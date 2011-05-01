@@ -4,6 +4,8 @@ Charge
 
 Charge game engine, but better know as Charge Miners a Minecraft Viewer.
 
+.. image:: https://github.com/Wallbraker/Charged-Miners/wiki/shot-1.png
+
 
 Getting started
 ===============
