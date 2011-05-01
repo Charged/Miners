@@ -1,0 +1,98 @@
+======
+Charge
+======
+
+Charge game engine, but better know as Charge Miners a Minecraft Viewer.
+
+
+Getting started
+===============
+
+Dependencies
+------------
+
+In order to run Charge you need to install the following libraries: SDL,
+SDL-Image, SDL-ttf, OpenAL and OpenGL. A D compiler is needed to build Charge
+but should you have have downloaded prebuilt binaries this is not needed (see
+below on which). It is not needed to install the development version of the
+libraries (other then libphobos if you are building Charge of course, but this
+should come with the D compiler).
+
+For Ubuntu you can use this command:
+
+::
+
+ $ sudo apt-get install libsdl-image1.2 libsdl-ttf2.0-0 libsdl1.2debian libopenal1
+
+For Fedora you can do this with:
+
+::
+
+ $ sudo yum install SDL SDL_image SDL_ttf openal-soft
+
+
+D Compiler
+----------
+
+At the moment only GDC seems capable of compiling Charge for any platform.
+Since LDC does not support Phobos which Charge uses (minimally, tangobos might
+be able to support it, any patches that improves tangobos support is sought).
+DMD compiles the binary but it crashes in weird places inside C libraries.
+
+To get GDC on Ubuntu do this:
+
+::
+
+  $ sudo apt-get install gdc
+
+
+For other platforms you need probably need to compile it you can get the
+latest version from here https://bitbucket.org/goshawk/gdc/wiki/Home
+Cross compiling on Linux to Windows is confirmed working.
+
+
+Building
+--------
+
+Now you just need to build Charge, to do so type:
+
+::
+
+  $ make
+
+Thats it, but before running Charge for the first run this command:
+
+::
+
+  $ make res
+
+This will download the necessary resources files from the web. After that
+
+
+Running
+-------
+
+::
+
+  $ make run
+
+
+Contributing
+============
+
+Please feel free to contribute. Contributing is easy! Just send us your code.
+Diffs are appreciated, in git format; Github pull requests are excellent. The
+worst thing that can happen is that we will ignore you.
+
+Things to consider:
+
+ * While Charge has a engine part and a per game part its not strict where
+   things go. There is a time for over engineering and a time to get stuff
+   working. If its to mess put in a branch and we can hack on it till its
+   all good. Nothing is perfect from the start.
+ * Charge is GPLv2. Your contributions will be under that same license. If
+   this isn't acceptable, then your code cannot be merged. This is really the
+   only hard condition.
+ * Patches that you want to be committed to the main repository will need to
+   have your signoff (just commit with --signoff and git will add it for you).
+ * Have fun and there will be cake! That is all!

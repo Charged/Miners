@@ -1,0 +1,213 @@
+// Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
+// See copyright notice in src/charge/charge.d (GPLv2 only).
+module minecraft.terrain.chunk;
+
+import std.math;
+
+import charge.charge;
+import charge.math.ints;
+
+import minecraft.importer;
+import minecraft.gfx.vbo;
+import minecraft.gfx.imports;
+import minecraft.gfx.renderer;
+import minecraft.terrain.vol;
+import minecraft.terrain.data;
+import minecraft.terrain.builder;
+
+class Chunk
+{
+public:
+	GameWorld w;
+	bool gfx;
+	ChunkVBOArray cva;
+	ChunkVBORigidMesh cvrm;
+	ChunkVBOCompactMesh cvcm;
+	VolTerrain vt;
+	const int width = 16;
+	const int height = 128;
+	const int depth = 16;
+	const int blocks_size = width * height * depth;
+	const int data_size = blocks_size;
+	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */
+	ubyte *blocks;
+	ubyte *data;
+	int xPos;
+	int zPos;
+	int xOff;
+	int yOff;
+	int zOff;
+	GfxPointLight lights[];
+	static int used_mem;
+	bool empty;
+
+	this(VolTerrain vt, GameWorld w, int xPos, int zPos)
+	{
+		this.w = w;
+		this.vt = vt;
+		this.xPos = xPos;
+		this.zPos = zPos;
+		this.xOff = xPos * 16;
+		this.yOff = -64;
+		this.zOff = zPos * 16;
+		if (!getBlocksForChunk(vt.dir, xPos, zPos, blocks, data))
+			emptyChunk();
+		else
+			used_mem += blocks_size + data_size;
+	}
+
+	~this()
+	{
+		unbuild();
+		if (!empty) {
+			std.c.stdlib.free(blocks);
+			std.c.stdlib.free(data);
+			used_mem -= (blocks_size + data_size);
+		}
+	}
+
+	static this()
+	{
+		empty_blocks = cast(ubyte*)std.c.stdlib.malloc(blocks_size);
+		std.c.string.memset(empty_blocks, 0, blocks_size);
+		used_mem += blocks_size;
+	}
+
+	static ~this()
+	{
+		std.c.stdlib.free(empty_blocks);
+	}
+
+	void emptyChunk()
+	{
+		blocks = empty_blocks;
+		data = empty_blocks;
+		empty = true;
+	}
+
+	void build()
+	{
+		gfx = true;
+
+		if (empty)
+			return;
+
+		if (vt.cvgrm !is null) {
+			cvrm = buildRigidMeshFromChunk(this);
+			if (cvrm !is null)
+				vt.cvgrm.add(cvrm, xPos, zPos);
+		}
+
+		if (vt.cvgcm !is null) {
+			if (vt.buildIndexed)
+				cvcm = buildCompactMeshIndexedFromChunk(this);
+			else
+				cvcm = buildCompactMeshFromChunk(this);
+
+			if (cvcm !is null)
+				vt.cvgcm.add(cvcm, xPos, zPos);
+		}
+
+		if (vt.cvga !is null) {
+			cva = buildArrayFromChunk(this);
+			if (cva !is null)
+				vt.cvga.add(cva, xPos, zPos);
+		}
+	}
+
+	void unbuild()
+	{
+		foreach(l; lights) {
+			w.gfx.remove(l);
+			delete l;
+		}
+		lights = null;
+		if (gfx) {
+
+			if (cvrm) {
+				vt.cvgrm.remove(cvrm);
+				cvrm = null;
+			}
+			if (cvcm !is null) {
+				vt.cvgcm.remove(cvcm);
+				cvcm = null;
+			}
+			if (cva !is null) {
+				vt.cvga.remove(cva);
+				cva = null;
+			}
+			gfx = false;
+		}
+	}
+
+
+	/*
+	 * Accessors to blocks.
+	 */
+
+
+	final ubyte get(int x, int y, int z)
+	{
+		if (y < 0)
+			y = 0;
+		else if (y >= height)
+			return 0;
+
+		if (x < 0 || z < 0)
+			return vt.get(xPos, zPos, x, y, z);
+		else if (x >= width || z >= depth)
+			return vt.get(xPos, zPos, x, y, z);
+		else
+			return getUnsafe(x, y, z);
+	}
+
+	final ubyte getUnsafe(int x, int y, int z)
+	{
+		return blocks[x * depth * height + z * height + y];
+	}
+
+	final ubyte* getPointerY(int x, int z)
+	{
+		if (x < 0 || z < 0)
+			return vt.getPointerY(xPos, zPos, x, z);
+		else if (x >= width || z >= depth)
+			return vt.getPointerY(xPos, zPos, x, z);
+		else
+			return getUnsafePointerY(x, z);
+	}
+
+	final ubyte* getUnsafePointerY(int x, int z)
+	{
+		return &blocks[x * depth * height + z * height];
+	}
+
+
+	/*
+	 * Accessors to data.
+	 */
+
+
+	final ubyte getDataUnsafe(int x, int y, int z)
+	{
+		ubyte d = data[x * depth * height / 2 + z * height / 2  + y / 2];
+		if (y % 2 == 0)
+			return d & 0xf;
+		return cast(ubyte)(d >> 4);
+	}
+
+	final ubyte* getDataPointerY(int x, int z)
+	{
+		if (x < 0 || z < 0)
+			return vt.getDataPointerY(xPos, zPos, x, z);
+		else if (x >= width || z >= depth)
+			return vt.getDataPointerY(xPos, zPos, x, z);
+		else
+			return getDataUnsafePointerY(x, z);
+	}
+
+	final ubyte* getDataUnsafePointerY(int x, int z)
+	{
+		return &data[x * depth * height/2 + z * height/2];
+	}
+
+}

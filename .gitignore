@@ -1,0 +1,16 @@
+.obj
+res
+Charge
+Charge.map
+Charge.exe
+.cdtproject
+.project
+.settings
+.classpath
+.externalToolBuilders
+*.a
+*.dll
+*.so
+*.lnk
+*.dylib
+screenshot-*.bmp

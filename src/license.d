@@ -1,0 +1,3 @@
+module license;
+
+char[][] licenseArray;
