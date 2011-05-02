@@ -40,14 +40,17 @@ else version(linux)
 }
 else
 {
+	// XXX Figure out the proper way to import this on Mac.
 	extern(C)
 	{
-		const int RTLD_NOW = 2;
 		void *dlopen(char* file, int mode);
 		int dlclose(void* handle);
 		void *dlsym(void* handle, char* name);
 		char* dlerror();
 	}
+
+	// Can't be extern(C) or we conflict with phobos.
+	const RTLD_NOW = 2;
 }
 
 class Library
