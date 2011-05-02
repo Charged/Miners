@@ -42,7 +42,8 @@ ifeq ($(UNAME),Darwin)
 	PLATFORM=mac
 
 	# Extra to get the program working correctly
-	EXTRA_OBJ = .obj/$(OBJ_DIR)/SDLmain.o
+	EXTRA_OBJ = $(OBJ_DIR)/SDLmain.o
+	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-ldl -q,-framework,Cocoa
 else
 ifeq ($(UNAME),WindowsCross)
 	PLATFORM=windows
@@ -74,7 +75,7 @@ OBJ := $(COBJ) $(DOBJ) $(EXTRA_OBJ)
 all: $(TARGET)
 
 #Special target for MacOSX
-.obj/SDLmain.o : src/charge/platform/SDLmain.m
+$(OBJ_DIR)/SDLmain.o : src/charge/platform/SDLmain.m
 	@echo "  CC     src/charge/platform/SDLmain.m"
 	@gcc -I/Library/Frameworks/SDL.framework/Headers -c -o $@ src/charge/platform/SDLmain.m
 
