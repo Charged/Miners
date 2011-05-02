@@ -129,8 +129,8 @@ public:
 			throw new Exception("Invalid level");
 
 		vt = new VolTerrain(w, level, tex);
-		vt.setBuildType(rsbt[current_renderer]);
 		vt.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
+		vt.setBuildType(rsbt[current_renderer]);
 
 		if (build_all) {
 			l.fatal("Building all, please wait...");
