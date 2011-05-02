@@ -72,25 +72,26 @@ protected:
 
 	this(Pool p, char[] name, SDL_Surface *surf, bool dynamic)
 	{
-		width = surf.w;
-		height = surf.h;
-
 		if (dynamic || surf.pitch != width * Color4b.sizeof) {
-			this(p, name, width, height, dynamic);
+			// Use other contructor to alloc memory
+			this(p, name, surf.w, surf.h, dynamic);
 
-			pixels = cast(Color4b*)std.c.stdlib.malloc(width*height*Color4b.sizeof);
+			// Copy pixels
 			Color4b *src = cast(Color4b*)surf.pixels;
-
 			size_t nblocksx = surf.pitch / Color4b.sizeof;
 			for (int i; i < height; i++) {
 				pixels[width * i .. width * (i+1)] =
 					src[nblocksx * i .. nblocksx * (i+1)];
 			}
 
+			// Free the loaded surface
 			SDL_FreeSurface(surf);
 		} else {
+			// Call base calss constructor
 			super(p, uri, name, dynamic);
 
+			this.width = surf.w;
+			this.height = surf.h;
 			this.pixels = cast(Color4b*)surf.pixels;
 			this.surf = surf;
 		}
