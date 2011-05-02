@@ -173,17 +173,17 @@ protected:
 		auto dat = std.string.format(level, "/level.dat");
 		auto region = std.string.format(level, "/region");
 
-		if (!isfile(dat)) {
+		if (!exists(dat)) {
 			l.fatal("Could not find level.dat in the level directory");
 			l.fatal("This probably isn't a level, exiting the viewer.");
-			l.fatal("looked in this folder: %s", level);
+			l.fatal("looked for this file: %s", dat);
 			return false;
 		}
 
-		if (!isdir(region)) {
+		if (!exists(region)) {
 			l.fatal("Could not find the region folder in the level directory");
 			l.fatal("This probably isn't a level, exiting the viewer.");
-			l.fatal("looked in this folder: %s", level);
+			l.fatal("looked for this folder: %s", region);
 			return false;
 		}
 
