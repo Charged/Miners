@@ -12,13 +12,19 @@ import charge.charge;
 
 struct WorkspaceData
 {
-	static WorkspaceData* cMalloc()
+	/**
+	 * Allocate a workspace from the C heap.
+	 */
+	static WorkspaceData* malloc()
 	{
 		return cast(WorkspaceData*)
 			std.c.stdlib.malloc(WorkspaceData.sizeof);
 	}
 
-	void cFree()
+	/**
+	 * Free a workspace that was allocted from the C heap.
+	 */
+	void free()
 	{
 		std.c.stdlib.free(cast(void*)this);
 	}
@@ -150,14 +156,14 @@ template AOCalculator()
 
 template ArrayPacker()
 {
-	int array[];
+	int *verts;
 	int num;
 
 	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off)
 	{
 		int high = (x << 0) | (normal << 5) | (texture << 8);
 		int low = (z << 0) | (y << 5) | (light << 12);
-		array[num++] = high | low << 16;
+		verts[num++] = high | low << 16;
 	}
 }
 
@@ -186,7 +192,7 @@ template MeshPacker()
 
 template CompactMeshPacker()
 {
-	ChunkVBOCompactMesh.Vertex[] verts;
+	ChunkVBOCompactMesh.Vertex *verts;
 	int iv;
 	int xOff;
 	int yOff;
@@ -210,7 +216,7 @@ template CompactMeshPacker()
 
 template CompactMeshPackerIndexed()
 {
-	ChunkVBOCompactMesh.Vertex[] verts;
+	ChunkVBOCompactMesh.Vertex *verts;
 	int iv;
 	int xOff;
 	int yOff;
@@ -649,16 +655,19 @@ struct LeafBuilder
 
 ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 {
-	auto data = WorkspaceData.cMalloc();
+	auto data = WorkspaceData.malloc();
+	cMemoryArray!(int) vertices;
+	scope(exit) { data.free(); vertices.free(); }
+
 	mixin BaseBuilder!(ArrayPacker) bldr;
 	LeafBuilder lbldr;
 
 	data.copyFromChunk(chunk);
 
-	array.length = 128*1024;
+	verts = vertices.realloc(128*1024);
 
 	lbldr.data = data;
-	lbldr.array = array;
+	lbldr.verts = verts;
 	lbldr.build();
 
 	num = lbldr.num;
@@ -768,17 +777,16 @@ ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 		}
 	}
 
-	data.cFree();
-	auto ret = ChunkVBOArray(array[0 .. num], chunk.xPos, chunk.zPos);
-	delete array;
-
-	return ret;
+	// C memory freed above with scope(exit)
+	return ChunkVBOArray(verts[0 .. num], chunk.xPos, chunk.zPos);
 }
 
 ChunkVBORigidMesh buildRigidMeshFromChunk(Chunk chunk)
 {
+	auto data = WorkspaceData.malloc();
 	auto mb = new RigidMeshBuilder(128*1024, 0, RigidMesh.Types.QUADS);
-	auto data = WorkspaceData.cMalloc();
+	scope(exit) { data.free(); delete mb; }
+
 	mixin MeshBasedDispatcher!(MeshPacker) dispatch;
 
 	data.copyFromChunk(chunk);
@@ -796,21 +804,21 @@ ChunkVBORigidMesh buildRigidMeshFromChunk(Chunk chunk)
 		}
 	}
 
-	auto ret = ChunkVBORigidMesh(mb, chunk.xPos, chunk.zPos);
-	data.cFree();
-	delete mb;
-
-	return ret;
+	// C memory freed above with scope(exit)
+	return ChunkVBORigidMesh(mb, chunk.xPos, chunk.zPos);
 }
 
 ChunkVBOCompactMesh buildCompactMeshFromChunk(Chunk chunk)
 {
-	auto data = WorkspaceData.cMalloc();
+	auto data = WorkspaceData.malloc();
+	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
+	scope(exit) { data.free(); vertices.free(); }
+
 	mixin MeshBasedDispatcher!(CompactMeshPacker);
 
 	data.copyFromChunk(chunk);
 
-	verts.length = 128*1024;
+	verts = vertices.realloc(128 * 1024);
 	xOff = chunk.xOff;
 	yOff = chunk.yOff;
 	zOff = chunk.zOff;
@@ -823,22 +831,21 @@ ChunkVBOCompactMesh buildCompactMeshFromChunk(Chunk chunk)
 		}
 	}
 
-	data.cFree();
-
-	auto ret = ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
-	delete verts;
-
-	return ret;
+	// C memory freed above with scope(exit)
+	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
 }
 
 ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(Chunk chunk)
 {
-	auto data = WorkspaceData.cMalloc();
+	auto data = WorkspaceData.malloc();
+	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
+	scope(exit) { data.free(); vertices.free(); }
+
 	mixin MeshBasedDispatcher!(CompactMeshPackerIndexed);
 
 	data.copyFromChunk(chunk);
 
-	verts.length = 128*1024;
+	verts = vertices.realloc(128 * 1024);
 	xOff = chunk.xOff;
 	yOff = chunk.yOff;
 	zOff = chunk.zOff;
@@ -851,10 +858,6 @@ ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(Chunk chunk)
 		}
 	}
 
-	data.cFree();
-
-	auto ret = ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
-	delete verts;
-
-	return ret;
+	// C memory freed above with scope(exit)
+	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
 }
