@@ -174,6 +174,7 @@ public:
 			if (!GL_VERSION_2_0)
 				throw new Exception("GL_VERSION < 2.0");
 
+			// XXX Should test for GL_EXT_gpu_shader4 as well
 			if (!GL_EXT_geometry_shader4)
 				throw new Exception("GL_EXT_geometry_shader4 not supported");
 
@@ -345,7 +346,7 @@ void main()
 ";
 
 	const char[] materialFragForwardIndexed = "
-#extension GL_EXT_texture_array : enable
+#extension GL_EXT_texture_array : require
 
 uniform sampler2DArray diffuseTex;
 
@@ -371,6 +372,8 @@ void main()
 ";
 
 	const char[] materialFragDeferred = "
+#extension GL_EXT_texture_array : require
+
 uniform sampler2DArray diffuseTex;
 
 varying float light;
@@ -411,7 +414,7 @@ void main()
 	vec3 vs_normal = normals[int(vs_data.z)].xyz;
 	light = 1.0 - vs_data.w * 0.4;
 
-	uv = vs_data.xy / 16.0f;
+	uv = vs_data.xy / 16.0;
 
 	// Okay for now, but this should not be done.
 	normal = vs_normal;//gl_NormalMatrix * vs_normal;
@@ -447,6 +450,8 @@ void main()
 ";
 
 	const char[] materialVertArrayIndexed = "
+#extension GL_EXT_gpu_shader4 : require
+
 uniform vec4 normals[6];
 uniform vec4 uv_mixs[6];
 
@@ -468,7 +473,7 @@ void main()
 
 	posInt.x = (bits.x & 0x1f);
 	int normalIndex = (bits.x >> 5) & 0x07;
-	texture = (bits.x >> 8) & 0xff;
+	texture = float((bits.x >> 8) & 0xff);
 	lightInt = (bits.y >> 12 & 0x0f);
 	posInt.y = ((bits.y >> 5) & 0x7f);
 	posInt.z = (bits.y & 0x1f);
@@ -483,7 +488,7 @@ void main()
 	pos.xyz += vec3(offset.x, -64, offset.y);
 	pos.w = 1.0;
 
-	light = 1.0 - lightInt * 0.3;
+	light = 1.0 - float(lightInt) * 0.3;
 	normal = gl_NormalMatrix * normals[normalIndex].xyz;
 	gl_Position = gl_ModelViewProjectionMatrix * pos;
 }
