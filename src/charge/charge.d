@@ -9,6 +9,7 @@ module charge.charge;
 
 public
 {
+	static import charge.util.memory;
 	static import charge.util.vector;
 
 	static import charge.math.mesh;
@@ -71,6 +72,7 @@ public
 	static import charge.core;
 }
 
+alias charge.util.memory.cMemoryArray cMemoryArray;
 alias charge.util.vector.Vector Vector;
 alias charge.util.vector.VectorData VectorData;
 
