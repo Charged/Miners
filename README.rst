@@ -32,6 +32,10 @@ For Fedora you can do this with:
 
  $ sudo yum install SDL SDL_image SDL_ttf openal-soft
 
+On Mac you will need to download and install the SDL, SDL-image & SDL-ttf
+frameworks into /Library/Frameworks, both for compiling and running.
+Hopefully in the future this will not be needed for running.
+
 
 D Compiler
 ----------
@@ -47,6 +51,10 @@ To get GDC on Ubuntu do this:
 
   $ sudo apt-get install gdc
 
+
+On Mac the only know working compiler is DMD 1.062, just excract the contents
+of dmd.1.062.zip <somewhere> and set the DMD enviromental variable to be
+"<somewhere>/osx/bin/dmd" or put the folder "<somewhere>/osx/bin" on the path.
 
 For other platforms you need probably need to compile it you can get the
 latest version from here https://bitbucket.org/goshawk/gdc/wiki/Home
