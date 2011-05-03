@@ -325,7 +325,7 @@ private:
 		printDebug(shader, false, type);
 	}
 
-	private static void printDebug(int shader, bool program, char[] type)
+	private static bool printDebug(int shader, bool program, char[] type)
 	{
 		// Instead of pointers, realy bothersome.
 		int status;
@@ -354,8 +354,11 @@ private:
 				l.warn("%s status: %s\n%s", type, status, buffer);
 			else
 				l.warn("%s status: %s", type, status);
+
+			return false;
 		} else {
 			//l.trace("status: %s", status);
+			return true;
 		}
 	}
 
