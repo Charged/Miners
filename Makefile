@@ -28,22 +28,23 @@ else
 endif
 endif
 
-
 DDEFINES = -version=DynamicODE
 TARGET = Charge
 CCOMP_FLAGS = -c -Wall -g -o $@
-DCOMP_FLAGS = -c -w -gc -Isrc $(DDEFINES) -of$@ -debug -q,-ggdb3,-O0
+DCOMP_FLAGS = -c -w -gc -Isrc $(DDEFINES) -of$@ -debug
 LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-ldl
 
 ifeq ($(UNAME),Linux)
 	PLATFORM=linux
+	DCOMP_FLAGS = -c -w -gc -Isrc $(DDEFINES) -of$@ -debug -q,-ggdb3,-O0
 else
 ifeq ($(UNAME),Darwin)
 	PLATFORM=mac
 
 	# Extra to get the program working correctly
 	EXTRA_OBJ = $(OBJ_DIR)/SDLmain.o
-	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-ldl -q,-framework,Cocoa
+	CCOMP_FLAGS = -c -Wall -g -o $@ -m32
+	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa
 else
 ifeq ($(UNAME),WindowsCross)
 	PLATFORM=windows
@@ -77,7 +78,7 @@ all: $(TARGET)
 #Special target for MacOSX
 $(OBJ_DIR)/SDLmain.o : src/charge/platform/SDLmain.m
 	@echo "  CC     src/charge/platform/SDLmain.m"
-	@gcc -I/Library/Frameworks/SDL.framework/Headers -c -o $@ src/charge/platform/SDLmain.m
+	@gcc -m32 -I/Library/Frameworks/SDL.framework/Headers -c -o $@ src/charge/platform/SDLmain.m
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c Makefile
 	@echo "  CC     src/$*.c"
