@@ -72,7 +72,7 @@ public:
 	{
 		alias Packet.Header Header;
 		Address a;
-		size_t n;
+		intptr_t n;
 		Header *h;
 		// Windows is stupid and you must take the entire package
 		uint8_t peek[1024];
