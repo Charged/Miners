@@ -70,67 +70,114 @@ public:
 		w.gfx.fog.start = 150;
 		w.gfx.fog.stop = 250;
 		w.gfx.fog.color = Color4f(89.0/255, 178.0/255, 220.0/255);
+
+		auto kb = CtlInput().keyboard;
+		kb.up ~= &this.keyUp;
+		kb.down ~= &this.keyDown;
+
+		auto m = CtlInput().mouse;
+		m.up ~= &this.mouseUp;
+		m.down ~= &this.mouseDown;
+		m.move ~= &this.mouseMove;
 	}
 
-	void handleInput(SDL_Event *e)
+	~this()
 	{
-		if (e.type == SDL_KEYDOWN) {
-			if (e.key.keysym.sym == SDLK_v)
-				sl.shadow = !sl.shadow;
+		auto kb = CtlInput().keyboard;
+		kb.up.disconnect(&this.keyUp);
+		kb.down.disconnect(&this.keyDown);
 
-			if (e.key.keysym.sym == SDLK_w)
-				m.forward = true;
-			if (e.key.keysym.sym == SDLK_s)
-				m.backward = true;
-			if (e.key.keysym.sym == SDLK_a)
-				m.left = true;
-			if (e.key.keysym.sym == SDLK_d)
-				m.right = true;
-			if (e.key.keysym.sym == SDLK_LSHIFT)
-				m.speed = true;
-			if (e.key.keysym.sym == SDLK_SPACE)
-				m.up = true;
+		auto m = CtlInput().mouse;
+		m.up.disconnect(&this.mouseUp);
+		m.down.disconnect(&this.mouseDown);
+		m.move.disconnect(&this.mouseMove);
+	}
+
+	void keyDown(CtlKeyboard kb, int sym)
+	{
+		switch(sym) {
+		case SDLK_v:
+			sl.shadow = !sl.shadow;
+			break;
+		case SDLK_w:
+			m.forward = true;
+			break;
+		case SDLK_s:
+			m.backward = true;
+			break;
+		case SDLK_a:
+			m.left = true;
+			break;
+		case SDLK_d:
+			m.right = true;
+			break;
+		case SDLK_LSHIFT:
+			m.speed = true;
+			break;
+		case SDLK_SPACE:
+			m.up = true;
+			break;
+		default:
 		}
+	}
 
-		if (e.type == SDL_KEYUP) {
-			if (e.key.keysym.sym == SDLK_w)
-				m.forward = false;
-			if (e.key.keysym.sym == SDLK_s)
-				m.backward = false;
-			if (e.key.keysym.sym == SDLK_a)
-				m.left = false;
-			if (e.key.keysym.sym == SDLK_d)
-				m.right = false;
-			if (e.key.keysym.sym == SDLK_LSHIFT)
-				m.speed = false;
-			if (e.key.keysym.sym == SDLK_SPACE)
-				m.up = false;
+	void keyUp(CtlKeyboard kb, int sym)
+	{
+		switch(sym) {
+		case SDLK_w:
+			m.forward = false;
+			break;
+		case SDLK_s:
+			m.backward = false;
+			break;
+		case SDLK_a:
+			m.left = false;
+			break;
+		case SDLK_d:
+			m.right = false;
+			break;
+		case SDLK_LSHIFT:
+			m.speed = false;
+			break;
+		case SDLK_SPACE:
+			m.up = false;
+			break;
+		default:
 		}
+	}
 
-		if (e.type == SDL_MOUSEMOTION && cam_moveing) {
-			double xrel = e.motion.xrel;
-			double yrel = e.motion.yrel;
+	void mouseMove(CtlMouse mouse, int ixrel, int iyrel)
+	{
+		if (cam_moveing) {
+			double xrel = ixrel;
+			double yrel = iyrel;
 			cam_heading += xrel / 500.0;
 			cam_pitch += yrel / 500.0;
 			cam.rotation = Quatd(cam_heading, cam_pitch, 0);
 		}
 
-		if (e.type == SDL_MOUSEMOTION && light_moveing) {
-			double xrel = e.motion.xrel;
-			double yrel = e.motion.yrel;
+		if (light_moveing) {
+			double xrel = ixrel;
+			double yrel = iyrel;
 			light_heading += xrel / 500.0;
 			light_pitch += yrel / 500.0;
 			sl.rotation = Quatd(light_heading, light_pitch, 0);
 		}
+	}
 
-		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == 1)
+	void mouseDown(CtlMouse m, int button)
+	{
+		if (button == 1)
 			cam_moveing = true;
-		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == 3)
+		if (button == 3)
 			light_moveing = true;
+	}
 
-		if (e.type == SDL_MOUSEBUTTONUP && e.button.button == 1)
+	void mouseUp(CtlMouse m, int button)
+	{
+		if (button == 1)
 			cam_moveing = false;
-		if (e.type == SDL_MOUSEBUTTONUP && e.button.button == 3)
+		if (button == 3)
 			light_moveing = false;
 	}
 
@@ -231,6 +278,9 @@ public:
 
 		gl = new GameLogic(w);
 		camera = gl.cam;
+
+		auto kb = CtlInput().keyboard;
+		kb.up ~= &this.keyUp;
 	}
 
 	~this()
@@ -245,6 +295,9 @@ public:
 		}
 		delete gl;
 		delete w;
+
+		auto kb = CtlInput().keyboard;
+		kb.up.disconnect(&this.keyUp);
 	}
 
 protected:
@@ -349,41 +402,28 @@ protected:
 		}
 	}
 
-	void input()
+	void keyUp(CtlKeyboard kb, int sym)
 	{
-		SDL_Event e;
+		switch(sym) {
+		case SDLK_o:
+			Core().screenShot();
+			break;
+		case SDLK_b:
+			aa = !aa;
+			break;
+		case SDLK_r:
+			current_renderer++;
+			if (current_renderer >= num_renderers)
+				current_renderer = 0;
 
-		while(SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) {
-				running = false;
-			}
-
-			if (e.type == SDL_KEYDOWN) {
-				if (e.key.keysym.sym == SDLK_ESCAPE)
-					running = false;
-			}
-
-			if (e.type == SDL_KEYUP) {
-				if (e.key.keysym.sym == SDLK_o)
-					Core().screenShot();
-				if (e.key.keysym.sym == SDLK_b)
-					aa = !aa;
-				if (e.key.keysym.sym == SDLK_r) {
-					current_renderer++;
-					if (current_renderer >= num_renderers)
-						current_renderer = 0;
-
-					r = rs[current_renderer];
-					vt.setBuildType(rsbt[current_renderer]);
-				}
-
-				if (e.key.keysym.sym == SDLK_i) {
-					static int i = 1;
-					vt.setCenter(0, i++);
-				}
-			}
-
-			gl.handleInput(&e);
+			r = rs[current_renderer];
+			vt.setBuildType(rsbt[current_renderer]);
+			break;
+		case SDLK_i:
+			static int i = 1;
+			vt.setCenter(0, i++);
+			break;
+		default:
 		}
 	}
 
