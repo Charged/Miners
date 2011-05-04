@@ -11,73 +11,32 @@ import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 import minecraft.gfx.renderer;
 
-
-class Game : public GameSimpleApp
+class GameLogic
 {
-private:
-	double cam_heading;
-	double cam_pitch;
-	bool cam_moveing;
+public:
+	GameWorld w;
+
+	/* Light related */
+	GfxSimpleLight sl;
 	double light_heading;
 	double light_pitch;
 	bool light_moveing;
-	bool aa;
-	int x; int z;
-	int ticks;
 
-	charge.game.app.TimeKeeper buildTime;
-
-	GameWorld w;
-
-	VolTerrain vt;
-	GfxSimpleLight sl;
-
-	GfxTexture tex;
-	GfxTextureArray ta;
-
-	GfxRenderer r; // Current renderer
-	GfxRenderer dr; // Inbuilt deferred or Fixed func
-	MinecraftDeferredRenderer mdr; // Special deferred renderer
-	MinecraftForwardRenderer mfr; // Special forward renderer
-	GfxRenderer rs[4]; // Null terminated list of renderer
-	VolTerrain.BuildTypes rsbt[4]; // A list of build types for the renderers
-	int num_renderers;
-	int current_renderer;
-
+	/* Camera related */
 	GfxCamera cam;
 	GameMover m;
+	double cam_heading;
+	double cam_pitch;
+	bool cam_moveing;
 
-	bool canDoForward;
-	bool canDoDeferred;
-
-	bool built; /**< Have we built a chunk */
-
-	int start;
-	int num_frames;
-
-	char[] level;
-	bool build_all;
-
-public:
+private:
 	mixin SysLogging;
 
-	this(char[][] args)
+public:
+	this(GameWorld w)
 	{
-		super(args);
-		parseArgs(args);
-		l.fatal("-license         - print licenses");
-		l.fatal("-level <level>   - to specify level directory");
-		l.fatal("-all             - build all chunks near the camera on start");
+		this.w = w;
 
-		running = true;
-
-		canDoForward = MinecraftForwardRenderer.check();
-		canDoDeferred = MinecraftDeferredRenderer.check();
-
-		setupTextures();
-		setupRenderers();
-
-		w = new GameWorld();
 		GfxDefaultTarget rt = GfxDefaultTarget();
 		cam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, .1, 250);
 		m = new GameProjCameraMover(cam);
@@ -89,7 +48,6 @@ public:
 		//m = new GameIsoCameraMover(cam);
 
 		sl = new GfxSimpleLight();
-
 		// Night
 		//sl.diffuse = Color4f(0.0/255, 3.0/255, 30.0/255);
 		//sl.ambient = Color4f(0.0/255, 3.0/255, 30.0/255);
@@ -112,18 +70,147 @@ public:
 		w.gfx.fog.start = 150;
 		w.gfx.fog.stop = 250;
 		w.gfx.fog.color = Color4f(89.0/255, 178.0/255, 220.0/255);
+	}
 
-		if (level is null) {
-			auto home = std.string.toString(getenv("HOME"));
-			if (home is null) {
-				auto str = "could not guess default level location (HOME env not found)";
-				l.fatal(str);
-				throw new Exception("");
-			}
+	void handleInput(SDL_Event *e)
+	{
+		if (e.type == SDL_KEYDOWN) {
+			if (e.key.keysym.sym == SDLK_v)
+				sl.shadow = !sl.shadow;
 
-			level = std.string.format(home, "/.minecraft/saves/World1");
-			l.fatal(`Guessing level location: "%s"`, level);
+			if (e.key.keysym.sym == SDLK_w)
+				m.forward = true;
+			if (e.key.keysym.sym == SDLK_s)
+				m.backward = true;
+			if (e.key.keysym.sym == SDLK_a)
+				m.left = true;
+			if (e.key.keysym.sym == SDLK_d)
+				m.right = true;
+			if (e.key.keysym.sym == SDLK_LSHIFT)
+				m.speed = true;
+			if (e.key.keysym.sym == SDLK_SPACE)
+				m.up = true;
 		}
+
+		if (e.type == SDL_KEYUP) {
+			if (e.key.keysym.sym == SDLK_w)
+				m.forward = false;
+			if (e.key.keysym.sym == SDLK_s)
+				m.backward = false;
+			if (e.key.keysym.sym == SDLK_a)
+				m.left = false;
+			if (e.key.keysym.sym == SDLK_d)
+				m.right = false;
+			if (e.key.keysym.sym == SDLK_LSHIFT)
+				m.speed = false;
+			if (e.key.keysym.sym == SDLK_SPACE)
+				m.up = false;
+		}
+
+		if (e.type == SDL_MOUSEMOTION && cam_moveing) {
+			double xrel = e.motion.xrel;
+			double yrel = e.motion.yrel;
+			cam_heading += xrel / 500.0;
+			cam_pitch += yrel / 500.0;
+			cam.rotation = Quatd(cam_heading, cam_pitch, 0);
+		}
+
+		if (e.type == SDL_MOUSEMOTION && light_moveing) {
+			double xrel = e.motion.xrel;
+			double yrel = e.motion.yrel;
+			light_heading += xrel / 500.0;
+			light_pitch += yrel / 500.0;
+			sl.rotation = Quatd(light_heading, light_pitch, 0);
+		}
+
+		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == 1)
+			cam_moveing = true;
+		if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == 3)
+			light_moveing = true;
+
+		if (e.type == SDL_MOUSEBUTTONUP && e.button.button == 1)
+			cam_moveing = false;
+		if (e.type == SDL_MOUSEBUTTONUP && e.button.button == 3)
+			light_moveing = false;
+	}
+
+	void logic()
+	{
+		m.tick();
+	}
+}
+
+class Game : public GameSimpleApp
+{
+private:
+	/* program args */
+	char[] level;
+	bool build_all;
+
+
+	charge.game.app.TimeKeeper buildTime;
+
+	GameWorld w;
+
+	GameLogic gl;
+
+	VolTerrain vt;
+
+	/*
+	 * For managing the rendering.
+	 */
+	GfxTexture tex;
+	GfxTextureArray ta;
+
+	GfxRenderer r; // Current renderer
+	GfxRenderer dr; // Inbuilt deferred or Fixed func
+	MinecraftDeferredRenderer mdr; // Special deferred renderer
+	MinecraftForwardRenderer mfr; // Special forward renderer
+	GfxRenderer rs[4]; // Null terminated list of renderer
+	VolTerrain.BuildTypes rsbt[4]; // A list of build types for the renderers
+	int num_renderers;
+	int current_renderer;
+
+	bool canDoForward;
+	bool canDoDeferred;
+
+	bool aa;
+
+	/*
+	 * For tracking the camera
+	 */
+	GfxCamera camera;
+	int x; int z;
+
+
+	bool built; /**< Have we built a chunk */
+
+	int ticks;
+	int start;
+	int num_frames;
+
+public:
+	mixin SysLogging;
+
+	this(char[][] args)
+	{
+		super(args);
+		parseArgs(args);
+		l.fatal("-license         - print licenses");
+		l.fatal("-level <level>   - to specify level directory");
+		l.fatal("-all             - build all chunks near the camera on start");
+
+		running = true;
+
+		canDoForward = MinecraftForwardRenderer.check();
+		canDoDeferred = MinecraftDeferredRenderer.check();
+
+		setupTextures();
+		setupRenderers();
+
+		w = new GameWorld();
+
+		guessLevel();
 
 		if (!checkLevel(level))
 			throw new Exception("Invalid level");
@@ -141,6 +228,9 @@ public:
 		}
 
 		start = SDL_GetTicks();
+
+		gl = new GameLogic(w);
+		camera = gl.cam;
 	}
 
 	~this()
@@ -153,6 +243,7 @@ public:
 			tex.dereference();
 			tex = null;
 		}
+		delete gl;
 		delete w;
 	}
 
@@ -243,6 +334,21 @@ protected:
 		r = rs[current_renderer];
 	}
 
+	void guessLevel()
+	{
+		if (level is null) {
+			auto home = std.string.toString(getenv("HOME"));
+			if (home is null) {
+				auto str = "could not guess default level location (HOME env not found)";
+				l.fatal(str);
+				throw new Exception("");
+			}
+
+			level = std.string.format(home, "/.minecraft/saves/World1");
+			l.fatal(`Guessing level location: "%s"`, level);
+		}
+	}
+
 	void input()
 	{
 		SDL_Event e;
@@ -255,25 +361,11 @@ protected:
 			if (e.type == SDL_KEYDOWN) {
 				if (e.key.keysym.sym == SDLK_ESCAPE)
 					running = false;
-				if (e.key.keysym.sym == SDLK_w)
-					m.forward = true;
-				if (e.key.keysym.sym == SDLK_s)
-					m.backward = true;
-				if (e.key.keysym.sym == SDLK_a)
-					m.left = true;
-				if (e.key.keysym.sym == SDLK_d)
-					m.right = true;
-				if (e.key.keysym.sym == SDLK_LSHIFT)
-					m.speed = true;
-				if (e.key.keysym.sym == SDLK_SPACE)
-					m.up = true;
 			}
 
 			if (e.type == SDL_KEYUP) {
 				if (e.key.keysym.sym == SDLK_o)
 					Core().screenShot();
-				if (e.key.keysym.sym == SDLK_v)
-					sl.shadow = !sl.shadow;
 				if (e.key.keysym.sym == SDLK_b)
 					aa = !aa;
 				if (e.key.keysym.sym == SDLK_r) {
@@ -285,51 +377,14 @@ protected:
 					vt.setBuildType(rsbt[current_renderer]);
 				}
 
-				if (e.key.keysym.sym == SDLK_w)
-					m.forward = false;
-				if (e.key.keysym.sym == SDLK_s)
-					m.backward = false;
-				if (e.key.keysym.sym == SDLK_a)
-					m.left = false;
-				if (e.key.keysym.sym == SDLK_d)
-					m.right = false;
-				if (e.key.keysym.sym == SDLK_LSHIFT)
-					m.speed = false;
-				if (e.key.keysym.sym == SDLK_SPACE)
-					m.up = false;
 				if (e.key.keysym.sym == SDLK_i) {
 					static int i = 1;
 					vt.setCenter(0, i++);
 				}
 			}
 
-			if (e.type == SDL_MOUSEMOTION && cam_moveing) {
-				double xrel = e.motion.xrel;
-				double yrel = e.motion.yrel;
-				cam_heading += xrel / 500.0;
-				cam_pitch += yrel / 500.0;
-				cam.rotation = Quatd(cam_heading, cam_pitch, 0);
-			}
-
-			if (e.type == SDL_MOUSEMOTION && light_moveing) {
-				double xrel = e.motion.xrel;
-				double yrel = e.motion.yrel;
-				light_heading += xrel / 500.0;
-				light_pitch += yrel / 500.0;
-				sl.rotation = Quatd(light_heading, light_pitch, 0);
-			}
-
-			if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == 1)
-				cam_moveing = true;
-			if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == 3)
-				light_moveing = true;
-
-			if (e.type == SDL_MOUSEBUTTONUP && e.button.button == 1)
-				cam_moveing = false;
-			if (e.type == SDL_MOUSEBUTTONUP && e.button.button == 3)
-				light_moveing = false;
+			gl.handleInput(&e);
 		}
-
 	}
 
 	void logic()
@@ -339,11 +394,12 @@ protected:
 		built = false;
 
 		w.tick();
-		m.tick();
+
+		gl.logic();
 
 		// Center the map around the camera.
 		{
-			auto p = cam.position;
+			auto p = camera.position;
 			int x = cast(int)p.x;
 			int z = cast(int)p.z;
 			x = p.x < 0 ? (x - 16) / 16 : x / 16;
@@ -354,7 +410,9 @@ protected:
 			this.x = x;
 			this.z = z;
 		}
+
 		ticks++;
+
 		auto elapsed = SDL_GetTicks() - start;
 		if (elapsed > 1000) {
 			l.bug("FPS: %s",
@@ -391,7 +449,9 @@ protected:
 			dt = new charge.gfx.target.DoubleTarget(rt.width, rt.height);
 		rt.clear();
 		r.target = aa ? cast(GfxRenderTarget)dt : cast(GfxRenderTarget)rt;
-		r.render(cam, w.gfx);
+
+		r.render(camera, w.gfx);
+
 		if (aa)
 			dt.resolve(rt);
 		rt.swap();
