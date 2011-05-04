@@ -387,7 +387,7 @@ protected:
 
 		static charge.gfx.target.DoubleTarget dt;
 		GfxDefaultTarget rt = GfxDefaultTarget();
-		if (dt is null)
+		if (aa && dt is null)
 			dt = new charge.gfx.target.DoubleTarget(rt.width, rt.height);
 		rt.clear();
 		r.target = aa ? cast(GfxRenderTarget)dt : cast(GfxRenderTarget)rt;
