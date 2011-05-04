@@ -15,4 +15,10 @@ public:
 	Signal!(Mouse, int) down;
 	Signal!(Mouse, int) up;
 
+	~this()
+	{
+		move.destruct();
+		down.destruct();
+		up.destruct();
+	}
 }
