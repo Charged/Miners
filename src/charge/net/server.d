@@ -87,7 +87,7 @@ public:
 			} else if (n < cast(int)Header.sizeof) {
 				l.warn("invalid header for packet");
 				// Safe because n can not be < 0
-				buffer.length = cast(ulong)n;
+				buffer.length = cast(size_t)n;
 				s.receiveFrom(buffer, a);
 				break;
 			}
