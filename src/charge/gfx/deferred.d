@@ -40,7 +40,7 @@ private:
 	static Shader pointlight_shader;
 	static Shader spotlight_shader;
 	static Shader fog_shader;
-	static Texture spotlight_texture;
+	Texture spotlight_texture;
 
 public:
 	static bool init()
@@ -66,7 +66,6 @@ public:
 			return false;
 		}
 
-		spotlight_texture = Texture("res/spotlight.bmp");
 		pointlight_shader = ShaderMaker(pointlight_shader_vertex,
 		                                pointlight_shader_geom,
 		                                pointlight_shader_frag,
@@ -131,6 +130,8 @@ public:
 		if (!initilized)
 			throw new Exception("Rendering system not initalized");
 
+		spotlight_texture = Texture("res/spotlight.bmp");
+
 		depthTarget = new DepthTargetArray(2048, 2048, 4);
 
 		l.bug("Created new deferred renderer");
@@ -138,6 +139,7 @@ public:
 
 	~this()
 	{
+		spotlight_texture.dereference();
 		delete deferredTarget;
 	}
 

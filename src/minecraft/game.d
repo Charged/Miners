@@ -305,6 +305,10 @@ public:
 			tex.dereference();
 			tex = null;
 		}
+
+		delete dr;
+		delete mfr;
+		delete mdr;
 		delete sr;
 		delete gl;
 		delete w;
