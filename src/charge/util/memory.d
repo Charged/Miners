@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.util.memory;
 
+static import std.outofmemory;
 static import std.c.stdlib;
 
 /*
