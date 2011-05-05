@@ -5,6 +5,7 @@ import std.file;
 import charge.charge;
 import charge.game.lua;
 
+import minecraft.world;
 import minecraft.terrain.vol;
 import minecraft.terrain.chunk;
 
@@ -20,7 +21,7 @@ public:
 	GfxProjCamera c;
 
 public:
-	this(GameWorld w)
+	this(World w)
 	{
 		super(w);
 		c = new GfxProjCamera();
@@ -43,7 +44,7 @@ private:
 	GfxSimpleLight gfx;
 
 public:
-	this(GameWorld w)
+	this(World w)
 	{
 		super(w);
 		gfx = new GfxSimpleLight();
@@ -66,7 +67,7 @@ public:
 class ScriptRunner
 {
 public:
-	GameWorld w;
+	World w;
 	LuaState s;
 	SunLight sl;
 	Camera c;
@@ -75,7 +76,7 @@ private:
 	mixin SysLogging;
 
 public:
-	this(GameWorld w, char[] filename)
+	this(World w, char[] filename)
 	{
 		this.w = w;
 
@@ -93,7 +94,7 @@ public:
 		Vector3dWrapper.register(s);
 		Point3dWrapper.register(s);
 		QuatdWrapper.register(s);
-		GameWorldWrapper.register(s);
+		WorldWrapper.register(s);
 		CameraWrapper.register(s);
 		SunLightWrapper.register(s);
 
@@ -237,18 +238,20 @@ protected:
 
 
 
-struct GameWorldWrapper
+struct WorldWrapper
 {
-	const static char *namez = "d_class_charge_game_world_World";
-	const static char[] name = "d_class_charge_game_world_World";
+	const static char *namez = "d_class_minecraft_world_World";
+	const static char[] name = "d_class_minecraft_world_World";
 
-	extern (C) static int newGameWorld(lua_State *l)
+	extern (C) static int newWorld(lua_State *l)
 	{
 		auto s = LuaState(l);
-		GameWorld w;
+		World w;
 
 		try {
-			w = new GameWorld();
+			// TODO
+			//w = new World(level, g.rm);
+			throw new Exception("Not implemented this new World yet");
 		} catch (Exception e) {
 			s.error(e);
 		}
@@ -259,13 +262,13 @@ struct GameWorldWrapper
 
 	static void register(LuaState s)
 	{
-		s.registerClass!(GameWorld);
+		s.registerClass!(World);
 		s.pushCFunction(&ObjectWrapper.toString);
 		s.setFieldz(-2, "__tostring");
 		s.pop();
 
 		s.pushString("World");
-		s.pushCFunction(&newGameWorld);
+		s.pushCFunction(&newWorld);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 }
@@ -278,7 +281,7 @@ struct CameraWrapper
 	extern (C) static int newCamera(lua_State *l)
 	{
 		auto s = LuaState(l);
-		auto w = s.checkClass!(GameWorld)(1, false);
+		auto w = s.checkClass!(World)(1, false);
 		Camera c;
 
 		try
@@ -315,7 +318,7 @@ struct SunLightWrapper
 	extern (C) static int newSunLight(lua_State *l)
 	{
 		auto s = LuaState(l);
-		auto w = s.checkClass!(GameWorld)(1, false);
+		auto w = s.checkClass!(World)(1, false);
 		SunLight sl;
 
 		try
