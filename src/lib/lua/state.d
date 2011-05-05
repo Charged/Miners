@@ -306,12 +306,12 @@ public:
 
 	int doFile(char[] name)
 	{
-		return luaL_dofile(l, std.string.toStringz("res/test.lua"));
+		return luaL_dofile(l, std.string.toStringz(name));
 	}
 
 	int loadFile(char[] name)
 	{
-		return luaL_loadfile(l, std.string.toStringz("res/test.lua"));
+		return luaL_loadfile(l, std.string.toStringz(name));
 	}
 
 	int call(int nargs = 0, int nresults = LUA_MULTRET)
