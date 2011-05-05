@@ -7,6 +7,7 @@ import std.string;
 
 import lib.lua.state;
 
+import charge.math.color;
 import charge.math.point3d;
 import charge.math.vector3d;
 import charge.math.movable;
@@ -65,6 +66,7 @@ class LuaState : public State
 	mixin (StructWrapper("Vector3d"));
 	mixin (StructWrapper("Point3d"));
 	mixin (StructWrapper("Quatd"));
+	mixin (StructWrapper("Color4f"));
 }
 
 struct MovableWrapper
@@ -545,6 +547,139 @@ struct Point3dWrapper
 	static Point3d* to(State s, int index)
 	{
 		return cast(Point3d*)s.toUserData(index);
+	}
+
+	static bool isAt(State s, int index)
+	{
+		return s.isUserDataz(index, namez);
+	}
+
+}
+
+struct Color4fWrapper
+{
+	const static char *namez = "d_struct_charge_math_color_Color4f";
+	const static char[] name = "d_struct_charge_math_color_Color4f";
+
+	extern (C) static int toString(lua_State *l)
+	{
+		auto s = LuaState(l);
+		s.pushString(check(s, 1).toString);
+		return 1;
+	}
+
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto ud = check(s, 1);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key)	{
+		case "r":
+			s.pushNumber(ud.r);
+			break;
+		case "g":
+			s.pushNumber(ud.g);
+			break;
+		case "b":
+			s.pushNumber(ud.b);
+			break;
+		case "a":
+			s.pushNumber(ud.a);
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	extern (C) static int newIndex(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto ud = check(s, 1);
+		auto v = s.checkNumber(3);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key)	{
+		case "r":
+			ud.r = v;
+			break;
+		case "g":
+			ud.g = v;
+			break;
+		case "b":
+			ud.b = v;
+			break;
+		case "a":
+			ud.a = v;
+			break;
+		default:
+			s.error("No memeber of that that name");
+			break;
+		}
+
+		return 0;
+	}
+
+	extern (C) static int newColor4f(lua_State *l)
+	{
+		auto s = LuaState(l);
+
+		if (s.isNumber(1) && s.isNumber(2) && s.isNumber(3)) {
+			auto r = cast(float)s.toNumber(1);
+			auto g = cast(float)s.toNumber(2);
+			auto b = cast(float)s.toNumber(3);
+			auto a = s.isNumber(4) ? cast(float)s.toNumber(4) : 1.0f;
+			push(s, Color4f(r, g, b, a));
+		} else {
+			push(s, Color4f());
+		}
+		return 1;
+	}
+
+	static void register(State s)
+	{
+		s.registerStructz!(Color4f)(namez);
+
+		s.pushCFunction(&index);
+		s.setFieldz(-2, "__index");
+		s.pushCFunction(&newIndex);
+		s.setFieldz(-2, "__newindex");
+		s.pushCFunction(&toString);
+		s.setFieldz(-2, "__tostring");
+		s.pop();
+
+		s.pushString("Color");
+		s.pushCFunction(&newColor4f);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+	}
+
+	static Color4f* push(State s)
+	{
+		return s.pushStructPtrz!(Color4f)(namez);
+	}
+
+	static Color4f* push(State s, Color4f p)
+	{
+		return cast(Color4f*)s.pushStructRefz(p, namez);
+	}
+
+	static Color4f* check(State s, int index)
+	{
+		return s.checkStructz!(Color4f)(index, namez);
+	}
+
+	static Color4f* to(State s, int index)
+	{
+		return cast(Color4f*)s.toUserData(index);
 	}
 
 	static bool isAt(State s, int index)
