@@ -28,40 +28,39 @@ else
 endif
 endif
 
+
+CFLAGS ?= -g -Wall
+DFLAGS ?= -gc -debug
+LDFLAGS ?= -gc
+
 DDEFINES = -version=DynamicODE
 TARGET = Charge
-CCOMP_FLAGS = -c -Wall -g -o $@
-DCOMP_FLAGS = -c -w -gc -Isrc $(DDEFINES) -of$@ -debug
-LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-ldl
+CCOMP_FLAGS = -c -o$@ $(CFLAGS)
+DCOMP_FLAGS = -c -w -Isrc $(DDEFINES) -of$@ $(DFLAGS)
+LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS)
 
 ifeq ($(UNAME),Linux)
 	PLATFORM=linux
-	DCOMP_FLAGS = -c -w -gc -Isrc $(DDEFINES) -of$@ -debug -q,-ggdb3,-O0
 else
 ifeq ($(UNAME),Darwin)
 	PLATFORM=mac
 
 	# Extra to get the program working correctly
 	EXTRA_OBJ = $(OBJ_DIR)/SDLmain.o
-	CCOMP_FLAGS = -c -Wall -g -o $@ -m32
-	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa
+	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa $(LDFLAGS)
 else
 ifeq ($(UNAME),WindowsCross)
 	PLATFORM=windows
 	TARGET = Charge.exe
 
 	# Work around winsocket issue
-	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-lgphobos -L-lws2_32
+	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-lgphobos -L-lws2_32 $(LDFLAGS)
 else
 	PLATFORM=windows
 	TARGET = Charge.exe
 
-	# Always use dmc on Windows platforms
-	CC := $(DMC)
-	CCOMP_FLAGS = -c -g -o$@
-
 	# Change the link flags
-	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-lws2_32
+	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-lws2_32 $(LDFLAGS)
 endif
 endif
 endif
