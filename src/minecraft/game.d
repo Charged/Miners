@@ -197,7 +197,7 @@ private:
 	char[] level;
 	bool build_all;
 
-
+	charge.game.app.TimeKeeper luaTime;
 	charge.game.app.TimeKeeper buildTime;
 
 	GameWorld w;
@@ -451,8 +451,13 @@ protected:
 		if (gl !is null)
 			gl.logic();
 
-		if (sr !is null)
+		if (sr !is null) {
+			logicTime.stop();
+			luaTime.start();
 			sr.logic();
+			luaTime.stop();
+			logicTime.start();
+		}
 
 		// Center the map around the camera.
 		{
@@ -479,10 +484,12 @@ protected:
 
 			l.bug("INFO\n\tgfx:   %# 2.3s%%\n\tgame:  %# 2.3s%%\n"
 				"\tnet:   %# 2.3s%%\n\tidle:  %# 2.3s%%\n"
-				"\tctl:   %# 2.3s%%\n\tbuild: %# 2.3s%%",
+				"\tctl:   %# 2.3s%%\n\tbuild: %# 2.3s%%\n"
+				"\tlua:   %# 2.3s%%",
 				renderTime.calc(elapsed), logicTime.calc(elapsed),
 				networkTime.calc(elapsed), idleTime.calc(elapsed),
-				inputTime.calc(elapsed), buildTime.calc(elapsed));
+				inputTime.calc(elapsed), buildTime.calc(elapsed),
+				luaTime.calc(elapsed));
 
 			start = elapsed + start;
 			const double MB = 1024 * 1024;
