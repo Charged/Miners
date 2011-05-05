@@ -149,6 +149,18 @@ public:
 		case SDLK_SPACE:
 			m.up = false;
 			break;
+		case SDLK_o:
+			Core().screenShot();
+			break;
+		case SDLK_b:
+			w.rm.aa = !w.rm.aa;
+			break;
+		case SDLK_r:
+			w.switchRenderer();
+			break;
+		case SDLK_v:
+			sl.shadow = !sl.shadow;
+			break;
 		default:
 		}
 	}

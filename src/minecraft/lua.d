@@ -260,11 +260,59 @@ struct WorldWrapper
 		return 1;
 	}
 
+	extern (C) static int switchRenderer(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto w = s.checkClass!(World)(1, false);
+
+		try {
+			w.switchRenderer();
+		} catch (Exception e) {
+			s.error(e);
+		}
+
+		return 0;
+	}
+
+	extern (C) static int toggleAA(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto w = s.checkClass!(World)(1, false);
+
+		try {
+			w.rm.aa = !w.rm.aa;
+		} catch (Exception e) {
+			s.error(e);
+		}
+
+		s.pushBool(w.rm.aa);
+		return 1;
+	}
+
+	extern (C) static int screenshot(lua_State *l)
+	{
+		auto s = LuaState(l);
+
+		try {
+			Core().screenShot();
+		} catch (Exception e) {
+			s.error(e);
+		}
+
+		return 1;
+	}
+
 	static void register(LuaState s)
 	{
 		s.registerClass!(World);
 		s.pushCFunction(&ObjectWrapper.toString);
 		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&switchRenderer);
+		s.setFieldz(-2, "switchRenderer");
+		s.pushCFunction(&toggleAA);
+		s.setFieldz(-2, "toggleAA");
+		s.pushCFunction(&screenshot);
+		s.setFieldz(-2, "screenshot");
 		s.pop();
 
 		s.pushString("World");

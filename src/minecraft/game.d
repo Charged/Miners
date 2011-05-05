@@ -87,9 +87,6 @@ public:
 			camera = gl.cam;
 		}
 
-		auto kb = CtlInput().keyboard;
-		kb.up ~= &this.keyUp;
-
 		start = SDL_GetTicks();
 	}
 
@@ -99,9 +96,6 @@ public:
 		delete gl;
 		delete w;
 		delete rm;
-
-		auto kb = CtlInput().keyboard;
-		kb.up.disconnect(&this.keyUp);
 	}
 
 protected:
@@ -150,26 +144,6 @@ protected:
 
 			level = std.string.format(home, "/.minecraft/saves/World1");
 			l.fatal(`Guessing level location: "%s"`, level);
-		}
-	}
-
-	void keyUp(CtlKeyboard kb, int sym)
-	{
-		switch(sym) {
-		case SDLK_o:
-			Core().screenShot();
-			break;
-		case SDLK_b:
-			rm.aa = !rm.aa;
-			break;
-		case SDLK_r:
-			w.switchRenderer();
-			break;
-		case SDLK_i:
-			static int i = 1;
-			w.vt.setCenter(0, i++);
-			break;
-		default:
 		}
 	}
 
