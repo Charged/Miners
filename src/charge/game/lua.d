@@ -335,6 +335,38 @@ struct Vector3dWrapper
 		return 1;
 	}
 
+	extern (C) static int scale(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto v = check(s, 1);
+		s.checkNumber(2);
+
+		v.scale(s.toNumber(2));
+		s.pop();
+
+		return 1;
+	}
+
+	extern (C) static int lengthSqrd(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto v = check(s, 1);
+
+		s.pushNumber(v.lengthSqrd());
+
+		return 1;
+	}
+
+	extern (C) static int normalize(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto v = check(s, 1);
+
+		v.normalize();
+
+		return 1;
+	}
+
 	static void register(State s)
 	{
 		s.registerStructz!(Vector3d)(namez);
@@ -347,6 +379,12 @@ struct Vector3dWrapper
 		s.setFieldz(-2, "__add");
 		s.pushCFunction(&toString);
 		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&lengthSqrd);
+		s.setFieldz(-2, "lengthSqrd");
+		s.pushCFunction(&scale);
+		s.setFieldz(-2, "scale");
+		s.pushCFunction(&normalize);
+		s.setFieldz(-2, "normalize");
 		s.pop();
 
 		s.pushString("Vector3d");
