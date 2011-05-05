@@ -91,6 +91,7 @@ public:
 		s.openLibs();
 
 		// Registers classes
+		Color4fWrapper.register(s);
 		Vector3dWrapper.register(s);
 		Point3dWrapper.register(s);
 		QuatdWrapper.register(s);
@@ -378,14 +379,91 @@ struct SunLightWrapper
 		return 1;
 	}
 
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto sl = s.checkClass!(SunLight)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
+		case "position":
+			sl.gfx.getPosition(*Point3dWrapper.push(s));
+			break;
+		case "rotation":
+			sl.gfx.getRotation(*QuatdWrapper.push(s));
+			break;
+		case "diffuse":
+			s.pushColor4f(sl.gfx.diffuse);
+			break;
+		case "ambient":
+			s.pushColor4f(sl.gfx.ambient);
+			break;
+		case "shadow":
+			s.pushBool(sl.gfx.shadow);
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	extern (C) static int newIndex(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto sl = s.checkClass!(SunLight)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key)	{
+		case "position":
+			auto p = Point3dWrapper.check(s, 3);
+			try {
+				sl.gfx.setPosition(*p);
+				return 1;
+			} catch (Exception e) {
+				return s.error(e);
+			}
+		case "rotation":
+			auto q = QuatdWrapper.check(s, 3);
+			try {
+				sl.gfx.setRotation(*q);
+				return 1;
+			} catch (Exception e) {
+				return s.error(e);
+			}
+		case "diffuse":
+			auto color = 
+			sl.gfx.diffuse = *s.checkColor4f(3);
+			break;
+		case "ambient":
+			sl.gfx.ambient = *s.checkColor4f(3);
+			break;
+		case "shadow":
+			sl.gfx.shadow = s.toBool(3);
+			break;
+		default:
+			s.error("No memeber of that that name");
+			break;
+		}
+
+		return 0;
+	}
+
 	static void register(LuaState s)
 	{
 		s.registerClass!(SunLight);
 		s.pushCFunction(&ObjectWrapper.toString);
 		s.setFieldz(-2, "__tostring");
-		s.pushCFunction(&MovableWrapper.index);
+		s.pushCFunction(&index);
 		s.setFieldz(-2, "__index");
-		s.pushCFunction(&MovableWrapper.newIndex);
+		s.pushCFunction(&newIndex);
 		s.setFieldz(-2, "__newindex");
 		s.pop();
 
