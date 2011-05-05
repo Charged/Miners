@@ -189,7 +189,7 @@ struct QuatdWrapper
 			Vector3dWrapper.push(s, *q1 * *v);
 			return 1;
 		}
-		s.error("Expected either Vector3d or Quatd");
+		s.error("Expected either Vector or Quat");
 		return 1;
 	}
 
@@ -216,7 +216,7 @@ struct QuatdWrapper
 		s.setFieldz(-2, "__tostring");
 		s.pop();
 
-		s.pushString("Quatd");
+		s.pushString("Quat");
 		s.pushCFunction(&newQuatd);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
@@ -387,7 +387,7 @@ struct Vector3dWrapper
 		s.setFieldz(-2, "normalize");
 		s.pop();
 
-		s.pushString("Vector3d");
+		s.pushString("Vector");
 		s.pushCFunction(&newVector3d);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
@@ -522,7 +522,7 @@ struct Point3dWrapper
 		s.setFieldz(-2, "__tostring");
 		s.pop();
 
-		s.pushString("Point3d");
+		s.pushString("Point");
 		s.pushCFunction(&newPoint3d);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
