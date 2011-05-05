@@ -1,1 +1,9 @@
-Improve the Makefile
+ * Improve the Makefile
+	Support for setting C/DFLAGS.
+	Improve the cross compile support.
+
+ * Improve time tracker
+	Make it stack based, or handle starting and stopping timers automatically.
+
+* Improve math functions
+	Especially matrix manipulation.
