@@ -6,7 +6,10 @@ import std.math;
 import std.file;
 import std.c.stdlib;
 import lib.sdl.sdl;
+
 import charge.charge;
+
+import minecraft.lua;
 import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 import minecraft.gfx.renderer;
@@ -200,6 +203,7 @@ private:
 	GameWorld w;
 
 	GameLogic gl;
+	ScriptRunner sr;
 
 	VolTerrain vt;
 
@@ -274,13 +278,21 @@ public:
 			l.fatal("Build time: %s seconds", (t2 - t1) / 1000.0);
 		}
 
-		start = SDL_GetTicks();
 
-		gl = new GameLogic(w);
-		camera = gl.cam;
+		auto scriptName = "res/script.lua";
+		try {
+			sr = new ScriptRunner(w, scriptName);
+			camera = sr.c.c;
+		} catch (Exception e) {
+			l.fatal("Could not find or run \"%s\"", scriptName);
+			gl = new GameLogic(w);
+			camera = gl.cam;
+		}
 
 		auto kb = CtlInput().keyboard;
 		kb.up ~= &this.keyUp;
+
+		start = SDL_GetTicks();
 	}
 
 	~this()
@@ -293,6 +305,7 @@ public:
 			tex.dereference();
 			tex = null;
 		}
+		delete sr;
 		delete gl;
 		delete w;
 
@@ -435,7 +448,11 @@ protected:
 
 		w.tick();
 
-		gl.logic();
+		if (gl !is null)
+			gl.logic();
+
+		if (sr !is null)
+			sr.logic();
 
 		// Center the map around the camera.
 		{
