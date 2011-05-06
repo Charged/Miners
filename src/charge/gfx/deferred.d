@@ -130,16 +130,23 @@ public:
 		if (!initilized)
 			throw new Exception("Rendering system not initalized");
 
-		spotlight_texture = Texture("res/spotlight.bmp");
-
 		depthTarget = new DepthTargetArray(2048, 2048, 4);
+
+		// If we where to fail to allocate the depthtarget for some reason
+		// and throw a error and we allocated the spotlight texture before
+		// the depthtarget we would get segfaults in the resource pool.
+		// Why do you ask, well thats because the allocated class is not
+		// deleted at once but instead left up to the GC, and calling
+		// dereference from the GC context is bad.
+		spotlight_texture = Texture("res/spotlight.bmp");
 
 		l.bug("Created new deferred renderer");
 	}
 
 	~this()
 	{
-		spotlight_texture.dereference();
+		if (spotlight_texture !is null)
+			spotlight_texture.dereference();
 		delete deferredTarget;
 	}
 
