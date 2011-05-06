@@ -52,9 +52,10 @@ To get GDC on Ubuntu do this:
   $ sudo apt-get install gdc
 
 
-On Mac the only know working compiler is DMD 1.062, just excract the contents
-of dmd.1.062.zip <somewhere> and set the DMD enviromental variable to be
-"<somewhere>/osx/bin/dmd" or put the folder "<somewhere>/osx/bin" on the path.
+On Mac know working compilers are DMD 1.062 and DMD 1.064, DMD 1.066 is known
+broken, just excract the contents of dmd.1.<version>.zip <somewhere> and set
+the DMD enviromental variable to be "<somewhere>/osx/bin/dmd" or put the
+folder "<somewhere>/osx/bin" on the path.
 
 For other platforms you need probably need to compile it you can get the
 latest version from here https://bitbucket.org/goshawk/gdc/wiki/Home
