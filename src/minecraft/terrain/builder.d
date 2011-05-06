@@ -683,6 +683,35 @@ template BlockDispatcher(alias T)
 			makeXYZ(dec, x, y, z, set);
 	}
 
+	void torch(int x, int y, int z)
+	{
+		auto dec = tile[50];
+		ubyte tex = calcTextureXZ(&dec);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		// TODO Support other directions
+		if (d != 5)
+			return;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = x,   x2 = x+16;
+		int y1 = y,   y2 = y+16;
+		int z1 = z+9, z2 = z+7;
+
+		makeQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
+		makeQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
+
+		x1 = x+9; x2 = x+7;
+		z1 = z;   z2 = z+16;
+
+		makeQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
+		makeQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
+	}
+
 	void craftingTable(uint x, uint y, uint z) {
 		int set = data.getSolidSet(x, y, z);
 		int setAlt = set & (1 << 0 | 1 << 4);
@@ -722,6 +751,9 @@ template BlockDispatcher(alias T)
 			case 43:
 			case 44:
 				slab(type, x, y, z);
+				break;
+			case 50:
+				torch(x, y, z);
 				break;
 			case 58:
 				craftingTable(x, y, z);
@@ -1099,11 +1131,6 @@ ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 		bldr.makeXYZ(dec, x, y, z, set);
 	}
 
-
-	void torch(int x, int y, int z) {
-
-	}
-
 	void grass(int x, int y, int z) {
 		if (data.get(x, y + 1, z) == 78 /* snow */)
 			solid(78, x, y, z);
@@ -1161,9 +1188,6 @@ ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 				break;
 			case 35:
 				wool(x, y, z);
-				break;
-			case 50:
-				torch(x, y, z);
 				break;
 			case 58:
 				craftingTable(x, y, z);

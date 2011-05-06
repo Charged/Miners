@@ -86,7 +86,7 @@ BlockDescriptor tile[256] = [
 	{  true, Block,     {  3,  2 }, {  4,  0 }, "bookshelf" },
 	{  true, Block,     {  4,  2 }, {  4,  2 }, "moss stone" },            // 48
 	{  true, Block,     {  5,  2 }, {  5,  2 }, "obsidian" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "torch" },
+	{ false, Stuff,     {  0,  5 }, {  0,  5 }, "torch" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "fire" },
 	{ false, Stuff,     {  1,  4 }, {  1,  4 }, "monster spawner" },
 	{ false, Stuff,     {  4,  0 }, {  4,  0 }, "wooden stairs" },
