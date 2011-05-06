@@ -225,7 +225,7 @@ template ArrayPacker()
 	int *verts;
 	int num;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off)
+	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, bool half)
 	{
 		int high = (x << 0) | (normal << 5) | (texture << 8);
 		int low = (z << 0) | (y << 5) | (light << 12);
@@ -245,7 +245,7 @@ template MeshPacker()
 	int yOff;
 	int zOff;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off)
+	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, bool half)
 	{
 		float u = (texture % 16 + uv_off % 16) / 16.0f;
 		float v = (texture / 16 + uv_off / 16) / 16.0f;
@@ -258,6 +258,9 @@ template MeshPacker()
 		nz = (nz & !minus) -(nz & minus);
 
 		mixin PositionCalculator!();
+
+		if (half & (uv_off >> 4))
+			v -= (1 / 16.0f) / 2;
 
 		mb.vert(xF, yF, zF, u, v, nx, ny, nz);
 	}
@@ -276,7 +279,7 @@ template CompactMeshPacker()
 	int yOff;
 	int zOff;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off)
+	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, bool half)
 	{
 		ubyte u = (texture % 16 + uv_off % 16);
 		ubyte v = (texture / 16 + uv_off / 16);
@@ -307,7 +310,7 @@ template CompactMeshPackerIndexed()
 	int yOff;
 	int zOff;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off)
+	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, bool half)
 	{
 		mixin PositionCalculator!();
 
@@ -317,7 +320,7 @@ template CompactMeshPackerIndexed()
 		verts[iv].normal = normal;
 		verts[iv].light = light;
 		verts[iv].texture_u_or_index = texture;
-		verts[iv].texture_v_or_offset = 0;
+		verts[iv].texture_v_or_offset = half;
 		iv++;
 	}
 }
@@ -333,40 +336,60 @@ template QuadEmitter(alias T)
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			  ubyte texture, ubyte normal)
 	{
-		pack(x1, y, z1, texture, c1/*ao124*/, normal,  0);
-		pack(x1, y, z2, texture, c2/*ao467*/, normal, 16);
-		pack(x2, y, z2, texture, c3/*ao578*/, normal, 17);
-		pack(x2, y, z1, texture, c4/*ao235*/, normal,  1);
+		pack(x1, y, z1, texture, c1/*ao124*/, normal,  0, false);
+		pack(x1, y, z2, texture, c2/*ao467*/, normal, 16, false);
+		pack(x2, y, z2, texture, c3/*ao578*/, normal, 17, false);
+		pack(x2, y, z1, texture, c4/*ao235*/, normal,  1, false);
 	}
 
 	void makeQuadAOYN(int x1, int x2, int y, int z1, int z2,
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			  ubyte texture, ubyte normal)
 	{
-		pack(x1, y, z1, texture, c1/*ao124*/, normal,  0);
-		pack(x2, y, z1, texture, c2/*ao235*/, normal,  1);
-		pack(x2, y, z2, texture, c3/*ao578*/, normal, 17);
-		pack(x1, y, z2, texture, c4/*ao467*/, normal, 16);
+		pack(x1, y, z1, texture, c1/*ao124*/, normal,  0, false);
+		pack(x2, y, z1, texture, c2/*ao235*/, normal,  1, false);
+		pack(x2, y, z2, texture, c3/*ao578*/, normal, 17, false);
+		pack(x1, y, z2, texture, c4/*ao467*/, normal, 16, false);
 	}
 
 	void makeQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
-		pack(x2, y1, z1, texture, c1/*ao124*/, normal, 17);
-		pack(x2, y2, z1, texture, c2/*ao467*/, normal,  1);
-		pack(x1, y2, z2, texture, c3/*ao578*/, normal,  0);
-		pack(x1, y1, z2, texture, c4/*ao235*/, normal, 16);
+		pack(x2, y1, z1, texture, c1/*ao124*/, normal, 17, false);
+		pack(x2, y2, z1, texture, c2/*ao467*/, normal,  1, false);
+		pack(x1, y2, z2, texture, c3/*ao578*/, normal,  0, false);
+		pack(x1, y1, z2, texture, c4/*ao235*/, normal, 16, false);
 	}
 
 	void makeQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
-		pack(x1, y1, z2, texture, c1/*ao235*/, normal, 17);
-		pack(x1, y2, z2, texture, c2/*ao578*/, normal,  1);
-		pack(x2, y2, z1, texture, c3/*ao467*/, normal,  0);
-		pack(x2, y1, z1, texture, c4/*ao124*/, normal, 16);
+		pack(x1, y1, z2, texture, c1/*ao235*/, normal, 17, false);
+		pack(x1, y2, z2, texture, c2/*ao578*/, normal,  1, false);
+		pack(x2, y2, z1, texture, c3/*ao467*/, normal,  0, false);
+		pack(x2, y1, z1, texture, c4/*ao124*/, normal, 16, false);
+	}
+
+	void makeHalfQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
+			   ubyte texture, ubyte normal)
+	{
+		pack(x2, y1, z1, texture, c1/*ao124*/, normal, 17, true);
+		pack(x2, y2, z1, texture, c2/*ao467*/, normal,  1, true);
+		pack(x1, y2, z2, texture, c3/*ao578*/, normal,  0, true);
+		pack(x1, y1, z2, texture, c4/*ao235*/, normal, 16, true);
+	}
+
+	void makeHalfQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
+			   ubyte texture, ubyte normal)
+	{
+		pack(x1, y1, z2, texture, c1/*ao235*/, normal, 17, true);
+		pack(x1, y2, z2, texture, c2/*ao578*/, normal,  1, true);
+		pack(x2, y2, z1, texture, c3/*ao467*/, normal,  0, true);
+		pack(x2, y1, z1, texture, c4/*ao124*/, normal, 16, true);
 	}
 
 	void makeQuadYP(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
@@ -491,6 +514,101 @@ template QuadBuilder(alias T)
 		if (set & 32)
 			makeXZ(dec, x, y, z, false, false);
 	}
+
+	void makeHalfY(BlockDescriptor *dec, uint x, uint y, uint z)
+	{
+		auto aoy = y;
+		mixin AOScannerY!();
+		mixin AOCalculator!();
+
+		int x1 = x, x2 = x+1;
+		int z1 = z, z2 = z+1;
+
+		ubyte texture = calcTextureY(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		x2 <<= shift;
+		z1 <<= shift;
+		z2 <<= shift;
+
+		y <<= shift;
+		y += VERTEX_SIZE_DIVISOR / 2;
+
+		makeQuadAOYP(x1, x2, y, z1, z2,
+			     ao124, ao467, ao578, ao235,
+			     texture, 0);
+	}
+
+	void makeHalfXZ(BlockDescriptor *dec, uint x, uint y, uint z, bool minus, bool xaxis)
+	{
+		bool xm = !minus & xaxis;
+		bool zm = !minus & !xaxis;
+		int xs = xaxis ? x - minus + !minus : x;
+		int xsn = xs + !xaxis;
+		int xsp = xs - !xaxis;
+		int zs = !xaxis ? z - minus + !minus : z;
+		int zsp = zs + xaxis;
+		int zsn = zs - xaxis;
+
+		auto c1 = data.filled(xsn, y-1, zsn);
+		auto c2 = data.filled(xs , y-1, zs );
+		auto c3 = data.filled(xsp, y-1, zsp);
+		auto c4 = data.filled(xsn, y  , zsn);
+		auto c5 = data.filled(xsp, y  , zsp);
+		auto c6 = false;
+		auto c7 = false;
+		auto c8 = false;
+
+		mixin AOCalculator!();
+
+		int x1 = x+xm, x2 = x+xm+!xaxis;
+		int y1 = y   , y2;
+		int z1 = z+zm, z2 = z+zm+xaxis;
+
+		ubyte normal = cast(ubyte)((xaxis ? 2 : 4) | minus);
+		ubyte texture = calcTextureXZ(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		x2 <<= shift;
+		y1 <<= shift;
+		y2 = y1 + VERTEX_SIZE_DIVISOR / 2;
+		z1 <<= shift;
+		z2 <<= shift;
+
+		if (minus) {
+			makeHalfQuadAOXZN(x1, x2, y1, y2, z1, z2,
+					 ao235, ao578, ao467, ao124,
+					 texture, normal);
+		} else {
+			makeHalfQuadAOXZP(x1, x2, y1, y2, z1, z2,
+					  ao124, ao467, ao578, ao235,
+					  texture, normal);
+		}
+	}
+
+	void makeHalfXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
+	{
+		if (set & 1)
+			makeHalfXZ(dec, x, y, z, true, true);
+
+		if (set & 2)
+			makeHalfXZ(dec, x, y, z, false, true);
+
+		if (set & 4)
+			makeY(dec, x, y, z, true);
+
+		if (set & 8)
+			makeHalfY(dec, x, y, z);
+
+		if (set & 16)
+			makeHalfXZ(dec, x, y, z, true, false);
+
+		if (set & 32)
+			makeHalfXZ(dec, x, y, z, false, false);
+	}
+
 }
 
 /**
@@ -549,6 +667,22 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
+	void slab(ubyte type, uint x, uint y, uint z) {
+		int set = data.getSolidOrTypeSet(type, x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		auto dec = &slabTile[d];
+
+		/* all set */
+		if (set == 0)
+			return;
+
+		if (type == 44)
+			makeHalfXYZ(dec, x, y, z, set);
+		else
+			makeXYZ(dec, x, y, z, set);
+	}
+
 	void craftingTable(uint x, uint y, uint z) {
 		int set = data.getSolidSet(x, y, z);
 		int setAlt = set & (1 << 0 | 1 << 4);
@@ -584,6 +718,10 @@ template BlockDispatcher(alias T)
 				break;
 			case 35:
 				wool(x, y, z);
+				break;
+			case 43:
+			case 44:
+				slab(type, x, y, z);
 				break;
 			case 58:
 				craftingTable(x, y, z);

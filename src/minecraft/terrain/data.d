@@ -162,3 +162,10 @@ BlockDescriptor woodTile[3] = [
 
 BlockDescriptor craftingTableAltTile =
 	{  true, DataBlock, { 12,  3 }, { 11,  2 }, "crafting table" };
+
+BlockDescriptor slabTile[4] = [
+	{  true, Block,     {  5,  0 }, {  6,  0 }, "stone", },                // 0
+	{  true, Block,     {  0, 12 }, {  0, 11 }, "sandstone" },
+	{  true, Block,     {  4,  0 }, {  4,  0 }, "wooden plank" },
+	{  true, Block,     {  0,  1 }, {  0,  1 }, "clobb" },
+];

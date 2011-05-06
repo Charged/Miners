@@ -159,7 +159,7 @@ protected:
 				MinecraftDeferredRenderer.init();
 
 				mdr = new MinecraftDeferredRenderer(ta);
-				rsbt[num_renderers] = VolTerrain.BuildTypes.Array;
+				rsbt[num_renderers] = VolTerrain.BuildTypes.CompactMesh;
 				rs[num_renderers++] = mdr;
 			} catch (Exception e) {
 				l.warn("No fancy renderer \"%s\"", e);
