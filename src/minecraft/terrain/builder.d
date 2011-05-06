@@ -119,6 +119,15 @@ struct WorkspaceData
 	}
 }
 
+/*
+ * Used to convert a chunk block coord into a int and back to a float.
+ *
+ * That is the builder uses fix precision floating point.
+ */
+const VERTEX_SIZE_BIT_SHIFT = 4;
+const VERTEX_SIZE_DIVISOR = 16;
+
+
 /**
  * Convinience function for texture array
  */
@@ -154,6 +163,27 @@ template AOCalculator()
 	auto ao124 = calcAmbient(c2, c4, c1);
 }
 
+/**
+ * Calculates global floating point coordinates from local shifted coordinates.
+ *
+ * Reads x, y, z for coordinates.
+ * Reads xOff, yOff, zOff for offsets.
+ * And devides the result with VERTEX_SIZE_DIVISOR.
+ *
+ * Result is stored in the variables xF, yF, zF.
+ */
+template PositionCalculator()
+{
+	float xF = cast(float)(x+xOff) / VERTEX_SIZE_DIVISOR;
+	float yF = cast(float)(y+yOff) / VERTEX_SIZE_DIVISOR;
+	float zF = cast(float)(z+zOff) / VERTEX_SIZE_DIVISOR;
+}
+
+/*
+ * Packes verticies into a ArrayMesh.
+ *
+ * Does not take shifted coordinates.
+ */
 template ArrayPacker()
 {
 	int *verts;
@@ -167,6 +197,11 @@ template ArrayPacker()
 	}
 }
 
+/*
+ * Packs verticies into a RigidMesh.
+ *
+ * Takes shifted coordinates.
+ */
 template MeshPacker()
 {
 	RigidMeshBuilder mb;
@@ -186,10 +221,17 @@ template MeshPacker()
 		ny = (ny & !minus) -(ny & minus);
 		nz = (nz & !minus) -(nz & minus);
 
-		mb.vert(x+xOff, y+yOff, z+zOff, u, v, nx, ny, nz);
+		mixin PositionCalculator!();
+
+		mb.vert(xF, yF, zF, u, v, nx, ny, nz);
 	}
 }
 
+/*
+ * Packs verticies into a compact mesh non-indexed texture coords.
+ *
+ * Takes shifted coordinates.
+ */
 template CompactMeshPacker()
 {
 	ChunkVBOCompactMesh.Vertex *verts;
@@ -203,9 +245,11 @@ template CompactMeshPacker()
 		ubyte u = (texture % 16 + uv_off % 16);
 		ubyte v = (texture / 16 + uv_off / 16);
 
-		verts[iv].position[0] = x+xOff;
-		verts[iv].position[1] = y+yOff;
-		verts[iv].position[2] = z+zOff;
+		mixin PositionCalculator!();
+
+		verts[iv].position[0] = xF;
+		verts[iv].position[1] = yF;
+		verts[iv].position[2] = zF;
 		verts[iv].normal = normal;
 		verts[iv].light = light;
 		verts[iv].texture_u_or_index = u;
@@ -214,6 +258,11 @@ template CompactMeshPacker()
 	}
 }
 
+/*
+ * Packs verticies into a compact mesh non-indexed texture coords.
+ *
+ * Takes shifted coordinates.
+ */
 template CompactMeshPackerIndexed()
 {
 	ChunkVBOCompactMesh.Vertex *verts;
@@ -224,9 +273,11 @@ template CompactMeshPackerIndexed()
 
 	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off)
 	{
-		verts[iv].position[0] = x+xOff;
-		verts[iv].position[1] = y+yOff;
-		verts[iv].position[2] = z+zOff;
+		mixin PositionCalculator!();
+
+		verts[iv].position[0] = xF;
+		verts[iv].position[1] = yF;
+		verts[iv].position[2] = zF;
 		verts[iv].normal = normal;
 		verts[iv].light = light;
 		verts[iv].texture_u_or_index = texture;
@@ -235,8 +286,10 @@ template CompactMeshPackerIndexed()
 	}
 }
 
-/* Because structs can't inherent */
-template BaseBuilderTmpl(alias T)
+/**
+ * Helper functions for emiting quads to a packer.
+ */
+template QuadEmitter(alias T)
 {
 	mixin T!();
 
@@ -316,9 +369,14 @@ template BaseBuilderTmpl(alias T)
 
 }
 
-template BaseBuilder(alias T)
+/**
+ * Constructs fullsized quads.
+ *
+ * Coordinates are shifted.
+ */
+template QuadBuilder(alias T)
 {
-	mixin BaseBuilderTmpl!(T);
+	mixin QuadEmitter!(T);
 
 	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, bool minus)
 	{
@@ -340,6 +398,13 @@ template BaseBuilder(alias T)
 
 		ubyte normal = minus;
 		ubyte texture = calcTextureY(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		x2 <<= shift;
+		y  <<= shift;
+		z1 <<= shift;
+		z2 <<= shift;
 
 		if (minus) {
 			makeQuadAOYN(x1, x2, y, z1, z2,
@@ -381,6 +446,14 @@ template BaseBuilder(alias T)
 		ubyte normal = cast(ubyte)((xaxis ? 2 : 4) | minus);
 		ubyte texture = calcTextureXZ(dec);
 
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		x2 <<= shift;
+		y1 <<= shift;
+		y2 <<= shift;
+		z1 <<= shift;
+		z2 <<= shift;
+
 		if (minus) {
 			makeQuadAOXZN(x1, x2, y1, y2, z1, z2,
 				      ao235, ao578, ao467, ao124,
@@ -414,9 +487,12 @@ template BaseBuilder(alias T)
 	}
 }
 
-template MeshBasedDispatcher(alias T)
+/**
+ * Dispatches blocks from a chunk.
+ */
+template BlockDispatcher(alias T)
 {
-	mixin BaseBuilder!(T);
+	mixin QuadBuilder!(T);
 
 	void solidDec(BlockDescriptor *dec, uint x, uint y, uint z) {
 		int set = data.getSolidSet(x, y, z);
@@ -516,6 +592,193 @@ template MeshBasedDispatcher(alias T)
 	}
 }
 
+ChunkVBORigidMesh buildRigidMeshFromChunk(Chunk chunk)
+{
+	auto data = WorkspaceData.malloc();
+	auto mb = new RigidMeshBuilder(128*1024, 0, RigidMesh.Types.QUADS);
+	scope(exit) { data.free(); delete mb; }
+
+	mixin BlockDispatcher!(MeshPacker) dispatch;
+
+	data.copyFromChunk(chunk);
+
+	dispatch.mb = mb;
+	xOff = chunk.xOff << VERTEX_SIZE_BIT_SHIFT;
+	yOff = chunk.yOff << VERTEX_SIZE_BIT_SHIFT;
+	zOff = chunk.zOff << VERTEX_SIZE_BIT_SHIFT;
+
+	for (int x; x < 16; x++) {
+		for (int y; y < 128; y++) {
+			for (int z; z < 16; z++) {
+				b(x, y, z);
+			}
+		}
+	}
+
+	// C memory freed above with scope(exit)
+	return ChunkVBORigidMesh(mb, chunk.xPos, chunk.zPos);
+}
+
+ChunkVBOCompactMesh buildCompactMeshFromChunk(Chunk chunk)
+{
+	auto data = WorkspaceData.malloc();
+	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
+	scope(exit) { data.free(); vertices.free(); }
+
+	mixin BlockDispatcher!(CompactMeshPacker);
+
+	data.copyFromChunk(chunk);
+
+	verts = vertices.realloc(128 * 1024);
+	xOff = chunk.xOff << VERTEX_SIZE_BIT_SHIFT;
+	yOff = chunk.yOff << VERTEX_SIZE_BIT_SHIFT;
+	zOff = chunk.zOff << VERTEX_SIZE_BIT_SHIFT;
+
+	for (int x; x < 16; x++) {
+		for (int y; y < 128; y++) {
+			for (int z; z < 16; z++) {
+				b(x, y, z);
+			}
+		}
+	}
+
+	// C memory freed above with scope(exit)
+	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
+}
+
+ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(Chunk chunk)
+{
+	auto data = WorkspaceData.malloc();
+	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
+	scope(exit) { data.free(); vertices.free(); }
+
+	mixin BlockDispatcher!(CompactMeshPackerIndexed);
+
+	data.copyFromChunk(chunk);
+
+	verts = vertices.realloc(128 * 1024);
+	xOff = chunk.xOff << VERTEX_SIZE_BIT_SHIFT;
+	yOff = chunk.yOff << VERTEX_SIZE_BIT_SHIFT;
+	zOff = chunk.zOff << VERTEX_SIZE_BIT_SHIFT;
+
+	for (int x; x < 16; x++) {
+		for (int y; y < 128; y++) {
+			for (int z; z < 16; z++) {
+				b(x, y, z);
+			}
+		}
+	}
+
+	// C memory freed above with scope(exit)
+	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
+}
+
+
+
+
+/*****************************************************************************
+ * Code for Array textures.
+ *
+ */
+
+template QuadBuilderNonShifted(alias T)
+{
+	mixin QuadEmitter!(T);
+
+	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, bool minus)
+	{
+		auto sy = y - minus + !minus;
+		auto c1 = data.filled(x-1, sy, z-1);
+		auto c2 = data.filled(x  , sy, z-1);
+		auto c3 = data.filled(x+1, sy, z-1);
+		auto c4 = data.filled(x-1, sy, z  );
+		auto c5 = data.filled(x+1, sy, z  );
+		auto c6 = data.filled(x-1, sy, z+1);
+		auto c7 = data.filled(x  , sy, z+1);
+		auto c8 = data.filled(x+1, sy, z+1);
+
+		mixin AOCalculator!();
+
+		int x1 = x, x2 = x+1;
+		int z1 = z, z2 = z+1;
+		y += !minus;
+
+		ubyte normal = minus;
+		ubyte texture = calcTextureY(dec);
+
+		if (minus) {
+			makeQuadAOYN(x1, x2, y, z1, z2,
+				     ao124, ao235, ao578, ao467,
+				     texture, normal);
+		} else {
+			makeQuadAOYP(x1, x2, y, z1, z2,
+				     ao124, ao467, ao578, ao235,
+				     texture, normal);
+		}
+	}
+
+	void makeXZ(BlockDescriptor *dec, uint x, uint y, uint z, bool minus, bool xaxis)
+	{
+		bool xm = !minus & xaxis;
+		bool zm = !minus & !xaxis;
+		int xs = xaxis ? x - minus + !minus : x;
+		int xsn = xs + !xaxis;
+		int xsp = xs - !xaxis;
+		int zs = !xaxis ? z - minus + !minus : z;
+		int zsp = zs + xaxis;
+		int zsn = zs - xaxis;
+
+		auto c1 = data.filled(xsn, y-1, zsn);
+		auto c2 = data.filled(xs , y-1, zs );
+		auto c3 = data.filled(xsp, y-1, zsp);
+		auto c4 = data.filled(xsn, y  , zsn);
+		auto c5 = data.filled(xsp, y  , zsp);
+		auto c6 = data.filled(xsn, y+1, zsn);
+		auto c7 = data.filled(xs , y+1, zs );
+		auto c8 = data.filled(xsp, y+1, zsp);
+
+		mixin AOCalculator!();
+
+		int x1 = x+xm, x2 = x+xm+!xaxis;
+		int y1 = y   , y2 = y+1;
+		int z1 = z+zm, z2 = z+zm+xaxis;
+
+		ubyte normal = cast(ubyte)((xaxis ? 2 : 4) | minus);
+		ubyte texture = calcTextureXZ(dec);
+
+		if (minus) {
+			makeQuadAOXZN(x1, x2, y1, y2, z1, z2,
+				      ao235, ao578, ao467, ao124,
+				      texture, normal);
+		} else {
+			makeQuadAOXZP(x1, x2, y1, y2, z1, z2,
+				      ao124, ao467, ao578, ao235,
+				      texture, normal);
+		}
+	}
+
+	void makeXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
+	{
+		if (set & 1)
+			makeXZ(dec, x, y, z, true, true);
+
+		if (set & 2)
+			makeXZ(dec, x, y, z, false, true);
+
+		if (set & 4)
+			makeY(dec, x, y, z, true);
+
+		if (set & 8)
+			makeY(dec, x, y, z, false);
+
+		if (set & 16)
+			makeXZ(dec, x, y, z, true, false);
+
+		if (set & 32)
+			makeXZ(dec, x, y, z, false, false);
+	}
+}
+
 /*
  * The merging of quads could possible be done for all type of quads this,
  * however this led to artifacts as between the seams of areas. Not a big
@@ -524,7 +787,7 @@ template MeshBasedDispatcher(alias T)
 struct LeafBuilder
 {
 	WorkspaceData *data;
-	mixin BaseBuilderTmpl!(ArrayPacker);
+	mixin QuadEmitter!(ArrayPacker);
 	int saved;
 
 	static char[] checkString(char[] add)
@@ -667,7 +930,7 @@ ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 	cMemoryArray!(int) vertices;
 	scope(exit) { data.free(); vertices.free(); }
 
-	mixin BaseBuilder!(ArrayPacker) bldr;
+	mixin QuadBuilderNonShifted!(ArrayPacker) bldr;
 	LeafBuilder lbldr;
 
 	data.copyFromChunk(chunk);
@@ -795,85 +1058,4 @@ ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 
 	// C memory freed above with scope(exit)
 	return ChunkVBOArray(verts[0 .. num], chunk.xPos, chunk.zPos);
-}
-
-ChunkVBORigidMesh buildRigidMeshFromChunk(Chunk chunk)
-{
-	auto data = WorkspaceData.malloc();
-	auto mb = new RigidMeshBuilder(128*1024, 0, RigidMesh.Types.QUADS);
-	scope(exit) { data.free(); delete mb; }
-
-	mixin MeshBasedDispatcher!(MeshPacker) dispatch;
-
-	data.copyFromChunk(chunk);
-
-	dispatch.mb = mb;
-	xOff = chunk.xOff;
-	yOff = chunk.yOff;
-	zOff = chunk.zOff;
-
-	for (int x; x < 16; x++) {
-		for (int y; y < 128; y++) {
-			for (int z; z < 16; z++) {
-				b(x, y, z);
-			}
-		}
-	}
-
-	// C memory freed above with scope(exit)
-	return ChunkVBORigidMesh(mb, chunk.xPos, chunk.zPos);
-}
-
-ChunkVBOCompactMesh buildCompactMeshFromChunk(Chunk chunk)
-{
-	auto data = WorkspaceData.malloc();
-	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
-	scope(exit) { data.free(); vertices.free(); }
-
-	mixin MeshBasedDispatcher!(CompactMeshPacker);
-
-	data.copyFromChunk(chunk);
-
-	verts = vertices.realloc(128 * 1024);
-	xOff = chunk.xOff;
-	yOff = chunk.yOff;
-	zOff = chunk.zOff;
-
-	for (int x; x < 16; x++) {
-		for (int y; y < 128; y++) {
-			for (int z; z < 16; z++) {
-				b(x, y, z);
-			}
-		}
-	}
-
-	// C memory freed above with scope(exit)
-	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
-}
-
-ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(Chunk chunk)
-{
-	auto data = WorkspaceData.malloc();
-	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
-	scope(exit) { data.free(); vertices.free(); }
-
-	mixin MeshBasedDispatcher!(CompactMeshPackerIndexed);
-
-	data.copyFromChunk(chunk);
-
-	verts = vertices.realloc(128 * 1024);
-	xOff = chunk.xOff;
-	yOff = chunk.yOff;
-	zOff = chunk.zOff;
-
-	for (int x; x < 16; x++) {
-		for (int y; y < 128; y++) {
-			for (int z; z < 16; z++) {
-				b(x, y, z);
-			}
-		}
-	}
-
-	// C memory freed above with scope(exit)
-	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
 }
