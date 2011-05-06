@@ -9,6 +9,12 @@ import minecraft.world;
 import minecraft.terrain.vol;
 import minecraft.terrain.chunk;
 
+
+const defaultFogColor = Color4f(89.0/255, 178.0/255, 220.0/255);
+const defaultFogStart = 150;
+const defaultFogStop = 250;
+const defaultViewDistance = defaultFogStop;
+
 /*
  *
  * Simple actors
@@ -25,6 +31,7 @@ public:
 	{
 		super(w);
 		c = new GfxProjCamera();
+		c.far = defaultViewDistance;
 	}
 
 	~this()
@@ -42,6 +49,7 @@ class SunLight : public GameActor
 {
 private:
 	GfxSimpleLight gfx;
+	GfxFog fog;
 
 public:
 	this(World w)
@@ -49,13 +57,23 @@ public:
 		super(w);
 		gfx = new GfxSimpleLight();
 		w.gfx.add(gfx);
+
+		fog = new GfxFog();
+		w.gfx.fog = fog;
+
+		fog.start = defaultFogStart;
+		fog.stop = defaultViewDistance;
+		fog.color = defaultFogColor;
 	}
 
 	~this()
 	{
-		delete gfx;
-	}
+		w.gfx.remove(gfx);
+		w.gfx.fog = null;
 
+		delete gfx;
+		delete fog;
+	}
 
 	void setPosition(ref Point3d pos) { gfx.setPosition(pos); }
 	void getPosition(out Point3d pos) { gfx.getPosition(pos); }
@@ -342,14 +360,74 @@ struct CameraWrapper
 		return 1;
 	}
 
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto c = s.checkClass!(Camera)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
+		case "position":
+			c.c.getPosition(*Point3dWrapper.push(s));
+			break;
+		case "rotation":
+			c.c.getRotation(*QuatdWrapper.push(s));
+			break;
+		case "far":
+			s.pushNumber(c.c.far);
+			break;
+		case "near":
+			s.pushNumber(c.c.near);
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	extern (C) static int newIndex(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto c = s.checkClass!(Camera)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key)	{
+		case "position":
+			c.c.setPosition(*s.checkPoint3d(3));
+			break;
+		case "rotation":
+			c.c.setRotation(*s.checkQuatd(3));
+			break;
+		case "far":
+			c.c.far = s.toNumber(3);
+			break;
+		case "near":
+			c.c.near = s.toNumber(3);
+			break;
+		default:
+			s.error("No memeber of that that name");
+			break;
+		}
+
+		return 0;
+	}
+
 	static void register(LuaState s)
 	{
 		s.registerClass!(Camera);
 		s.pushCFunction(&ObjectWrapper.toString);
 		s.setFieldz(-2, "__tostring");
-		s.pushCFunction(&MovableWrapper.index);
+		s.pushCFunction(&index);
 		s.setFieldz(-2, "__index");
-		s.pushCFunction(&MovableWrapper.newIndex);
+		s.pushCFunction(&newIndex);
 		s.setFieldz(-2, "__newindex");
 		s.pop();
 
@@ -403,6 +481,18 @@ struct SunLightWrapper
 		case "shadow":
 			s.pushBool(sl.gfx.shadow);
 			break;
+		case "fog":
+			s.pushBool(sl.w.gfx.fog !is null);
+			break;
+		case "fogStart":
+			s.pushNumber(sl.fog.start);
+			break;
+		case "fogStop":
+			s.pushNumber(sl.fog.stop);
+			break;
+		case "fogColor":
+			s.pushColor4f(sl.fog.color);
+			break;
 		default:
 			s.getMetaTable(1);
 			s.pushValue(2);
@@ -447,6 +537,18 @@ struct SunLightWrapper
 			break;
 		case "shadow":
 			sl.gfx.shadow = s.toBool(3);
+			break;
+		case "fog":
+			sl.w.gfx.fog = s.toBool(3) ? sl.fog : null;
+			break;
+		case "fogStart":
+			sl.w.gfx.fog.start = s.toNumber(3);
+			break;
+		case "fogStop":
+			sl.w.gfx.fog.stop = s.toNumber(3);
+			break;
+		case "fogColor":
+			sl.fog.color = *s.checkColor4f(3);
 			break;
 		default:
 			s.error("No memeber of that that name");
