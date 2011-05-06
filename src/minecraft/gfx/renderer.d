@@ -86,8 +86,12 @@ public:
 protected:
 	void renderLoop(GfxRenderQueue rq, GfxWorld w)
 	{
+		Matrix4x4d view;
 		GfxRenderable r;
 		GfxSimpleMaterial m;
+
+		glGetDoublev(GL_MODELVIEW_MATRIX, view.array.ptr);
+		view.transpose();
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
@@ -98,9 +102,11 @@ protected:
 			auto sl = cast(GfxSimpleLight)l;
 			if (sl is null)
 				continue;
+
+			auto direction = view * sl.rotation.rotateHeading;
 		
 			glUseProgram(shader.id);
-			shader.float3("lightDir", sl.rotation.rotateHeading);
+			shader.float3("lightDir", direction);
 			shader.float4("lightDiffuse", sl.diffuse);
 			shader.float4("lightAmbient", sl.ambient);
 			glUseProgram(0);
@@ -417,7 +423,7 @@ void main()
 	uv = vs_data.xy / 16.0;
 
 	// Okay for now, but this should not be done.
-	normal = vs_normal;//gl_NormalMatrix * vs_normal;
+	normal = gl_NormalMatrix * vs_normal;
 	gl_Position = gl_ModelViewProjectionMatrix * vs_position;
 }
 ";
@@ -444,7 +450,7 @@ void main()
 	light = 1.0 - vs_data.w * 0.4;
 
 	// Okay for now, but this should not be done.
-	normal = vs_normal;//gl_NormalMatrix * vs_normal;
+	normal = gl_NormalMatrix * vs_normal;
 	gl_Position = gl_ModelViewProjectionMatrix * vs_position;
 }
 ";
