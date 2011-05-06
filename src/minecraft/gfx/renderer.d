@@ -154,6 +154,7 @@ private:
 	mixin SysLogging;
 	static bool initialized;
 	static GfxShader material_shader;
+	static GfxShader material_shader_array;
 
 	GfxTextureArray ta;
 
@@ -206,16 +207,24 @@ public:
 		if (!check())
 			return false;
 
-		material_shader = GfxShaderMaker(Helper.materialVertArrayIndexed,
+		material_shader_array  = GfxShaderMaker(Helper.materialVertArrayIndexed,
+							Helper.materialFragDeferred,
+							["vs_data"],
+							["diffuseTex"]);
+
+		glUseProgram(material_shader_array.id);
+		material_shader_array.float4("normals", 6, Helper.normals.ptr);
+		material_shader_array.float4("uv_mixs", 6, Helper.uv_mixs.ptr);
+		glUseProgram(0);
+
+		material_shader = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
 						 Helper.materialFragDeferred,
-						 ["vs_data"],
+						 ["vs_position", "vs_data"],
 						 ["diffuseTex"]);
 
 		glUseProgram(material_shader.id);
-		material_shader.sampler("diffuseTex", 0);
 		material_shader.float4("normals", 6, Helper.normals.ptr);
 		material_shader.float4("uv_mixs", 6, Helper.uv_mixs.ptr);
-
 		glUseProgram(0);
 
 		initialized = true;
@@ -226,11 +235,23 @@ public:
 protected:
 	void drawGroup(ChunkVBOGroupArray cvga, GfxSimpleMaterial m)
 	{
-		glUseProgram(material_shader.id);
+		glUseProgram(material_shader_array.id);
 
 		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, ta.id);
-		cvga.drawShader(material_shader);
+		cvga.drawShader(material_shader_array);
+
+		glUseProgram(0);
+	}
+
+	void drawGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m)
+	{
+		glUseProgram(material_shader.id);
+		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, ta.id);
+
+		cvgcm.drawAttrib();
+
+		glUseProgram(0);
 	}
 
 	void renderDirectionLightShadow(GfxSimpleLight dl,
@@ -252,13 +273,17 @@ protected:
 		for (auto r = rq.pop; r !is null; r = rq.pop) {
 			auto m = cast(GfxSimpleMaterial)r.getMaterial();
 
+			auto cvgmc = cast(ChunkVBOGroupCompactMesh)r;
+			if (cvgmc !is null) {
+				drawGroup(cvgmc, m);
+				continue;
+			}
+
 			auto cvga = cast(ChunkVBOGroupArray)r;
 			if (cvga !is null) {
 				drawGroup(cvga, m);
 				continue;
 			}
-
-			continue;
 		}
 	}
 
@@ -270,24 +295,26 @@ protected:
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glActiveTexture(GL_TEXTURE0);
-		glEnable(GL_TEXTURE_2D);
 
 		for (r = rq.pop; r !is null; r = rq.pop) {
 			m = cast(GfxSimpleMaterial)r.getMaterial();
 			if (m is null)
 				continue;
 
+			auto cvgmc = cast(ChunkVBOGroupCompactMesh)r;
+			if (cvgmc !is null) {
+				drawGroup(cvgmc, m);
+				continue;
+			}
+
 			auto cvg = cast(ChunkVBOGroupArray)r;
 			if (cvg !is null) {
 				drawGroup(cvg, m);
 				continue;
 			}
-
-			continue;
 		}
 
 		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_TEXTURE_2D);
 		glUseProgram(0);
 		glDisable(GL_CULL_FACE);
 	}
