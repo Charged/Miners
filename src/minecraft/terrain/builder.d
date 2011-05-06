@@ -457,6 +457,11 @@ template MeshBasedDispatcher(alias T)
 		solid(80, x, y, z);
 	}
 
+	void wood(int x, int y, int z) {
+		auto dec = &woodTile[data.getDataUnsafe(x, y, z)];
+		solidDec(dec, x, y, z);
+	}
+
 	void wool(int x, int y, int z) {
 		auto dec = &woolTile[data.getDataUnsafe(x, y, z)];
 		solidDec(dec, x, y, z);
@@ -485,6 +490,9 @@ template MeshBasedDispatcher(alias T)
 		switch(type) {
 			case 2:
 				grass(x, y, z);
+				break;
+			case 17:
+				wood(x, y, z);
 				break;
 			case 18:
 				solid(type, x, y, z);
@@ -716,6 +724,11 @@ ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 		solid(80, x, y, z);
 	}
 
+	void wood(int x, int y, int z) {
+		auto dec = &woodTile[data.getDataUnsafe(x, y, z)];
+		solidDec(dec, x, y, z);
+	}
+
 	void wool(int x, int y, int z) {
 		auto dec = &woolTile[data.getDataUnsafe(x, y, z)];
 		solidDec(dec, x, y, z);
@@ -743,6 +756,9 @@ ChunkVBOArray buildArrayFromChunk(Chunk chunk)
 		switch(type) {
 			case 2:
 				grass(x, y, z);
+				break;
+			case 17:
+				wood(x, y, z);
 				break;
 			// Done by LeafBuilder
 			//case 18:

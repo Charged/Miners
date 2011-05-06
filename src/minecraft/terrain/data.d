@@ -154,5 +154,11 @@ BlockDescriptor woolTile[256] = [
 	{  true, Block,     {  1,  7 }, {  1,  7 }, "black" },
 ];
 
+BlockDescriptor woodTile[3] = [
+	{  true, Block,     {  4,  1 }, {  5,  1 }, "normal", },                // 0
+	{  true, Block,     {  4,  7 }, {  5,  1 }, "spruce" },
+	{  true, Block,     {  5,  7 }, {  5,  1 }, "birch" }
+];
+
 BlockDescriptor craftingTableAltTile =
 	{  true, DataBlock, { 12,  3 }, { 11,  2 }, "crafting table" };
