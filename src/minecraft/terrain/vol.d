@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module minecraft.terrain.vol;
 
+import std.math;
+
 // For SDL get ticks
 import lib.sdl.sdl;
 
@@ -24,15 +26,17 @@ public:
 	}
 
 	GfxTexture tex;
-	const int width = 64;
-	const int depth = 64;
+	const int width = 16;
+	const int depth = 16;
 	const int view_radi = 16;
 	int save_build_i;
 	int save_build_j;
 	int save_build_k;
-	int xOff;
-	int zOff;
-	Chunk[depth][width] chunk;
+	int xCenter;
+	int zCenter;
+	int rxOff;
+	int rzOff;
+	Region[depth][width] region;
 	ChunkVBOGroupArray cvga;
 	ChunkVBOGroupRigidMesh cvgrm;
 	ChunkVBOGroupCompactMesh cvgcm;
@@ -41,30 +45,29 @@ public:
 
 	bool buildIndexed; // The renderer supports array textures.
 
-
 	this(GameWorld w, char[] dir, GfxTexture tex)
 	{
 		super(w);
 
-		this.xOff = 0;
-		this.zOff = 0;
+		this.rxOff = 0;
+		this.rzOff = 0;
 		this.dir = dir;
 		this.tex = tex;
+
+		// Make sure all state is setup correctly
+		setCenter(0, 0);
 
 		// Make the code not early out.
 		currentBuildType = BuildTypes.Array;
 
 		// Setup the groups
 		setBuildType(BuildTypes.RigidMesh);
-
-		// Make sure all state is setup correctly
-		setCenter(0, 0);
 	}
 
 	~this() {
-		foreach(row; chunk)
-			foreach(c; row)
-				delete c;
+		foreach(row; region)
+			foreach(r; row)
+				delete r;
 		delete cvga;
 		delete cvgrm;
 		delete cvgcm;
@@ -90,10 +93,10 @@ public:
 		// Unbuild all the meshes.
 		for (int x; x < width; x++) {
 			for (int z; z < depth; z++) {
-				auto c = chunk[x][z];
-				if (c is null)
+				auto r = region[x][z];
+				if (r is null)
 					continue;
-				c.unbuild();
+				r.unbuildAll();
 			}
 		}
 
@@ -135,15 +138,11 @@ public:
 
 	final Chunk getChunk(int x, int z)
 	{
-		x -= xOff;
-		z -= zOff;
+		auto r = getRegion(x, z);
+		if (r is null)
+			return null;
 
-		if (x < 0 || z < 0)
-			return null;
-		else if (x >= width || z >= depth)
-			return null;
-		else
-			return chunk[x][z];
+		return r.getChunk(x, z);
 	}
 
 	ubyte get(int xPos, int zPos, int x, int y, int z)
@@ -187,80 +186,45 @@ public:
 
 	void setCenter(int xNew, int zNew)
 	{
-		Chunk[depth][width] copy;
-		int xNewOff = xNew - (width / 2);
-		int zNewOff = zNew - (depth / 2);
+		setCenterRegions(xNew, zNew);
 
+		xCenter = xNew;
+		zCenter = zNew;
 		for (int x; x < width; x++) {
 			for (int z; z < depth; z++) {
-				auto c = chunk[x][z];
-				if (c is null)
+				auto r = region[x][z];
+				if (r is null)
 					continue;
-				int xPos = c.xPos - xNewOff;
-				int zPos = c.zPos - zNewOff;
-				if (xPos < 0 || zPos < 0 || xPos >= width || zPos >= depth) {
-					delete c;
-				} else {
-					copy[xPos][zPos] = c;
-				}
+
+				r.unbuildRadi(xCenter, zCenter, view_radi);
 			}
 		}
-
-		xOff = xNewOff;
-		zOff = zNewOff;
-		for (int x; x < width; x++) {
-			for (int z; z < depth; z++) {
-				auto c = copy[x][z];
-				if (c is null)
-					chunk[x][z] = null;
-				else
-					chunk[x][z] = c;
-			}
-		}
-
-		const hW = width/2;
-		const hD = depth/2;
-		for (int x; x < width; x++) {
-			for (int z; z < depth; z++) {
-				const int r = view_radi - 1;
-				auto c = chunk[x][z];
-				if (c is null)
-					continue;
-				if (x < hW - r || x > hW + r ||
-				    z < hD - r || z > hD + r)
-					c.unbuild();
-			}
-		}
-
-		charge.sys.resource.Pool().collect();
 
 		// Reset the saved position for the buildOne function
 		save_build_i = 0;
 		save_build_j = 0;
 		save_build_k = 0;
+
+		charge.sys.resource.Pool().collect();
 	}
 
 	bool buildOne()
 	{
-		const hW = width/2;
-		const hD = depth/2;
-
 		bool dob(int x, int z) {
-			x += hW;
-			z += hD;
+			x += xCenter;
+			z += zCenter;
 
-			auto c = chunk[x][z];
-			if (c !is null && c.gfx/* !is null*/)
+			auto c = getChunk(x, z);
+			if (c !is null && c.gfx)
 				return false;
 
 			for (int i = x-1; i < x+2; i++) {
 				for (int j = z-1; j < z+2; j++) {
-					if (chunk[i][j] is null)
-						chunk[i][j] = new Chunk(this, w, i+xOff, j+zOff);
+					loadChunk(i, j);
 				}
 			}
 
-			chunk[x][z].build();
+			getRegion(x, z).buildUnsafe(x, z);
 			return true;
 		}
 
@@ -292,8 +256,214 @@ public:
 		return false;
 	}
 
-
 protected:
+	void setCenterRegions(int xNew, int zNew)
+	{
+		auto rxNew = cast(int)floor(cast(float)xNew / Region.width);
+		auto rzNew = cast(int)floor(cast(float)zNew / Region.depth);
+
+		int rxNewOff = rxNew - (width / 2);
+		int rzNewOff = rzNew - (depth / 2);
+
+		if (rxNewOff == rxOff && rzNewOff == rzOff)
+			return;
+
+		Region[depth][width] copy;
+
+		for (int x; x < width; x++) {
+			for (int z; z < depth; z++) {
+				auto r = region[x][z];
+				if (r is null)
+					continue;
+				int rxPos = r.xPos - rxNewOff;
+				int rzPos = r.zPos - rzNewOff;
+				if (rxPos < 0 || rzPos < 0 || rxPos >= width || rzPos >= depth) {
+					delete r;
+				} else {
+					copy[rxPos][rzPos] = r;
+				}
+			}
+		}
+
+		rxOff = rxNewOff;
+		rzOff = rzNewOff;
+		for (int x; x < width; x++)
+			for (int z; z < depth; z++)
+				region[x][z] = copy[x][z];
+	}
+
+	final Region getRegion(int x, int z)
+	{
+		auto rx = cast(int)floor(x/32.0) - rxOff;
+		auto rz = cast(uint)floor(z/32.0) - rzOff;
+
+		if (rx < 0 || rz < 0)
+			return null;
+		else if (rx >= width || rz >= depth)
+			return null;
+
+		return region[rx][rz];
+	}
+
+	void loadChunk(int x, int z)
+	{
+		auto rx = cast(int)floor(x/32.0) - rxOff;
+		auto rz = cast(uint)floor(z/32.0) - rzOff;
+
+		if (rx < 0 || rz < 0)
+			assert(null is "tried to load chunk outside of regions");
+		else if (rx >= width || rz >= depth)
+			assert(null is "tried to load chunk outside of regions");
+
+		auto r = region[rx][rz];
+		if (r is null)
+			region[rx][rz] = r = new Region(this, rx+rxOff, rz+rzOff);
+
+		r.loadChunkUnsafe(x, z);
+	}
+}
+
+final class Region
+{
+public:
+	const int width = 32;
+	const int depth = 32;
+	Chunk[width][depth] chunk;
+
+	VolTerrain vt;
+
+	int numBuilt;
+
+	/*
+	 * The same used as as in the filename.
+	 */
+	int xPos;
+	int zPos;
+
+	/*
+	 * Used to go from a global chunk position to a local one.
+	 */
+	int xOff;
+	int zOff;
+private:
+
+public:
+	this(VolTerrain vt, int xPos, int zPos)
+	{
+		this.vt = vt;
+		this.xPos = xPos;
+		this.zPos = zPos;
+
+		xOff = xPos * 32;
+		zOff = zPos * 32;
+	}
+
+	~this()
+	{
+		foreach(row; chunk)
+			foreach(c; row)
+				delete c;
+	}
+
+	final void buildUnsafe(int x, int z)
+	{
+		auto c = getChunkUnsafe(x, z);
+		if (c is null || c.gfx)
+			return;
+
+		c.build();
+		numBuilt++;
+	}
+
+	final void unbuild(int x, int z)
+	{
+		if (numBuilt <= 0)
+			return;
+
+		auto c = getChunk(x, z);
+		if (c is null || !c.gfx)
+			return;
+
+		c.build();
+		numBuilt--;
+	}
+
+	final void unbuildAll()
+	{
+		if (numBuilt <= 0)
+			return;
+
+		for (int x; x < width; x++) {
+			for (int z; z < depth; z++) {
+				auto c = chunk[x][z];
+				if (c is null)
+					continue;
+				c.unbuild();
+			}
+		}
+
+		numBuilt = 0;
+	}
+
+	final void unbuildRadi(int xCenter, int zCenter, int view_radi)
+	{
+		if (numBuilt <= 0)
+			return;
+
+		int r = view_radi - 1;
+		for (int x; x < width; x++) {
+			for (int z; z < depth; z++) {
+				auto xp = x + xOff;
+				auto zp = z + zOff;
+
+				auto c = chunk[x][z];
+				if (c is null || !c.gfx)
+					continue;
+
+				if (xp < xCenter - r || xp > xCenter + r ||
+				    zp < zCenter - r || zp > zCenter + r) {
+					c.unbuild();
+					numBuilt--;
+				}
+			}
+		}
+	}
 
 
+	final void loadChunkUnsafe(int x, int z)
+	{
+		x -= xOff;
+		z -= zOff;
+
+		if (chunk[x][z] !is null)
+			return;
+
+		chunk[x][z] = new Chunk(vt, vt.w, x+xOff, z+zOff);
+	}
+
+	final Chunk getChunkUnsafe(int x, int z)
+	{
+		x -= xOff;
+		z -= zOff;
+
+		if (x < 0 || z < 0)
+			return null;
+		else if (x >= width || z >= depth)
+			return null;
+
+		return chunk[x][z];
+	}
+
+	final Chunk getChunk(int x, int z)
+	{
+		x -= xOff;
+		z -= zOff;
+
+		if (x < 0 || z < 0)
+			return null;
+		else if (x >= width || z >= depth)
+			return null;
+
+		return chunk[x][z];
+	}
 }
