@@ -209,7 +209,7 @@ template CompactMeshPacker()
 		verts[iv].normal = normal;
 		verts[iv].light = light;
 		verts[iv].texture_u_or_index = u;
-		verts[iv].texture_v_or_pad = v;
+		verts[iv].texture_v_or_offset = v;
 		iv++;
 	}
 }
@@ -230,7 +230,7 @@ template CompactMeshPackerIndexed()
 		verts[iv].normal = normal;
 		verts[iv].light = light;
 		verts[iv].texture_u_or_index = texture;
-		verts[iv].texture_v_or_pad = 0;
+		verts[iv].texture_v_or_offset = 0;
 		iv++;
 	}
 }

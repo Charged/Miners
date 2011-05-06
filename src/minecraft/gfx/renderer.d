@@ -472,7 +472,7 @@ void main()
 	vec4 mixs = uv_mixs[int(vs_data.z)];
 
 	uvi.x = dot(vs_position.xz, mixs.xy);
-	uvi.y = dot(vs_position.zy, mixs.zw);
+	uvi.y = dot(vs_position.zy, mixs.zw) - vs_data.y * 0.5;
 	uvi.z = vs_data.x;
 	light = 1.0 - vs_data.w * 0.4;
 

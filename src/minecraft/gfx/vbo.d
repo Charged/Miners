@@ -39,7 +39,7 @@ public:
 		float[3] position;
 		struct {
 			ubyte texture_u_or_index;
-			ubyte texture_v_or_pad;
+			ubyte texture_v_or_offset;
 			ubyte normal;
 			ubyte light;
 		}
