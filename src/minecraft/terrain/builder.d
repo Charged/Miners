@@ -164,6 +164,42 @@ template AOCalculator()
 }
 
 /**
+ * Scans and returns filled status of corner blockes, used for fake AO.
+ *
+ * Reads x, aoy, z for position.
+ * Declares and set c[1-8].
+ */
+template AOScannerY()
+{
+	auto c1 = data.filled(x-1, aoy, z-1);
+	auto c2 = data.filled(x  , aoy, z-1);
+	auto c3 = data.filled(x+1, aoy, z-1);
+	auto c4 = data.filled(x-1, aoy, z  );
+	auto c5 = data.filled(x+1, aoy, z  );
+	auto c6 = data.filled(x-1, aoy, z+1);
+	auto c7 = data.filled(x  , aoy, z+1);
+	auto c8 = data.filled(x+1, aoy, z+1);
+}
+
+/**
+ * Scans and returns filled status of corner blockes, used for fake AO.
+ *
+ * Reads xsn, xs, xsp, y, zsn, zs, xsp for position.
+ * Declares and set c[1-8].
+ */
+template AOScannerXZ()
+{
+	auto c1 = data.filled(xsn, y-1, zsn);
+	auto c2 = data.filled(xs , y-1, zs );
+	auto c3 = data.filled(xsp, y-1, zsp);
+	auto c4 = data.filled(xsn, y  , zsn);
+	auto c5 = data.filled(xsp, y  , zsp);
+	auto c6 = data.filled(xsn, y+1, zsn);
+	auto c7 = data.filled(xs , y+1, zs );
+	auto c8 = data.filled(xsp, y+1, zsp);
+}
+
+/**
  * Calculates global floating point coordinates from local shifted coordinates.
  *
  * Reads x, y, z for coordinates.
@@ -293,40 +329,6 @@ template QuadEmitter(alias T)
 {
 	mixin T!();
 
-	void makeQuadXZP(int x1, int x2, int y1, int y2, int z1, int z2,
-			 ubyte tex, ubyte normal)
-	{
-		pack(x2, y1, z1, tex, 0, normal, 0);
-		pack(x2, y2, z1, tex, 0, normal, 0);
-		pack(x1, y2, z2, tex, 0, normal, 0);
-		pack(x1, y1, z2, tex, 0, normal, 0);
-	}
-
-	void makeQuadXZN(int x1, int x2, int y1, int y2, int z1, int z2,
-			 ubyte tex, ubyte normal)
-	{
-		pack(x2, y2, z1, tex, 0, normal, 0);
-		pack(x2, y1, z1, tex, 0, normal, 0);
-		pack(x1, y1, z2, tex, 0, normal, 0);
-		pack(x1, y2, z2, tex, 0, normal, 0);
-	}
-
-	void makeQuadYP(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
-	{
-		pack(x2, y, z2, tex, 0, normal, 0);
-		pack(x2, y, z1, tex, 0, normal, 0);
-		pack(x1, y, z1, tex, 0, normal, 0);
-		pack(x1, y, z2, tex, 0, normal, 0);
-	}
-
-	void makeQuadYN(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
-	{
-		pack(x2, y, z1, tex, 0, normal, 0);
-		pack(x2, y, z2, tex, 0, normal, 0);
-		pack(x1, y, z2, tex, 0, normal, 0);
-		pack(x1, y, z1, tex, 0, normal, 0);
-	}
-
 	void makeQuadAOYP(int x1, int x2, int y, int z1, int z2,
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			  ubyte texture, ubyte normal)
@@ -367,6 +369,27 @@ template QuadEmitter(alias T)
 		pack(x2, y1, z1, texture, c4/*ao124*/, normal, 16);
 	}
 
+	void makeQuadYP(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
+	{
+		makeQuadAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void makeQuadYN(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
+	{
+		makeQuadAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void makeQuadXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+			 ubyte tex, ubyte normal)
+	{
+		makeQuadAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void makeQuadXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+			 ubyte tex, ubyte normal)
+	{
+		makeQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
 }
 
 /**
@@ -380,16 +403,8 @@ template QuadBuilder(alias T)
 
 	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, bool minus)
 	{
-		auto sy = y - minus + !minus;
-		auto c1 = data.filled(x-1, sy, z-1);
-		auto c2 = data.filled(x  , sy, z-1);
-		auto c3 = data.filled(x+1, sy, z-1);
-		auto c4 = data.filled(x-1, sy, z  );
-		auto c5 = data.filled(x+1, sy, z  );
-		auto c6 = data.filled(x-1, sy, z+1);
-		auto c7 = data.filled(x  , sy, z+1);
-		auto c8 = data.filled(x+1, sy, z+1);
-
+		auto aoy = y - minus + !minus;
+		mixin AOScannerY!();
 		mixin AOCalculator!();
 
 		int x1 = x, x2 = x+1;
@@ -427,16 +442,7 @@ template QuadBuilder(alias T)
 		int zs = !xaxis ? z - minus + !minus : z;
 		int zsp = zs + xaxis;
 		int zsn = zs - xaxis;
-
-		auto c1 = data.filled(xsn, y-1, zsn);
-		auto c2 = data.filled(xs , y-1, zs );
-		auto c3 = data.filled(xsp, y-1, zsp);
-		auto c4 = data.filled(xsn, y  , zsn);
-		auto c5 = data.filled(xsp, y  , zsp);
-		auto c6 = data.filled(xsn, y+1, zsn);
-		auto c7 = data.filled(xs , y+1, zs );
-		auto c8 = data.filled(xsp, y+1, zsp);
-
+		mixin AOScannerXZ!();
 		mixin AOCalculator!();
 
 		int x1 = x+xm, x2 = x+xm+!xaxis;
@@ -687,16 +693,9 @@ template QuadBuilderNonShifted(alias T)
 
 	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, bool minus)
 	{
-		auto sy = y - minus + !minus;
-		auto c1 = data.filled(x-1, sy, z-1);
-		auto c2 = data.filled(x  , sy, z-1);
-		auto c3 = data.filled(x+1, sy, z-1);
-		auto c4 = data.filled(x-1, sy, z  );
-		auto c5 = data.filled(x+1, sy, z  );
-		auto c6 = data.filled(x-1, sy, z+1);
-		auto c7 = data.filled(x  , sy, z+1);
-		auto c8 = data.filled(x+1, sy, z+1);
+		auto aoy = y - minus + !minus;
 
+		mixin AOScannerY!();
 		mixin AOCalculator!();
 
 		int x1 = x, x2 = x+1;
@@ -728,15 +727,7 @@ template QuadBuilderNonShifted(alias T)
 		int zsp = zs + xaxis;
 		int zsn = zs - xaxis;
 
-		auto c1 = data.filled(xsn, y-1, zsn);
-		auto c2 = data.filled(xs , y-1, zs );
-		auto c3 = data.filled(xsp, y-1, zsp);
-		auto c4 = data.filled(xsn, y  , zsn);
-		auto c5 = data.filled(xsp, y  , zsp);
-		auto c6 = data.filled(xsn, y+1, zsn);
-		auto c7 = data.filled(xs , y+1, zs );
-		auto c8 = data.filled(xsp, y+1, zsp);
-
+		mixin AOScannerXZ!();
 		mixin AOCalculator!();
 
 		int x1 = x+xm, x2 = x+xm+!xaxis;
