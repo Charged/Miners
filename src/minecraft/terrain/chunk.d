@@ -50,22 +50,16 @@ public:
 		this.xOff = xPos * 16;
 		this.yOff = -64;
 		this.zOff = zPos * 16;
-		if (!getBlocksForChunk(vt.dir, xPos, zPos, blocks, data))
-			emptyChunk();
-		else
-			used_mem += blocks_size + data_size;
+		emptyChunk();
 	}
 
 	~this()
 	{
 		unbuild();
-		if (!empty) {
-			std.c.stdlib.free(blocks);
-			std.c.stdlib.free(data);
-			used_mem -= (blocks_size + data_size);
-		}
+		freeBlocksAndData();
 	}
 
+private:
 	static this()
 	{
 		empty_blocks = cast(ubyte*)std.c.stdlib.malloc(blocks_size);
@@ -78,8 +72,70 @@ public:
 		std.c.stdlib.free(empty_blocks);
 	}
 
+	/**
+	 * If the chunk is not empty free the blocks and data
+	 * arrays that where given to us.
+	 */
+	void freeBlocksAndData()
+	{
+		if (!empty) {
+			std.c.stdlib.free(blocks);
+			std.c.stdlib.free(data);
+			used_mem -= (blocks_size + data_size);
+		}
+	}
+
+public:
+	/**
+	 * Give a block and data array to this chunk.
+	 *
+	 * The two arrays must be allocted via C lib *alloc function.
+	 * It is now the chunks responsibility to free the data.
+	 */
+	void giveBlocksAndData(ubyte *blocks, ubyte *data)
+	{
+		freeBlocksAndData();
+
+		this.empty = false;
+		this.blocks = blocks;
+		this.data = data;
+		used_mem += blocks_size + data_size;
+	}
+
+	/**
+	 * Allocate blocks and data arrays and set empty to false if empty.
+	 *
+	 * The allocated arrays will be zero (air). Nothing will be done if
+	 * already non-empty. While just being filled with air could count as
+	 * empty, empty in this case means that blocks and data are shared
+	 * between chunks and is read-only.
+	 */
+	void allocBlocksAndData()
+	{
+		if (!empty)
+			return;
+
+		empty = false;
+		blocks = cast(ubyte*)std.c.stdlib.malloc(blocks_size);
+		data = cast(ubyte*)std.c.stdlib.malloc(data_size);
+		std.c.string.memset(blocks, 0, blocks_size);
+		std.c.string.memset(data, 0, data_size);
+		used_mem += blocks_size + data_size;
+	}
+
+	/**
+	 * Free any data allocated and mark the chunk as empty.
+	 *
+	 * Read access is still possible but will only return 0 (air)
+	 * and for pointer access pointers to a shared array empty array.
+	 *
+	 * So make sure to not write to a emptied chunk. Newly allocated
+	 * chunks are empty, call allocBlocksAndData to alloc writable data.
+	 */
 	void emptyChunk()
 	{
+		freeBlocksAndData();
+
 		blocks = empty_blocks;
 		data = empty_blocks;
 		empty = true;

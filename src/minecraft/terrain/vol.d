@@ -11,6 +11,7 @@ import charge.charge;
 
 import minecraft.gfx.vbo;
 import minecraft.gfx.renderer;
+import minecraft.importer;
 import minecraft.terrain.chunk;
 
 class VolTerrain : public GameActor
@@ -305,7 +306,10 @@ protected:
 		return region[rx][rz];
 	}
 
-	void loadChunk(int x, int z)
+	/**
+	 * Creates and if a level was specified loads data.
+	 */
+	Chunk loadChunk(int x, int z)
 	{
 		auto rx = cast(int)floor(x/32.0) - rxOff;
 		auto rz = cast(uint)floor(z/32.0) - rzOff;
@@ -319,7 +323,18 @@ protected:
 		if (r is null)
 			region[rx][rz] = r = new Region(this, rx+rxOff, rz+rzOff);
 
-		r.loadChunkUnsafe(x, z);
+		auto c = r.createChunkUnsafe(x, z);
+
+		// Don't load chunk data if no level was specified.
+		if (dir is null)
+			return c;
+
+		ubyte *blocks;
+		ubyte *data;
+		if (getBlocksForChunk(dir, x, z, blocks, data))
+			c.giveBlocksAndData(blocks, data);
+
+		return c;
 	}
 }
 
@@ -429,16 +444,15 @@ public:
 		}
 	}
 
-
-	final void loadChunkUnsafe(int x, int z)
+	final Chunk createChunkUnsafe(int x, int z)
 	{
 		x -= xOff;
 		z -= zOff;
 
 		if (chunk[x][z] !is null)
-			return;
+			return chunk[x][z];
 
-		chunk[x][z] = new Chunk(vt, vt.w, x+xOff, z+zOff);
+		return chunk[x][z] = new Chunk(vt, vt.w, x+xOff, z+zOff);
 	}
 
 	final Chunk getChunkUnsafe(int x, int z)
