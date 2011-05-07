@@ -57,8 +57,11 @@ protected:
 	{
 		Renderable r = rq.pop();
 
+		glAlphaFunc(GL_GEQUAL, 0.5f);
+
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
+
 		while(r !is null) {
 			Material m = r.getMaterial();
 
@@ -71,6 +74,7 @@ protected:
 
 			r = rq.pop();
 		}
+
 		glDisable(GL_CULL_FACE);
 	}
 
@@ -78,6 +82,9 @@ protected:
 	{
 		SimpleMaterial sm = cast(SimpleMaterial)m;
 		int i;
+
+		if (sm.fake)
+			glEnable(GL_ALPHA_TEST);
 
 		foreach(l; w.lights) {
 			assert(l !is null);
@@ -95,6 +102,9 @@ protected:
 			glColor3d(0.0, 0.0, 0.0);
 			r.drawFixed();
 		}
+
+		if (sm.fake)
+			glDisable(GL_ALPHA_TEST);
 	}
 
 	void render(SimpleMaterial m, Renderable r)
