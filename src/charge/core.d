@@ -34,6 +34,7 @@ private:
 
 	int screenshotNum;
 	uint width, height;
+	bool fullscreen;
 
 	/* surface for window */
 	SDL_Surface *s;
@@ -182,6 +183,33 @@ public:
 		return true;
 	}
 
+	void resize(uint w, uint h)
+	{
+		resize(w, h, fullscreen);
+	}
+
+	void resize(uint w, uint h, bool fullscreen)
+	{
+		l.info("Resizing window (%s, %s) %s", w, h,
+			fullscreen ? "fullscren" : "windowed");
+		this.fullscreen = fullscreen;
+		width = w; height = h;
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+		uint bits = SDL_OPENGL | SDL_RESIZABLE;
+		if (fullscreen)
+			bits |= SDL_FULLSCREEN;
+
+		s = SDL_SetVideoMode(
+				w,
+				h,
+				0,
+				bits
+			);
+
+		DefaultTarget.initDefaultTarget(w, h);
+	}
+
 	bool close()
 	{
 		Pool().clean();
@@ -249,8 +277,9 @@ private:
 		width = x; height = y;
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-		uint bits = SDL_OPENGL;
-		if (p.getBool("fullscreen", false))
+		fullscreen = p.getBool("fullscreen", false);
+		uint bits = SDL_OPENGL | SDL_RESIZABLE;
+		if (fullscreen)
 			bits |= SDL_FULLSCREEN;
 
 		s = SDL_SetVideoMode(

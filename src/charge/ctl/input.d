@@ -22,6 +22,7 @@ private:
 
 public:
 	Signal!(Device) hotplug;
+	Signal!(uint, uint) resize;
 	Signal!() quit;
 
 public:
@@ -80,6 +81,9 @@ public:
 
 			if (e.type == SDL_MOUSEBUTTONUP)
 				mouseArray[0].up(mouseArray[0], e.button.button);
+
+			if (e.type == SDL_VIDEORESIZE)
+				resize(cast(uint)e.resize.w, cast(uint)e.resize.h);
 		}
 	}
 

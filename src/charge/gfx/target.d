@@ -53,8 +53,11 @@ public:
 
 	static void initDefaultTarget(uint w, uint h)
 	{
-		assert(instance is null);
-		instance = new DefaultTarget(w, h);
+		//assert(instance is null);
+		if (instance is null)
+			instance = new DefaultTarget(w, h);
+		instance.w = w;
+		instance.h = h;
 	}
 
 	uint width()

@@ -168,6 +168,15 @@ protected:
 		Matrix4x4d proj;
 		Matrix4x4d projITS; /* Inverse Transpose Scale */
 
+		// Catch any screen size changes.
+		if (deferredTarget is null ||
+		    deferredTarget.width != renderTarget.width ||
+		    deferredTarget.height != renderTarget.height) {
+			delete deferredTarget;
+			deferredTarget = new DeferredTarget(renderTarget.width,
+							    renderTarget.height);
+		}
+
 		//
 		// Fill the G-Buffer
 		//

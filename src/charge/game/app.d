@@ -36,7 +36,8 @@ protected:
 
 public:
 
-	this(char[][] args) {
+	this(char[][] args)
+	{
 		running = true;
 
 		CtlInput().quit ~= &stop;
@@ -67,14 +68,26 @@ protected:
 	TimeKeeper idleTime;
 	
 public:
-	this(char[][] args) {
+	this(char[][] args)
+	{
 		super(args);
+		CtlInput().resize ~= &resize;
+	}
+
+	~this()
+	{
+		CtlInput().resize -= &resize;
 	}
 
 	abstract void network();
 	abstract void render();
 	abstract void logic();
 	abstract void close();
+
+	void resize(uint w, uint h)
+	{
+		Core().resize(w, h);
+	}
 
 	/**
 	 * Idle is a bit missleading name, this function is always after a
