@@ -678,10 +678,9 @@ template BlockDispatcher(alias T)
 			makeXYZ(dec, x, y, z, set);
 	}
 
-	void torch(int x, int y, int z)
-	{
-		auto dec = tile[50];
-		ubyte tex = calcTextureXZ(&dec);
+	void torch(int x, int y, int z) {
+		auto dec = &tile[50];
+		ubyte tex = calcTextureXZ(dec);
 		auto d = data.getDataUnsafe(x, y, z);
 
 		// TODO Support other directions
@@ -723,6 +722,35 @@ template BlockDispatcher(alias T)
 			makeXYZ(decAlt, x, y, z, setAlt);
 	}
 
+	void crops(int x, int y, int z) {
+		auto dec = &cropsTile[data.getDataUnsafe(x, y, z)];
+		ubyte tex = calcTextureXZ(dec);
+		const int set = 51;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		// TODO Crops should be offset 1/16 of a block.
+		int x1 = x,    x2 = x+16;
+		int y1 = y,    y2 = y+16;
+		int z1 = z+12, z2 = z+4;
+
+		makeQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
+		makeQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+		makeQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+		makeQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
+
+		x1 = x+12; x2 = x+4;
+		z1 = z;    z2 = z+16;
+
+		makeQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
+		makeQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+		makeQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
+		makeQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
+	}
+
 	void snow(int x, int y, int z) {
 		// Make snow into full block for now
 		solid(80, x, y, z);
@@ -757,6 +785,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 58:
 				craftingTable(x, y, z);
+				break;
+			case 59:
+				crops(x, y, z);
 				break;
 			case 78:
 				snow(x, y, z);

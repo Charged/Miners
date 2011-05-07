@@ -169,3 +169,14 @@ BlockDescriptor slabTile[4] = [
 	{  true, Block,     {  4,  0 }, {  4,  0 }, "wooden plank" },
 	{  true, Block,     {  0,  1 }, {  0,  1 }, "clobb" },
 ];
+
+BlockDescriptor cropsTile[8] = [
+	{  false, Stuff, {  8,  5 }, {  0,  5 }, "crops 0" },                  // 0
+	{  false, Stuff, {  9,  5 }, {  0,  5 }, "crops 1" },
+	{  false, Stuff, { 10,  5 }, {  0,  5 }, "crops 2" },
+	{  false, Stuff, { 11,  5 }, {  0,  5 }, "crops 3" },
+	{  false, Stuff, { 12,  5 }, {  0,  5 }, "crops 4" },
+	{  false, Stuff, { 13,  5 }, {  0,  5 }, "crops 5" },
+	{  false, Stuff, { 14,  5 }, {  0,  5 }, "crops 6" },
+	{  false, Stuff, { 15,  5 }, {  0,  5 }, "crops 7" },
+];
