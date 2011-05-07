@@ -11,7 +11,7 @@ import charge.charge;
 
 import minecraft.lua.runner;
 import minecraft.world;
-import minecraft.logic;
+import minecraft.runner;
 import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 import minecraft.gfx.renderer;
