@@ -34,9 +34,15 @@ class FileManager
 protected:
 	static FileManager instance;
 	Vector!(FileLoader) loaders;
+	void[][char[]] builtins;
 	mixin Logging;
 
 public:
+	this()
+	{
+		loaders ~= &this.loadBuiltin;
+	}
+
 	static FileManager opCall()
 	{
 		if (instance is null)
@@ -59,29 +65,48 @@ public:
 		loaders.remove(dg); 
 	}
 
-private:
-	File get(char[] filename)
+	void addBuiltin(char[] filename, void[] data)
 	{
-		auto f = load(filename);
+		assert(null is (filename in builtins));
+
+		builtins[filename] = data;
+	}
+
+private:
+	File get(char[] file)
+	{
+		// Always check if file is on disk
+		auto f = loadDisk(file);
 
 		int len = cast(int)loaders.length - 1;
-		for(int i = len; i >= 0 && f is null; --i) {
-			f = loaders[i](filename);
-		}
+		for(int i = len; i >= 0 && f is null; --i)
+			f = loaders[i](file);
 
 		return f;
 	}
 
-	File load(char[] file)
+	static File loadDisk(char[] file)
 	{
-		auto m = std.file.read(file);
-		if (!m)
-			return null;
+		void[] data;
 
-		auto df = new DefaultFile();
-		df.mem = m;
+		try {
+			data = std.file.read(file);
+		} catch (Exception e) {
+			return null;
+		}
+
+		auto df = new DiskFile(data);
 
 		return df;
+	}
+
+	File loadBuiltin(char[] file)
+	{
+		auto data = file in builtins;
+		if (data is null)
+			return null;
+
+		return new BuiltinFile(*data);
 	}
 }
 
@@ -91,13 +116,44 @@ private:
  */
 
 
-class DefaultFile : public File
+/**
+ * A file on the filesystem or disk.
+ */
+class DiskFile : public File
 {
 	void[] mem;
+
+	this(void[] mem)
+	{
+		this.mem = mem;
+	}
 
 	~this()
 	{
 		delete mem;
+	}
+
+	SDL_RWops* peekSDL()
+	{
+		return SDL_RWFromConstMem(mem.ptr, cast(int)mem.length);
+	}
+
+	void[] peekMem()
+	{
+		return mem;
+	}
+}
+
+/**
+ * A builtin file pointing to data in memory.
+ */
+class BuiltinFile : public File
+{
+	void[] mem;
+
+	this(void[] mem)
+	{
+		this.mem = mem;
 	}
 
 	SDL_RWops* peekSDL()
