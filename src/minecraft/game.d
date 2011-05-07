@@ -9,7 +9,7 @@ import lib.sdl.sdl;
 
 import charge.charge;
 
-import minecraft.lua;
+import minecraft.lua.runner;
 import minecraft.world;
 import minecraft.logic;
 import minecraft.terrain.chunk;
