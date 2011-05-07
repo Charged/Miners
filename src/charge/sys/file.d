@@ -14,11 +14,20 @@ alias File delegate(char[] filename) FileLoader;
 
 abstract class File
 {
-	SDL_RWops* getSDL() { return null; }
-	void[] getMem() { return null; }
-	void[] takeMem() { return null; }
-}
+	/**
+	 * Return a SDL_RWops to look at the contents of this file.
+	 *
+	 * Read only, and only valid as long as this file is valid.
+	 */
+	SDL_RWops* peekSDL() { return null; }
 
+	/**
+	 * Return a array to the entire file.
+	 *
+	 * Read only, and only valid as long as this file is valid.
+	 */
+	void[] peekMem() { return null; }
+}
 
 class FileManager
 {
@@ -28,11 +37,6 @@ protected:
 	mixin Logging;
 
 public:
-	this()
-	{
-		loaders ~= &(new DefaultFile).load;
-	}
-
 	static FileManager opCall()
 	{
 		if (instance is null)
@@ -55,58 +59,56 @@ public:
 		loaders.remove(dg); 
 	}
 
+private:
 	File get(char[] filename)
 	{
-		for(int i = cast(int)loaders.length - 1; i >= 0; --i) {
-			auto f = loaders[i](filename);
-			if (f is null)
-				continue;
-			return f;
+		auto f = load(filename);
+
+		int len = cast(int)loaders.length - 1;
+		for(int i = len; i >= 0 && f is null; --i) {
+			f = loaders[i](filename);
 		}
-		return null;
+
+		return f;
 	}
 
-	static class DefaultFile : public File
+	File load(char[] file)
 	{
-		void[] mem;
+		auto m = std.file.read(file);
+		if (!m)
+			return null;
 
-		~this()
-		{
-			delete mem;
-		}
+		auto df = new DefaultFile();
+		df.mem = m;
 
-		SDL_RWops* getSDL()
-		{
-			return SDL_RWFromConstMem(mem.ptr, cast(int)mem.length);
-		}
+		return df;
+	}
+}
 
-		void[] getMem()
-		{
-			return mem.dup;
-		}
 
-		void[] takeMem()
-		{
-			auto ret = mem;
-			this.mem = null;
-			delete this;
-			return ret;
-		}
+/*
+ * Implementation of different file types.
+ */
 
-		File load(char[] file)
-		{
-			auto m = std.file.read(file);
-			if (!m)
-				return null;
 
-			auto df = new DefaultFile();
-			df.mem = m;
+class DefaultFile : public File
+{
+	void[] mem;
 
-			return df;
-		}
-
+	~this()
+	{
+		delete mem;
 	}
 
+	SDL_RWops* peekSDL()
+	{
+		return SDL_RWFromConstMem(mem.ptr, cast(int)mem.length);
+	}
+
+	void[] peekMem()
+	{
+		return mem;
+	}
 }
 
 class ZipFile
@@ -132,5 +134,4 @@ public
 	{
 		FileManager().rem(&this.load);
 	}
-
 }

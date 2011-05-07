@@ -124,10 +124,11 @@ private:
 			l.warn("Failed to load %s: file not found", filename);
 			return null;
 		}
-		scope(exit)
-			delete file;
+		scope(exit) delete file;
 
-		font = TTF_OpenFontRW(file.getSDL(), true, size);
+		auto sdl_file = file.peekSDL();
+
+		font = TTF_OpenFontRW(sdl_file, true, size);
 		if (font is null) {
 			l.warn("Failed to load %s: file invalid format", filename);
 			return null;

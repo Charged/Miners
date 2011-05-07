@@ -153,7 +153,7 @@ protected:
 		scope(exit)
 			delete file;
 
-		auto sdl_file = file.getSDL;
+		auto sdl_file = file.peekSDL;
 
 		sl = IMG_Load_RW(sdl_file, 1);
 		if (sl is null) {

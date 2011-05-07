@@ -63,7 +63,9 @@ private:
 		}
 		scope(exit) delete file;
 
-		if (!SDL_LoadWAV_RW(file.getSDL, 1, &spec, &data, &len)) {
+		auto sdl_file = file.peekSDL;
+
+		if (!SDL_LoadWAV_RW(sdl_file, 1, &spec, &data, &len)) {
 			l.warn("Invalid format in file ", filename);
 			return null;
 		}

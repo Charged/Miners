@@ -140,11 +140,8 @@ protected:
 			return null;
 		}
 
-		f = file.takeMem();
-		file = null;
-
-		/* Meshes can be quite large tell the GC to not look for pointers */
-		std.gc.hasNoPointers(f.ptr);
+		f = file.peekMem();
+		scope(exit) delete file;
 
 		/* Sanity checks */
 		if (f.length < RigidMeshStruct.sizeof) {
@@ -159,10 +156,10 @@ protected:
 			goto err;
 		}
 
-		size_t length = RigidMeshStruct.sizeof + mod.indexCount * uint.sizeof +
+		size_t dataLength = RigidMeshStruct.sizeof + mod.indexCount * uint.sizeof +
 			mod.vertCount * Vertex.sizeof;
 
-		if (f.length != length) {
+		if (f.length != dataLength) {
 			l.warn("file %s has wrong size", filename);
 			goto err;
 		}
@@ -172,11 +169,13 @@ protected:
 			goto err;
 		}
 
-		mod.index = cast(uint*)&mod[1];
-		tris = (cast(Triangle*)mod.index)[0 .. mod.indexCount / 3];
+		// Indices storted right after the RigidMeshStruct
+		auto tris_ptr = cast(Triangle*)(&mod[1]);
+		tris = tris_ptr[0 .. mod.indexCount / 3];
 
-		mod.verts = cast(Vertex*)&mod.index[mod.indexCount];
-		verts = (cast(Vertex*)mod.verts)[0 .. mod.vertCount];
+		// Vertices storted after the indicies
+		auto vert_ptr = cast(Vertex*)&tris_ptr[tris.length];
+		verts = vert_ptr[0 .. mod.vertCount];
 
 		/// TODO test all the indecies.
 		l.info("Loaded ", filename);
@@ -184,7 +183,6 @@ protected:
 		return new RigidMesh(p, filename, false, verts, tris, Types.INDEXED_TRIANGLES);
 
 	err:
-		delete f;
 		return null;
 	}
 private:
