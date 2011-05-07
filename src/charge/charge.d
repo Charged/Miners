@@ -109,7 +109,6 @@ alias charge.gfx.gfx.gfxLoaded gfxLoaded;
 alias charge.gfx.cube.Cube GfxCube;
 alias charge.gfx.draw.Draw GfxDraw;
 alias charge.gfx.font.Font GfxFont;
-alias charge.gfx.font.FontManager GfxFontManager;
 alias charge.gfx.rigidmodel.RigidModel GfxRigidModel;
 alias charge.gfx.light.Light GfxLight;
 alias charge.gfx.light.SimpleLight GfxSimpleLight;

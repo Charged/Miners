@@ -34,7 +34,6 @@ private:
 	GfxDefaultTarget rt;
 	GfxDraw d;
 	GfxTexture sidebar;
-	GfxFont font;
 	GfxDynamicTexture sb_header;
 	GfxDynamicTexture sb_dyn;
 
@@ -101,16 +100,13 @@ public:
 
 		r = GfxRenderer.create();
 		d = new GfxDraw();
-		sidebar = GfxTexture("res/test.bmp");
-		//sidebar = GfxTextureManager("res/sidebar.png");
+		//sidebar = GfxTexture("res/test.bmp");
+		sidebar = GfxTexture("res/sidebar.png");
 
 		sb_header = new GfxDynamicTexture("sb_header");
 		sb_dyn = new GfxDynamicTexture("sb_speed");
 
-		font = GfxFontManager("res/font.bin", 18);
-		font.render(sb_header, "Information");
-
-		font = GfxFontManager("res/font.bin", 12);
+		GfxFont.render(sb_header, "Information");
 
 		CtlInput().quit ~= &quit;
 		CtlKeyboard keyboard = CtlInput().keyboards[0];
@@ -438,28 +434,28 @@ private:
 		x += 4;
 		y += 28;
 /*
-		font.render(sb_dyn, format("FPS: %s", fps));
+		GfxFont.render(sb_dyn, format("FPS: %s", fps));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 
-		font.render(sb_dyn, format("Usage: %s", usage));
+		GfxFont.render(sb_dyn, format("Usage: %s", usage));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 */
 
-		font.render(sb_dyn, format("Usage GFX: %s", usage_gfx));
+		GfxFont.render(sb_dyn, format("Usage GFX: %s", usage_gfx));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 /*
-		font.render(sb_dyn, format("Usage Logic: %s", usage_logic));
+		GfxFont.render(sb_dyn, format("Usage Logic: %s", usage_logic));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 
-		font.render(sb_dyn, format("Usage Misc: %s", usage));
+		GfxFont.render(sb_dyn, format("Usage Misc: %s", usage));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 */
-		font.render(sb_dyn, format("Generation: %s", w.gen));
+		GfxFont.render(sb_dyn, format("Generation: %s", w.gen));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 /*
@@ -469,11 +465,11 @@ private:
 			auto altitude = round(car.position.y * 10 - 2.7) / 10;
 
 
-			font.render(sb_dyn, format("  Speed: %s km/h", vel));
+			GfxFont.render(sb_dyn, format("  Speed: %s km/h", vel));
 			d.blit(sb_dyn, x, y);
 			y += 11;
 
-			font.render(sb_dyn, format("  Altitude: %s", altitude));
+			GfxFont.render(sb_dyn, format("  Altitude: %s", altitude));
 			d.blit(sb_dyn, x, y);
 			y += 11;
 		}
