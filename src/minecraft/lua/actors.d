@@ -130,6 +130,9 @@ struct CameraWrapper
 		case "near":
 			s.pushNumber(c.c.near);
 			break;
+		case "ratio":
+			s.pushNumber(c.c.ratio);
+			break;
 		default:
 			s.getMetaTable(1);
 			s.pushValue(2);
@@ -160,6 +163,9 @@ struct CameraWrapper
 			break;
 		case "near":
 			c.c.near = s.toNumber(3);
+			break;
+		case "ratio":
+			c.c.ratio = s.toNumber(3);
 			break;
 		default:
 			s.error("No memeber of that that name");

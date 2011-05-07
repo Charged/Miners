@@ -26,7 +26,11 @@ public:
 	bool light_moveing;
 
 	/* Camera related */
+	GfxProjCamera pcam;
+	GfxIsoCamera icam;
 	GfxCamera cam;
+	GameMover pm;
+	GameMover im;
 	GameMover m;
 	double cam_heading;
 	double cam_pitch;
@@ -40,15 +44,15 @@ public:
 	{
 		this.w = w;
 
+		cam = icam = new GfxIsoCamera(800/16f, 600/16f, -200, 200);
+		m = im = new GameIsoCameraMover(cam);
+
 		GfxDefaultTarget rt = GfxDefaultTarget();
-		cam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, .1, 250);
-		m = new GameProjCameraMover(cam);
+		cam = pcam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, .1, 250);
+		m = pm = new GameProjCameraMover(cam);
 		cam.position = Point3d(0.0, 5.0, 15.0);
 		cam_heading = 0.0;
 		cam_pitch = 0.0;
-
-		//cam = new GfxIsoCamera(800/16f, 600/16f, -200, 200);
-		//m = new GameIsoCameraMover(cam);
 
 		sl = new GfxSimpleLight();
 		// Night
@@ -198,6 +202,13 @@ public:
 			cam_moveing = false;
 		if (button == 3)
 			light_moveing = false;
+	}
+
+	void resize(uint w, uint h)
+	{
+		pcam.ratio = cast(double)w / h;
+		icam.width = w / 16.0;
+		icam.height = h / 16.0;
 	}
 
 	void logic()

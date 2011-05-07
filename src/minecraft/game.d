@@ -147,6 +147,20 @@ protected:
 		}
 	}
 
+	/*
+	 *
+	 * Callback functions
+	 *
+	 */
+
+	void resize(uint w, uint h)
+	{
+		super.resize(w, h);
+
+		if (sr !is null)
+			sr.resize(w, h);
+	}
+
 	void logic()
 	{
 		// This make sure we at least always

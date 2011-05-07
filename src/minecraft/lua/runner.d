@@ -106,6 +106,17 @@ public:
 		delete sl;
 	}
 
+	void resize(uint w, uint h)
+	{
+		s.getGlobalz("resize");
+		s.pushNumber(w);
+		s.pushNumber(h);
+
+		if (s.call(2) == 2) {
+			l.warn(s.toString(-1));
+		}
+	}
+
 	void logic()
 	{
 		s.getGlobalz("logic");
