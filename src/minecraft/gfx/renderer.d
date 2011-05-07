@@ -58,7 +58,7 @@ public:
 		if (textureArraySupported) {
 			material_shader_indexed = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
 								 Helper.materialFragForwardIndexed,
-								 ["vs_position", "vs_data"],
+								 ["vs_position", "vs_data1", "vs_data2"],
 								 ["diffuseTex"]);
 
 			glUseProgram(material_shader_indexed.id);
@@ -69,7 +69,7 @@ public:
 
 		material_shader = GfxShaderMaker(Helper.materialVertCompactMesh,
 						 Helper.materialFragForward,
-						 ["vs_position", "vs_data"],
+						 ["vs_position", "vs_data1", "vs_data2"],
 						 ["diffuseTex"]);
 
 		glUseProgram(material_shader.id);
@@ -219,7 +219,7 @@ public:
 
 		material_shader = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
 						 Helper.materialFragDeferred,
-						 ["vs_position", "vs_data"],
+						 ["vs_position", "vs_data1", "vs_data2"],
 						 ["diffuseTex"]);
 
 		glUseProgram(material_shader.id);
@@ -439,15 +439,16 @@ varying float light;
 varying vec2 uv;
 
 attribute vec4 vs_position;
-attribute vec4 vs_data;
+attribute vec4 vs_data1;
+attribute vec4 vs_data2;
 
 void main()
 {
-	int g = int(vs_data.z);
-	vec3 vs_normal = normals[int(vs_data.z)].xyz;
-	light = 1.0 - vs_data.w * 0.4;
+	int g = int(vs_data1.z);
+	vec3 vs_normal = normals[int(vs_data1.z)].xyz;
+	light = 1.0 - vs_data1.w * 0.4;
 
-	uv = vs_data.xy / 16.0;
+	uv = vs_data1.xy / 16.0 + vs_data2.xy / 256.0;
 
 	// Okay for now, but this should not be done.
 	normal = gl_NormalMatrix * vs_normal;
@@ -461,20 +462,21 @@ varying float light;
 varying vec3 uvi;
 
 attribute vec4 vs_position;
-attribute vec4 vs_data;
+attribute vec4 vs_data1;
+attribute vec4 vs_data2;
 
 uniform vec4 normals[6];
 uniform vec4 uv_mixs[6];
 
 void main()
 {
-	vec3 vs_normal = normals[int(vs_data.z)].xyz;
-	vec4 mixs = uv_mixs[int(vs_data.z)];
+	vec3 vs_normal = normals[int(vs_data1.z)].xyz;
+	vec4 mixs = uv_mixs[int(vs_data1.z)];
 
-	uvi.x = dot(vs_position.xz, mixs.xy);
-	uvi.y = dot(vs_position.zy, mixs.zw) - vs_data.y * 0.5;
-	uvi.z = vs_data.x;
-	light = 1.0 - vs_data.w * 0.4;
+	uvi.x = dot(vs_position.xz, mixs.xy) + vs_data2.x / 16.0;
+	uvi.y = dot(vs_position.zy, mixs.zw) + vs_data2.y / 16.0;
+	uvi.z = vs_data1.x;
+	light = 1.0 - vs_data1.w * 0.4;
 
 	// Okay for now, but this should not be done.
 	normal = gl_NormalMatrix * vs_normal;
