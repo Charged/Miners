@@ -16,6 +16,7 @@ private
 	import charge.phy.phy;
 	import charge.sys.logger;
 	import charge.sys.properties;
+	import charge.sys.file;
 	import charge.sys.resource;
 	import charge.gfx.target;
 	static import std.string;
@@ -143,6 +144,8 @@ public:
 
 	bool init()
 	{
+		initBuiltins();
+
 		Properties p = Properties("settings.ini");
 
 		if (p is null) {
@@ -191,6 +194,16 @@ public:
 	}
 
 private:
+	void initBuiltins()
+	{
+		auto fm = FileManager();
+
+		void[] defaultPicture = import("default.png");
+
+		fm.addBuiltin("res/default.png", defaultPicture);
+		fm.addBuiltin("res/spotlight.png", defaultPicture);
+	}
+
 	void initPhy(Properties p)
 	{
 		version(DynamicODE) {

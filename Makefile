@@ -36,7 +36,7 @@ LDFLAGS ?= -gc
 DDEFINES = -version=DynamicODE
 TARGET = Charge
 CCOMP_FLAGS = -c -o$@ $(CFLAGS)
-DCOMP_FLAGS = -c -w -Isrc $(DDEFINES) -of$@ $(DFLAGS)
+DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
 LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS)
 
 ifeq ($(UNAME),Linux)

@@ -102,7 +102,7 @@ public:
 	this()
 	{
 		color = Color4f.White;
-		//setTexture("tex", "res/test.bmp");
+		super.setTexture("tex", "res/default.png");
 	}
 
 	~this()

@@ -1,0 +1,4 @@
+These files in this directory are linked in at compiled time
+into the binary. The path is change from res/builtin/<name> to
+res/<name> so that its sure that it works. Files on disk have
+priority over builtin files.
