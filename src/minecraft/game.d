@@ -47,6 +47,10 @@ private:
 	int start;
 	int num_frames;
 
+
+	GfxDraw d;
+	GfxDynamicTexture text;
+
 public:
 	mixin SysLogging;
 
@@ -88,6 +92,9 @@ public:
 		}
 
 		start = SDL_GetTicks();
+
+ 		d = new GfxDraw();
+		text = new GfxDynamicTexture("mc/text");
 	}
 
 	~this()
@@ -96,6 +103,9 @@ public:
 		delete gl;
 		delete w;
 		delete rm;
+
+		delete d;
+		text.dereference();
 	}
 
 protected:
@@ -198,24 +208,28 @@ protected:
 
 		auto elapsed = SDL_GetTicks() - start;
 		if (elapsed > 1000) {
-			l.bug("FPS: %s",
-				cast(double)num_frames /
-				(cast(double)elapsed / 1000.0));
-			num_frames = 0;
-
-			l.bug("INFO\n\tgfx:   %# 2.3s%%\n\tgame:  %# 2.3s%%\n"
+			const double MB = 1024 * 1024;
+			char[] info = std.string.format(
+				"FPS: %s\n"
+				"VBO mem: %sMB\n"
+				"Chunk mem: %sMB\n"
+				"Time:\n"
+				"\tgfx:   %# 2.3s%%\n\tgame:  %# 2.3s%%\n"
 				"\tnet:   %# 2.3s%%\n\tidle:  %# 2.3s%%\n"
 				"\tctl:   %# 2.3s%%\n\tbuild: %# 2.3s%%\n"
-				"\tlua:   %# 2.3s%%",
+				"\tlua:   %# 2.3s%%\n",
+				cast(double)num_frames / (cast(double)elapsed / 1000.0),
+				charge.gfx.vbo.VBO.used / MB,
+				Chunk.used_mem / MB,
 				renderTime.calc(elapsed), logicTime.calc(elapsed),
 				networkTime.calc(elapsed), idleTime.calc(elapsed),
 				inputTime.calc(elapsed), buildTime.calc(elapsed),
 				luaTime.calc(elapsed));
 
+			GfxFont.render(text, info);
+
+			num_frames = 0;
 			start = elapsed + start;
-			const double MB = 1024 * 1024;
-			l.bug("Used VBO mem: %sMB", charge.gfx.vbo.VBO.used / MB);
-			l.trace("Used Chunk mem: %sMB", Chunk.used_mem / MB);
 		}
 	}
 
@@ -239,6 +253,13 @@ protected:
 
 		if (rm.aa)
 			dt.resolve(rt);
+
+		debug {
+			d.target = rt;
+
+			d.blit(text, 8, 8);
+		}
+
 		rt.swap();
 	}
 
