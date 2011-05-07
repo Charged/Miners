@@ -104,12 +104,6 @@ public:
 			SDL_Delay(cast(uint)time);
 	}
 
-	void do_network() { networkTime.start(); network(); networkTime.stop(); }
-	void do_render() { renderTime.start(); render(); renderTime.stop(); }
-	void do_logic() { logicTime.start(); logic(); logicTime.stop(); }
-	void do_input() { inputTime.start(); input(); inputTime.stop(); }
-	void do_idle(long time) { idleTime.start(); idle(time); idleTime.stop(); }
-
 	void input()
 	{
 		CtlInput().tick();
@@ -152,6 +146,12 @@ public:
 		close();
 	}
 
+private:
+	void do_network() { networkTime.start(); network(); networkTime.stop(); }
+	void do_render() { renderTime.start(); render(); renderTime.stop(); }
+	void do_logic() { logicTime.start(); logic(); logicTime.stop(); }
+	void do_input() { inputTime.start(); input(); inputTime.stop(); }
+	void do_idle(long time) { idleTime.start(); idle(time); idleTime.stop(); }
 }
 
 class AppTest : public SimpleApp
