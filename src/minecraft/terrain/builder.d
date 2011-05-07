@@ -633,6 +633,18 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
+	void grass(int x, int y, int z) {
+		if (data.get(x, y + 1, z) == 78 /* snow */)
+			solid(78, x, y, z);
+		else
+			solid(2 /* grass */, x, y, z);
+	}
+
+	void wood(int x, int y, int z) {
+		auto dec = &woodTile[data.getDataUnsafe(x, y, z)];
+		solidDec(dec, x, y, z);
+	}
+
 	void glass(uint x, uint y, uint z) {
 		const type = 20;
 		auto dec = &tile[type];
@@ -643,23 +655,6 @@ template BlockDispatcher(alias T)
 			return;
 
 		makeXYZ(dec, x, y, z, set);
-	}
-
-	void grass(int x, int y, int z) {
-		if (data.get(x, y + 1, z) == 78 /* snow */)
-			solid(78, x, y, z);
-		else
-			solid(2 /* grass */, x, y, z);
-	}
-
-	void snow(int x, int y, int z) {
-		// Make snow into full block for now
-		solid(80, x, y, z);
-	}
-
-	void wood(int x, int y, int z) {
-		auto dec = &woodTile[data.getDataUnsafe(x, y, z)];
-		solidDec(dec, x, y, z);
 	}
 
 	void wool(int x, int y, int z) {
@@ -726,6 +721,11 @@ template BlockDispatcher(alias T)
 
 		if (setAlt != 0)
 			makeXYZ(decAlt, x, y, z, setAlt);
+	}
+
+	void snow(int x, int y, int z) {
+		// Make snow into full block for now
+		solid(80, x, y, z);
 	}
 
 	void b(uint x, uint y, uint z) {
