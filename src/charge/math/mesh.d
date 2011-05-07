@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.mesh;
 
+import std.outofmemory;
+
 import charge.sys.file;
 import charge.sys.logger;
 import charge.sys.resource;
@@ -49,8 +51,10 @@ public:
 
 private:
 	mixin Logging;
-	Vertex v[];
-	Triangle t[];
+	Vertex *v;
+	size_t num_verts;
+	Triangle *t;
+	size_t num_tris;
 	Types tp;
 
 public:
@@ -76,19 +80,20 @@ public:
 		return new RigidMesh(p, name, true, verts, tris, type);
 	}
 
-	~this() {
-		v = null;
-		t = null;
+	~this()
+	{
+		std.c.stdlib.free(v);
+		std.c.stdlib.free(t);
 	}
 
 	Vertex[] verts()
 	{
-		return v;
+		return v[0 .. num_verts];
 	}
 
 	Triangle[] tris()
 	{
-		return t;
+		return t[0 .. num_tris];
 	}
 
 	Types type()
@@ -100,9 +105,25 @@ protected:
 	this(Pool p, char[] name, bool tmp, Vertex verts[], Triangle tris[], Types type)
 	{
 		super(p, uri, name, tmp);
-		this.t = tris;
-		this.v = verts;
 		this.tp = type;
+		this.num_verts = verts.length;
+		this.num_tris = tris.length;
+		this.v = cast(Vertex*)std.c.stdlib.malloc(num_verts * Vertex.sizeof);
+		if (tris !is null)
+			this.t = cast(Triangle*)std.c.stdlib.malloc(num_tris * Triangle.sizeof);
+
+		if (v is null || (t is null && tris.length != 0)) {
+			std.c.stdlib.free(v);
+			std.c.stdlib.free(t);
+			throw new std.outofmemory.OutOfMemoryException();
+		}
+
+		v[0 .. num_verts] = verts[0 .. $];
+
+		if (tris !is null)
+			t[0 .. num_tris] = tris[0 .. $];
+		else
+			assert(t is null);
 	}
 
 	static RigidMesh load(Pool p, char[] filename)
@@ -220,6 +241,6 @@ class RigidMeshBuilder
 
 	final RigidMesh build()
 	{
-		return RigidMesh(verts[0 .. iv].dup, tris[0 .. it].dup, type);
+		return RigidMesh(verts[0 .. iv], tris[0 .. it], type);
 	}
 }
