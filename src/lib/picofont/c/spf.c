@@ -16,6 +16,7 @@ extern "C" {
 
 #include "SDL_picofont.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #define FNT_FONTHEIGHT 8
@@ -35,7 +36,7 @@ typedef struct
 	int y;
 }FNT_xy;
 
-FNT_xy FNT_Generate(const char* text, unsigned int len, unsigned int w, unsigned char* pixels)
+FNT_xy FNT_Generate(const char* text, unsigned int len, unsigned int w, unsigned char* pixels, char value)
 {
 	unsigned int i, x, y, col, row, stop;
 	unsigned char *fnt, chr;
@@ -89,7 +90,7 @@ FNT_xy FNT_Generate(const char* text, unsigned int len, unsigned int w, unsigned
 			for(y = 0; y < FNT_FONTHEIGHT; y++){
 				for(x = 0; x < FNT_FONTWIDTH; x++){
 					if(fnt[text[i] * FNT_FONTHEIGHT + y] >> (7 - x) & 1){
-						pixels[((col - 1) * FNT_FONTWIDTH) + x + (y + row * FNT_FONTHEIGHT) * w] = 1;
+						pixels[((col - 1) * FNT_FONTWIDTH) + x + (y + row * FNT_FONTHEIGHT) * w] = value;
 					}
 				}
 			}
@@ -99,61 +100,31 @@ FNT_xy FNT_Generate(const char* text, unsigned int len, unsigned int w, unsigned
 	return xy;
 }
 
-/* XXX: Not used */
-#if 0
-SDL_Surface* FNT_Render(const char* text, SDL_Color color)
+unsigned char* FNT_Render(const char* text, unsigned int *w, unsigned int *h)
 {
-	return FNT_RenderMax(text, strlen(text), color);
+	return FNT_RenderMax(text, strlen(text), w, h);
 }
 
-SDL_Surface* FNT_RenderMax(const char* text, unsigned int len, SDL_Color color)
+unsigned char* FNT_RenderMax(const char* text, unsigned int len, unsigned int *w, unsigned int *h)
 {
-	SDL_Surface* surface;
-	SDL_Color colors[2];
+	unsigned char* pixels;
 	FNT_xy xy;
 
-	colors[0].r = (color.r + 0x7e) % 0xff;
-	colors[0].g = (color.g + 0x7e) % 0xff;
-	colors[0].b = (color.b + 0x7e) % 0xff;
+	xy = FNT_Generate(text, len, 0, NULL, 0);
 
-	colors[1] = color;
-
-	xy = FNT_Generate(text, len, 0, NULL);
-
-	surface = SDL_CreateRGBSurface(
-			SDL_SWSURFACE, 
-			xy.x,
-			xy.y,
-			8,
-			0,
-			0,
-			0,
-			0
-	);
-
-	if(!surface){
+	pixels = malloc(xy.x * xy.y);
+	if (!pixels)
 		return NULL;
-	}
+	memset(pixels, 0, xy.x * xy.y);
 
-	SDL_SetColorKey(surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, (color.r + 0x7e) % 0xff, (color.g + 0x7e) % 0xff, (color.b + 0x7e) % 0xff));
-	/*SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0x0d, 0xea, 0xd0));*/
+	FNT_Generate(text, len, xy.x, pixels, 0xff);
 
-	SDL_SetColors(surface, colors, 0, 2);
+	*w = xy.x;
+	*h = xy.y;
 
-
-	if(SDL_MUSTLOCK(surface)){
-		SDL_LockSurface(surface);
-	}
-
-	FNT_Generate(text, len, surface->w, (unsigned char*)surface->pixels);
-	
-	if(SDL_MUSTLOCK(surface)){
-		SDL_UnlockSurface(surface);
-	}
-
-	return surface;
+	return pixels;
 }
-#endif
+
 
 #ifdef __cplusplus
 };

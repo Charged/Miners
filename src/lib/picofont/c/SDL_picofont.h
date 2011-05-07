@@ -15,13 +15,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* XXX not used */
-#if 0
-#include <SDL.h>
 
-SDL_Surface* FNT_Render(const char* text, SDL_Color color);
-SDL_Surface* FNT_RenderMax(const char* text, unsigned int len, SDL_Color color);
-#endif
+unsigned char* FNT_Render(const char* text, unsigned int *w, unsigned int *h);
+unsigned char* FNT_RenderMax(const char* text, unsigned int len, unsigned int *w, unsigned int *h);
 
 void FNT_GetFontSize(unsigned int *w, unsigned int *h);
 unsigned char* FNT_GetFont();
