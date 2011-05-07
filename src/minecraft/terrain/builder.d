@@ -751,6 +751,14 @@ template BlockDispatcher(alias T)
 		makeQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
 	}
 
+	void farmland(int x, int y, int z) {
+		auto d = data.getDataUnsafe(x, y, z);
+		if (d > 0)
+			d = 1;
+		auto dec = &farmlandTile[d];
+		solidDec(dec, x, y, z);
+	}
+
 	void snow(int x, int y, int z) {
 		// Make snow into full block for now
 		solid(80, x, y, z);
@@ -788,6 +796,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 59:
 				crops(x, y, z);
+				break;
+			case 60:
+				farmland(x, y, z);
 				break;
 			case 78:
 				snow(x, y, z);

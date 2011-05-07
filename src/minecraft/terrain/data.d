@@ -180,3 +180,8 @@ BlockDescriptor cropsTile[8] = [
 	{  false, Stuff, { 14,  5 }, {  0,  5 }, "crops 6" },
 	{  false, Stuff, { 15,  5 }, {  0,  5 }, "crops 7" },
 ];
+
+BlockDescriptor farmlandTile[2] = [
+	{  true, Stuff,     {  2,  0 }, {  7,  5 }, "farmland dry" },          // 0
+	{  true, Stuff,     {  2,  0 }, {  6,  5 }, "farmland wet" },
+];
