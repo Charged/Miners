@@ -50,6 +50,7 @@ private:
 
 	GfxDraw d;
 	GfxDynamicTexture debugText;
+	GfxDynamicTexture cameraText;
 
 public:
 	mixin SysLogging;
@@ -95,6 +96,7 @@ public:
 
  		d = new GfxDraw();
 		debugText = new GfxDynamicTexture("mc/debugText");
+		cameraText = new GfxDynamicTexture("mc/cameraText");
 	}
 
 	~this()
@@ -106,6 +108,7 @@ public:
 
 		delete d;
 		debugText.dereference();
+		cameraText.dereference();
 	}
 
 protected:
@@ -263,8 +266,18 @@ protected:
 
 			auto w = debugText.width + 16;
 			auto h = debugText.height + 16;
+			auto x = rt.width - debugText.width - 16 - 8;
+			d.fill(Color4f(0, 0, 0, .8), true, x, 8, w, h);
+			d.blit(debugText, x+8, 16);
+
+			auto p = camera.position;
+			char[] info = std.string.format("Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
+			GfxFont.render(cameraText, info);
+
+			w = cameraText.width + 16;
+			h = cameraText.height + 16;
 			d.fill(Color4f(0, 0, 0, .8), true, 8, 8, w, h);
-			d.blit(debugText, 16, 16);
+			d.blit(cameraText, 16, 16);
 
 			d.stop();
 		}
