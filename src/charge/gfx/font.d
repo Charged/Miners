@@ -15,6 +15,7 @@ class Font
 public:
 	static void render(DynamicTexture dt, char[] text)
 	{
+		int glTarget = GL_TEXTURE_2D;
 		int glFormat = GL_ALPHA;
 		int glInternalFormat = GL_ALPHA;
 		uint id;
@@ -33,10 +34,14 @@ public:
 		if (!glIsTexture(id))
 			glGenTextures(1, cast(GLuint*)&id);
 
-		glBindTexture(GL_TEXTURE_2D, id);
-		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+		glBindTexture(glTarget, id);
+		glTexParameteri(glTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(glTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameterf(glTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameterf(glTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
 		glTexImage2D(
-			GL_TEXTURE_2D,    //target
+			glTarget,         //target
 			0,                //level
 			glInternalFormat, //internalformat
 			w,                //width
@@ -45,8 +50,8 @@ public:
 			glFormat,         //format
 			GL_UNSIGNED_BYTE, //type
 			pixels);          //pixels
-		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glBindTexture(glTarget, 0);
 
 		dt.update(id, w, h);
 	}
