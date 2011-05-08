@@ -209,3 +209,12 @@ BlockDescriptor jackolanternFrontTile =
 
 BlockDescriptor cactusBottomTile =
 	{ false, Stuff,     {  7,  4 }, {  7,  4 }, "cactus" };
+
+BlockDescriptor leavesTile[] = [
+	{ false, Stuff,     {  4,  3 }, {  4,  3 }, "normal leaves" },
+	{ false, Stuff,     {  4,  8 }, {  4,  8 }, "spruce leaves" },
+
+	// (9,9) and (9,10) are created in applyStaticBiome()
+	{ false, Stuff,     {  9,  9 }, {  9,  9 }, "birch leaves" },
+	{ false, Stuff,     {  9, 10 }, {  9, 10 }, "other leaves" },
+];

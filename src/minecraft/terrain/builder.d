@@ -1068,6 +1068,12 @@ template BlockDispatcher(alias T)
 			emitQuadXZN(x1, x2, y1, y2, z1, z2, tex, normal);
 	}
 
+	void leaves(int x, int y, int z) {
+		auto d = data.getDataUnsafe(x, y, z);
+		auto dec = &leavesTile[d & 3];
+		solidDec(dec, x, y, z);
+	}
+
 	void farmland(int x, int y, int z) {
 		auto d = data.getDataUnsafe(x, y, z);
 		if (d > 0)
@@ -1372,7 +1378,7 @@ template BlockDispatcher(alias T)
 				wood(x, y, z);
 				break;
 			case 18:
-				solid(type, x, y, z);
+				leaves(x, y, z);
 				break;
 			case 20:
 				glass(x, y, z);

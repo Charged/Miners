@@ -180,11 +180,23 @@ protected:
 	{
 		//auto grass = Color4b(88, 190, 55, 255);
 		auto grass = Color4b(102, 180, 68, 255);
-		auto leaves = Color4b(91, 139, 23, 255);
+
+		// These colors are just a guess
+		auto leavesRegular = Color4b(91, 139, 23, 255);
+		auto leavesSpruce = Color4b(83, 107, 73, 255);
+		auto leavesBirch = Color4b(125, 163, 83, 255);
+		auto leavesOther = leavesRegular;
+
+		// Copy to some currently unused texture tiles
+		copyTile(pic, 4, 3, 9, 9); // Birch leaves
+		copyTile(pic, 4, 3, 9, 10); // Other leaves
 
 		modulateColor(pic, 0, 0, grass); // Top grass
 		modulateColor(pic, 6, 2, grass); // Side grass blend
-		modulateColor(pic, 4, 3, leaves); // Tree leaves
+		modulateColor(pic, 4, 3, leavesRegular); // Tree leaves
+		modulateColor(pic, 4, 8, leavesSpruce); // Spruce leaves
+		modulateColor(pic, 9, 9, leavesBirch); // Birch leaves
+		modulateColor(pic, 9, 10, leavesOther); // Other leaves
 
 		// Blend the now colored side grass onto the used side
 		blendTiles(pic, 3, 0, 6, 2);
@@ -205,6 +217,23 @@ protected:
 			for (int y; y < tile_size; y++) {
 				auto ptr = &pic.pixels[(x + tile_x) + (y + tile_y) * pic.width];
 				ptr.modulate(color);
+			}
+		}
+	}
+
+	void copyTile(Picture pic, uint tile_x, uint tile_y, uint newtile_x, uint newtile_y)
+	{
+		uint tile_size = pic.width / 16;
+		tile_x *= tile_size;
+		tile_y *= tile_size;
+		newtile_x *= tile_size;
+		newtile_y *= tile_size;
+
+		for (int x; x < tile_size; x++) {
+			for (int y; y < tile_size; y++) {
+				auto ptr = &pic.pixels[(x + tile_x) + (y + tile_y) * pic.width];
+				auto newptr = &pic.pixels[(x + newtile_x) + (y + newtile_y) * pic.width];
+				*newptr = *ptr;
 			}
 		}
 	}
