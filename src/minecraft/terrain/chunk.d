@@ -50,6 +50,9 @@ public:
 		this.xOff = xPos * 16;
 		this.yOff = -64;
 		this.zOff = zPos * 16;
+
+		// Setup pointers
+		this.empty = true;
 		emptyChunk();
 	}
 
@@ -70,6 +73,7 @@ private:
 	static ~this()
 	{
 		std.c.stdlib.free(empty_blocks);
+		used_mem -= blocks_size;
 	}
 
 	/**
