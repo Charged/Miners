@@ -210,21 +210,24 @@ protected:
 		if (elapsed > 1000) {
 			const double MB = 1024 * 1024;
 			char[] info = std.string.format(
-				"FPS: %s\n"
-				"VBO mem: %sMB\n"
-				"Chunk mem: %sMB\n"
+				"Charge%7.1fFPS\n"
+				"\n"
+				"Memory:\n"
+				"   VBO%7.1fMB\n"
+				" Chunk%7.1fMB\n"
+				"\n"
 				"Time:\n"
-				"\tgfx:   %# 2.3s%%\n\tgame:  %# 2.3s%%\n"
-				"\tnet:   %# 2.3s%%\n\tidle:  %# 2.3s%%\n"
-				"\tctl:   %# 2.3s%%\n\tbuild: %# 2.3s%%\n"
-				"\tlua:   %# 2.3s%%\n",
+				"\tgfx   %5.1f%%\n\tctl   %5.1f%%\n"
+				"\tnet   %5.1f%%\n\tgame  %5.1f%%\n"
+				"\tlua   %5.1f%%\n\tbuild %5.1f%%\n"
+				"\tidle  %5.1f%%",
 				cast(double)num_frames / (cast(double)elapsed / 1000.0),
 				charge.gfx.vbo.VBO.used / MB,
 				Chunk.used_mem / MB,
-				renderTime.calc(elapsed), logicTime.calc(elapsed),
-				networkTime.calc(elapsed), idleTime.calc(elapsed),
-				inputTime.calc(elapsed), buildTime.calc(elapsed),
-				luaTime.calc(elapsed));
+				renderTime.calc(elapsed), inputTime.calc(elapsed),
+				networkTime.calc(elapsed), logicTime.calc(elapsed),
+				luaTime.calc(elapsed), buildTime.calc(elapsed),
+				idleTime.calc(elapsed));
 
 			GfxFont.render(text, info);
 
