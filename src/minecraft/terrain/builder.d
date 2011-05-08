@@ -828,6 +828,51 @@ template BlockDispatcher(alias T)
 			makeQuadYP(x1, x2, y2, z1, z2, tex, 0);
 	}
 
+	void door(ubyte type, int x, int y, int z) {
+		auto dec = &tile[type];
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+		ubyte tex;
+		if (d & 8)
+			// top half
+			tex = calcTextureXZ(dec);
+		else
+			// bottom half
+			tex = calcTextureY(dec);
+
+		bool flip = false;
+		if (d & 4)
+		{
+			d += 1;
+			flip = true;
+		}
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = [x,    x,    x+13, x   ][d & 3];
+		int x2 = [x+3,  x+16, x+16, x+16][d & 3];
+		int y1 = y;
+		int y2 = y+16;
+		int z1 = [z,    z,    z,    z+13][d & 3];
+		int z2 = [z+16, z+3,  z+16, z+16][d & 3];
+
+		if (set & sideMask.ZN)
+			makeQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+		if (set & sideMask.ZP)
+			makeQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+		if (set & sideMask.XN)
+			makeQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+		if (set & sideMask.XP)
+			makeQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
+		if (set & sideMask.YP)
+			makeQuadYP(x1, x2, y2, z1, z2, tex, 0);
+		if (set & sideMask.YN)
+			makeQuadYN(x1, x2, y1, z1, z2, tex, 0);
+	}
+
 	void farmland(int x, int y, int z) {
 		auto d = data.getDataUnsafe(x, y, z);
 		if (d > 0)
@@ -876,6 +921,10 @@ template BlockDispatcher(alias T)
 				break;
 			case 60:
 				farmland(x, y, z);
+				break;
+			case 64:
+			case 71:
+				door(type, x, y, z);
 				break;
 			case 53:
 			case 67:

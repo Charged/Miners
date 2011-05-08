@@ -100,14 +100,14 @@ BlockDescriptor tile[256] = [
 	{  true, DataBlock, { 12,  2 }, { 14,  3 }, "furnace" },
 	{  true, DataBlock, { 13,  3 }, { 14,  3 }, "burning furnace" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "sign post" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "wooden door" },           // 64
+	{ false, Stuff,     {  1,  5 }, {  1,  6 }, "wooden door" },           // 64
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "ladder" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "rails" },
 	{ false, Stuff,     {  0,  1 }, {  0,  1 }, "clobblestone stairs" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "wall sign" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "lever" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "stone pressure plate" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "iron door" },
+	{ false, Stuff,     {  2,  5 }, {  2,  6 }, "iron door" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "wooden pressure plate" }, // 72
 	{  true, Block,     {  3,  3 }, {  3,  3 }, "redostone ore" },
 	{  true, Block,     {  3,  3 }, {  3,  3 }, "glowing rstone ore" },
