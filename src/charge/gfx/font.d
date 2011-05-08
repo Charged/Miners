@@ -40,16 +40,29 @@ public:
 		glTexParameterf(glTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameterf(glTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-		glTexImage2D(
-			glTarget,         //target
-			0,                //level
-			glInternalFormat, //internalformat
-			w,                //width
-			h,                //height
-			0,                //border
-			glFormat,         //format
-			GL_UNSIGNED_BYTE, //type
-			pixels);          //pixels
+		if (dt.width != w || dt.height != h) {
+			glTexImage2D(
+				glTarget,         //target
+				0,                //level
+				glInternalFormat, //internalformat
+				w,                //width
+				h,                //height
+				0,                //border
+				glFormat,         //format
+				GL_UNSIGNED_BYTE, //type
+				pixels);          //pixels
+		} else {
+			glTexSubImage2D(
+				glTarget,         //target
+				0,                //level
+				0,		  //xoffset
+				0,                //yoffset
+				w,                //width
+				h,                //height
+				glFormat,         //format
+				GL_UNSIGNED_BYTE, //type
+				pixels);          //pixels
+		}
 
 		glBindTexture(glTarget, 0);
 
