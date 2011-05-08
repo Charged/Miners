@@ -49,7 +49,7 @@ private:
 
 
 	GfxDraw d;
-	GfxDynamicTexture text;
+	GfxDynamicTexture debugText;
 
 public:
 	mixin SysLogging;
@@ -94,7 +94,7 @@ public:
 		start = SDL_GetTicks();
 
  		d = new GfxDraw();
-		text = new GfxDynamicTexture("mc/text");
+		debugText = new GfxDynamicTexture("mc/debugText");
 	}
 
 	~this()
@@ -105,7 +105,7 @@ public:
 		delete rm;
 
 		delete d;
-		text.dereference();
+		debugText.dereference();
 	}
 
 protected:
@@ -229,7 +229,7 @@ protected:
 				luaTime.calc(elapsed), buildTime.calc(elapsed),
 				idleTime.calc(elapsed));
 
-			GfxFont.render(text, info);
+			GfxFont.render(debugText, info);
 
 			num_frames = 0;
 			start = elapsed + start;
@@ -259,8 +259,14 @@ protected:
 
 		debug {
 			d.target = rt;
+			d.start();
 
-			d.blit(text, 8, 8);
+			auto w = debugText.width + 16;
+			auto h = debugText.height + 16;
+			d.fill(Color4f(0, 0, 0, .8), true, 8, 8, w, h);
+			d.blit(debugText, 16, 16);
+
+			d.stop();
 		}
 
 		rt.swap();

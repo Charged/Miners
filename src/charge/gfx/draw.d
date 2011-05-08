@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.draw;
 
+import charge.math.color;
 import charge.sys.logger;
 import charge.gfx.texture;
 import charge.gfx.target;
@@ -10,7 +11,7 @@ import charge.gfx.gl;
 /**
  * Provides simple 2d rendering functionallity
  */
-class Draw
+final class Draw
 {
 private:
 	mixin Logging;
@@ -22,10 +23,20 @@ public:
 
 	}
 
+	void target(RenderTarget rt)
+	{
+		this.rt = rt;
+	}
+
+	RenderTarget target()
+	{
+		return rt;
+	}
+
 	/**
-	 * Blit entire texture to set target
+	 * Start drawing operations.
 	 */
-	void blit(Texture t, int x, int y)
+	void start()
 	{
 		if (rt is null)
 			return;
@@ -41,40 +52,104 @@ public:
 
 		glActiveTexture(GL_TEXTURE0);
 
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, t.id);
-
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluOrtho2D(0.0, rt.width, rt.height, 0.0);
+	}
 
-		glColor4f(1.0, 1.0, 1.0, 1.0);
+	/**
+	 * Start drawing operations.
+	 */
+	void stop()
+	{
+		if (rt is null)
+			return;
+
+		glDisable(GL_BLEND);
+	}
+
+	/**
+	 * Blit entire texture to set target
+	 */
+	void blit(Texture t, int x, int y)
+	{
+		blit(t, Color4f.White, true, x, y);
+	}
+
+	/**
+	 * Blit entire texture to set target
+	 */
+	void blit(Texture t, bool blend, int x, int y)
+	{
+		blit(t, Color4f.White, blend, x, y);
+	}
+
+	/**
+	 * Blit entire texture to set target, blend with given color.
+	 */
+	void blit(Texture t, Color4f color, bool blend, int x, int y)
+	{
+		if (rt is null || t is null)
+			return;
+
+		blit(t, color, blend,
+		     0, 0, t.width, t.height,
+		     x, y, t.width, t.height
+		     );
+	}
+
+	void blit(Texture t, Color4f color, bool blend,
+		  int srcX, int srcY, uint srcW, uint srcH,
+		  int dstX, int dstY, uint dstW, uint dstH)
+	{
+		if (rt is null || t is null || !t.width || !t.height)
+			return;
+
+		if (blend)
+			glEnable(GL_BLEND);
+		else
+			glDisable(GL_BLEND);
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, t.id);
+
+		float srcX1, srcX2, srcY1, srcY2;
+		srcX1 = cast(float)srcX / t.width;
+		srcY1 = cast(float)srcY / t.height;
+		srcX2 = cast(float)(srcX + srcW) / t.width;
+		srcY2 = cast(float)(srcY + srcH) / t.height;
+
+		glColor4fv(color.ptr);
 		glBegin(GL_QUADS);
-		glTexCoord2f(0.0,         0.0         );
-		glVertex2f  (x,           y           );
-		glTexCoord2f(0.0,         1.0         );
-		glVertex2f  (x,           y + t.height);
-		glTexCoord2f(1.0,         1.0         );
-		glVertex2f  (x + t.width, y + t.height);
-		glTexCoord2f(1.0,         0.0         );
-		glVertex2f  (x + t.width, y           );
+		glTexCoord2f(      srcX1,       srcY1);
+		glVertex2f  (       dstX,        dstY);
+		glTexCoord2f(      srcX1,       srcY2);
+		glVertex2f  (       dstX, dstY + dstH);
+		glTexCoord2f(      srcX2,       srcY2);
+		glVertex2f  (dstX + dstW, dstY + dstH);
+		glTexCoord2f(      srcX2,       srcY1);
+		glVertex2f  (dstX + dstW,        dstY);
 		glEnd();
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
 	}
 
-	void target(RenderTarget rt)
+	void fill(Color4f color, bool blend, int x, int y, uint w, uint h)
 	{
-		this.rt = rt;
-	}
+		if (blend)
+			glEnable(GL_BLEND);
+		else
+			glDisable(GL_BLEND);
 
-	RenderTarget target()
-	{
-		return rt;
+		glColor4fv(color.ptr);
+		glBegin(GL_QUADS);
+		glVertex2f(    x,     y);
+		glVertex2f(    x, y + h);
+		glVertex2f(x + w, y + h);
+		glVertex2f(x + w,     y);
+		glEnd();
 	}
-
 }
