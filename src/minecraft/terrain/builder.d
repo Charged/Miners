@@ -154,6 +154,15 @@ alias uvCorner.UV_BOTTOM_RIGHT UV_BOTTOM_RIGHT;
 const VERTEX_SIZE_BIT_SHIFT = 4;
 const VERTEX_SIZE_DIVISOR = 16;
 
+/* For use together with solid set */
+enum sideMask {
+     XN = 1 << 0,
+     XP = 1 << 1,
+     YN = 1 << 2,
+     YP = 1 << 3,
+     ZN = 1 << 4,
+     ZP = 1 << 5
+}
 
 /**
  * Convinience function for texture array
@@ -533,22 +542,22 @@ template QuadBuilder(alias T)
 
 	void makeXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
 	{
-		if (set & 1)
+		if (set & sideMask.XN)
 			makeXZ(dec, x, y, z, true, true);
 
-		if (set & 2)
+		if (set & sideMask.XP)
 			makeXZ(dec, x, y, z, false, true);
 
-		if (set & 4)
+		if (set & sideMask.YN)
 			makeY(dec, x, y, z, true);
 
-		if (set & 8)
+		if (set & sideMask.YP)
 			makeY(dec, x, y, z, false);
 
-		if (set & 16)
+		if (set & sideMask.ZN)
 			makeXZ(dec, x, y, z, true, false);
 
-		if (set & 32)
+		if (set & sideMask.ZP)
 			makeXZ(dec, x, y, z, false, false);
 	}
 
@@ -627,22 +636,21 @@ template QuadBuilder(alias T)
 
 	void makeHalfXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
 	{
-		if (set & 1)
+		if (set & sideMask.XN)
 			makeHalfXZ(dec, x, y, z, true, true);
 
-		if (set & 2)
+		if (set & sideMask.XP)
 			makeHalfXZ(dec, x, y, z, false, true);
 
-		if (set & 4)
+		if (set & sideMask.YN)
 			makeY(dec, x, y, z, true);
 
-		if (set & 8)
-			makeHalfY(dec, x, y, z);
+		makeHalfY(dec, x, y, z);
 
-		if (set & 16)
+		if (set & sideMask.ZN)
 			makeHalfXZ(dec, x, y, z, true, false);
 
-		if (set & 32)
+		if (set & sideMask.ZP)
 			makeHalfXZ(dec, x, y, z, false, false);
 	}
 
@@ -999,22 +1007,22 @@ template QuadBuilderNonShifted(alias T)
 
 	void makeXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
 	{
-		if (set & 1)
+		if (set & sideMask.XN)
 			makeXZ(dec, x, y, z, true, true);
 
-		if (set & 2)
+		if (set & sideMask.XP)
 			makeXZ(dec, x, y, z, false, true);
 
-		if (set & 4)
+		if (set & sideMask.YN)
 			makeY(dec, x, y, z, true);
 
-		if (set & 8)
+		if (set & sideMask.YP)
 			makeY(dec, x, y, z, false);
 
-		if (set & 16)
+		if (set & sideMask.ZN)
 			makeXZ(dec, x, y, z, true, false);
 
-		if (set & 32)
+		if (set & sideMask.ZP)
 			makeXZ(dec, x, y, z, false, false);
 	}
 }
