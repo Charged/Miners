@@ -873,6 +873,33 @@ template BlockDispatcher(alias T)
 			makeQuadYN(x1, x2, y1, z1, z2, tex, 0);
 	}
 
+	void ladder(ubyte type, int x, int y, int z) {
+		auto dec = &tile[type];
+		auto d = data.getDataUnsafe(x, y, z);
+		ubyte tex = calcTextureXZ(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		d -= 2;
+
+		int x1 = [x,    x,    x+15, x+1 ][d];
+		int x2 = [x+16, x+16, x+15, x+1 ][d];
+		int y1 = y;
+		int y2 = y+16;
+		int z1 = [z+15, z+1,  z,    z   ][d];
+		int z2 = [z+15, z+1,  z+16, z+16][d];
+		int normal = [5, 4, 3, 2][d];
+		bool positive = [false, true, false, true][d];
+
+		if (positive)
+			makeQuadXZP(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
+		else
+			makeQuadXZN(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
+	}
+
 	void farmland(int x, int y, int z) {
 		auto d = data.getDataUnsafe(x, y, z);
 		if (d > 0)
@@ -925,6 +952,9 @@ template BlockDispatcher(alias T)
 			case 64:
 			case 71:
 				door(type, x, y, z);
+				break;
+			case 65:
+				ladder(type, x, y, z);
 				break;
 			case 53:
 			case 67:
