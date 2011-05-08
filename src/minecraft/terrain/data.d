@@ -103,7 +103,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "wooden door" },           // 64
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "ladder" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "rails" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "clobblestone stairs" },
+	{ false, Stuff,     {  0,  1 }, {  0,  1 }, "clobblestone stairs" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "wall sign" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "lever" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "stone pressure plate" },

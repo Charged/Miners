@@ -796,6 +796,38 @@ template BlockDispatcher(alias T)
 		makeQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
 	}
 
+	void stair(ubyte type, int x, int y, int z) {
+		auto dec = &tile[type];
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+		ubyte tex = calcTextureXZ(dec);
+
+		makeHalfXYZ(dec, x, y, z, set);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = [x+8,  x,    x,    x   ][d];
+		int x2 = [x+16, x+8,  x+16, x+16][d];
+		int y1 = y+8;
+		int y2 = y+16;
+		int z1 = [z,    z,    z+8,  z   ][d];
+		int z2 = [z+16, z+16, z+16, z+8 ][d];
+
+		if (set & sideMask.ZN)
+			makeQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+		if (set & sideMask.ZP)
+			makeQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+		if (set & sideMask.XN)
+			makeQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+		if (set & sideMask.XP)
+			makeQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
+		if (set & sideMask.YP)
+			makeQuadYP(x1, x2, y2, z1, z2, tex, 0);
+	}
+
 	void farmland(int x, int y, int z) {
 		auto d = data.getDataUnsafe(x, y, z);
 		if (d > 0)
@@ -844,6 +876,10 @@ template BlockDispatcher(alias T)
 				break;
 			case 60:
 				farmland(x, y, z);
+				break;
+			case 53:
+			case 67:
+				stair(type, x, y, z);
 				break;
 			case 78:
 				snow(x, y, z);
