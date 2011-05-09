@@ -169,7 +169,8 @@ public:
 		}
 
 		if (vt.cvga !is null) {
-			cva = buildArrayFromChunk(this);
+			// TODO: Disabled for now
+			cva = null;//buildArrayFromChunk(this);
 			if (cva !is null)
 				vt.cvga.add(cva, xPos, zPos);
 		}
