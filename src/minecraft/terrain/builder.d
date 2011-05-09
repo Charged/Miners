@@ -12,32 +12,23 @@ import minecraft.terrain.chunk;
 import minecraft.terrain.workspace;
 
 
-/*
+/**
  * Should the packer manipulate the coords in any way.
  */
-enum uvManipulation {
-	UV_NONE,
-	UV_HALF_V,
-	UV_FLIP_V,
-	UV_FLIP_U,
+enum uvManip {
+	NONE,
+	HALF_V,
 }
 
-alias uvManipulation.UV_NONE UV_NONE;
-alias uvManipulation.UV_HALF_V UV_HALF_V;
-alias uvManipulation.UV_FLIP_V UV_FLIP_V;
-alias uvManipulation.UV_FLIP_U UV_FLIP_U;
-
+/**
+ * Which corner of the uv map is this vertex in.
+ */
 enum uvCorner {
-	UV_TOP_LEFT = 0,
-	UV_TOP_RIGHT = 1,
-	UV_BOTTOM_LEFT = 2,
-	UV_BOTTOM_RIGHT = 3,
+	TOP_LEFT,
+	TOP_RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM_RIGHT
 };
-
-alias uvCorner.UV_TOP_LEFT UV_TOP_LEFT;
-alias uvCorner.UV_TOP_RIGHT UV_TOP_RIGHT;
-alias uvCorner.UV_BOTTOM_LEFT UV_BOTTOM_LEFT;
-alias uvCorner.UV_BOTTOM_RIGHT UV_BOTTOM_RIGHT;
 
 /*
  * Used to convert a chunk block coord into a int and back to a float.
@@ -47,7 +38,9 @@ alias uvCorner.UV_BOTTOM_RIGHT UV_BOTTOM_RIGHT;
 const VERTEX_SIZE_BIT_SHIFT = 4;
 const VERTEX_SIZE_DIVISOR = 16;
 
-/* For use together with solid set */
+/**
+ * For use together with solid set
+ */
 enum sideMask {
      XN = 1 << 0,
      XP = 1 << 1,
@@ -188,7 +181,7 @@ template MeshPacker()
 
 		mixin PositionCalculator!();
 
-		if (manip == UV_HALF_V & (uv_off >> 1))
+		if (manip == uvManip.HALF_V & (uv_off >> 1))
 			v -= (1 / 16.0f) / 2;
 
 		mb.vert(xF, yF, zF, u, v, nx, ny, nz);
@@ -224,7 +217,7 @@ template CompactMeshPacker()
 		verts[iv].light = light;
 		verts[iv].texture_u_offset = 0;
 		verts[iv].texture_v_offset =
-			cast(ubyte)(uv_off & 2 && manip == UV_HALF_V ? -8 : 0);
+			cast(ubyte)(uv_off & 2 && manip == uvManip.HALF_V ? -8 : 0);
 		verts[iv].torch_light = 0;
 		verts[iv].sun_light = 0;
 		iv++;
@@ -257,7 +250,7 @@ template CompactMeshPackerIndexed()
 		verts[iv].light = light;
 		verts[iv].texture_u_offset = 0;
 		verts[iv].texture_v_offset =
-			cast(ubyte)(manip == UV_HALF_V ? 8 : 0);
+			cast(ubyte)(manip == uvManip.HALF_V ? 8 : 0);
 		verts[iv].torch_light = 0;
 		verts[iv].sun_light = 0;
 		iv++;
@@ -275,60 +268,60 @@ template QuadEmitter(alias T)
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			  ubyte texture, ubyte normal)
 	{
-		pack(x1, y, z1, texture, c1/*ao124*/, normal, UV_TOP_LEFT, UV_NONE);
-		pack(x1, y, z2, texture, c2/*ao467*/, normal, UV_BOTTOM_LEFT, UV_NONE);
-		pack(x2, y, z2, texture, c3/*ao578*/, normal, UV_BOTTOM_RIGHT, UV_NONE);
-		pack(x2, y, z1, texture, c4/*ao235*/, normal, UV_TOP_RIGHT, UV_NONE);
+		pack(x1, y, z1, texture, c1/*ao124*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x1, y, z2, texture, c2/*ao467*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x2, y, z2, texture, c3/*ao578*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x2, y, z1, texture, c4/*ao235*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
 	}
 
 	void makeQuadAOYN(int x1, int x2, int y, int z1, int z2,
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			  ubyte texture, ubyte normal)
 	{
-		pack(x1, y, z1, texture, c1/*ao124*/, normal, UV_TOP_LEFT, UV_NONE);
-		pack(x2, y, z1, texture, c2/*ao235*/, normal, UV_TOP_RIGHT, UV_NONE);
-		pack(x2, y, z2, texture, c3/*ao578*/, normal, UV_BOTTOM_RIGHT, UV_NONE);
-		pack(x1, y, z2, texture, c4/*ao467*/, normal, UV_BOTTOM_LEFT, UV_NONE);
+		pack(x1, y, z1, texture, c1/*ao124*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x2, y, z1, texture, c2/*ao235*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x2, y, z2, texture, c3/*ao578*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x1, y, z2, texture, c4/*ao467*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
 	void makeQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
-		pack(x2, y1, z1, texture, c1/*ao124*/, normal, UV_BOTTOM_RIGHT, UV_NONE);
-		pack(x2, y2, z1, texture, c2/*ao467*/, normal, UV_TOP_RIGHT, UV_NONE);
-		pack(x1, y2, z2, texture, c3/*ao578*/, normal, UV_TOP_LEFT, UV_NONE);
-		pack(x1, y1, z2, texture, c4/*ao235*/, normal, UV_BOTTOM_LEFT, UV_NONE);
+		pack(x2, y1, z1, texture, c1/*ao124*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x2, y2, z1, texture, c2/*ao467*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x1, y2, z2, texture, c3/*ao578*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x1, y1, z2, texture, c4/*ao235*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
 	void makeQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
-		pack(x1, y1, z2, texture, c1/*ao235*/, normal, UV_BOTTOM_RIGHT, UV_NONE);
-		pack(x1, y2, z2, texture, c2/*ao578*/, normal, UV_TOP_RIGHT, UV_NONE);
-		pack(x2, y2, z1, texture, c3/*ao467*/, normal, UV_TOP_LEFT, UV_NONE);
-		pack(x2, y1, z1, texture, c4/*ao124*/, normal, UV_BOTTOM_LEFT, UV_NONE);
+		pack(x1, y1, z2, texture, c1/*ao235*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x1, y2, z2, texture, c2/*ao578*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x2, y2, z1, texture, c3/*ao467*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x2, y1, z1, texture, c4/*ao124*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
 	void makeHalfQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
-		pack(x2, y1, z1, texture, c1/*ao124*/, normal, UV_BOTTOM_RIGHT, UV_HALF_V);
-		pack(x2, y2, z1, texture, c2/*ao467*/, normal, UV_TOP_RIGHT, UV_HALF_V);
-		pack(x1, y2, z2, texture, c3/*ao578*/, normal, UV_TOP_LEFT, UV_HALF_V);
-		pack(x1, y1, z2, texture, c4/*ao235*/, normal, UV_BOTTOM_LEFT, UV_HALF_V);
+		pack(x2, y1, z1, texture, c1/*ao124*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
+		pack(x2, y2, z1, texture, c2/*ao467*/, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
+		pack(x1, y2, z2, texture, c3/*ao578*/, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
+		pack(x1, y1, z2, texture, c4/*ao235*/, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
 	}
 
 	void makeHalfQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
-		pack(x1, y1, z2, texture, c1/*ao235*/, normal, UV_BOTTOM_RIGHT, UV_HALF_V);
-		pack(x1, y2, z2, texture, c2/*ao578*/, normal, UV_TOP_RIGHT, UV_HALF_V);
-		pack(x2, y2, z1, texture, c3/*ao467*/, normal, UV_TOP_LEFT, UV_HALF_V);
-		pack(x2, y1, z1, texture, c4/*ao124*/, normal, UV_BOTTOM_LEFT, UV_HALF_V);
+		pack(x1, y1, z2, texture, c1/*ao235*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
+		pack(x1, y2, z2, texture, c2/*ao578*/, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
+		pack(x2, y2, z1, texture, c3/*ao467*/, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
+		pack(x2, y1, z1, texture, c4/*ao124*/, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
 	}
 
 	void makeQuadYP(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
