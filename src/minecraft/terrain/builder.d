@@ -39,15 +39,59 @@ const VERTEX_SIZE_BIT_SHIFT = 4;
 const VERTEX_SIZE_DIVISOR = 16;
 
 /**
+ * The normal of a side.
+ */
+enum sideNormal : ubyte {
+     XN = 0,
+     XP = 1,
+     YN = 2,
+     YP = 3,
+     ZN = 4,
+     ZP = 5,
+}
+
+/**
+ * Does the normal point alongside the axis.
+ */
+bool isNormalPositive(sideNormal normal)
+{
+	return cast(bool)(normal & 1);
+}
+
+/**
+ * Is the normal parallel to the X axis.
+ */
+bool isNormalX(sideNormal normal)
+{
+	return !(normal & 6);
+}
+
+/**
+ * Is the normal parallel to the Y axis.
+ */
+bool isNormalY(sideNormal normal)
+{
+	return !!(normal & 2);
+}
+
+/**
+ * Is the normal parallel to the Z axis.
+ */
+bool isNormalZ(sideNormal normal)
+{
+	return !!(normal & 4);
+}
+
+/**
  * For use together with solid set
  */
 enum sideMask {
-     XN = 1 << 0,
-     XP = 1 << 1,
-     YN = 1 << 2,
-     YP = 1 << 3,
-     ZN = 1 << 4,
-     ZP = 1 << 5
+     XN = 1 << sideNormal.XN,
+     XP = 1 << sideNormal.XP,
+     YN = 1 << sideNormal.YN,
+     YP = 1 << sideNormal.YP,
+     ZN = 1 << sideNormal.ZN,
+     ZP = 1 << sideNormal.ZP
 }
 
 /**
@@ -147,7 +191,8 @@ template ArrayPacker()
 	int *verts;
 	int num;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, int manip)
+	void pack(int x, int y, int z, ubyte texture, ubyte light,
+		  sideNormal normal, ubyte uv_off, int manip)
 	{
 		int high = (x << 0) | (normal << 5) | (texture << 8);
 		int low = (z << 0) | (y << 5) | (light << 12);
@@ -167,17 +212,18 @@ template MeshPacker()
 	int yOff;
 	int zOff;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, int manip)
+	void pack(int x, int y, int z, ubyte texture, ubyte light,
+		  sideNormal normal, ubyte uv_off, int manip)
 	{
 		float u = (texture % 16 + uv_off % 2) / 16.0f;
 		float v = (texture / 16 + uv_off / 2) / 16.0f;
-		int minus = normal & 1;
-		int nx = (normal&2)>>1;
-		int nz = (normal&4)>>2;
-		int ny = !nx & !nz;
-		nx = (nx & !minus) -(nx & minus);
-		ny = (ny & !minus) -(ny & minus);
-		nz = (nz & !minus) -(nz & minus);
+		int positive = isNormalPositive(normal);
+		int nx = isNormalX(normal);
+		int nz = isNormalY(normal);
+		int ny = isNormalZ(normal);
+		nx = (nx & positive) -(nx & !positive);
+		ny = (ny & positive) -(ny & !positive);
+		nz = (nz & positive) -(nz & !positive);
 
 		mixin PositionCalculator!();
 
@@ -201,7 +247,8 @@ template CompactMeshPacker()
 	int yOff;
 	int zOff;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, int manip)
+	void pack(int x, int y, int z, ubyte texture, ubyte light,
+		  sideNormal normal, ubyte uv_off, int manip)
 	{
 		ubyte u = (texture % 16 + uv_off % 2);
 		ubyte v = (texture / 16 + uv_off / 2);
@@ -266,7 +313,7 @@ template QuadEmitter(alias T)
 
 	void emitQuadAOYP(int x1, int x2, int y, int z1, int z2,
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			  ubyte texture, ubyte normal)
+			  ubyte texture, sideNormal normal)
 	{
 		pack(x1, y, z1, texture, c1/*ao124*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
 		pack(x1, y, z2, texture, c2/*ao467*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
@@ -276,7 +323,7 @@ template QuadEmitter(alias T)
 
 	void emitQuadAOYN(int x1, int x2, int y, int z1, int z2,
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			  ubyte texture, ubyte normal)
+			  ubyte texture, sideNormal normal)
 	{
 		pack(x1, y, z1, texture, c1/*ao124*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
 		pack(x2, y, z1, texture, c2/*ao235*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
@@ -286,7 +333,7 @@ template QuadEmitter(alias T)
 
 	void emitQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			   ubyte texture, ubyte normal)
+			   ubyte texture, sideNormal normal)
 	{
 		pack(x2, y1, z1, texture, c1/*ao124*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
 		pack(x2, y2, z1, texture, c2/*ao467*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
@@ -296,7 +343,7 @@ template QuadEmitter(alias T)
 
 	void emitQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			   ubyte texture, ubyte normal)
+			   ubyte texture, sideNormal normal)
 	{
 		pack(x1, y1, z2, texture, c1/*ao235*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
 		pack(x1, y2, z2, texture, c2/*ao578*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
@@ -306,7 +353,7 @@ template QuadEmitter(alias T)
 
 	void emitHalfQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			   ubyte texture, ubyte normal)
+			   ubyte texture, sideNormal normal)
 	{
 		pack(x2, y1, z1, texture, c1/*ao124*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
 		pack(x2, y2, z1, texture, c2/*ao467*/, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
@@ -316,7 +363,7 @@ template QuadEmitter(alias T)
 
 	void emitHalfQuadAOXZM(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			   ubyte texture, ubyte normal)
+			   ubyte texture, sideNormal normal)
 	{
 		pack(x1, y1, z2, texture, c1/*ao235*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
 		pack(x1, y2, z2, texture, c2/*ao578*/, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
@@ -324,24 +371,26 @@ template QuadEmitter(alias T)
 		pack(x2, y1, z1, texture, c4/*ao124*/, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
 	}
 
-	void emitQuadYP(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
+	void emitQuadYP(int x1, int x2, int y, int z1, int z2,
+			ubyte tex, sideNormal normal)
 	{
 		emitQuadAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
 
-	void emitQuadYN(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
+	void emitQuadYN(int x1, int x2, int y, int z1, int z2,
+			ubyte tex, sideNormal normal)
 	{
 		emitQuadAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
 
 	void emitQuadXZP(int x1, int x2, int y1, int y2, int z1, int z2,
-			 ubyte tex, ubyte normal)
+			 ubyte tex, sideNormal normal)
 	{
 		emitQuadAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
 
 	void emitQuadXZN(int x1, int x2, int y1, int y2, int z1, int z2,
-			 ubyte tex, ubyte normal)
+			 ubyte tex, sideNormal normal)
 	{
 		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
@@ -356,8 +405,9 @@ template QuadBuilder(alias T)
 {
 	mixin QuadEmitter!(T);
 
-	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, bool minus)
+	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
 	{
+		bool minus = normal == sideNormal.YN ? true : false;
 		auto aoy = y - minus + !minus;
 		mixin AOScannerY!();
 		mixin AOCalculator!();
@@ -366,7 +416,6 @@ template QuadBuilder(alias T)
 		int z1 = z, z2 = z+1;
 		y += !minus;
 
-		ubyte normal = minus;
 		ubyte texture = calcTextureY(dec);
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
@@ -387,8 +436,10 @@ template QuadBuilder(alias T)
 		}
 	}
 
-	void makeXZ(BlockDescriptor *dec, uint x, uint y, uint z, bool minus, bool xaxis)
+	void makeXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
 	{
+		bool minus = !isNormalPositive(normal);
+		bool xaxis = isNormalX(normal);
 		bool xm = !minus & xaxis;
 		bool zm = !minus & !xaxis;
 		int xs = xaxis ? x - minus + !minus : x;
@@ -404,7 +455,6 @@ template QuadBuilder(alias T)
 		int y1 = y   , y2 = y+1;
 		int z1 = z+zm, z2 = z+zm+xaxis;
 
-		ubyte normal = cast(ubyte)((xaxis ? 2 : 4) | minus);
 		ubyte texture = calcTextureXZ(dec);
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
@@ -429,22 +479,22 @@ template QuadBuilder(alias T)
 	void makeXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
 	{
 		if (set & sideMask.XN)
-			makeXZ(dec, x, y, z, true, true);
+			makeXZ(dec, x, y, z, sideNormal.XN);
 
 		if (set & sideMask.XP)
-			makeXZ(dec, x, y, z, false, true);
+			makeXZ(dec, x, y, z, sideNormal.XP);
 
 		if (set & sideMask.YN)
-			makeY(dec, x, y, z, true);
+			makeY(dec, x, y, z, sideNormal.YN);
 
 		if (set & sideMask.YP)
-			makeY(dec, x, y, z, false);
+			makeY(dec, x, y, z, sideNormal.YP);
 
 		if (set & sideMask.ZN)
-			makeXZ(dec, x, y, z, true, false);
+			makeXZ(dec, x, y, z, sideNormal.ZN);
 
 		if (set & sideMask.ZP)
-			makeXZ(dec, x, y, z, false, false);
+			makeXZ(dec, x, y, z, sideNormal.ZP);
 	}
 
 	void makeHalfY(BlockDescriptor *dec, uint x, uint y, uint z)
@@ -469,11 +519,14 @@ template QuadBuilder(alias T)
 
 		emitQuadAOYP(x1, x2, y, z1, z2,
 			     ao124, ao467, ao578, ao235,
-			     texture, 0);
+			     texture, sideNormal.YP);
 	}
 
-	void makeHalfXZ(BlockDescriptor *dec, uint x, uint y, uint z, bool minus, bool xaxis)
+	void makeHalfXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
 	{
+		bool minus = !isNormalPositive(normal);
+		bool xaxis = isNormalX(normal);
+
 		bool xm = !minus & xaxis;
 		bool zm = !minus & !xaxis;
 		int xs = xaxis ? x - minus + !minus : x;
@@ -498,7 +551,6 @@ template QuadBuilder(alias T)
 		int y1 = y   , y2;
 		int z1 = z+zm, z2 = z+zm+xaxis;
 
-		ubyte normal = cast(ubyte)((xaxis ? 2 : 4) | minus);
 		ubyte texture = calcTextureXZ(dec);
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
@@ -523,21 +575,21 @@ template QuadBuilder(alias T)
 	void makeHalfXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
 	{
 		if (set & sideMask.XN)
-			makeHalfXZ(dec, x, y, z, true, true);
+			makeHalfXZ(dec, x, y, z, sideNormal.XN);
 
 		if (set & sideMask.XP)
-			makeHalfXZ(dec, x, y, z, false, true);
+			makeHalfXZ(dec, x, y, z, sideNormal.XP);
 
 		if (set & sideMask.YN)
-			makeY(dec, x, y, z, true);
+			makeY(dec, x, y, z, sideNormal.YN);
 
 		makeHalfY(dec, x, y, z);
 
 		if (set & sideMask.ZN)
-			makeHalfXZ(dec, x, y, z, true, false);
+			makeHalfXZ(dec, x, y, z, sideNormal.ZN);
 
 		if (set & sideMask.ZP)
-			makeHalfXZ(dec, x, y, z, false, false);
+			makeHalfXZ(dec, x, y, z, sideNormal.ZP);
 	}
 
 }
@@ -627,14 +679,14 @@ template BlockDispatcher(alias T)
 		int y1 = y,   y2 = y+16;
 		int z1 = z+9, z2 = z+7;
 
-		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
-		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
+		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZP);
 
 		x1 = x+9; x2 = x+7;
 		z1 = z;   z2 = z+16;
 
-		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
-		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
+		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, sideNormal.XP);
 	}
 
 	void craftingTable(uint x, uint y, uint z) {
@@ -666,20 +718,23 @@ template BlockDispatcher(alias T)
 		// TODO Crops should be offset 1/16 of a block.
 		int x1 = x,    x2 = x+16;
 		int y1 = y,    y2 = y+16;
-		int z1 = z+12, z2 = z+4;
 
-		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
-		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
-		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
-		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
+		int z1 = z+4;
+		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZP);
+		int z2 = z+12;
+		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
 
-		x1 = x+12; x2 = x+4;
-		z1 = z;    z2 = z+16;
+		z1 = z; z2 = z+16;
 
-		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
-		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
-		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
-		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
+		x1 = x+4;
+		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, sideNormal.XP);
+
+		x2 = x+12;
+		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
 	}
 
 	void stair(ubyte type, int x, int y, int z) {
@@ -703,15 +758,15 @@ template BlockDispatcher(alias T)
 		int z2 = [z+16, z+16, z+16, z+8 ][d];
 
 		if (set & sideMask.ZN)
-			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
 		if (set & sideMask.ZP)
-			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.XP);
 		if (set & sideMask.XN)
-			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
 		if (set & sideMask.XP)
-			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
 		if (set & sideMask.YP)
-			emitQuadYP(x1, x2, y2, z1, z2, tex, 0);
+			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
 	void door(ubyte type, int x, int y, int z) {
@@ -746,17 +801,17 @@ template BlockDispatcher(alias T)
 		int z2 = [z+16, z+3,  z+16, z+16][d & 3];
 
 		if (set & sideMask.ZN)
-			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
 		if (set & sideMask.ZP)
-			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
 		if (set & sideMask.XN)
-			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
 		if (set & sideMask.XP)
-			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
-		if (set & sideMask.YP)
-			emitQuadYP(x1, x2, y2, z1, z2, tex, 0);
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
 		if (set & sideMask.YN)
-			emitQuadYN(x1, x2, y1, z1, z2, tex, 0);
+			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		if (set & sideMask.YP)
+			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
 	void ladder(ubyte type, int x, int y, int z) {
@@ -777,13 +832,14 @@ template BlockDispatcher(alias T)
 		int y2 = y+16;
 		int z1 = [z+15, z+1,  z,    z   ][d];
 		int z2 = [z+15, z+1,  z+16, z+16][d];
-		int normal = [5, 4, 3, 2][d];
-		bool positive = [false, true, false, true][d];
+		sideNormal normal = [sideNormal.ZN, sideNormal.ZP,
+				     sideNormal.XN, sideNormal.XP][d];
+		bool positive = isNormalPositive(normal);
 
 		if (positive)
-			emitQuadXZP(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
+			emitQuadXZP(x1, x2, y1, y2, z1, z2, tex, normal);
 		else
-			emitQuadXZN(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
+			emitQuadXZN(x1, x2, y1, y2, z1, z2, tex, normal);
 	}
 
 	void farmland(int x, int y, int z) {
