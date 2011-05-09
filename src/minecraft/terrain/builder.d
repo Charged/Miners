@@ -119,14 +119,37 @@ ubyte calcAmbient(bool side1, bool side2, bool corner)
 }
 
 /**
- * Convinience template to delcare and calculate all corners.
+ * Setup coordinates for the ambient occlusion scanner.
  */
-template AOCalculator()
+template AOSetupScannerCoordsXZ()
 {
-	auto ao235 = calcAmbient(c2, c5, c3);
-	auto ao578 = calcAmbient(c5, c7, c8);
-	auto ao467 = calcAmbient(c4, c7, c6);
-	auto ao124 = calcAmbient(c2, c4, c1);
+	// On which x should we look at, if Z just set it to the middle.
+	int aoXm = normalIsX ? x + positive - !positive : x;
+	// Yes these two below needs to be inverted.
+	int aoXn = aoXm + normalIsZ;
+	int aoXp = aoXm - normalIsZ;
+	// On which x should we look at, if X just set it to the middle.
+	int aoZm = normalIsZ ? z + positive - !positive : z;
+	int aoZn = aoZm - normalIsX;
+	int aoZp = aoZm + normalIsX;
+}
+
+/**
+ * Scans and returns filled status of corner blockes, used for fake AO.
+ *
+ * Reads xsn, xs, xsp, y, zsn, zs, xsp for position.
+ * Declares and set c[1-8].
+ */
+template AOScannerXZ()
+{
+	auto c1 = data.filled(aoXn, y-1, aoZn);
+	auto c2 = data.filled(aoXm, y-1, aoZm);
+	auto c3 = data.filled(aoXp, y-1, aoZp);
+	auto c4 = data.filled(aoXn, y  , aoZn);
+	auto c5 = data.filled(aoXp, y  , aoZp);
+	auto c6 = data.filled(aoXn, y+1, aoZn);
+	auto c7 = data.filled(aoXm, y+1, aoZm);
+	auto c8 = data.filled(aoXp, y+1, aoZp);
 }
 
 /**
@@ -148,21 +171,14 @@ template AOScannerY()
 }
 
 /**
- * Scans and returns filled status of corner blockes, used for fake AO.
- *
- * Reads xsn, xs, xsp, y, zsn, zs, xsp for position.
- * Declares and set c[1-8].
+ * Convinience template to delcare and calculate all corners.
  */
-template AOScannerXZ()
+template AOCalculator()
 {
-	auto c1 = data.filled(xsn, y-1, zsn);
-	auto c2 = data.filled(xs , y-1, zs );
-	auto c3 = data.filled(xsp, y-1, zsp);
-	auto c4 = data.filled(xsn, y  , zsn);
-	auto c5 = data.filled(xsp, y  , zsp);
-	auto c6 = data.filled(xsn, y+1, zsn);
-	auto c7 = data.filled(xs , y+1, zs );
-	auto c8 = data.filled(xsp, y+1, zsp);
+	auto ao235 = calcAmbient(c2, c5, c3);
+	auto ao578 = calcAmbient(c5, c7, c8);
+	auto ao467 = calcAmbient(c4, c7, c6);
+	auto ao124 = calcAmbient(c2, c4, c1);
 }
 
 /**
@@ -407,16 +423,14 @@ template QuadBuilder(alias T)
 
 	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
 	{
-		bool minus = normal == sideNormal.YN ? true : false;
-		auto aoy = y - minus + !minus;
+		bool positive = isNormalPositive(normal);
+		auto aoy = y + positive - !positive;
 		mixin AOScannerY!();
 		mixin AOCalculator!();
 
 		int x1 = x, x2 = x+1;
 		int z1 = z, z2 = z+1;
-		y += !minus;
-
-		ubyte texture = calcTextureY(dec);
+		y += positive;
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x1 <<= shift;
@@ -425,37 +439,39 @@ template QuadBuilder(alias T)
 		z1 <<= shift;
 		z2 <<= shift;
 
-		if (minus) {
-			emitQuadAOYN(x1, x2, y, z1, z2,
-				     ao124, ao235, ao578, ao467,
-				     texture, normal);
-		} else {
+		ubyte texture = calcTextureY(dec);
+
+		if (positive) {
 			emitQuadAOYP(x1, x2, y, z1, z2,
 				     ao124, ao467, ao578, ao235,
+				     texture, normal);
+		} else {
+			emitQuadAOYN(x1, x2, y, z1, z2,
+				     ao124, ao235, ao578, ao467,
 				     texture, normal);
 		}
 	}
 
 	void makeXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
 	{
-		bool minus = !isNormalPositive(normal);
-		bool xaxis = isNormalX(normal);
-		bool xm = !minus & xaxis;
-		bool zm = !minus & !xaxis;
-		int xs = xaxis ? x - minus + !minus : x;
-		int xsn = xs + !xaxis;
-		int xsp = xs - !xaxis;
-		int zs = !xaxis ? z - minus + !minus : z;
-		int zsp = zs + xaxis;
-		int zsn = zs - xaxis;
+		bool positive = isNormalPositive(normal);
+		bool normalIsZ = isNormalZ(normal);
+		bool normalIsX = !normalIsZ;
+
+		mixin AOSetupScannerCoordsXZ!();
 		mixin AOScannerXZ!();
 		mixin AOCalculator!();
 
-		int x1 = x+xm, x2 = x+xm+!xaxis;
-		int y1 = y   , y2 = y+1;
-		int z1 = z+zm, z2 = z+zm+xaxis;
+		// Where does the side stand.
+		int x1 = x + (positive & normalIsX);
+		int z1 = z + (positive & normalIsZ);
 
-		ubyte texture = calcTextureXZ(dec);
+		// If the normal is parallel to the other axis change the coordinate.
+		int x2 = x1 + normalIsZ;
+		int z2 = z1 + normalIsX;
+
+		// Height
+		int y1 = y, y2 = y+1;
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x1 <<= shift;
@@ -465,13 +481,15 @@ template QuadBuilder(alias T)
 		z1 <<= shift;
 		z2 <<= shift;
 
-		if (minus) {
-			emitQuadAOXZN(x1, x2, y1, y2, z1, z2,
-				      ao235, ao578, ao467, ao124,
-				      texture, normal);
-		} else {
+		ubyte texture = calcTextureXZ(dec);
+
+		if (positive) {
 			emitQuadAOXZP(x1, x2, y1, y2, z1, z2,
 				      ao124, ao467, ao578, ao235,
+				      texture, normal);
+		} else {
+			emitQuadAOXZN(x1, x2, y1, y2, z1, z2,
+				      ao235, ao578, ao467, ao124,
 				      texture, normal);
 		}
 	}
@@ -506,8 +524,6 @@ template QuadBuilder(alias T)
 		int x1 = x, x2 = x+1;
 		int z1 = z, z2 = z+1;
 
-		ubyte texture = calcTextureY(dec);
-
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x1 <<= shift;
 		x2 <<= shift;
@@ -517,6 +533,8 @@ template QuadBuilder(alias T)
 		y <<= shift;
 		y += VERTEX_SIZE_DIVISOR / 2;
 
+		ubyte texture = calcTextureY(dec);
+
 		emitQuadAOYP(x1, x2, y, z1, z2,
 			     ao124, ao467, ao578, ao235,
 			     texture, sideNormal.YP);
@@ -524,34 +542,33 @@ template QuadBuilder(alias T)
 
 	void makeHalfXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
 	{
-		bool minus = !isNormalPositive(normal);
-		bool xaxis = isNormalX(normal);
+		bool positive = isNormalPositive(normal);
+		bool normalIsZ = isNormalZ(normal);
+		bool normalIsX = !normalIsZ;
 
-		bool xm = !minus & xaxis;
-		bool zm = !minus & !xaxis;
-		int xs = xaxis ? x - minus + !minus : x;
-		int xsn = xs + !xaxis;
-		int xsp = xs - !xaxis;
-		int zs = !xaxis ? z - minus + !minus : z;
-		int zsp = zs + xaxis;
-		int zsn = zs - xaxis;
+		mixin AOSetupScannerCoordsXZ!();
 
-		auto c1 = data.filled(xsn, y-1, zsn);
-		auto c2 = data.filled(xs , y-1, zs );
-		auto c3 = data.filled(xsp, y-1, zsp);
-		auto c4 = data.filled(xsn, y  , zsn);
-		auto c5 = data.filled(xsp, y  , zsp);
+		auto c1 = data.filled(aoXn, y-1, aoZn);
+		auto c2 = data.filled(aoXm, y-1, aoZm);
+		auto c3 = data.filled(aoXp, y-1, aoZp);
+		auto c4 = data.filled(aoXn, y  , aoZn);
+		auto c5 = data.filled(aoXp, y  , aoZp);
 		auto c6 = false;
 		auto c7 = false;
 		auto c8 = false;
 
 		mixin AOCalculator!();
 
-		int x1 = x+xm, x2 = x+xm+!xaxis;
-		int y1 = y   , y2;
-		int z1 = z+zm, z2 = z+zm+xaxis;
+		// Where does the side stand.
+		int x1 = x + (positive & normalIsX);
+		int z1 = z + (positive & normalIsZ);
 
-		ubyte texture = calcTextureXZ(dec);
+		// If the normal is parallel to the other axis change the coordinate.
+		int x2 = x1 + normalIsZ;
+		int z2 = z1 + normalIsX;
+
+		// Height
+		int y1 = y, y2;
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x1 <<= shift;
@@ -561,14 +578,16 @@ template QuadBuilder(alias T)
 		z1 <<= shift;
 		z2 <<= shift;
 
-		if (minus) {
-			emitHalfQuadAOXZM(x1, x2, y1, y2, z1, z2,
-					 ao235, ao578, ao467, ao124,
-					 texture, normal);
-		} else {
+		ubyte texture = calcTextureXZ(dec);
+
+		if (positive) {
 			emitHalfQuadAOXZP(x1, x2, y1, y2, z1, z2,
 					  ao124, ao467, ao578, ao235,
 					  texture, normal);
+		} else {
+			emitHalfQuadAOXZM(x1, x2, y1, y2, z1, z2,
+					 ao235, ao578, ao467, ao124,
+					 texture, normal);
 		}
 	}
 
