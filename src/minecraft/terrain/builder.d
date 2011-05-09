@@ -112,6 +112,19 @@ ubyte calcTextureY(BlockDescriptor *dec)
 
 /**
  * Calculate the ambiant term depending if the surounding blocks are filled.
+ *
+ * If two diagonal sides around a corner is set full occlusion occurs.
+ * If any of the sides or the corner is set half occlusion occurs.
+ *
+ * Example: aoBL.
+ *   None set,          aoBL = 0
+ *   c1 set,            aoBL = 1
+ *   c2 set,            aoBL = 1
+ *   c4 set,            aoBL = 1
+ *   c1 & c2 set,       aoBL = 1
+ *   c1 & c4 set,       aoBL = 1
+ *   c2 & c4 set,       aoBL = 2
+ *   c1, c2 & c4 set,   aoBL = 2
  */
 ubyte calcAmbient(bool side1, bool side2, bool corner)
 {
@@ -119,25 +132,57 @@ ubyte calcAmbient(bool side1, bool side2, bool corner)
 }
 
 /**
+ *
  * Setup coordinates for the ambient occlusion scanner.
+ *
+ * The coordiantes are mapped the same as the UV coords are
+ * (tho the UV coords are v = 1-v). But the names match up.
+ *
+ *   +-------------+-------------+-------------+
+ *   |             |             |             |
+ *   |(x-1, y, z-1)| (x, y, z-1) |(x+1, y, z-1)|
+ *   |             |             |             |
+ *   |     c5      |     c7      |     c8      |
+ *   |             |             |             |
+ *   |(Xn, y+1, Zn)|(Xm, y+1, Zm)|(Xp, y+1, Zp)|
+ *   |             |             |             |
+ *   +-------------+-------------+-------------+
+ *   |             |(0, 1) (1, 1)|             |
+ *   | (x-1, y, z) | aoTL   aoTR | (x+1, y, z) |
+ *   |             |             |             |
+ *   |     c4      |             |     c5      |
+ *   |             |             |             |
+ *   | (Xn, y, Zn) | aoBL   aoBR | (Xp, y, Zp) |
+ *   |             |(0, 0) (1, 0)|             |
+ *   +-------------+-------------+-------------+
+ *   |             |             |             |
+ *   |(x-1, y, z+1)| (x, y, z+1) |(x+1, y, z+1)|
+ *   |             |             |             |
+ *   |     c1      |     c2      |     c3      |
+ *   |             |             |             |
+ *   |(Xn, y-1, Zn)|(Xm, y-1, Zm)|(Xp, y-1, Zp)|
+ *   |             |             |             |
+ *   +-------------+-------------+-------------+
+ * 
  */
 template AOSetupScannerCoordsXZ()
 {
 	// On which x should we look at, if Z just set it to the middle.
 	int aoXm = normalIsX ? x + positive - !positive : x;
-	// Yes these two below needs to be inverted.
-	int aoXn = aoXm + normalIsZ;
-	int aoXp = aoXm - normalIsZ;
-	// On which x should we look at, if X just set it to the middle.
+	int aoXn = aoXm + (normalIsZ & !positive) - (normalIsZ & positive);
+	int aoXp = aoXm + (normalIsZ & positive) - (normalIsZ & !positive);
+	// On which z position should we look at, if X just set it to the middle.
 	int aoZm = normalIsZ ? z + positive - !positive : z;
-	int aoZn = aoZm - normalIsX;
-	int aoZp = aoZm + normalIsX;
+	int aoZn = aoZm + (normalIsX & positive) - (normalIsX & !positive);
+	int aoZp = aoZm + (normalIsX & !positive) - (normalIsX & positive);
 }
 
 /**
  * Scans and returns filled status of corner blockes, used for fake AO.
  *
- * Reads xsn, xs, xsp, y, zsn, zs, xsp for position.
+ * Reads aoXn, aoXm, aoXp, y, aoZn, aoZm, aoZp.
+ * As given by the AOSetupScannerCoordsXZ template-
+ *
  * Declares and set c[1-8].
  */
 template AOScannerXZ()
@@ -160,25 +205,55 @@ template AOScannerXZ()
  */
 template AOScannerY()
 {
-	auto c1 = data.filled(x-1, aoy, z-1);
-	auto c2 = data.filled(x  , aoy, z-1);
-	auto c3 = data.filled(x+1, aoy, z-1);
+	auto c1 = data.filled(x-1, aoy, z+1);
+	auto c2 = data.filled(x  , aoy, z+1);
+	auto c3 = data.filled(x+1, aoy, z+1);
 	auto c4 = data.filled(x-1, aoy, z  );
 	auto c5 = data.filled(x+1, aoy, z  );
-	auto c6 = data.filled(x-1, aoy, z+1);
-	auto c7 = data.filled(x  , aoy, z+1);
-	auto c8 = data.filled(x+1, aoy, z+1);
+	auto c6 = data.filled(x-1, aoy, z-1);
+	auto c7 = data.filled(x  , aoy, z-1);
+	auto c8 = data.filled(x+1, aoy, z-1);
 }
 
 /**
+ *
  * Convinience template to delcare and calculate all corners.
+ *
+ * Each corner is occluded by the neighboring blocks. So aoBL that is
+ * bottom left is occluded by c1, c2, c4.
+ *
+ *   +-------------+-------------+-------------+
+ *   |             |             |             |
+ *   |(x-1, y, z-1)| (x, y, z-1) |(x+1, y, z-1)|
+ *   |             |             |             |
+ *   |     c5      |     c7      |     c8      |
+ *   |             |             |             |
+ *   |(Xn, y+1, Zn)|(Xm, y+1, Zm)|(Xp, y+1, Zp)|
+ *   |             |             |             |
+ *   +-------------+-------------+-------------+
+ *   |             |(0, 1) (1, 1)|             |
+ *   | (x-1, y, z) | aoTL   aoTR | (x+1, y, z) |
+ *   |             |             |             |
+ *   |     c4      |             |     c5      |
+ *   |             |             |             |
+ *   | (Xn, y, Zn) | aoBL   aoBR | (Xp, y, Zp) |
+ *   |             |(0, 0) (1, 0)|             |
+ *   +-------------+-------------+-------------+
+ *   |             |             |             |
+ *   |(x-1, y, z+1)| (x, y, z+1) |(x+1, y, z+1)|
+ *   |             |             |             |
+ *   |     c1      |     c2      |     c3      |
+ *   |             |             |             |
+ *   |(Xn, y-1, Zn)|(Xm, y-1, Zm)|(Xp, y-1, Zp)|
+ *   |             |             |             |
+ *   +-------------+-------------+-------------+
  */
 template AOCalculator()
 {
-	auto ao235 = calcAmbient(c2, c5, c3);
-	auto ao578 = calcAmbient(c5, c7, c8);
-	auto ao467 = calcAmbient(c4, c7, c6);
-	auto ao124 = calcAmbient(c2, c4, c1);
+	auto aoBR = calcAmbient(c2, c5, c3);
+	auto aoTR = calcAmbient(c5, c7, c8);
+	auto aoTL = calcAmbient(c4, c7, c6);
+	auto aoBL = calcAmbient(c2, c4, c1);
 }
 
 /**
@@ -328,63 +403,63 @@ template QuadEmitter(alias T)
 	mixin T!();
 
 	void emitQuadAOYP(int x1, int x2, int y, int z1, int z2,
-			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
+			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			  ubyte texture, sideNormal normal)
 	{
-		pack(x1, y, z1, texture, c1/*ao124*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x1, y, z2, texture, c2/*ao467*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
-		pack(x2, y, z2, texture, c3/*ao578*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x2, y, z1, texture, c4/*ao235*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x1, y, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x1, y, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x2, y, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x2, y, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
 	}
 
 	void emitQuadAOYN(int x1, int x2, int y, int z1, int z2,
-			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
+			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			  ubyte texture, sideNormal normal)
 	{
-		pack(x1, y, z1, texture, c1/*ao124*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x2, y, z1, texture, c2/*ao235*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
-		pack(x2, y, z2, texture, c3/*ao578*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x1, y, z2, texture, c4/*ao467*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x1, y, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x2, y, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x2, y, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x1, y, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
 	void emitQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
-			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
+			   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			   ubyte texture, sideNormal normal)
 	{
-		pack(x2, y1, z1, texture, c1/*ao124*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x2, y2, z1, texture, c2/*ao467*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
-		pack(x1, y2, z2, texture, c3/*ao578*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x1, y1, z2, texture, c4/*ao235*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x2, y1, z1, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x2, y2, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x1, y2, z2, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x1, y1, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
 	void emitQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
-			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
+			   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			   ubyte texture, sideNormal normal)
 	{
-		pack(x1, y1, z2, texture, c1/*ao235*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x1, y2, z2, texture, c2/*ao578*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
-		pack(x2, y2, z1, texture, c3/*ao467*/, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x2, y1, z1, texture, c4/*ao124*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x1, y1, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
+		pack(x1, y2, z2, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x2, y2, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
+		pack(x2, y1, z1, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
 	void emitHalfQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
-			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			   ubyte texture, sideNormal normal)
+			       ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			       ubyte texture, sideNormal normal)
 	{
-		pack(x2, y1, z1, texture, c1/*ao124*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
-		pack(x2, y2, z1, texture, c2/*ao467*/, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
-		pack(x1, y2, z2, texture, c3/*ao578*/, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
-		pack(x1, y1, z2, texture, c4/*ao235*/, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
+		pack(x2, y1, z1, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
+		pack(x2, y2, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
+		pack(x1, y2, z2, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
+		pack(x1, y1, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
 	}
 
 	void emitHalfQuadAOXZM(int x1, int x2, int y1, int y2, int z1, int z2,
-			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
-			   ubyte texture, sideNormal normal)
+			       ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			       ubyte texture, sideNormal normal)
 	{
-		pack(x1, y1, z2, texture, c1/*ao235*/, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
-		pack(x1, y2, z2, texture, c2/*ao578*/, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
-		pack(x2, y2, z1, texture, c3/*ao467*/, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
-		pack(x2, y1, z1, texture, c4/*ao124*/, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
+		pack(x1, y1, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
+		pack(x1, y2, z2, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
+		pack(x2, y2, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
+		pack(x2, y1, z1, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
 	}
 
 	void emitQuadYP(int x1, int x2, int y, int z1, int z2,
@@ -443,11 +518,11 @@ template QuadBuilder(alias T)
 
 		if (positive) {
 			emitQuadAOYP(x1, x2, y, z1, z2,
-				     ao124, ao467, ao578, ao235,
+				     aoBL, aoBR, aoTL, aoTR,
 				     texture, normal);
 		} else {
 			emitQuadAOYN(x1, x2, y, z1, z2,
-				     ao124, ao235, ao578, ao467,
+				     aoBL, aoBR, aoTL, aoTR,
 				     texture, normal);
 		}
 	}
@@ -485,11 +560,11 @@ template QuadBuilder(alias T)
 
 		if (positive) {
 			emitQuadAOXZP(x1, x2, y1, y2, z1, z2,
-				      ao124, ao467, ao578, ao235,
+				      aoBL, aoBR, aoTL, aoTR,
 				      texture, normal);
 		} else {
 			emitQuadAOXZN(x1, x2, y1, y2, z1, z2,
-				      ao235, ao578, ao467, ao124,
+				      aoBL, aoBR, aoTL, aoTR,
 				      texture, normal);
 		}
 	}
@@ -536,7 +611,7 @@ template QuadBuilder(alias T)
 		ubyte texture = calcTextureY(dec);
 
 		emitQuadAOYP(x1, x2, y, z1, z2,
-			     ao124, ao467, ao578, ao235,
+			     aoBL, aoBR, aoTL, aoTR,
 			     texture, sideNormal.YP);
 	}
 
@@ -582,12 +657,12 @@ template QuadBuilder(alias T)
 
 		if (positive) {
 			emitHalfQuadAOXZP(x1, x2, y1, y2, z1, z2,
-					  ao124, ao467, ao578, ao235,
+					  aoBL, aoBR, aoTL, aoTR,
 					  texture, normal);
 		} else {
 			emitHalfQuadAOXZM(x1, x2, y1, y2, z1, z2,
-					 ao235, ao578, ao467, ao124,
-					 texture, normal);
+					  aoBL, aoBR, aoTL, aoTR,
+					  texture, normal);
 		}
 	}
 
