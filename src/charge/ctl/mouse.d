@@ -7,8 +7,10 @@ import charge.ctl.device;
 
 class Mouse : public Device
 {
-private:
-
+public:
+	int state; /**< Mask of button state, 1 == pressed */
+	int x;
+	int y;
 
 public:
 	Signal!(Mouse, int, int) move;

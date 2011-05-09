@@ -73,14 +73,29 @@ public:
 			if (e.type == SDL_KEYUP)
 				keyboardArray[0].up(keyboardArray[0], e.key.keysym.sym);
 
-			if (e.type == SDL_MOUSEMOTION)
-				mouseArray[0].move(mouseArray[0], e.motion.xrel, e.motion.yrel);
+			if (e.type == SDL_MOUSEMOTION) {
+				auto m = mouseArray[0];
+				m.state = e.motion.state;
+				m.x = e.motion.x;
+				m.y = e.motion.y;
+				m.move(m, e.motion.xrel, e.motion.yrel);
+			}
 
-			if (e.type == SDL_MOUSEBUTTONDOWN)
-				mouseArray[0].down(mouseArray[0], e.button.button);
+			if (e.type == SDL_MOUSEBUTTONDOWN) {
+				auto m = mouseArray[0];
+				m.state |= (1 << e.button.button);
+				m.x = e.button.x;
+				m.y = e.button.y;
+				m.down(m, e.button.button);
+			}
 
-			if (e.type == SDL_MOUSEBUTTONUP)
-				mouseArray[0].up(mouseArray[0], e.button.button);
+			if (e.type == SDL_MOUSEBUTTONUP) {
+				auto m = mouseArray[0];
+				m.state = ~(1 << e.button.button) & m.state;
+				m.x = e.button.x;
+				m.y = e.button.y;
+				m.up(m, e.button.button);
+			}
 
 			if (e.type == SDL_VIDEORESIZE)
 				resize(cast(uint)e.resize.w, cast(uint)e.resize.h);
