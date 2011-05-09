@@ -203,7 +203,7 @@ public:
 
 	void resize(uint w, uint h)
 	{
-		pcam.ratio = cast(double)w / h;
+		pcam.ratio = cast(double)w / cast(double)h;
 		icam.width = w / 16.0;
 		icam.height = h / 16.0;
 	}

@@ -172,6 +172,8 @@ protected:
 
 		if (sr !is null)
 			sr.resize(w, h);
+		if (gl !is null)
+			gl.resize(w, h);
 	}
 
 	void logic()
@@ -260,7 +262,7 @@ protected:
 		if (rm.aa)
 			dt.resolve(rt);
 
-		debug {
+		{
 			d.target = rt;
 			d.start();
 
@@ -270,6 +272,7 @@ protected:
 			d.fill(Color4f(0, 0, 0, .8), true, x, 8, w, h);
 			d.blit(debugText, x+8, 16);
 
+/*
 			auto p = camera.position;
 			char[] info = std.string.format("Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
 			GfxFont.render(cameraText, info);
@@ -278,6 +281,7 @@ protected:
 			h = cameraText.height + 16;
 			d.fill(Color4f(0, 0, 0, .8), true, 8, 8, w, h);
 			d.blit(cameraText, 16, 16);
+*/
 
 			d.stop();
 		}
