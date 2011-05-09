@@ -36,6 +36,9 @@ public:
 	double cam_pitch;
 	bool cam_moveing;
 
+	CtlMouse mouse;
+	bool grabbed;
+
 private:
 	mixin SysLogging;
 
@@ -82,10 +85,10 @@ public:
 		kb.up ~= &this.keyUp;
 		kb.down ~= &this.keyDown;
 
-		auto m = CtlInput().mouse;
-		m.up ~= &this.mouseUp;
-		m.down ~= &this.mouseDown;
-		m.move ~= &this.mouseMove;
+		mouse = CtlInput().mouse;
+		mouse.up ~= &this.mouseUp;
+		mouse.down ~= &this.mouseDown;
+		mouse.move ~= &this.mouseMove;
 	}
 
 	~this()
@@ -150,6 +153,13 @@ public:
 		case SDLK_SPACE:
 			m.up = false;
 			break;
+		case SDLK_g:
+			if (!kb.ctrl)
+				break;
+			grabbed = !grabbed;
+			mouse.grab = grabbed;
+			mouse.show = !grabbed;
+			break;
 		case SDLK_o:
 			Core().screenShot();
 			break;
@@ -168,11 +178,18 @@ public:
 
 	void mouseMove(CtlMouse mouse, int ixrel, int iyrel)
 	{
-		if (cam_moveing) {
+		if (cam_moveing || (grabbed && !light_moveing)) {
 			double xrel = ixrel;
 			double yrel = iyrel;
-			cam_heading += xrel / 500.0;
-			cam_pitch += yrel / 500.0;
+
+			if (grabbed) {
+				cam_heading += xrel / -500.0;
+				cam_pitch += yrel / -500.0;
+			} else {
+				cam_heading += xrel / 500.0;
+				cam_pitch += yrel / 500.0;
+			}
+
 			cam.rotation = Quatd(cam_heading, cam_pitch, 0);
 		}
 
