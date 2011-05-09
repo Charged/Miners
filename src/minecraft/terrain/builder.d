@@ -264,7 +264,7 @@ template QuadEmitter(alias T)
 {
 	mixin T!();
 
-	void makeQuadAOYP(int x1, int x2, int y, int z1, int z2,
+	void emitQuadAOYP(int x1, int x2, int y, int z1, int z2,
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			  ubyte texture, ubyte normal)
 	{
@@ -274,7 +274,7 @@ template QuadEmitter(alias T)
 		pack(x2, y, z1, texture, c4/*ao235*/, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
 	}
 
-	void makeQuadAOYN(int x1, int x2, int y, int z1, int z2,
+	void emitQuadAOYN(int x1, int x2, int y, int z1, int z2,
 			  ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			  ubyte texture, ubyte normal)
 	{
@@ -284,7 +284,7 @@ template QuadEmitter(alias T)
 		pack(x1, y, z2, texture, c4/*ao467*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
-	void makeQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+	void emitQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
@@ -294,7 +294,7 @@ template QuadEmitter(alias T)
 		pack(x1, y1, z2, texture, c4/*ao235*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
-	void makeQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+	void emitQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
@@ -304,7 +304,7 @@ template QuadEmitter(alias T)
 		pack(x2, y1, z1, texture, c4/*ao124*/, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
 	}
 
-	void makeHalfQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+	void emitHalfQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
@@ -314,7 +314,7 @@ template QuadEmitter(alias T)
 		pack(x1, y1, z2, texture, c4/*ao235*/, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
 	}
 
-	void makeHalfQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+	void emitHalfQuadAOXZM(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte c1, ubyte c2, ubyte c3, ubyte c4,
 			   ubyte texture, ubyte normal)
 	{
@@ -324,26 +324,26 @@ template QuadEmitter(alias T)
 		pack(x2, y1, z1, texture, c4/*ao124*/, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
 	}
 
-	void makeQuadYP(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
+	void emitQuadYP(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
 	{
-		makeQuadAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
+		emitQuadAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
 
-	void makeQuadYN(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
+	void emitQuadYN(int x1, int x2, int y, int z1, int z2, ubyte tex, ubyte normal)
 	{
-		makeQuadAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
+		emitQuadAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
 
-	void makeQuadXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+	void emitQuadXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			 ubyte tex, ubyte normal)
 	{
-		makeQuadAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
+		emitQuadAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
 
-	void makeQuadXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+	void emitQuadXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			 ubyte tex, ubyte normal)
 	{
-		makeQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
+		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
 	}
 }
 
@@ -377,11 +377,11 @@ template QuadBuilder(alias T)
 		z2 <<= shift;
 
 		if (minus) {
-			makeQuadAOYN(x1, x2, y, z1, z2,
+			emitQuadAOYN(x1, x2, y, z1, z2,
 				     ao124, ao235, ao578, ao467,
 				     texture, normal);
 		} else {
-			makeQuadAOYP(x1, x2, y, z1, z2,
+			emitQuadAOYP(x1, x2, y, z1, z2,
 				     ao124, ao467, ao578, ao235,
 				     texture, normal);
 		}
@@ -416,11 +416,11 @@ template QuadBuilder(alias T)
 		z2 <<= shift;
 
 		if (minus) {
-			makeQuadAOXZN(x1, x2, y1, y2, z1, z2,
+			emitQuadAOXZN(x1, x2, y1, y2, z1, z2,
 				      ao235, ao578, ao467, ao124,
 				      texture, normal);
 		} else {
-			makeQuadAOXZP(x1, x2, y1, y2, z1, z2,
+			emitQuadAOXZP(x1, x2, y1, y2, z1, z2,
 				      ao124, ao467, ao578, ao235,
 				      texture, normal);
 		}
@@ -467,7 +467,7 @@ template QuadBuilder(alias T)
 		y <<= shift;
 		y += VERTEX_SIZE_DIVISOR / 2;
 
-		makeQuadAOYP(x1, x2, y, z1, z2,
+		emitQuadAOYP(x1, x2, y, z1, z2,
 			     ao124, ao467, ao578, ao235,
 			     texture, 0);
 	}
@@ -510,11 +510,11 @@ template QuadBuilder(alias T)
 		z2 <<= shift;
 
 		if (minus) {
-			makeHalfQuadAOXZN(x1, x2, y1, y2, z1, z2,
+			emitHalfQuadAOXZM(x1, x2, y1, y2, z1, z2,
 					 ao235, ao578, ao467, ao124,
 					 texture, normal);
 		} else {
-			makeHalfQuadAOXZP(x1, x2, y1, y2, z1, z2,
+			emitHalfQuadAOXZP(x1, x2, y1, y2, z1, z2,
 					  ao124, ao467, ao578, ao235,
 					  texture, normal);
 		}
@@ -627,14 +627,14 @@ template BlockDispatcher(alias T)
 		int y1 = y,   y2 = y+16;
 		int z1 = z+9, z2 = z+7;
 
-		makeQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
-		makeQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
+		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
+		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
 
 		x1 = x+9; x2 = x+7;
 		z1 = z;   z2 = z+16;
 
-		makeQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
-		makeQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
+		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
+		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
 	}
 
 	void craftingTable(uint x, uint y, uint z) {
@@ -668,18 +668,18 @@ template BlockDispatcher(alias T)
 		int y1 = y,    y2 = y+16;
 		int z1 = z+12, z2 = z+4;
 
-		makeQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
-		makeQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
-		makeQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
-		makeQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
+		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, 4);
+		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, 5);
 
 		x1 = x+12; x2 = x+4;
 		z1 = z;    z2 = z+16;
 
-		makeQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
-		makeQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
-		makeQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
-		makeQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
+		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, 2);
+		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
+		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, 3);
 	}
 
 	void stair(ubyte type, int x, int y, int z) {
@@ -703,15 +703,15 @@ template BlockDispatcher(alias T)
 		int z2 = [z+16, z+16, z+16, z+8 ][d];
 
 		if (set & sideMask.ZN)
-			makeQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
 		if (set & sideMask.ZP)
-			makeQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
 		if (set & sideMask.XN)
-			makeQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
 		if (set & sideMask.XP)
-			makeQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
 		if (set & sideMask.YP)
-			makeQuadYP(x1, x2, y2, z1, z2, tex, 0);
+			emitQuadYP(x1, x2, y2, z1, z2, tex, 0);
 	}
 
 	void door(ubyte type, int x, int y, int z) {
@@ -746,17 +746,17 @@ template BlockDispatcher(alias T)
 		int z2 = [z+16, z+3,  z+16, z+16][d & 3];
 
 		if (set & sideMask.ZN)
-			makeQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, 5);
 		if (set & sideMask.ZP)
-			makeQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, 4);
 		if (set & sideMask.XN)
-			makeQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, 3);
 		if (set & sideMask.XP)
-			makeQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, 2);
 		if (set & sideMask.YP)
-			makeQuadYP(x1, x2, y2, z1, z2, tex, 0);
+			emitQuadYP(x1, x2, y2, z1, z2, tex, 0);
 		if (set & sideMask.YN)
-			makeQuadYN(x1, x2, y1, z1, z2, tex, 0);
+			emitQuadYN(x1, x2, y1, z1, z2, tex, 0);
 	}
 
 	void ladder(ubyte type, int x, int y, int z) {
@@ -781,9 +781,9 @@ template BlockDispatcher(alias T)
 		bool positive = [false, true, false, true][d];
 
 		if (positive)
-			makeQuadXZP(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
+			emitQuadXZP(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
 		else
-			makeQuadXZN(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
+			emitQuadXZN(x1, x2, y1, y2, z1, z2, tex, cast(ubyte)normal);
 	}
 
 	void farmland(int x, int y, int z) {
