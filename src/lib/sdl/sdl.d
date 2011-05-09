@@ -13,6 +13,7 @@ import lib.sdl.event;
 import lib.sdl.keyboard;
 import lib.sdl.keysym;
 import lib.sdl.timer;
+import lib.sdl.mouse;
 
 const SDL_INIT_TIMER       = 0x00000001;
 const SDL_INIT_AUDIO       = 0x00000010;
@@ -31,6 +32,7 @@ void loadSDL(Loader l)
 	loadSDL_Timer(l);
 	loadSDL_RWops(l);
 	loadSDL_audio(l);
+	loadSDL_Mouse(l);
 
 	loadFunc!(SDL_Init)(l);
 	loadFunc!(SDL_InitSubSystem)(l);
