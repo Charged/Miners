@@ -854,7 +854,7 @@ template BlockDispatcher(alias T)
 		if (set & sideMask.ZN)
 			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
 		if (set & sideMask.ZP)
-			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.XP);
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
 		if (set & sideMask.XN)
 			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
 		if (set & sideMask.XP)
