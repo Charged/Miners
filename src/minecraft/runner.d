@@ -107,9 +107,6 @@ public:
 	void keyDown(CtlKeyboard kb, int sym)
 	{
 		switch(sym) {
-		case SDLK_v:
-			sl.shadow = !sl.shadow;
-			break;
 		case SDLK_w:
 			m.forward = true;
 			break;
