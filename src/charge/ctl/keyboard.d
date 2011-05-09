@@ -5,9 +5,12 @@ module charge.ctl.keyboard;
 import charge.util.signal;
 import charge.ctl.device;
 
+import lib.sdl.keysym;
+
 class Keyboard : public Device
 {
-private:
+public:
+	int mod;
 
 public:
 	Signal!(Keyboard, int) down;
@@ -17,5 +20,25 @@ public:
 	{
 		down.destruct();
 		up.destruct();
+	}
+
+	final bool ctrl()
+	{
+		return (mod & KMOD_CTRL) != 0;
+	}
+
+	final bool alt()
+	{
+		return (mod & KMOD_ALT) != 0;
+	}
+
+	final bool meta()
+	{
+		return (mod & KMOD_META) != 0;
+	}
+
+	final bool shift()
+	{
+		return (mod & KMOD_SHIFT) != 0;
 	}
 }

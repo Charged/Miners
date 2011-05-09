@@ -67,11 +67,17 @@ public:
 				if (e.key.keysym.sym == SDLK_ESCAPE)
 					quit();
 
-			if (e.type == SDL_KEYDOWN)
-				keyboardArray[0].down(keyboardArray[0], e.key.keysym.sym);
+			if (e.type == SDL_KEYDOWN) {
+				auto k = keyboardArray[0];
+				k.mod = e.key.keysym.mod;
+				k.down(k, e.key.keysym.sym);
+			}
 
-			if (e.type == SDL_KEYUP)
-				keyboardArray[0].up(keyboardArray[0], e.key.keysym.sym);
+			if (e.type == SDL_KEYUP) {
+				auto k = keyboardArray[0];
+				k.mod = e.key.keysym.mod;
+				k.up(k, e.key.keysym.sym);
+			}
 
 			if (e.type == SDL_MOUSEMOTION) {
 				auto m = mouseArray[0];
