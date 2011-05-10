@@ -82,6 +82,12 @@ struct WorkspaceData
 		return tile[t].filled != 0 || t == type;
 	}
 
+	bool filledOrTypes(ubyte t1, ubyte t2, int x, int y, int z)
+	{
+		auto t = (*this)[x, y, z];
+		return t == t1 || t == t2 || tile[t].filled != 0;
+	}
+
 	int getSolidSet(int x, int y, int z)
 	{
 		auto xmc = !filled(x-1,   y,   z);
@@ -101,6 +107,17 @@ struct WorkspaceData
 		auto ypc = !filledOrType(type,   x, y+1,   z);
 		auto zmc = !filledOrType(type,   x,   y, z-1);
 		auto zpc = !filledOrType(type,   x,   y, z+1);
+		return xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
+	}
+
+	int getSolidOrTypesSet(ubyte t1, ubyte t2, int x, int y, int z)
+	{
+		auto xmc = !filledOrTypes(t1, t2, x-1,   y,   z);
+		auto xpc = !filledOrTypes(t1, t2, x+1,   y,   z);
+		auto ymc = !filledOrTypes(t1, t2,   x, y-1,   z);
+		auto ypc = !filledOrTypes(t1, t2,   x, y+1,   z);
+		auto zmc = !filledOrTypes(t1, t2,   x,   y, z-1);
+		auto zpc = !filledOrTypes(t1, t2,   x,   y, z+1);
 		return xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
 	}
 

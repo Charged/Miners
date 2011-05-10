@@ -717,6 +717,46 @@ template BlockDispatcher(alias T)
 			solid(2 /* grass */, x, y, z);
 	}
 
+	void water(int x, int y, int z) {
+		int set = data.getSolidOrTypesSet(8, 9, x, y, z);
+		auto dec = &tile[8];
+		ubyte tex = calcTextureXZ(dec);
+		
+		int x1 = x, x2 = x+1;
+		int z1 = z, z2 = z+1;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		x2 <<= shift;
+		z1 <<= shift;
+		z2 <<= shift;
+
+		int y1 = y, y2 = y + 1;
+		y1 <<= shift;
+		y2 <<= shift;
+
+		auto aboveType = data.get(x, y+1, z);
+		if (aboveType != 8 && aboveType != 9) {
+			set |= sideMask.YP;
+			y2 -= 2;
+		}
+
+		if (set & sideMask.XN)
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		if (set & sideMask.XP)
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+
+		if (set & sideMask.YN)
+			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		if (set & sideMask.YP)
+			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+
+		if (set & sideMask.ZN)
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		if (set & sideMask.ZP)
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+	}
+
 	void wood(int x, int y, int z) {
 		auto dec = &woodTile[data.getDataUnsafe(x, y, z)];
 		solidDec(dec, x, y, z);
@@ -956,6 +996,10 @@ template BlockDispatcher(alias T)
 		switch(type) {
 			case 2:
 				grass(x, y, z);
+				break;
+			case 8:
+			case 9:
+				water(x, y, z);
 				break;
 			case 17:
 				wood(x, y, z);

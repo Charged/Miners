@@ -44,8 +44,8 @@ BlockDescriptor tile[256] = [
 	{  true, Block,     {  4,  0 }, {  4,  0 }, "wooden plank" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "sapling" },
 	{  true, Block,     {  1,  1 }, {  1,  1 }, "bedrock" },
-	{  true, Stuff,     { 15, 13 }, { 15, 13 }, "water" },                 // 8
-	{  true, Stuff,     { 15, 13 }, { 15, 13 }, "spring water" },
+	{ false, Stuff,     { 15, 13 }, { 15, 13 }, "water" },                 // 8
+	{ false, Stuff,     { 15, 13 }, { 15, 13 }, "spring water" },
 	{  true, Stuff,     { 15, 15 }, { 15, 15 }, "lava" },
 	{  true, Stuff,     { 15, 15 }, { 15, 15 }, "spring lava" },
 	{  true, Block,     {  2,  1 }, {  2,  1 }, "sand" },
