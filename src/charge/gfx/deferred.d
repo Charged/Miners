@@ -183,9 +183,12 @@ protected:
 
 		deferredTarget.setTarget();
 
+		glClearDepth(1);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 
 		c.transform();
 
@@ -723,6 +726,43 @@ protected:
 		glVertex3f( 1.0f, -1.0f,  0.0f);
 		glVertex3f( 1.0f,  1.0f,  0.0f);
 		glVertex3f(-1.0f,  1.0f,  0.0f);
+		glEnd();
+	}
+
+
+	/*
+	 *
+	 * Debug code
+	 *
+	 */
+
+
+	void debugTextureFullscreen(uint id)
+	{
+		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 2);
+		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 1);
+		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 0);
+
+		glDisable(GL_BLEND);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluOrtho2D(0, 1, 0, 1);
+
+		gluTexUnitEnableBind(GL_TEXTURE_2D, 0, deferredTarget.normal);
+
+		glColor4fv(Color4f.White.ptr);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
+		glVertex2f  (0, 0);
+		glTexCoord2f(1, 0);
+		glVertex2f  (1, 0);
+		glTexCoord2f(1, 1);
+		glVertex2f  (1, 1);
+		glTexCoord2f(0, 1);
+		glVertex2f  (0, 1);
 		glEnd();
 	}
 
