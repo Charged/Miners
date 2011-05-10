@@ -37,7 +37,12 @@ DDEFINES = -version=DynamicODE
 TARGET = Charge
 CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
-LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS)
+LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(ODE_FALGS) $(LDFLAGS)
+
+ifneq ($(strip $(USE_ODE)),)
+	DDEFINES =
+	ODE_FLAGS = -L-L. -L-lode -L-lstdc++
+endif
 
 ifeq ($(UNAME),Linux)
 	PLATFORM=linux
