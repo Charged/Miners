@@ -18,6 +18,9 @@ public:
 	SunLight sl;
 	Camera c;
 
+	CtlMouse mouse;
+	CtlKeyboard keyboard;
+
 private:
 	mixin SysLogging;
 
@@ -41,6 +44,10 @@ public:
 		Vector3dWrapper.register(s);
 		Point3dWrapper.register(s);
 		QuatdWrapper.register(s);
+
+		MouseWrapper.register(s);
+		KeyboardWrapper.register(s);
+
 		WorldWrapper.register(s);
 		CameraWrapper.register(s);
 		SunLightWrapper.register(s);
@@ -62,6 +69,17 @@ public:
 		sl = new SunLight(w);
 		c = new Camera(w);
 
+		mouse = CtlInput().mouse;
+		keyboard = CtlInput().keyboard;
+
+		s.pushStringz("keyboard");
+		s.pushClass(keyboard);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("mouse");
+		s.pushClass(mouse);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
 		s.pushStringz("world");
 		s.pushClass(w);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
@@ -80,26 +98,22 @@ public:
 			throw new Exception("Error initalizing lua script");
 		}
 
-		auto kb = CtlInput().keyboard;
-		kb.up ~= &this.keyUp;
-		kb.down ~= &this.keyDown;
+		keyboard.up ~= &this.keyUp;
+		keyboard.down ~= &this.keyDown;
 
-		auto m = CtlInput().mouse;
-		m.up ~= &this.mouseUp;
-		m.down ~= &this.mouseDown;
-		m.move ~= &this.mouseMove;
+		mouse.up ~= &this.mouseUp;
+		mouse.down ~= &this.mouseDown;
+		mouse.move ~= &this.mouseMove;
 	}
 
 	~this()
 	{
-		auto kb = CtlInput().keyboard;
-		kb.up.disconnect(&this.keyUp);
-		kb.down.disconnect(&this.keyDown);
+		keyboard.up.disconnect(&this.keyUp);
+		keyboard.down.disconnect(&this.keyDown);
 
-		auto m = CtlInput().mouse;
-		m.up.disconnect(&this.mouseUp);
-		m.down.disconnect(&this.mouseDown);
-		m.move.disconnect(&this.mouseMove);
+		mouse.up.disconnect(&this.mouseUp);
+		mouse.down.disconnect(&this.mouseDown);
+		mouse.move.disconnect(&this.mouseMove);
 
 		delete s;
 		delete c;
