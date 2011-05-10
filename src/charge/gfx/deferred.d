@@ -138,7 +138,7 @@ public:
 		// Why do you ask, well thats because the allocated class is not
 		// deleted at once but instead left up to the GC, and calling
 		// dereference from the GC context is bad.
-		spotlight_texture = Texture("res/spotlight.bmp");
+		spotlight_texture = Texture("res/spotlight.png");
 
 		l.bug("Created new deferred renderer");
 	}
