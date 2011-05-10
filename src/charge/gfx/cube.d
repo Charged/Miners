@@ -246,6 +246,9 @@ public:
 
 	void drawAttrib()
 	{
+		gluPushAndTransform(pos, rot);
+		glScaled(x, y, z);
+
 		glEnableVertexAttribArray(0); // pos
 		glEnableVertexAttribArray(1); // uv
 		glEnableVertexAttribArray(2); // normal
@@ -264,6 +267,8 @@ public:
 		glDisableVertexAttribArray(2); // normal
 		glDisableVertexAttribArray(3); // tanget
 		glDisableVertexAttribArray(4); // binomial
+
+		glPopMatrix();
 	}
 
 private:
