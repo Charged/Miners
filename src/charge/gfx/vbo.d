@@ -185,7 +185,7 @@ public:
 	/**
 	 * Draws the vbo using fixed vertex inputs.
 	 */
-	final void draw()
+	final void drawFixed()
 	{
 		setup();
 		doDraw();
@@ -251,9 +251,16 @@ public:
 			glVertexAttribPointer(0, 3, GL_FLOAT, false, vertexSize, vbo.vertOffset);   // pos
 			glVertexAttribPointer(1, 2, GL_FLOAT, false, vertexSize, vbo.texOffset);    // uv
 			glVertexAttribPointer(2, 3, GL_FLOAT, false, vertexSize, vbo.normalOffset); // normal
-			glDrawArrays(vbo.primType, 0, vbo.numVerts);
+
+			if (vbo.indexed) {
+				glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, vbo.vboIndices);
+				glDrawElements(vbo.primType, vbo.numIndices, GL_UNSIGNED_INT, null);
+			} else {
+				glDrawArrays(vbo.primType, 0, vbo.numVerts);
+			}
 		}
 
+		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
 		glDisableVertexAttribArray(0); // pos

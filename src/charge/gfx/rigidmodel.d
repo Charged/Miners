@@ -78,7 +78,7 @@ protected:
 		gluPushAndTransform(pos, rot);
 		glScaled(x, y, z);
 
-		vbo.draw();
+		vbo.drawFixed();
 
 		glPopMatrix();
 	}
