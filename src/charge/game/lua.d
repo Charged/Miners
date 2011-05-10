@@ -13,6 +13,12 @@ import charge.math.vector3d;
 import charge.math.movable;
 import charge.math.quatd;
 
+static import charge.ctl.mouse;
+static import charge.ctl.keyboard;
+
+alias charge.ctl.mouse.Mouse CtlMouse;
+alias charge.ctl.keyboard.Keyboard CtlKeyboard;
+
 private static char[] StructWrapperPush(char[] type)
 {
 	return `
@@ -68,6 +74,14 @@ class LuaState : public State
 	mixin (StructWrapper("Quatd"));
 	mixin (StructWrapper("Color4f"));
 }
+
+
+/*
+ *
+ * Math wrappers
+ *
+ */
+
 
 struct MovableWrapper
 {
@@ -687,4 +701,146 @@ struct Color4fWrapper
 		return s.isUserDataz(index, namez);
 	}
 
+}
+
+
+/*
+ *
+ * Input wrappers
+ *
+ */
+
+struct MouseWrapper
+{
+	const static char *namez = "d_class_charge_ctl_mouse_Mouse";
+	const static char[] name = "d_class_charge_ctl_mouse_Mouse";
+
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto m = s.checkClass!(CtlMouse)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
+		case "button1":
+			s.pushBool((m.state & (1 << 0)) != 0);
+			break;
+		case "button2":
+			s.pushBool((m.state & (1 << 1)) != 0);
+			break;
+		case "button3":
+			s.pushBool((m.state & (1 << 2)) != 0);
+			break;
+		case "button4":
+			s.pushBool((m.state & (1 << 3)) != 0);
+			break;
+		case "button5":
+			s.pushBool((m.state & (1 << 4)) != 0);
+			break;
+		case "x":
+			s.pushNumber(m.x);
+			break;
+		case "y":
+			s.pushNumber(m.y);
+			break;
+		case "grab":
+			s.pushBool(m.grab);
+			break;
+		case "show":
+			s.pushBool(m.show);
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	extern (C) static int newIndex(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto m = s.checkClass!(CtlMouse)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key)	{
+		case "grab":
+			m.grab = s.toBool(3);
+			break;
+		case "show":
+			std.stdio.writefln("show %s", s.toBool(3));
+			m.show = s.toBool(3);
+			break;
+		default:
+			s.error("No memeber of that that name");
+			break;
+		}
+
+		return 0;
+	}
+
+	static void register(LuaState s)
+	{
+		s.registerClass!(CtlMouse);
+		s.pushCFunction(&ObjectWrapper.toString);
+		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&index);
+		s.setFieldz(-2, "__index");
+		s.pushCFunction(&newIndex);
+		s.setFieldz(-2, "__newindex");
+		s.pop();
+	}
+}
+
+struct KeyboardWrapper
+{
+	const static char *namez = "d_class_charge_ctl_keyboard_Keyboard";
+	const static char[] name = "d_class_charge_ctl_keyboard_Keyboard";
+
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto kb = s.checkClass!(CtlKeyboard)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
+		case "ctrl":
+			s.pushBool(kb.ctrl);
+			break;
+		case "alt":
+			s.pushBool(kb.alt);
+			break;
+		case "meta":
+			s.pushBool(kb.meta);
+			break;
+		case "shift":
+			s.pushBool(kb.shift);
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	static void register(LuaState s)
+	{
+		s.registerClass!(CtlKeyboard);
+		s.pushCFunction(&ObjectWrapper.toString);
+		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&index);
+		s.setFieldz(-2, "__index");
+		s.pop();
+	}
 }
