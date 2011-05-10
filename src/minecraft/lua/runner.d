@@ -21,6 +21,8 @@ public:
 	CtlMouse mouse;
 	CtlKeyboard keyboard;
 
+	bool initialized;
+
 private:
 	mixin SysLogging;
 
@@ -63,6 +65,9 @@ public:
 			       s.toString(-3), "\n",
 			       s.toString(-2), "\n",
 			       s.toString(-1), "\n");
+
+			delete s;
+
 			throw new Exception("Error initalizing lua script");
 		}
 
@@ -95,6 +100,10 @@ public:
 		ret = s.call();
 		if (ret == 2) {
 			l.warn("call failed\n", s.toString(-1));
+
+			delete s;
+			delete c;
+			delete sl;
 			throw new Exception("Error initalizing lua script");
 		}
 
@@ -104,20 +113,24 @@ public:
 		mouse.up ~= &this.mouseUp;
 		mouse.down ~= &this.mouseDown;
 		mouse.move ~= &this.mouseMove;
+
+		initialized = true;
 	}
 
 	~this()
 	{
-		keyboard.up.disconnect(&this.keyUp);
-		keyboard.down.disconnect(&this.keyDown);
+		if (initialized) {
+			keyboard.up.disconnect(&this.keyUp);
+			keyboard.down.disconnect(&this.keyDown);
 
-		mouse.up.disconnect(&this.mouseUp);
-		mouse.down.disconnect(&this.mouseDown);
-		mouse.move.disconnect(&this.mouseMove);
+			mouse.up.disconnect(&this.mouseUp);
+			mouse.down.disconnect(&this.mouseDown);
+			mouse.move.disconnect(&this.mouseMove);
 
-		delete s;
-		delete c;
-		delete sl;
+			delete s;
+			delete c;
+			delete sl;
+		}
 	}
 
 	void resize(uint w, uint h)
