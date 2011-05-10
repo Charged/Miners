@@ -33,15 +33,16 @@ CFLAGS ?= -g -Wall
 DFLAGS ?= -gc -debug
 LDFLAGS ?= -gc
 
-DDEFINES = -version=DynamicODE
+DDEFINES = $(ODE_DDEFINES)
 TARGET = Charge
 CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
-LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(ODE_FALGS) $(LDFLAGS)
+LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(ODE_LDFLAGS) $(LDFLAGS)
 
 ifneq ($(strip $(USE_ODE)),)
-	DDEFINES =
-	ODE_FLAGS = -L-L. -L-lode -L-lstdc++
+	ODE_LDFLAGS = -L-L. -L-lode -L-lstdc++
+else
+	ODE_DDEFINES = -version=DynamicODE
 endif
 
 ifeq ($(UNAME),Linux)
