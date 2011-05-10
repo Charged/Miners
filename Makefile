@@ -35,7 +35,7 @@ LDFLAGS ?= -gc
 
 DDEFINES = -version=DynamicODE
 TARGET = Charge
-CCOMP_FLAGS = -c -o$@ $(CFLAGS)
+CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
 LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS)
 
@@ -47,6 +47,7 @@ ifeq ($(UNAME),Darwin)
 
 	# Extra to get the program working correctly
 	EXTRA_OBJ = $(OBJ_DIR)/SDLmain.o
+	CARCH= -arch i386 -arch x86_64
 	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa $(LDFLAGS)
 else
 ifeq ($(UNAME),WindowsCross)
@@ -75,9 +76,9 @@ OBJ := $(COBJ) $(DOBJ) $(EXTRA_OBJ)
 all: $(TARGET)
 
 #Special target for MacOSX
-$(OBJ_DIR)/SDLmain.o : src/charge/platform/SDLmain.m
+$(OBJ_DIR)/SDLmain.o : src/charge/platform/SDLmain.m Makefile
 	@echo "  CC     src/charge/platform/SDLmain.m"
-	@gcc -m32 -I/Library/Frameworks/SDL.framework/Headers -c -o $@ src/charge/platform/SDLmain.m
+	@gcc $(CARCH) -I/Library/Frameworks/SDL.framework/Headers -c -o $@ src/charge/platform/SDLmain.m
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c Makefile
 	@echo "  CC     src/$*.c"
