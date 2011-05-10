@@ -37,7 +37,11 @@ public:
 		if (name is null)
 			return false;
 
-		auto tex = Texture(filename);
+		Texture tex;
+
+		if (filename !is null)
+			tex = Texture(filename);
+
 		auto ret = setTexture(name, tex);
 		if (tex !is null)
 			tex.dereference();
@@ -131,7 +135,8 @@ public:
 				if (this.tex)
 					this.tex.dereference();
 				this.tex = tex;
-				tex.reference();
+				if (this.tex)
+					tex.reference();
 				break;
 			default:
 				return false;
