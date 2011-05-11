@@ -63,7 +63,7 @@ public:
 
 			glUseProgram(material_shader_indexed.id);
 			material_shader_indexed.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
-			material_shader_indexed.float4("uv_mixs", 6, Helper.uv_mixs.ptr);
+			material_shader_indexed.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
 			glUseProgram(0);
 		}
 
