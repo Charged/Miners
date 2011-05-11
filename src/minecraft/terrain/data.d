@@ -97,7 +97,7 @@ BlockDescriptor tile[256] = [
 	{  true, DataBlock, { 11,  3 }, { 11,  2 }, "crafting table" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "crops" },
 	{  true, Stuff,     {  2,  0 }, {  6,  5 }, "farmland" },
-	{  true, DataBlock, { 12,  2 }, { 14,  3 }, "furnace" },
+	{  true, DataBlock, { 13,  2 }, { 14,  3 }, "furnace" },
 	{  true, DataBlock, { 13,  3 }, { 14,  3 }, "burning furnace" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "sign post" },
 	{ false, Stuff,     {  1,  5 }, {  1,  6 }, "wooden door" },           // 64
@@ -185,3 +185,6 @@ BlockDescriptor farmlandTile[2] = [
 	{  true, Stuff,     {  2,  0 }, {  7,  5 }, "farmland dry" },          // 0
 	{  true, Stuff,     {  2,  0 }, {  6,  5 }, "farmland wet" },
 ];
+
+BlockDescriptor furnaceFrontTile =
+	{  true, DataBlock, { 12,  2 }, { 14,  3 }, "furnace" };

@@ -984,6 +984,26 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
+	void furnace(int x, int y, int z) {
+		auto dec = &tile[61];
+		auto decFront = &furnaceFrontTile;
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		if (set & sideMask.ZN)
+			makeXZ((d == 2) ? decFront : dec, x, y, z, sideNormal.ZN);
+		if (set & sideMask.ZP)
+			makeXZ((d == 3) ? decFront : dec, x, y, z, sideNormal.ZP);
+		if (set & sideMask.XN)
+			makeXZ((d == 4) ? decFront : dec, x, y, z, sideNormal.XN);
+		if (set & sideMask.XP)
+			makeXZ((d == 5) ? decFront : dec, x, y, z, sideNormal.XP);
+		if (set & sideMask.YN)
+			makeY(dec, x, y, z, sideNormal.YN);
+		if (set & sideMask.YP)
+			makeY(dec, x, y, z, sideNormal.YP);
+	}
+
 	void snow(int x, int y, int z) {
 		// Make snow into full block for now
 		solid(80, x, y, z);
@@ -1028,6 +1048,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 60:
 				farmland(x, y, z);
+				break;
+			case 61:
+				furnace(x, y, z);
 				break;
 			case 64:
 			case 71:
