@@ -986,38 +986,22 @@ template BlockDispatcher(alias T)
 
 	void furnace(int x, int y, int z) {
 		auto dec = &tile[61];
+		auto decFront = &furnaceFrontTile;
 		int set = data.getSolidSet(x, y, z);
 		auto d = data.getDataUnsafe(x, y, z);
 
-		ubyte tex = calcTextureXZ(dec);
-		ubyte front_tex = cast(ubyte)(tex - 1);
-
-		int x1 = x, x2 = x + 1;
-		int y1 = y, y2 = y + 1;
-		int z1 = z, z2 = z + 1;
-
-		const shift = VERTEX_SIZE_BIT_SHIFT;
-		x1 <<= shift;
-		x2 <<= shift;
-		y1 <<= shift;
-		y2 <<= shift;
-		z1 <<= shift;
-		z2 <<= shift;
-
 		if (set & sideMask.ZN)
-			emitQuadXZN(x1, x2, y1, y2, z1, z1, (d == 2) ? front_tex : tex, sideNormal.ZN);
+			makeXZ((d == 2) ? decFront : dec, x, y, z, sideNormal.ZN);
 		if (set & sideMask.ZP)
-			emitQuadXZP(x1, x2, y1, y2, z2, z2, (d == 3) ? front_tex : tex, sideNormal.ZP);
+			makeXZ((d == 3) ? decFront : dec, x, y, z, sideNormal.ZP);
 		if (set & sideMask.XN)
-			emitQuadXZN(x1, x1, y1, y2, z1, z2, (d == 4) ? front_tex : tex, sideNormal.XN);
+			makeXZ((d == 4) ? decFront : dec, x, y, z, sideNormal.XN);
 		if (set & sideMask.XP)
-			emitQuadXZP(x2, x2, y1, y2, z1, z2, (d == 5) ? front_tex : tex, sideNormal.XP);
-
-		tex = calcTextureY(dec);
+			makeXZ((d == 5) ? decFront : dec, x, y, z, sideNormal.XP);
 		if (set & sideMask.YN)
-			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+			makeY(dec, x, y, z, sideNormal.YN);
 		if (set & sideMask.YP)
-			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+			makeY(dec, x, y, z, sideNormal.YP);
 	}
 
 	void snow(int x, int y, int z) {

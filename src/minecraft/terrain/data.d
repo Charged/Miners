@@ -185,3 +185,6 @@ BlockDescriptor farmlandTile[2] = [
 	{  true, Stuff,     {  2,  0 }, {  7,  5 }, "farmland dry" },          // 0
 	{  true, Stuff,     {  2,  0 }, {  6,  5 }, "farmland wet" },
 ];
+
+BlockDescriptor furnaceFrontTile =
+	{  true, DataBlock, { 12,  2 }, { 14,  3 }, "furnace" };
