@@ -62,7 +62,7 @@ public:
 								 ["diffuseTex"]);
 
 			glUseProgram(material_shader_indexed.id);
-			material_shader_indexed.float4("normals", 6, Helper.normals.ptr);
+			material_shader_indexed.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
 			material_shader_indexed.float4("uv_mixs", 6, Helper.uv_mixs.ptr);
 			glUseProgram(0);
 		}
@@ -73,7 +73,7 @@ public:
 						 ["diffuseTex"]);
 
 		glUseProgram(material_shader.id);
-		material_shader.float4("normals", 6, Helper.normals.ptr);
+		material_shader.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
 		glUseProgram(0);
 	}
 
@@ -213,8 +213,8 @@ public:
 							["diffuseTex"]);
 
 		glUseProgram(material_shader_array.id);
-		material_shader_array.float4("normals", 6, Helper.normals.ptr);
-		material_shader_array.float4("uv_mixs", 6, Helper.uv_mixs.ptr);
+		material_shader_array.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
+		material_shader_array.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
 		glUseProgram(0);
 
 		material_shader = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
@@ -223,8 +223,8 @@ public:
 						 ["diffuseTex"]);
 
 		glUseProgram(material_shader.id);
-		material_shader.float4("normals", 6, Helper.normals.ptr);
-		material_shader.float4("uv_mixs", 6, Helper.uv_mixs.ptr);
+		material_shader.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
+		material_shader.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
 		glUseProgram(0);
 
 		initialized = true;
@@ -333,6 +333,11 @@ public:
 		 0.0,  1.0,  0.0, 0.0, // YP - Up
 		 0.0,  0.0, -1.0, 0.0, // ZN
 		 0.0,  0.0,  1.0, 0.0, // ZP
+
+		-1.0,  0.0, -1.0, 0.0, // XNZN
+		-1.0,  0.0,  1.0, 0.0, // XNZP
+		 1.0,  0.0, -1.0, 0.0, // XPZN
+		 1.0,  0.0,  1.0, 0.0, // XPZP
 	];
 	const static float uv_mixs[] = [
 		 0.0,  1.0,  0.0, -1.0, // XN
@@ -341,6 +346,11 @@ public:
 		 1.0,  0.0,  1.0,  0.0, // YP - Up
 		-1.0,  0.0,  0.0, -1.0, // ZN
 		 1.0,  0.0,  0.0, -1.0, // ZP
+
+		 0.0,  1.0,  0.0, -1.0, // XNZN
+		 0.0, -1.0,  0.0, -1.0, // XMZP
+		-1.0,  0.0,  0.0, -1.0, // XPZN
+		 1.0,  0.0,  0.0, -1.0, // XPZP
 	];
 
 	/*
@@ -431,8 +441,8 @@ void main()
 	 */
 
 	const char[] materialVertCompactMesh = "
-uniform vec4 normals[6];
-uniform vec4 uv_mixs[6];
+uniform vec4 normals[10];
+uniform vec4 uv_mixs[10];
 
 varying vec3 normal;
 varying float light;
@@ -465,8 +475,8 @@ attribute vec4 vs_position;
 attribute vec4 vs_data1;
 attribute vec4 vs_data2;
 
-uniform vec4 normals[6];
-uniform vec4 uv_mixs[6];
+uniform vec4 normals[10];
+uniform vec4 uv_mixs[10];
 
 void main()
 {
@@ -487,8 +497,8 @@ void main()
 	const char[] materialVertArrayIndexed = "
 #extension GL_EXT_gpu_shader4 : require
 
-uniform vec4 normals[6];
-uniform vec4 uv_mixs[6];
+uniform vec4 normals[10];
+uniform vec4 uv_mixs[10];
 
 uniform vec2 offset;
 

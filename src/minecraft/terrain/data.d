@@ -73,8 +73,8 @@ BlockDescriptor tile[256] = [
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
 	{  true, DataBlock, {  0,  4 }, {  0,  4 }, "wool" },
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "yellow flower" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "red rose" },
+	{ false, Stuff,     { 12,  0 }, { 12,  0 }, "yellow flower" },
+	{ false, Stuff,     { 13,  0 }, { 13,  0 }, "red rose" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "brown myshroom" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "red mushroom" },          // 40
 	{  true, Block,     {  7,  1 }, {  7,  1 }, "gold block" },

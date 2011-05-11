@@ -42,13 +42,36 @@ const VERTEX_SIZE_DIVISOR = 16;
  * The normal of a side.
  */
 enum sideNormal : ubyte {
-     XN = 0,
-     XP = 1,
-     YN = 2,
-     YP = 3,
-     ZN = 4,
-     ZP = 5,
+	XN = 0,
+	XP = 1,
+	YN = 2,
+	YP = 3,
+	ZN = 4,
+	ZP = 5,
+
+// These extended normals are not accepted by most
+// functions only the emitters and packers take these.
+	XNZN = 6,
+	XNZP = 7,
+	XPZN = 8,
+	XPZP = 9,
 }
+
+
+int normalTable[] = [
+	-1, 0, 0,
+	 1, 0, 0,
+	 0,-1, 0,
+	 0, 1, 0,
+	 0, 0,-1,
+	 0, 0, 1,
+
+// Extended normals
+	-1, 0,-1,
+	-1, 0, 1,
+	 1, 0,-1,
+	 1, 0, 1,
+];
 
 /**
  * Does the normal point alongside the axis.
@@ -308,13 +331,10 @@ template MeshPacker()
 	{
 		float u = (texture % 16 + uv_off % 2) / 16.0f;
 		float v = (texture / 16 + uv_off / 2) / 16.0f;
-		int positive = isNormalPositive(normal);
-		int nx = isNormalX(normal);
-		int nz = isNormalY(normal);
-		int ny = isNormalZ(normal);
-		nx = (nx & positive) -(nx & !positive);
-		ny = (ny & positive) -(ny & !positive);
-		nz = (nz & positive) -(nz & !positive);
+
+		int nx = normalTable[normal*3+0];
+		int ny = normalTable[normal*3+1];
+		int nz = normalTable[normal*3+2];
 
 		mixin PositionCalculator!();
 
@@ -484,6 +504,16 @@ template QuadEmitter(alias T)
 			 ubyte tex, sideNormal normal)
 	{
 		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void emitDiagonalQuads(int x1, int x2, int y1, int y2, int z1, int z2, ubyte tex)
+	{
+		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, sideNormal.XNZN);
+		emitQuadAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, sideNormal.XPZP);
+
+		// We flip the z values to get the other two set of coords.
+		emitQuadAOXZP(x1, x2, y1, y2, z2, z1, 0, 0, 0, 0, tex, sideNormal.XNZP);
+		emitQuadAOXZN(x1, x2, y1, y2, z2, z1, 0, 0, 0, 0, tex, sideNormal.XPZN);
 	}
 }
 
@@ -779,6 +809,22 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
+	void flower(ubyte type, int x, int y, int z) {
+		auto desc = &tile[type];
+		auto tex = calcTextureXZ(desc);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = x, x2 = x+16;
+		int y1 = y, y2 = y+16;
+		int z1 = z, z2 = z+16;
+
+		emitDiagonalQuads(x1, x2, y1, y2, z1, z2, tex);
+	}
+
 	void slab(ubyte type, uint x, uint y, uint z) {
 		int set = data.getSolidOrTypeSet(type, x, y, z);
 		auto d = data.getDataUnsafe(x, y, z);
@@ -1032,6 +1078,10 @@ template BlockDispatcher(alias T)
 				break;
 			case 35:
 				wool(x, y, z);
+				break;
+			case 37:
+			case 38:
+				flower(type, x, y, z);
 				break;
 			case 43:
 			case 44:
