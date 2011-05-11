@@ -1004,6 +1004,41 @@ template BlockDispatcher(alias T)
 			makeY(dec, x, y, z, sideNormal.YP);
 	}
 
+	void wallsign(int x, int y, int z) {
+		auto dec = &tile[68];
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+		ubyte tex = calcTextureXZ(dec);
+
+		d -= 2;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = [x,    x,    x+14, x   ][d];
+		int x2 = [x+16, x+16, x+16, x+2 ][d];
+		int y1 = y+4;
+		int y2 = y+12;
+		int z1 = [z+14, z,    z,    z   ][d];
+		int z2 = [z+16, z+2,  z+16, z+16][d];
+
+		// Signs don't occupy a whole block, so the front face has to be shown, even
+		// when a block is in front of it.
+		if (set & sideMask.ZN || d == 0)
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		if (set & sideMask.ZP || d == 1)
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		if (set & sideMask.XN || d == 2)
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		if (set & sideMask.XP || d == 3)
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+
+		emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+	}
+
 	void snow(int x, int y, int z) {
 		// Make snow into full block for now
 		solid(80, x, y, z);
@@ -1062,6 +1097,9 @@ template BlockDispatcher(alias T)
 			case 53:
 			case 67:
 				stair(type, x, y, z);
+				break;
+			case 68:
+				wallsign(x, y, z);
 				break;
 			case 78:
 				snow(x, y, z);
