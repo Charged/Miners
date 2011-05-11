@@ -10,6 +10,7 @@ import charge.sys.logger;
 import charge.sys.file;
 import charge.math.picture;
 import charge.gfx.gl;
+import charge.gfx.target;
 
 
 class Texture : public Resource
@@ -196,6 +197,74 @@ package:
 		this.h = h;
 	}
 
+}
+
+class TextureTarget : public Texture, public RenderTarget
+{
+private:
+	GLuint fbo;
+
+public:
+	static TextureTarget opCall(char[] name, uint w, uint h)
+	{
+		return new TextureTarget(Pool(), name, w, h);
+	}
+
+	void setTarget()
+	{
+		static GLenum buffers[3] = [
+			GL_COLOR_ATTACHMENT0_EXT,
+		];
+		gluFrameBufferBind(fbo, buffers, w, h);
+	}
+
+	uint width()
+	{
+		return w;
+	}
+
+	uint height()
+	{
+		return h;
+	}
+
+protected:
+	this(Pool p, char[] name, uint w, uint h)
+	{
+		uint colorTex, colorFormat;
+
+		if (!GL_EXT_framebuffer_object)
+			throw new Exception("GL_EXT_framebuffer_object not supported");
+
+		colorFormat = GL_RGBA8;
+
+		glGenTextures(1, &colorTex);
+		glGenFramebuffersEXT(1, &fbo);
+
+		scope(failure) {
+			glDeleteFramebuffersEXT(1, &fbo);
+			glDeleteTextures(1, &colorTex);
+			fbo = colorTex = 0;
+		}
+
+		glBindTexture(GL_TEXTURE_2D, colorTex);
+		glTexImage2D(GL_TEXTURE_2D, 0, colorFormat, w, h, 0, GL_RGBA, GL_FLOAT, null);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTex, 0);
+
+		GLenum status = cast(GLenum)glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+
+		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+			throw new Exception("DoubleTarget framebuffer not complete " ~ std.string.toString(status));
+
+		super(p, name, true, GL_TEXTURE_2D, colorTex, w, h);
+	}
 }
 
 class TextureArray : public Texture

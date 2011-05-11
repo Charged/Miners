@@ -56,7 +56,12 @@ public:
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluOrtho2D(0.0, rt.width, rt.height, 0.0);
+
+		// Need to flip the coords if rendering to a FBO.
+		if (rt !is DefaultTarget())
+			gluOrtho2D(0.0, rt.width, 0.0, rt.height);
+		else
+			gluOrtho2D(0.0, rt.width, rt.height, 0.0);
 	}
 
 	/**

@@ -117,6 +117,7 @@ alias charge.gfx.light.SpotLight GfxSpotLight;
 alias charge.gfx.light.Fog GfxFog;
 alias charge.gfx.texture.Texture GfxTexture;
 alias charge.gfx.texture.TextureArray GfxTextureArray;
+alias charge.gfx.texture.TextureTarget GfxTextureTarget;
 alias charge.gfx.texture.DynamicTexture GfxDynamicTexture;
 alias charge.gfx.material.Material GfxMaterial;
 alias charge.gfx.material.SimpleMaterial GfxSimpleMaterial;
