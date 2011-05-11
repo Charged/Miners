@@ -984,6 +984,42 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
+	void furnace(int x, int y, int z) {
+		auto dec = &tile[61];
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		ubyte tex = calcTextureXZ(dec);
+		ubyte front_tex = cast(ubyte)(tex - 1);
+
+		int x1 = x, x2 = x + 1;
+		int y1 = y, y2 = y + 1;
+		int z1 = z, z2 = z + 1;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		x2 <<= shift;
+		y1 <<= shift;
+		y2 <<= shift;
+		z1 <<= shift;
+		z2 <<= shift;
+
+		if (set & sideMask.ZN)
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, (d == 2) ? front_tex : tex, sideNormal.ZN);
+		if (set & sideMask.ZP)
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, (d == 3) ? front_tex : tex, sideNormal.ZP);
+		if (set & sideMask.XN)
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, (d == 4) ? front_tex : tex, sideNormal.XN);
+		if (set & sideMask.XP)
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, (d == 5) ? front_tex : tex, sideNormal.XP);
+
+		tex = calcTextureY(dec);
+		if (set & sideMask.YN)
+			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		if (set & sideMask.YP)
+			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+	}
+
 	void snow(int x, int y, int z) {
 		// Make snow into full block for now
 		solid(80, x, y, z);
@@ -1028,6 +1064,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 60:
 				farmland(x, y, z);
+				break;
+			case 61:
+				furnace(x, y, z);
 				break;
 			case 64:
 			case 71:
