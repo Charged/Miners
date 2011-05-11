@@ -51,6 +51,7 @@ private:
 	GfxDraw d;
 	GfxDynamicTexture debugText;
 	GfxDynamicTexture cameraText;
+	GfxTextureTarget infoTexture;
 
 public:
 	mixin SysLogging;
@@ -97,6 +98,8 @@ public:
  		d = new GfxDraw();
 		debugText = new GfxDynamicTexture("mc/debugText");
 		cameraText = new GfxDynamicTexture("mc/cameraText");
+
+		makeInfoTexture();
 	}
 
 	~this()
@@ -109,6 +112,9 @@ public:
 		delete d;
 		debugText.dereference();
 		cameraText.dereference();
+
+		if (infoTexture !is null)
+			infoTexture.dereference();
 	}
 
 protected:
@@ -266,6 +272,12 @@ protected:
 			d.target = rt;
 			d.start();
 
+			// TODO: Disabled for now
+			if (false)
+				d.blit(infoTexture,
+				       (rt.width - infoTexture.width) / 2,
+				       (rt.height - infoTexture.height) / 2);
+
 			auto w = debugText.width + 16;
 			auto h = debugText.height + 16;
 			auto x = rt.width - debugText.width - 16 - 8;
@@ -319,4 +331,65 @@ protected:
 	void close()
 	{
 	}
+
+	void makeInfoTexture(/*GfxRenderTarget rt*/)
+	{
+		auto introText = new GfxDynamicTexture("mc/introText");
+		auto headerText = new GfxDynamicTexture("mc/headerText");
+
+		GfxFont.render(headerText, headerTextChars);
+		GfxFont.render(introText, introTextChars);
+
+		int width = 8 + cast(int)fmax(4 + headerText.width * 2 + 4, introText.width) + 8;
+		int height = 8 + 4 + headerText.height * 2 + 4 + 8 + introText.height + 8;
+
+		int center = width / 2;
+		int maxWidth = cast(int)fmax(headerText.width*2, introText.width) + 16;
+		int maxHeight = 8 + 4 + headerText.height*2 + 4 + 8 + introText.height + 8;
+
+		if (infoTexture !is null)
+			infoTexture.dereference();
+		infoTexture = GfxTextureTarget("mc/infoText", width, height);
+
+		auto d = new GfxDraw();
+		d.target = infoTexture;
+		d.start();
+
+		// Background
+		d.fill(Color4f(0, 0, 0, .8), false, 0, 0, width, height);
+
+		// Title bar background
+		d.fill(Color4f(0, 0, 1.0, 0.8), false,
+		       8, 8, maxWidth-16, headerText.height*2+8);
+
+		// Header text
+		d.blit(headerText, Color4f.White, true,
+		       0, 0,                                         // srcX, srcY
+		       headerText.width, headerText.height,          // srcW, srcH
+		       center - headerText.width, 8 + 4,             // dstX, dstY
+		       headerText.width * 2, headerText.height * 2); // dstW, dstH
+
+		// Intro text
+		d.blit(introText, center - introText.width / 2, 8+4+headerText.height*2+4+8);
+
+		d.stop();
+
+		introText.dereference();
+		headerText.dereference();
+
+		// Make sure the target is unbound.
+		auto rt = GfxDefaultTarget();
+		rt.setTarget();
+	}
+
+	const char[] headerTextChars = `Charged Miners`;
+
+	const char[] introTextChars =
+`Welcome to charged miners, I see that this is the
+first time that you are running this application.
+
+
+
+            Press any key to continue.
+`;
 }
