@@ -29,9 +29,18 @@ endif
 endif
 
 
+# gdmd's -g exports native D debugging info use
+# that instead of emulated c ones that -gc gives us.
+ifeq ($(notdir $(DMD)),gdmd)
+	DEBUG_DFLAGS = -g -debug
+else
+	DEBUG_DFLAGS = -gc -debug
+endif
+
+
 CFLAGS ?= -g -Wall
-DFLAGS ?= -gc -debug
-LDFLAGS ?= -gc
+DFLAGS ?= $(DEBUG_DFLAGS)
+LDFLAGS ?= $(DEBUG_DFLAGS)
 
 DDEFINES = $(ODE_DDEFINES)
 TARGET = Charge
