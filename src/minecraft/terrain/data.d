@@ -59,7 +59,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  1,  3 }, {  1,  3 }, "glass" },
 	{  true, Block,     {  0, 10 }, {  0, 10 }, "lapis lazuli ore" },
 	{  true, Block,     {  0,  9 }, {  0,  9 }, "lapis lazuli block" },
-	{  true, DataBlock, { 14,  2 }, { 14,  3 }, "dispenser" },
+	{  true, DataBlock, { 13,  2 }, { 14,  3 }, "dispenser" },
 	{  true, Block,     {  0, 12 }, {  0, 11 }, "sand Stone" },            // 24
 	{  true, Block,     { 10,  4 }, { 10,  4 }, "note block" },
 	{ false, Stuff,     {  0,  4 }, {  0,  4 }, "bed" },
@@ -122,12 +122,12 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "sugar cane" },
 	{  true, Block,     { 10,  4 }, { 11,  4 }, "jukebox" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "fence" },
-	{  true, DataBlock, {  7,  7 }, {  6,  6 }, "pumpkin" },
+	{  true, DataBlock, {  6,  7 }, {  6,  6 }, "pumpkin" },
 	{  true, Block,     {  7,  6 }, {  7,  6 }, "netherrack" },
 	{  true, Block,     {  8,  6 }, {  8,  6 }, "soul sand" },             // 88
 	{  true, Block,     {  9,  6 }, {  9,  6 }, "glowstone block" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "portal" },
-	{  true, DataBlock, {  8,  7 }, {  6,  6 }, "jack-o-lantern" },
+	{  true, DataBlock, {  6,  7 }, {  6,  6 }, "jack-o-lantern" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "cake block" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "redstone repeater off" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "redstone repeater on" },
@@ -188,3 +188,12 @@ BlockDescriptor farmlandTile[2] = [
 
 BlockDescriptor furnaceFrontTile =
 	{  true, DataBlock, { 12,  2 }, { 14,  3 }, "furnace" };
+
+BlockDescriptor dispenserFrontTile =
+	{  true, DataBlock, { 14,  2 }, { 14,  3 }, "dispenser" };
+
+BlockDescriptor pumpkinFrontTile =
+	{  true, DataBlock, {  7,  7 }, {  6,  6 }, "pumpkin" };
+
+BlockDescriptor jackolanternFrontTile =
+	{  true, DataBlock, {  8,  7 }, {  6,  6 }, "jack-o-lantern" };
