@@ -99,7 +99,7 @@ BlockDescriptor tile[256] = [
 	{  true, Stuff,     {  2,  0 }, {  6,  5 }, "farmland" },
 	{  true, DataBlock, { 13,  2 }, { 14,  3 }, "furnace" },
 	{  true, DataBlock, { 13,  2 }, { 14,  3 }, "burning furnace" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "sign post" },
+	{ false, Stuff,     {  4,  0 }, {  0,  0 }, "sign post" },
 	{ false, Stuff,     {  1,  5 }, {  1,  6 }, "wooden door" },           // 64
 	{ false, Stuff,     {  3,  5 }, {  3,  5 }, "ladder" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "rails" },
