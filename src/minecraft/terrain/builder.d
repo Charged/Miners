@@ -821,6 +821,18 @@ template BlockDispatcher(alias T)
 		makeXYZ(dec, x, y, z, set);
 	}
 
+	void dispenser(int x, int y, int z) {
+		auto dec = &tile[23];
+		auto decFront = &dispenserFrontTile;
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		auto faceNormal = [sideNormal.ZN, sideNormal.ZP,
+				   sideNormal.XN, sideNormal.XP][d-2];
+
+		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
+	}
+
 	void wool(int x, int y, int z) {
 		auto dec = &woolTile[data.getDataUnsafe(x, y, z)];
 		solidDec(dec, x, y, z);
@@ -1053,18 +1065,10 @@ template BlockDispatcher(alias T)
 		int set = data.getSolidSet(x, y, z);
 		auto d = data.getDataUnsafe(x, y, z);
 
-		if (set & sideMask.ZN)
-			makeXZ((d == 2) ? decFront : dec, x, y, z, sideNormal.ZN);
-		if (set & sideMask.ZP)
-			makeXZ((d == 3) ? decFront : dec, x, y, z, sideNormal.ZP);
-		if (set & sideMask.XN)
-			makeXZ((d == 4) ? decFront : dec, x, y, z, sideNormal.XN);
-		if (set & sideMask.XP)
-			makeXZ((d == 5) ? decFront : dec, x, y, z, sideNormal.XP);
-		if (set & sideMask.YN)
-			makeY(dec, x, y, z, sideNormal.YN);
-		if (set & sideMask.YP)
-			makeY(dec, x, y, z, sideNormal.YP);
+		auto faceNormal = [sideNormal.ZN, sideNormal.ZP,
+				   sideNormal.XN, sideNormal.XP][d-2];
+
+		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
 	}
 
 	void wallsign(int x, int y, int z) {
@@ -1107,6 +1111,30 @@ template BlockDispatcher(alias T)
 		solid(80, x, y, z);
 	}
 
+	void pumpkin(int x, int y, int z) {
+		auto dec = &tile[86];
+		auto decFront = &pumpkinFrontTile;
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		auto faceNormal = [sideNormal.ZN, sideNormal.XP,
+				   sideNormal.ZP, sideNormal.XN][d];
+
+		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
+	}
+
+	void jack_o_lantern(int x, int y, int z) {
+		auto dec = &tile[91];
+		auto decFront = &jackolanternFrontTile;
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		auto faceNormal = [sideNormal.ZN, sideNormal.XP,
+				   sideNormal.ZP, sideNormal.XN][d];
+
+		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
+	}
+
 	void b(uint x, uint y, uint z) {
 		static int count = 0;
 		ubyte type = data.get(x, y, z);
@@ -1127,6 +1155,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 20:
 				glass(x, y, z);
+				break;
+			case 23:
+				dispenser(x, y, z);
 				break;
 			case 35:
 				wool(x, y, z);
@@ -1170,6 +1201,12 @@ template BlockDispatcher(alias T)
 				break;
 			case 78:
 				snow(x, y, z);
+				break;
+			case 86:
+				pumpkin(x, y, z);
+				break;
+			case 91:
+				jack_o_lantern(x, y, z);
 				break;
 			default:
 				if (tile[type].filled)
