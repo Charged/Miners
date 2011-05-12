@@ -1071,6 +1071,58 @@ template BlockDispatcher(alias T)
 		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
 	}
 
+	void signpost(int x, int y, int z) {
+		auto dec = &tile[63];
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+		ubyte tex = calcTextureXZ(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = x+7, x2 = x+9;
+		int z1 = z+7, z2 = z+9;
+		int y1 = y, y2 = y+8;
+
+		// Pole
+		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+
+		bool north = [ true,  true, false, false,
+			      false, false,  true,  true,
+			       true,  true, false, false,
+			      false, false,  true,  true][d];
+		// Sign
+		if (north) {
+			// North/South orientation
+			z1 = z+7;
+			z2 = z+9;
+			x1 = x;
+			x2 = x+16;
+			y1 = y+8;
+			y2 = y+16;
+		} else {
+			// West/East orientation
+			x1 = x+7;
+			x2 = x+9;
+			z1 = z;
+			z2 = z+16;
+			y1 = y+8;
+			y2 = y+16;
+		}
+
+		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+	}
+
 	void wallsign(int x, int y, int z) {
 		auto dec = &tile[68];
 		int set = data.getSolidSet(x, y, z);
@@ -1189,6 +1241,9 @@ template BlockDispatcher(alias T)
 			case 61:
 			case 62:
 				furnace(type, x, y, z);
+				break;
+			case 63:
+				signpost(x, y, z);
 				break;
 			case 64:
 			case 71:
