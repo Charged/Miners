@@ -1187,6 +1187,36 @@ template BlockDispatcher(alias T)
 		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
 	}
 
+	void cactus(int x, int y, int z) {
+		const type = 81;
+		auto dec = &tile[type];
+		ubyte tex = calcTextureXZ(dec);
+
+		int x2 = x+1;
+		int y2 = y+1;
+		int z2 = z+1;
+
+		if (!data.filledOrType(type, x, y+1, z))
+			makeY(dec, x, y, z, sideNormal.YP);
+		if (!data.filledOrType(type, x, y-1, z)) {
+			dec = &cactusBottomTile;
+			makeY(dec, x, y, z, sideNormal.YN);
+		}
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		x2 <<= shift;
+		y <<= shift;
+		y2 <<= shift;
+		z <<= shift;
+		z2 <<= shift;
+
+		emitQuadXZN(x, x2, y, y2, z+1, z+1, tex, sideNormal.ZN);
+		emitQuadXZP(x, x2, y, y2, z+15, z+15, tex, sideNormal.ZP);
+		emitQuadXZN(x+1, x+1, y, y2, z, z2, tex, sideNormal.XN);
+		emitQuadXZP(x+15, x+15, y, y2, z, z2, tex, sideNormal.XP);
+	}
+
 	void b(uint x, uint y, uint z) {
 		static int count = 0;
 		ubyte type = data.get(x, y, z);
@@ -1261,6 +1291,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 78:
 				snow(x, y, z);
+				break;
+			case 81:
+				cactus(x, y, z);
 				break;
 			case 86:
 				pumpkin(x, y, z);

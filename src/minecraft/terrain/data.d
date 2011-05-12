@@ -117,7 +117,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  4,  4 }, {  2,  4 }, "snow" },
 	{  true, Block,     {  3,  4 }, {  3,  4 }, "ice" },
 	{  true, Block,     {  2,  4 }, {  2,  4 }, "snow block" },            // 80
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "cactus" },
+	{ false, Stuff,     {  6,  4 }, {  5,  4 }, "cactus" },
 	{  true, Block,     {  8,  4 }, {  8,  4 }, "clay block" },
 	{ false, Stuff,     {  9,  4 }, {  0,  0 }, "sugar cane" },
 	{  true, Block,     { 10,  4 }, { 11,  4 }, "jukebox" },
@@ -199,3 +199,6 @@ BlockDescriptor pumpkinFrontTile =
 
 BlockDescriptor jackolanternFrontTile =
 	{  true, DataBlock, {  8,  7 }, {  6,  6 }, "jack-o-lantern" };
+
+BlockDescriptor cactusBottomTile =
+	{ false, Stuff,     {  7,  4 }, {  7,  4 }, "cactus" };
