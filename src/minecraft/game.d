@@ -4,7 +4,9 @@ module minecraft.game;
 
 import std.math;
 import std.file;
+import std.stdio;
 import std.c.stdlib;
+
 import lib.sdl.sdl;
 
 import charge.charge;
@@ -60,9 +62,10 @@ public:
 	{
 		super(args);
 		parseArgs(args);
-		l.fatal("-license         - print licenses");
-		l.fatal("-level <level>   - to specify level directory");
-		l.fatal("-all             - build all chunks near the camera on start");
+
+		writefln("   -a, --all             - build all chunks near the camera on start");
+		writefln("   -l, --level <level>   - to specify level directory");
+		writefln("       --license         - print licenses");
 
 		running = true;
 
@@ -118,15 +121,27 @@ public:
 	}
 
 protected:
-	void parseArgs(char[][] arg)
+	void parseArgs(char[][] args)
 	{
-		for(int i; i < arg.length; i++) {
-			if (arg[i] == "-level")
-				level = arg[++i];
-			else if (arg[i] == "-all")
+		for(int i; i < args.length; i++) {
+			switch(args[i]) {
+			case "-l":
+			case "-level":
+			case "--level":
+				if (++i < args.length) {
+					level = args[i];
+					break;
+				}
+				writefln("Expected argument to level switch");
+				throw new Exception("");
+			case "-a":
+			case "-all":
+			case "--all":
 				build_all = true;
+				break;
+			default:
+			}
 		}
-
 	}
 
 	bool checkLevel(char[] level)
