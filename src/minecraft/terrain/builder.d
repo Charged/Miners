@@ -716,6 +716,23 @@ template QuadBuilder(alias T)
 			makeHalfXZ(dec, x, y, z, sideNormal.ZP);
 	}
 
+	void makeFacedBlock(BlockDescriptor *dec, BlockDescriptor *decFace,
+			    uint x, uint y, uint z, sideNormal faceNormal, int set)
+	{
+
+		if (set & sideMask.ZN)
+			makeXZ((faceNormal == sideNormal.ZN) ? decFace : dec, x, y, z, sideNormal.ZN);
+		if (set & sideMask.ZP)
+			makeXZ((faceNormal == sideNormal.ZP) ? decFace : dec, x, y, z, sideNormal.ZP);
+		if (set & sideMask.XN)
+			makeXZ((faceNormal == sideNormal.XN) ? decFace : dec, x, y, z, sideNormal.XN);
+		if (set & sideMask.XP)
+			makeXZ((faceNormal == sideNormal.XP) ? decFace : dec, x, y, z, sideNormal.XP);
+		if (set & sideMask.YN)
+			makeY(dec, x, y, z, sideNormal.YN);
+		if (set & sideMask.YP)
+			makeY(dec, x, y, z, sideNormal.YP);
+	}
 }
 
 /**
