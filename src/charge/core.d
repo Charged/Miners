@@ -207,6 +207,9 @@ public:
 				bits
 			);
 
+		width = w = s.w;
+		height = h = s.h;
+
 		DefaultTarget.initDefaultTarget(w, h);
 	}
 
@@ -222,6 +225,12 @@ public:
 	}
 
 private:
+	/*
+	 *
+	 * Init and close functions
+	 *
+	 */
+
 	void initBuiltins()
 	{
 		auto fm = FileManager();
@@ -288,6 +297,9 @@ private:
 				0,
 				bits
 			);
+
+		width = x = s.w;
+		height = y = s.h;
 
 		loadGL(&loadFunc);
 
