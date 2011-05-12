@@ -838,7 +838,7 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
-	void flower(ubyte type, int x, int y, int z) {
+	void plants(ubyte type, int x, int y, int z) {
 		auto desc = &tile[type];
 		auto tex = calcTextureXZ(desc);
 
@@ -1162,9 +1162,13 @@ template BlockDispatcher(alias T)
 			case 35:
 				wool(x, y, z);
 				break;
+			case 6:
 			case 37:
 			case 38:
-				flower(type, x, y, z);
+			case 39:
+			case 40:
+			case 83:
+				plants(type, x, y, z);
 				break;
 			case 43:
 			case 44:
