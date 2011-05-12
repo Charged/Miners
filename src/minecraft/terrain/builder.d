@@ -1059,9 +1059,9 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
-	void furnace(int x, int y, int z) {
-		auto dec = &tile[61];
-		auto decFront = &furnaceFrontTile;
+	void furnace(ubyte type, int x, int y, int z) {
+		auto dec = &tile[type];
+		auto decFront = &furnaceFrontTile[type - 61];
 		int set = data.getSolidSet(x, y, z);
 		auto d = data.getDataUnsafe(x, y, z);
 
@@ -1183,7 +1183,8 @@ template BlockDispatcher(alias T)
 				farmland(x, y, z);
 				break;
 			case 61:
-				furnace(x, y, z);
+			case 62:
+				furnace(type, x, y, z);
 				break;
 			case 64:
 			case 71:
