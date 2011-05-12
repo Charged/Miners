@@ -42,7 +42,7 @@ BlockDescriptor tile[256] = [
 	{  true, Block,     {  2,  0 }, {  2,  0 }, "dirt" },
 	{  true, Block,     {  0,  1 }, {  0,  1 }, "clobb" },
 	{  true, Block,     {  4,  0 }, {  4,  0 }, "wooden plank" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "sapling" },
+	{ false, Stuff,     { 15,  0 }, { 15,  0 }, "sapling" },
 	{  true, Block,     {  1,  1 }, {  1,  1 }, "bedrock" },
 	{ false, Stuff,     { 15, 13 }, { 15, 13 }, "water" },                 // 8
 	{ false, Stuff,     { 15, 13 }, { 15, 13 }, "spring water" },
@@ -73,10 +73,10 @@ BlockDescriptor tile[256] = [
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
 	{  true, DataBlock, {  0,  4 }, {  0,  4 }, "wool" },
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
-	{ false, Stuff,     { 12,  0 }, { 12,  0 }, "yellow flower" },
-	{ false, Stuff,     { 13,  0 }, { 13,  0 }, "red rose" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "brown myshroom" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "red mushroom" },          // 40
+	{ false, Stuff,     { 13,  0 }, { 13,  0 }, "yellow flower" },
+	{ false, Stuff,     { 12,  0 }, { 12,  0 }, "red rose" },
+	{ false, Stuff,     { 13,  1 }, {  0,  0 }, "brown myshroom" },
+	{ false, Stuff,     { 12,  1 }, {  0,  0 }, "red mushroom" },          // 40
 	{  true, Block,     {  7,  1 }, {  7,  1 }, "gold block" },
 	{  true, Block,     {  6,  1 }, {  6,  1 }, "iron block" },
 	{  true, DataBlock, {  5,  0 }, {  6,  0 }, "double slab" },
@@ -119,7 +119,7 @@ BlockDescriptor tile[256] = [
 	{  true, Block,     {  2,  4 }, {  2,  4 }, "snow block" },            // 80
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "cactus" },
 	{  true, Block,     {  8,  4 }, {  8,  4 }, "clay block" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "sugar cane" },
+	{ false, Stuff,     {  9,  4 }, {  0,  0 }, "sugar cane" },
 	{  true, Block,     { 10,  4 }, { 11,  4 }, "jukebox" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "fence" },
 	{  true, DataBlock, {  6,  7 }, {  6,  6 }, "pumpkin" },
