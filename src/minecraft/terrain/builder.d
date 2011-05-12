@@ -1213,6 +1213,26 @@ template BlockDispatcher(alias T)
 		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
+	void pressure_plate(ubyte type, int x, int y, int z) {
+		auto dec = &tile[type];
+		ubyte tex = calcTextureXZ(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = x+1, x2 = x+15;
+		int z1 = z+1, z2 = z+15;
+		int y1 = y, y2 = y+1;
+
+		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+	}
+
 	void snow(int x, int y, int z) {
 		// Make snow into full block for now
 		solid(80, x, y, z);
@@ -1409,6 +1429,10 @@ template BlockDispatcher(alias T)
 				break;
 			case 68:
 				wallsign(x, y, z);
+				break;
+			case 70:
+			case 72:
+				pressure_plate(type, x, y, z);
 				break;
 			case 77:
 				stone_button(x, y, z);
