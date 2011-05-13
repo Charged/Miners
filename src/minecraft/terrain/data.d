@@ -121,7 +121,7 @@ BlockDescriptor tile[256] = [
 	{  true, Block,     {  8,  4 }, {  8,  4 }, "clay block" },
 	{ false, Stuff,     {  9,  4 }, {  0,  0 }, "sugar cane" },
 	{  true, Block,     { 10,  4 }, { 11,  4 }, "jukebox" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "fence" },
+	{ false, Stuff,     {  4,  0 }, {  4,  0 }, "fence" },
 	{  true, DataBlock, {  6,  7 }, {  6,  6 }, "pumpkin" },
 	{  true, Block,     {  7,  6 }, {  7,  6 }, "netherrack" },
 	{  true, Block,     {  8,  6 }, {  8,  6 }, "soul sand" },             // 88
