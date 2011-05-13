@@ -1163,6 +1163,70 @@ template BlockDispatcher(alias T)
 		solid(80, x, y, z);
 	}
 
+	void fence(int x, int y, int z) {
+		const type = 85;
+		auto dec = &tile[type];
+		int set = data.getSolidSet(x, y, z);
+		ubyte tex = calcTextureXZ(dec);
+
+		// Look for nearby fences.
+		auto north = data.get(x, y, z-1) == type;
+		auto east = data.get(x-1, y, z) == type;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = x+6, x2 = x+10;
+		int z1 = z+6, z2 = z+10;
+		int y1 = y, y2 = y+16;
+
+		// Pole.
+		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+
+		if (set & sideMask.YN)
+			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		if (set & sideMask.YP)
+			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+
+		// Bars in north or east direction.
+		if (north) {
+			z1 = z-6;
+			z2 = z+6;
+
+			emitQuadYP(x1+1, x2-1, y+15, z1, z2, tex, sideNormal.YP);
+			emitQuadYN(x1+1, x2-1, y+12, z1, z2, tex, sideNormal.YN);
+			emitQuadXZP(x2-1, x2-1, y+12, y+15, z1, z2, tex, sideNormal.XP);
+			emitQuadXZN(x1+1, x1+1, y+12, y+15, z1, z2, tex, sideNormal.XN);
+
+			emitQuadYP(x1+1, x2-1, y+9, z1, z2, tex, sideNormal.YP);
+			emitQuadYN(x1+1, x2-1, y+6, z1, z2, tex, sideNormal.YN);
+			emitQuadXZP(x2-1, x2-1, y+6, y+9, z1, z2, tex, sideNormal.XP);
+			emitQuadXZN(x1+1, x1+1, y+6, y+9, z1, z2, tex, sideNormal.XN);
+		}
+
+		if (east) {
+			z1 = z+6,
+			z2 = z+10;
+			x1 = x-6;
+			x2 = x+6;
+
+			emitQuadYP(x1, x2, y+15, z1+1, z2-1, tex, sideNormal.YP);
+			emitQuadYN(x1, x2, y+12, z1+1, z2-1, tex, sideNormal.YN);
+			emitQuadXZP(x1, x2, y+12, y+15, z2-1, z2-1, tex, sideNormal.XP);
+			emitQuadXZN(x1, x2, y+12, y+15, z1+1, z1+1, tex, sideNormal.XN);
+
+			emitQuadYP(x1, x2, y+9, z1+1, z2-1, tex, sideNormal.YP);
+			emitQuadYN(x1, x2, y+6, z1+1, z2-1, tex, sideNormal.YN);
+			emitQuadXZP(x1, x2, y+6, y+9, z2-1, z2-1, tex, sideNormal.XP);
+			emitQuadXZN(x1, x2, y+6, y+9, z1+1, z1+1, tex, sideNormal.XN);
+		}
+	}
+
 	void pumpkin(int x, int y, int z) {
 		auto dec = &tile[86];
 		auto decFront = &pumpkinFrontTile;
@@ -1294,6 +1358,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 81:
 				cactus(x, y, z);
+				break;
+			case 85:
+				fence(x, y, z);
 				break;
 			case 86:
 				pumpkin(x, y, z);
