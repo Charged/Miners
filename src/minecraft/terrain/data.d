@@ -113,7 +113,7 @@ BlockDescriptor tile[256] = [
 	{  true, Block,     {  3,  3 }, {  3,  3 }, "glowing rstone ore" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "redstone torch off" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "redstone torch on" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "stone button" },
+	{ false, Stuff,     {  1,  0 }, {  1,  0 }, "stone button" },
 	{ false, Stuff,     {  4,  4 }, {  2,  4 }, "snow" },
 	{  true, Block,     {  3,  4 }, {  3,  4 }, "ice" },
 	{  true, Block,     {  2,  4 }, {  2,  4 }, "snow block" },            // 80
