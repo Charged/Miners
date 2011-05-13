@@ -1158,6 +1158,44 @@ template BlockDispatcher(alias T)
 		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
+	void stone_button(int x, int y, int z) {
+		auto dec = &tile[77];
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+		ubyte tex = calcTextureXZ(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		// Button pressed state.
+		int depth = (d & 8) ? 1 : 2;
+
+		d -= 1;
+		d &= 3;
+
+		int x1 = [x,       x+16-depth, x+5,     x+5       ][d];
+		int x2 = [x+depth, x+16,       x+11,    x+11      ][d];
+		int z1 = [z+5,     z+5,        z,       z+16-depth][d];
+		int z2 = [z+11,    z+11,       z+depth, z+16      ][d];
+		int y1 = y+6;
+		int y2 = y+10;
+
+		// Don't render the face where the button is attached to the block.
+		if (set & sideMask.ZN || d != 2)
+			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		if (set & sideMask.ZP || d != 3)
+			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		if (set & sideMask.XN || d != 0)
+			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		if (set & sideMask.XP || d != 1)
+			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+
+		emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+	}
+
 	void snow(int x, int y, int z) {
 		// Make snow into full block for now
 		solid(80, x, y, z);
@@ -1288,6 +1326,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 68:
 				wallsign(x, y, z);
+				break;
+			case 77:
+				stone_button(x, y, z);
 				break;
 			case 78:
 				snow(x, y, z);
