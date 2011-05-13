@@ -361,23 +361,25 @@ template CompactMeshPacker()
 	void pack(int x, int y, int z, ubyte texture, ubyte light,
 		  sideNormal normal, ubyte uv_off, int manip)
 	{
-		ubyte u = (texture % 16 + uv_off % 2);
-		ubyte v = (texture / 16 + uv_off / 2);
+		int u = (texture & 0x0f) * 16;
+		int v = (texture & 0xf0);
+		u += (uv_off % 2) * 16;
+		v += (uv_off / 2) * 16;
+
+		if (manip == uvManip.HALF_V & (uv_off >> 1))
+			v -= 8;
 
 		mixin PositionCalculator!();
 
 		verts[iv].position[0] = xF;
 		verts[iv].position[1] = yF;
 		verts[iv].position[2] = zF;
-		verts[iv].texture_u_or_index = u;
-		verts[iv].texture_v_or_pad = v;
-		verts[iv].normal = normal;
+		verts[iv].u = cast(ushort)u;
+		verts[iv].v = cast(ushort)v;
 		verts[iv].light = light;
-		verts[iv].texture_u_offset = 0;
-		verts[iv].texture_v_offset =
-			cast(ubyte)(uv_off & 2 && manip == uvManip.HALF_V ? -8 : 0);
-		verts[iv].torch_light = 0;
-		verts[iv].sun_light = 0;
+		verts[iv].normal = normal;
+		verts[iv].texture = texture;
+		verts[iv].pad = 0;
 		iv++;
 	}
 }
@@ -397,20 +399,24 @@ template CompactMeshPackerIndexed()
 
 	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, int manip)
 	{
+		int tex = texture;
+		int u = (uv_off % 2) * 256;
+		int v = (uv_off / 2) * 256;
+
+		if (manip == uvManip.HALF_V & (uv_off >> 1))
+			v -= 8*16;
+
 		mixin PositionCalculator!();
 
 		verts[iv].position[0] = xF;
 		verts[iv].position[1] = yF;
 		verts[iv].position[2] = zF;
-		verts[iv].texture_u_or_index = texture;
-		verts[iv].texture_v_or_pad = 0;
-		verts[iv].normal = normal;
+		verts[iv].u = cast(ushort)u;
+		verts[iv].v = cast(ushort)v;
 		verts[iv].light = light;
-		verts[iv].texture_u_offset = 0;
-		verts[iv].texture_v_offset =
-			cast(ubyte)(manip == uvManip.HALF_V ? 8 : 0);
-		verts[iv].torch_light = 0;
-		verts[iv].sun_light = 0;
+		verts[iv].normal = normal;
+		verts[iv].texture = cast(ubyte)tex;
+		verts[iv].pad = 0;
 		iv++;
 	}
 }

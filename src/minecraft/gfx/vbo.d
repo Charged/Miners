@@ -38,16 +38,14 @@ public:
 	{
 		float[3] position;
 		struct {
-			ubyte texture_u_or_index;
-			ubyte texture_v_or_pad;
-			ubyte normal;
-			ubyte light;
+			ushort u;
+			ushort v;
 		}
 		struct {
-			ubyte texture_u_offset;
-			ubyte texture_v_offset;
-			ubyte torch_light;
-			ubyte sun_light;
+			ubyte light;
+			ubyte normal;
+			ubyte texture;
+			ubyte pad;
 		}
 	}
 
@@ -245,32 +243,32 @@ public:
 	{
 		const vertexSize = ChunkVBOCompactMesh.Vertex.sizeof;
 		const void* vertOffset = null;
-		const void* data1Offset = cast(void*)(3 * float.sizeof);
-		const void* data2Offset = cast(void*)(4 * float.sizeof);
+		const void* uvOffset = cast(void*)(3 * float.sizeof);
+		const void* dataOffset = cast(void*)(4 * float.sizeof);
 
 		gluPushAndTransform(pos, rot);
 
 		auto vbos = cast(ChunkVBOCompactMesh[])resultVBO[0 .. result_num];
 
 		glEnableVertexAttribArray(0); // pos
-		glEnableVertexAttribArray(1); // data1
-		glEnableVertexAttribArray(2); // data2
+		glEnableVertexAttribArray(1); // uv
+		glEnableVertexAttribArray(2); // data
 
 		foreach (vbo; vbos) {
 			glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo.vboVerts);
 
 			/* Shame that we need to set up this binding on each draw */
 			glVertexAttribPointer(0, 3, GL_FLOAT, false, vertexSize, vertOffset);  // pos
-			glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, false, vertexSize, data1Offset); // data1
-			glVertexAttribPointer(2, 4, GL_BYTE, false, vertexSize, data2Offset); // data2
+			glVertexAttribPointer(1, 2, GL_SHORT, false, vertexSize, uvOffset); // uv
+			glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, false, vertexSize, dataOffset); // data
 			glDrawArrays(GL_QUADS, 0, vbo.numVerts);
 		}
 
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
 		glDisableVertexAttribArray(0); // pos
-		glDisableVertexAttribArray(1); // data1
-		glDisableVertexAttribArray(2); // data2
+		glDisableVertexAttribArray(1); // uv
+		glDisableVertexAttribArray(2); // data
 
 		glPopMatrix();
 	}
