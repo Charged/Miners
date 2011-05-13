@@ -975,8 +975,8 @@ template BlockDispatcher(alias T)
 			makeXYZ(dec, x, y, z, set);
 	}
 
-	void torch(int x, int y, int z) {
-		auto dec = &tile[50];
+	void torch(ubyte type, int x, int y, int z) {
+		auto dec = &tile[type];
 		ubyte tex = calcTextureXZ(dec);
 		auto d = data.getDataUnsafe(x, y, z);
 
@@ -1504,7 +1504,9 @@ template BlockDispatcher(alias T)
 				slab(type, x, y, z);
 				break;
 			case 50:
-				torch(x, y, z);
+			case 75:
+			case 76:
+				torch(type, x, y, z);
 				break;
 			case 52:
 				solid(52, x, y, z);
