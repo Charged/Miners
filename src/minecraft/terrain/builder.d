@@ -838,6 +838,23 @@ template BlockDispatcher(alias T)
 		solidDec(dec, x, y, z);
 	}
 
+	void sapling(int x, int y, int z) {
+		auto d = data.getDataUnsafe(x, y, z);
+		auto dec = &saplingTile[d & 3];
+		auto tex = calcTextureXZ(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int x1 = x, x2 = x+16;
+		int y1 = y, y2 = y+16;
+		int z1 = z, z2 = z+16;
+
+		emitDiagonalQuads(x1, x2, y1, y2, z1, z2, tex);
+	}
+
 	void plants(ubyte type, int x, int y, int z) {
 		auto desc = &tile[type];
 		auto tex = calcTextureXZ(desc);
@@ -1309,6 +1326,8 @@ template BlockDispatcher(alias T)
 				wool(x, y, z);
 				break;
 			case 6:
+				sapling(x, y, z);
+				break;
 			case 37:
 			case 38:
 			case 39:

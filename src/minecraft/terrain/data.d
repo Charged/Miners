@@ -160,6 +160,13 @@ BlockDescriptor woodTile[3] = [
 	{  true, Block,     {  5,  7 }, {  5,  1 }, "birch" }
 ];
 
+BlockDescriptor saplingTile[4] = [
+	{ false, Stuff,     { 15,  0 }, { 15,  0 }, "normal" },
+	{ false, Stuff,     { 15,  3 }, { 15,  3 }, "spruce" },
+	{ false, Stuff,     { 15,  4 }, { 15,  4 }, "birch" },
+	{ false, Stuff,     { 15,  0 }, { 15,  0 }, "normal" },
+];
+
 BlockDescriptor craftingTableAltTile =
 	{  true, DataBlock, { 12,  3 }, { 11,  2 }, "crafting table" };
 
