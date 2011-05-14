@@ -4,6 +4,11 @@ module charge.core;
 
 private
 {
+	static import std.string;
+	import std.file;
+	import std.stdio;
+	import std.string;
+
 	import lib.loader;
 	import lib.al.al;
 	import lib.gl.gl;
@@ -11,18 +16,15 @@ private
 	import lib.sdl.sdl;
 	import lib.sdl.image;
 	import lib.sdl.ttf;
+
 	import charge.sfx.sfx;
 	import charge.gfx.gfx;
+	import charge.gfx.target;
 	import charge.phy.phy;
 	import charge.sys.logger;
 	import charge.sys.properties;
 	import charge.sys.file;
 	import charge.sys.resource;
-	import charge.gfx.target;
-	static import std.string;
-	import std.file;
-	import std.stdio;
-	import std.string;
 }
 
 class Core
@@ -31,6 +33,8 @@ private:
 
 	mixin Logging;
 	static Core instance;
+
+	Properties p;
 
 	int screenshotNum;
 	uint width, height;
@@ -146,34 +150,9 @@ public:
 	bool init()
 	{
 		initBuiltins();
+		initProperties();
 
-		Properties p = Properties("settings.ini");
-
-		if (p is null) {
-			l.warn("failed to load settings useing defaults");
-			p = new Properties;
-		}
-
-		sdl = Library.loads(libSDLname);
-		ttf = Library.loads(libSDLttf);
-		image = Library.loads(libSDLImage);
-		openal = Library.loads(libOpenALname);
-		alut = Library.loads(libALUTname);
-
-		if (!sdl)
-			l.fatal("Could not load SDL, crashing bye bye!");
-
-		if (!ttf)
-			l.fatal("Could not load SDL-ttf, crashing bye bye!");
-
-		if (!image)
-			l.fatal("Could not load SDL-image, crashing bye bye!");
-
-		if (!openal)
-			l.fatal("Could not load OpenAL, crashing bye bye!");
-
-		if (!alut)
-			l.bug("ALUT not found, nothing to see here move along.");
+		loadLibraries();
 
 		initSfx(p);
 		initGfx(p);
@@ -240,6 +219,47 @@ private:
 		fm.addBuiltin("res/default.png", defaultPicture);
 		fm.addBuiltin("res/spotlight.png", defaultPicture);
 	}
+
+	void initProperties()
+	{
+		char[] file = "settings.ini";
+		p = Properties(file);
+
+		if (p is null) {
+			l.warn("failed to load settings useing defaults");
+			p = new Properties;
+		}
+	}
+
+	void loadLibraries()
+	{
+		sdl = Library.loads(libSDLname);
+		ttf = Library.loads(libSDLttf);
+		image = Library.loads(libSDLImage);
+		openal = Library.loads(libOpenALname);
+		alut = Library.loads(libALUTname);
+
+		if (!sdl)
+			l.fatal("Could not load SDL, crashing bye bye!");
+
+		if (!ttf)
+			l.fatal("Could not load SDL-ttf, crashing bye bye!");
+
+		if (!image)
+			l.fatal("Could not load SDL-image, crashing bye bye!");
+
+		if (!openal)
+			l.fatal("Could not load OpenAL, crashing bye bye!");
+
+		if (!alut)
+			l.bug("ALUT not found, nothing to see here move along.");
+	}
+
+	/*
+	 *
+	 * Init and close functions for subsystems
+	 *
+	 */
 
 	void initPhy(Properties p)
 	{
