@@ -642,6 +642,106 @@ template QuadEmitter(alias T)
 		emitQuadAOXZP(x1, x2, y1, y2, z2, z1, 0, 0, 0, 0, tex, sideNormal.XNZP);
 		emitQuadAOXZN(x1, x2, y1, y2, z2, z1, 0, 0, 0, 0, tex, sideNormal.XPZN);
 	}
+
+	/*
+		+--+
+		|  |
+		|  +--+
+		| /   |
+		|/    |
+		o-----+
+	*/
+	void emitStairQuadsLP(int x1, int x3, int y1, int y3, int z1, int z3,
+			      ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			      ubyte texture, sideNormal normal)
+	{
+		ubyte aoTC = cast(ubyte)((aoTL + aoTR)/2);
+		ubyte aoMR = cast(ubyte)((aoBR + aoTR)/2);
+		ubyte aoMC = cast(ubyte)((aoBL + aoTR)/2);
+
+		int x2 = (x1 + x3)/2, y2 = (y1 + y3)/2, z2 = (z1 + z3)/2;
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x2, y3, z2, texture, aoTC, normal, uvCoord.CENTER, uvCoord.TOP);
+		pack(x1, y3, z3, texture, aoTL, normal, uvCoord.LEFT,   uvCoord.TOP);
+		pack(x1, y1, z3, texture, aoBL, normal, uvCoord.LEFT,   uvCoord.BOTTOM);
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x1, y1, z3, texture, aoBL, normal, uvCoord.LEFT,   uvCoord.BOTTOM);
+		pack(x3, y1, z1, texture, aoBR, normal, uvCoord.RIGHT,  uvCoord.BOTTOM);
+		pack(x3, y2, z1, texture, aoMR, normal, uvCoord.RIGHT,  uvCoord.MIDDLE);
+	}
+
+	void emitStairQuadsLN(int x1, int x3, int y1, int y3, int z1, int z3,
+			      ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			      ubyte texture, sideNormal normal)
+	{
+		ubyte aoTC = cast(ubyte)((aoTL + aoTR)/2);
+		ubyte aoML = cast(ubyte)((aoBL + aoTL)/2);
+		ubyte aoMC = cast(ubyte)((aoBL + aoTR)/2);
+
+		int x2 = (x1 + x3)/2, y2 = (y1 + y3)/2, z2 = (z1 + z3)/2;
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x1, y1, z3, texture, aoBR, normal, uvCoord.LEFT,   uvCoord.BOTTOM);
+		pack(x1, y3, z3, texture, aoTR, normal, uvCoord.LEFT,   uvCoord.TOP);
+		pack(x2, y3, z2, texture, aoTC, normal, uvCoord.CENTER, uvCoord.TOP);
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x3, y2, z1, texture, aoML, normal, uvCoord.RIGHT,  uvCoord.MIDDLE);
+		pack(x3, y1, z1, texture, aoBL, normal, uvCoord.RIGHT,  uvCoord.BOTTOM);
+		pack(x1, y1, z3, texture, aoBR, normal, uvCoord.LEFT,   uvCoord.BOTTOM);
+	}
+
+	/*
+		   +--+
+		   |  |
+		+--+  |
+		|   \ |
+		|    \|
+		o-----+
+	*/
+	void emitStairQuadsRP(int x1, int x3, int y1, int y3, int z1, int z3,
+			      ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			      ubyte texture, sideNormal normal)
+	{
+		ubyte aoTC = cast(ubyte)((aoTL + aoTR)/2);
+		ubyte aoML = cast(ubyte)((aoBL + aoTL)/2);
+		ubyte aoMC = cast(ubyte)((aoBL + aoTR)/2);
+
+		int x2 = (x1 + x3)/2, y2 = (y1 + y3)/2, z2 = (z1 + z3)/2;
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x1, y2, z3, texture, aoML, normal, uvCoord.LEFT,   uvCoord.MIDDLE);
+		pack(x1, y1, z3, texture, aoBL, normal, uvCoord.LEFT,   uvCoord.BOTTOM);
+		pack(x3, y1, z1, texture, aoBR, normal, uvCoord.RIGHT,  uvCoord.BOTTOM);
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x3, y1, z1, texture, aoBR, normal, uvCoord.RIGHT,  uvCoord.BOTTOM);
+		pack(x3, y3, z1, texture, aoTR, normal, uvCoord.RIGHT,  uvCoord.TOP);
+		pack(x2, y3, z2, texture, aoTC, normal, uvCoord.CENTER, uvCoord.TOP);
+	}
+
+	void emitStairQuadsRN(int x1, int x3, int y1, int y3, int z1, int z3,
+			      ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			      ubyte texture, sideNormal normal)
+	{
+		ubyte aoTC = cast(ubyte)((aoTL + aoTR)/2);
+		ubyte aoMR = cast(ubyte)((aoBR + aoTR)/2);
+		ubyte aoMC = cast(ubyte)((aoBL + aoTR)/2);
+
+		int x2 = (x1 + x3)/2, y2 = (y1 + y3)/2, z2 = (z1 + z3)/2;
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x3, y1, z1, texture, aoBL, normal, uvCoord.RIGHT,  uvCoord.BOTTOM);
+		pack(x1, y1, z3, texture, aoBR, normal, uvCoord.LEFT,   uvCoord.BOTTOM);
+		pack(x1, y2, z3, texture, aoMR, normal, uvCoord.LEFT,   uvCoord.MIDDLE);
+
+		pack(x2, y2, z2, texture, aoMC, normal, uvCoord.CENTER, uvCoord.MIDDLE);
+		pack(x2, y3, z2, texture, aoTC, normal, uvCoord.CENTER, uvCoord.TOP);
+		pack(x3, y3, z1, texture, aoTL, normal, uvCoord.RIGHT,  uvCoord.TOP);
+		pack(x3, y1, z1, texture, aoBL, normal, uvCoord.RIGHT,  uvCoord.BOTTOM);
+	}
 }
 
 /**
@@ -682,6 +782,57 @@ template QuadBuilder(alias T)
 				     aoBL, aoBR, aoTL, aoTR,
 				     texture, normal);
 		}
+	}
+
+	void makeStairXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal, bool left)
+	{
+		bool positive = isNormalPositive(normal);
+		bool normalIsZ = isNormalZ(normal);
+		bool normalIsX = !normalIsZ;
+
+		mixin AOSetupScannerCoordsXZ!();
+		mixin AOScannerXZ!();
+		mixin AOCalculator!();
+
+		// Where does the side stand.
+		int x1 = x + (positive & normalIsX);
+		int z1 = z + (positive & normalIsZ);
+
+		// If the normal is parallel to the other axis change the coordinate.
+		int x2 = x1 + normalIsZ;
+		int z2 = z1 + normalIsX;
+
+		// Height
+		int y1 = y, y2 = y+1;
+
+		ubyte texture = calcTextureXZ(dec);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		x2 <<= shift;
+		y1 <<= shift;
+		y2 <<= shift;
+		z1 <<= shift;
+		z2 <<= shift;
+
+		auto emitStairQuads = &emitStairQuadsLP;
+		if (positive) {
+			if (left) {
+				emitStairQuads = &emitStairQuadsLP;
+			} else {
+				emitStairQuads = &emitStairQuadsRP;
+			}
+		} else {
+			if (left) {
+				emitStairQuads = &emitStairQuadsLN;
+			} else {
+				emitStairQuads = &emitStairQuadsRN;
+			}
+		}
+
+		emitStairQuads(x1, x2, y1, y2, z1, z2,
+			       aoBL, aoBR, aoTL, aoTR,
+			       texture, normal);
 	}
 
 	void makeXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
@@ -1167,30 +1318,57 @@ template BlockDispatcher(alias T)
 		auto d = data.getDataUnsafe(x, y, z);
 		ubyte tex = calcTextureXZ(dec);
 
-		makeHalfXYZ(dec, x, y, z, set);
+		// Half front
+		sideMask frontMask = [sideMask.XN, sideMask.XP, sideMask.ZN, sideMask.ZP][d];
+		makeHalfXYZ(dec, x, y, z, frontMask & set);
+
+		sideMask backMask = [sideMask.XP, sideMask.XN, sideMask.ZP, sideMask.ZN][d];
+		makeXYZ(dec, x, y, z, (backMask | sideMask.YN) & set);
+
+		sideNormal norm1 = [sideNormal.ZN, sideNormal.ZP, sideNormal.XN, sideNormal.XP][d];
+		makeStairXZ(dec, x, y, z, norm1, d == 1 || d == 2);
+
+		sideNormal norm2 = [sideNormal.ZP, sideNormal.ZN, sideNormal.XP, sideNormal.XN][d];
+		makeStairXZ(dec, x, y, z, norm2, d == 1 || d == 2);
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x <<= shift;
 		y <<= shift;
 		z <<= shift;
 
-		int x1 = [x+8,  x,    x,    x   ][d];
-		int x2 = [x+16, x+8,  x+16, x+16][d];
-		int y1 = y+8;
-		int y2 = y+16;
-		int z1 = [z,    z,    z+8,  z   ][d];
-		int z2 = [z+16, z+16, z+16, z+8 ][d];
+		int X1 = x, XM = x + 8, X2 = x + 16;
+		int Y1 = y, YM = y + 8, Y2 = y + 16;
+		int Z1 = z, ZM = z + 8, Z2 = z + 16;
 
-		if (set & sideMask.ZN)
-			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
-		if (set & sideMask.ZP)
-			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
-		if (set & sideMask.XN)
-			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
-		if (set & sideMask.XP)
-			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		// Midfront (top) and back
+		sideMask midfront = [sideMask.XN, sideMask.XP, sideMask.ZN, sideMask.ZP][d];
+
+		int x1 = [XM, X1, X1, X1][d];
+		int x2 = [X2, XM, X2, X2][d];
+		int z1 = [Z1, Z1, ZM, Z1][d];
+		int z2 = [Z2, Z2, Z2, ZM][d];
+		int ya = [YM, YM, YM, Y1][d];
+		int yb = [YM, YM, Y1, YM][d];
+		int yc = [YM, Y1, YM, YM][d];
+		int yd = [Y1, YM, YM, YM][d];
+		if (midfront & sideMask.ZN)
+			emitQuadXZN(x1, x2, ya, Y2, z1, z1, tex, sideNormal.ZN);
+		if (midfront & sideMask.ZP)
+			emitQuadXZP(x1, x2, yb, Y2, z2, z2, tex, sideNormal.ZP);
+		if (midfront & sideMask.XN)
+			emitQuadXZN(x1, x1, yc, Y2, z1, z2, tex, sideNormal.XN);
+		if (midfront & sideMask.XP)
+			emitQuadXZP(x2, x2, yd, Y2, z1, z2, tex, sideNormal.XP);
+
+		// Top
 		if (set & sideMask.YP)
-			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+			emitQuadYP(x1, x2, Y2, z1, z2, tex, sideNormal.YP);
+
+		int x3 = [X1, XM, X1, X1][d];
+		int x4 = [XM, X2, X2, X2][d];
+		int z3 = [Z1, Z1, Z1, ZM][d];
+		int z4 = [Z2, Z2, ZM, Z2][d];
+		emitQuadYP(x3, x4, YM, z3, z4, tex, sideNormal.YP);
 	}
 
 	void door(ubyte type, int x, int y, int z) {
