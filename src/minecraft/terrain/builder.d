@@ -36,6 +36,9 @@ enum uvManip {
 	NONE,
 	HALF_V,
 	FLIP_U,
+	ROT_90,
+	ROT_180,
+	ROT_270,
 	SIZE,
 }
 
@@ -62,6 +65,24 @@ uvCoord uvCoords[uvManip.SIZE][4][2] = [
 		[uvCoord.RIGHT, uvCoord.BOTTOM],
 		[uvCoord.LEFT,  uvCoord.BOTTOM],
 		[uvCoord.LEFT,  uvCoord.TOP],
+	],
+	[ // uvManip.ROT_90
+		[uvCoord.LEFT,  uvCoord.BOTTOM],
+		[uvCoord.RIGHT, uvCoord.BOTTOM],
+		[uvCoord.RIGHT, uvCoord.TOP],
+		[uvCoord.LEFT,  uvCoord.TOP],
+	],
+	[ // uvManip.ROT_180
+		[uvCoord.RIGHT, uvCoord.BOTTOM],
+		[uvCoord.RIGHT, uvCoord.TOP],
+		[uvCoord.LEFT,  uvCoord.TOP],
+		[uvCoord.LEFT,  uvCoord.BOTTOM],
+	],
+	[ // uvManip.ROT_270
+		[uvCoord.RIGHT, uvCoord.TOP],
+		[uvCoord.LEFT,  uvCoord.TOP],
+		[uvCoord.LEFT,  uvCoord.BOTTOM],
+		[uvCoord.RIGHT, uvCoord.BOTTOM],
 	],
 ];
 
@@ -480,6 +501,18 @@ template QuadEmitter(alias T)
 		pack(x2, y, z1, texture, aoTR, normal, uvCoord.RIGHT, uvCoord.TOP);
 	}
 
+	void emitQuadAOYP(int x1, int x2, int y, int z1, int z2,
+			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			  ubyte texture, sideNormal normal, uvManip manip)
+	{
+		mixin UVManipulator!(manip);
+
+		pack(x1, y, z1, texture, aoTL, normal, uTL, vTL);
+		pack(x1, y, z2, texture, aoBL, normal, uBL, vBL);
+		pack(x2, y, z2, texture, aoBR, normal, uBR, vBR);
+		pack(x2, y, z1, texture, aoTR, normal, uTR, vTR);
+	}
+
 	void emitQuadAOYN(int x1, int x2, int y, int z1, int z2,
 			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			  ubyte texture, sideNormal normal)
@@ -562,6 +595,12 @@ template QuadEmitter(alias T)
 			ubyte tex, sideNormal normal)
 	{
 		emitQuadAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void emitQuadYP(int x1, int x2, int y, int z1, int z2,
+			ubyte tex, sideNormal normal, uvManip manip)
+	{
+		emitQuadAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal, manip);
 	}
 
 	void emitQuadYN(int x1, int x2, int y, int z1, int z2,
@@ -1001,6 +1040,79 @@ template BlockDispatcher(alias T)
 
 		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, sideNormal.XN);
 		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, sideNormal.XP);
+	}
+
+	void redstone_wire(int x, int y, int z) {
+		bool shouldLinkTo(ubyte type) {
+			return type == 55 || type == 75 || type == 76;
+		}
+
+		auto d = data.getDataUnsafe(x, y, z);
+
+		// Find all neighbours with either redstone wire or a torch.
+		ubyte NORTH = data.get(x, y, z-1), NORTH_DOWN = data.get(x, y-1, z-1), NORTH_UP = data.get(x, y+1, z-1);
+		ubyte SOUTH = data.get(x, y, z+1), SOUTH_DOWN = data.get(x, y-1, z+1), SOUTH_UP = data.get(x, y+1, z+1);
+		ubyte EAST = data.get(x-1, y, z), EAST_DOWN = data.get(x-1, y-1, z), EAST_UP = data.get(x-1, y+1, z);
+		ubyte WEST = data.get(x+1, y, z), WEST_DOWN = data.get(x+1, y-1, z), WEST_UP = data.get(x+1, y+1, z);
+
+		auto north = shouldLinkTo(NORTH) || shouldLinkTo(NORTH_UP) || shouldLinkTo(NORTH_DOWN);
+		auto south = shouldLinkTo(SOUTH) || shouldLinkTo(SOUTH_UP) || shouldLinkTo(SOUTH_DOWN);
+		auto east = shouldLinkTo(EAST) || shouldLinkTo(EAST_UP) || shouldLinkTo(EAST_DOWN);
+		auto west = shouldLinkTo(WEST) || shouldLinkTo(WEST_UP) || shouldLinkTo(WEST_DOWN);
+
+		ubyte connection = north << 0 | south << 1 | east << 2 | west << 3;
+
+		int x1=x, y1=y, z1=z;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x1 <<= shift;
+		y1 <<= shift;
+		z1 <<= shift;
+
+		struct WireMapping {
+			RedstoneWireType type;
+			uvManip manip;
+		}
+
+		// For every possible combination of redstone connections, get the needed tile
+		// and necessary uv manipulations.
+		const WireMapping mappings[] = [
+			{RedstoneWireType.Crossover, 	uvManip.NONE},		// A single wire, no connections.
+			{RedstoneWireType.Line,		uvManip.ROT_90},	// N
+			{RedstoneWireType.Line,		uvManip.ROT_90},	// S
+			{RedstoneWireType.Line,		uvManip.ROT_90},	// N+S
+			{RedstoneWireType.Line,		uvManip.NONE},		// E
+			{RedstoneWireType.Corner,    	uvManip.ROT_90},	// E+N
+			{RedstoneWireType.Corner,    	uvManip.NONE},		// E+S
+			{RedstoneWireType.Tjunction,   	uvManip.NONE},		// E+N+S
+			{RedstoneWireType.Line,		uvManip.NONE},		// W
+			{RedstoneWireType.Corner,    	uvManip.ROT_180},	// W+N
+			{RedstoneWireType.Corner,    	uvManip.FLIP_U},	// W+S
+			{RedstoneWireType.Tjunction,   	uvManip.FLIP_U},	// W+N+S
+			{RedstoneWireType.Line,		uvManip.NONE},		// W+E
+			{RedstoneWireType.Tjunction,   	uvManip.ROT_90},	// W+E+N
+			{RedstoneWireType.Tjunction,   	uvManip.ROT_270},	// W+E+S
+			{RedstoneWireType.Crossover,	uvManip.NONE}		// W+E+N+S
+		];
+
+		uint active = (d > 0) ? 1 : 0;
+		WireMapping tile = mappings[connection];
+
+		// Place wire on the ground.
+		ubyte tex = calcTextureXZ(&redstoneWireTile[active][tile.type]);
+		emitQuadYP(x1, x1+16, y1+1, z1, z1+16, tex, sideNormal.YP, tile.manip);
+
+		// Place wire at the side of a block.
+		tex = calcTextureXZ(&redstoneWireTile[active][RedstoneWireType.Line]);
+
+		if (shouldLinkTo(NORTH_UP))
+			emitQuadXZP(x1, x1+16, y1, y1+16, z1+1, z1+1, tex, sideNormal.ZP, uvManip.ROT_90);
+		if (shouldLinkTo(SOUTH_UP))
+			emitQuadXZN(x1, x1+16, y1, y1+16, z1+15, z1+15, tex, sideNormal.ZN, uvManip.ROT_90);
+		if (shouldLinkTo(EAST_UP))
+			emitQuadXZP(x1+1, x1+1, y1, y1+16, z1, z1+16, tex, sideNormal.XP, uvManip.ROT_90);
+		if (shouldLinkTo(WEST_UP))
+			emitQuadXZN(x1+15, x1+15, y1, y1+16, z1, z1+16, tex, sideNormal.XN, uvManip.ROT_90);
 	}
 
 	void craftingTable(uint x, uint y, uint z) {
@@ -1510,6 +1622,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 52:
 				solid(52, x, y, z);
+				break;
+			case 55:
+				redstone_wire(x, y, z);
 				break;
 			case 58:
 				craftingTable(x, y, z);

@@ -7,6 +7,7 @@ import std.math;
 import charge.charge;
 
 import minecraft.terrain.chunk;
+import minecraft.terrain.data;
 import minecraft.terrain.vol;
 
 class World : public GameWorld
@@ -125,6 +126,8 @@ protected:
 		// Doesn't support biomes right now fixup the texture before use.
 		applyStaticBiome(pic);
 
+		setupRedstoneWire(pic);
+
 		tex = GfxTexture("mc/terrain", pic);
 		tex.filter = GfxTexture.Filter.Nearest; // Or we get errors near the block edges
 
@@ -205,6 +208,46 @@ protected:
 		fillEmptyWithAverage(pic, 4, 3); // Leaves
 		fillEmptyWithAverage(pic, 1, 3); // Glass
 		fillEmptyWithAverage(pic, 1, 4); // Moster-spawn
+	}
+
+	void setupRedstoneWire(Picture pic) {
+		auto active = Color4b(178, 0, 0, 155);
+		auto inactive = Color4b(65, 0, 0, 155);
+
+		// Clear tiles.
+		auto tile = redstoneWireTile[0][RedstoneWireType.Corner];
+		clearTile(pic, tile.xz.u, tile.xz.v);
+		tile = redstoneWireTile[0][RedstoneWireType.Tjunction];
+		clearTile(pic, tile.xz.u, tile.xz.v);
+
+		foreach(BlockDescriptor dec; redstoneWireTile[1])
+			clearTile(pic, dec.xz.u, dec.xz.v);
+
+		// Create corner (2 connections) tile and T-form (3 connections) tile
+		// from the crossover tile.
+		auto src = redstoneWireTile[0][RedstoneWireType.Crossover];
+		auto corner_dst = redstoneWireTile[0][RedstoneWireType.Corner];
+		auto tjunction_dst = redstoneWireTile[0][RedstoneWireType.Tjunction];
+
+		copyTilePart(pic, src.xz.u*16, src.xz.v*16+4, 12, 12,
+			     corner_dst.xz.u*16, corner_dst.xz.v*16+4);
+
+		copyTilePart(pic, src.xz.u*16, src.xz.v*16, 12, 16,
+				tjunction_dst.xz.u*16, tjunction_dst.xz.v*16);
+
+		// Copy all four wire tiles.
+		for (int i=0; i<4; i++) {
+			src = redstoneWireTile[0][i];
+			auto dst = redstoneWireTile[1][i];
+			copyTile(pic, src.xz.u, src.xz.v, dst.xz.u, dst.xz.v);
+		}
+
+		// Color the wire tiles.
+		foreach(BlockDescriptor dec; redstoneWireTile[0])
+			modulateColor(pic, dec.xz.u, dec.xz.v, inactive);
+
+		foreach(BlockDescriptor dec; redstoneWireTile[1])
+			modulateColor(pic, dec.xz.u, dec.xz.v, active);
 	}
 
 	void modulateColor(Picture pic, uint tile_x, uint tile_y, Color4b color)
@@ -297,5 +340,21 @@ protected:
 				*dst = avrg;
 			}
 		}
+	}
+
+	void copyTilePart(Picture pic, uint src_x, uint src_y, uint src_w, uint src_h,
+			  uint dst_x, uint dst_y) {
+		for (int x; x < src_w; x++) {
+			for (int y; y < src_h; y++) {
+				auto dst = &pic.pixels[(x + dst_x) + (y + dst_y) * pic.width];
+				auto src = &pic.pixels[(x + src_x) + (y + src_y) * pic.width];
+				*dst = *src;
+			}
+		}
+	}
+
+	void clearTile(Picture pic, uint tile_x, uint tile_y)
+	{
+		modulateColor(pic, tile_x, tile_y, Color4b(0, 0, 0, 0));
 	}
 }

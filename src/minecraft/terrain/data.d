@@ -91,7 +91,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  1,  4 }, {  1,  4 }, "monster spawner" },
 	{ false, Stuff,     {  4,  0 }, {  4,  0 }, "wooden stairs" },
 	{  true, DataBlock, { 10,  1 }, {  9,  1 }, "chest" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "redstone wire" },
+	{ false, Stuff,     {  4, 10 }, {  4, 10 }, "redstone wire" },
 	{  true, Block,     {  2,  3 }, {  2,  3 }, "diamond ore" },           // 56
 	{  true, Block,     {  8,  1 }, {  8,  1 }, "diamond block" },
 	{  true, DataBlock, { 11,  3 }, { 11,  2 }, "crafting table" },
@@ -217,4 +217,28 @@ BlockDescriptor leavesTile[] = [
 	// (9,9) and (9,10) are created in applyStaticBiome()
 	{ false, Stuff,     {  9,  9 }, {  9,  9 }, "birch leaves" },
 	{ false, Stuff,     {  9, 10 }, {  9, 10 }, "other leaves" },
+];
+
+enum RedstoneWireType {
+	Crossover,
+	Line,
+	Corner,
+	Tjunction
+};
+
+BlockDescriptor redstoneWireTile[2][4] = [
+	// inactive
+	[
+		{ false, Stuff, {  4, 10 }, {  4, 10 }, "crossover" },
+		{ false, Stuff, {  5, 10 }, {  5, 10 }, "line" },
+		{ false, Stuff, {  6, 10 }, {  6, 10 }, "corner" },
+		{ false, Stuff, {  7, 10 }, {  7, 10 }, "T-junction" },
+	],
+	// active
+	[
+		{ false, Stuff, {  4, 11 }, {  4, 11 }, "crossover" },
+		{ false, Stuff, {  5, 11 }, {  5, 11 }, "line" },
+		{ false, Stuff, {  6, 11 }, {  6, 11 }, "corner" },
+		{ false, Stuff, {  7, 11 }, {  7, 11 }, "T-junction" },
+	]
 ];
