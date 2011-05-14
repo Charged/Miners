@@ -1114,14 +1114,26 @@ template BlockDispatcher(alias T)
 		int z1 = [z,    z,    z,    z+13][d & 3];
 		int z2 = [z+16, z+3,  z+16, z+16][d & 3];
 
-		if (set & sideMask.ZN)
-			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
-		if (set & sideMask.ZP)
-			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
-		if (set & sideMask.XN)
-			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
-		if (set & sideMask.XP)
-			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		if (flip) {
+			if (set & sideMask.ZN)
+				emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN, uvManip.FLIP_U);
+			if (set & sideMask.ZP)
+				emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP, uvManip.FLIP_U);
+			if (set & sideMask.XN)
+				emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN, uvManip.FLIP_U);
+			if (set & sideMask.XP)
+				emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP, uvManip.FLIP_U);
+		} else {
+			if (set & sideMask.ZN)
+				emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+			if (set & sideMask.ZP)
+				emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+			if (set & sideMask.XN)
+				emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+			if (set & sideMask.XP)
+				emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		}
+
 		if (set & sideMask.YN)
 			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
 		if (set & sideMask.YP)
