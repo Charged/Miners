@@ -1506,6 +1506,9 @@ template BlockDispatcher(alias T)
 			case 50:
 				torch(x, y, z);
 				break;
+			case 52:
+				solid(52, x, y, z);
+				break;
 			case 58:
 				craftingTable(x, y, z);
 				break;
