@@ -29,7 +29,7 @@ public:
 	GfxTexture tex;
 	const int width = 16;
 	const int depth = 16;
-	const int view_radi = 16;
+	int view_radii;
 	int save_build_i;
 	int save_build_j;
 	int save_build_k;
@@ -49,6 +49,8 @@ public:
 	this(GameWorld w, char[] dir, GfxTexture tex)
 	{
 		super(w);
+
+		view_radii = 250 / 16 + 1;
 
 		this.rxOff = 0;
 		this.rzOff = 0;
@@ -82,6 +84,22 @@ public:
 	void setRotation(ref Quatd rot)
 	{
 		super.setRotation(rot);
+	}
+
+	void setViewRadii(int radii)
+	{
+		if (radii < view_radii) {
+			for (int x; x < width; x++) {
+				for (int z; z < depth; z++) {
+					auto r = region[x][z];
+					if (r is null)
+						continue;
+
+					r.unbuildRadi(xCenter, zCenter, radii);
+				}
+			}
+		}
+		view_radii = radii;
 	}
 
 	void setBuildType(BuildTypes type)
@@ -197,7 +215,7 @@ public:
 				if (r is null)
 					continue;
 
-				r.unbuildRadi(xCenter, zCenter, view_radi);
+				r.unbuildRadi(xCenter, zCenter, view_radii);
 			}
 		}
 
@@ -236,7 +254,7 @@ public:
 		int i = save_build_i;
 		int j = save_build_j;
 		int k = save_build_k;
-		for (; i < view_radi * 2 - 1; i++) {
+		for (; i < view_radii * 2 - 1; i++) {
 			for (; j < num(i); j++) {
 				for (; k < num(i); k++) {
 					if (dob(offset(j), offset(k))) {

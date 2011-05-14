@@ -47,6 +47,8 @@ public:
 	{
 		this.w = w;
 
+		w.vt.setViewRadii(250/16 + 1);
+
 		cam = icam = new GfxIsoCamera(800/16f, 600/16f, -200, 200);
 		m = im = new GameIsoCameraMover(cam);
 

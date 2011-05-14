@@ -160,6 +160,7 @@ struct CameraWrapper
 			break;
 		case "far":
 			c.c.far = s.toNumber(3);
+			(cast(World)c.w).vt.setViewRadii(cast(int)(c.c.far / 16 + 1));
 			break;
 		case "near":
 			c.c.near = s.toNumber(3);
