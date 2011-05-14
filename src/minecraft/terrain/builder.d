@@ -11,6 +11,23 @@ import minecraft.terrain.data;
 import minecraft.terrain.chunk;
 import minecraft.terrain.workspace;
 
+/*
+ * Define how many sub devisions there are in a texture tile.
+ */
+const UV_SIZE_BIT_SHIFT = 4;
+const UV_SIZE_DIVISOR = 1 << UV_SIZE_BIT_SHIFT;
+
+/**
+ * Which corner of the uv map is this vertex in.
+ */
+enum uvCoord : ushort {
+	LEFT   = 0,
+	CENTER = UV_SIZE_DIVISOR / 2,
+	RIGHT  = UV_SIZE_DIVISOR,
+	TOP    = 0,
+	MIDDLE = UV_SIZE_DIVISOR / 2,
+	BOTTOM = UV_SIZE_DIVISOR,
+};
 
 /**
  * Should the packer manipulate the coords in any way.
@@ -18,17 +35,50 @@ import minecraft.terrain.workspace;
 enum uvManip {
 	NONE,
 	HALF_V,
+	FLIP_U,
+	SIZE,
 }
 
 /**
- * Which corner of the uv map is this vertex in.
+ * Pre-made uv coords manipulation
+ *
+ * TopLeft, BottomLeft, BottomRight, TopRight
  */
-enum uvCorner {
-	TOP_LEFT,
-	TOP_RIGHT,
-	BOTTOM_LEFT,
-	BOTTOM_RIGHT
-};
+uvCoord uvCoords[uvManip.SIZE][4][2] = [
+	[ // uvManip.NONE
+		[uvCoord.LEFT,  uvCoord.TOP],
+		[uvCoord.LEFT,  uvCoord.BOTTOM],
+		[uvCoord.RIGHT, uvCoord.BOTTOM],
+		[uvCoord.RIGHT, uvCoord.TOP],
+	],
+	[ // uvManip.HALF_V
+		[uvCoord.LEFT,  uvCoord.TOP],
+		[uvCoord.LEFT,  uvCoord.MIDDLE],
+		[uvCoord.RIGHT, uvCoord.MIDDLE],
+		[uvCoord.RIGHT, uvCoord.TOP],
+	],
+	[ // uvManip.FLIP_U
+		[uvCoord.RIGHT, uvCoord.TOP],
+		[uvCoord.RIGHT, uvCoord.BOTTOM],
+		[uvCoord.LEFT,  uvCoord.BOTTOM],
+		[uvCoord.LEFT,  uvCoord.TOP],
+	],
+];
+
+/**
+ * Setup manipulated texture coords.
+ */
+template UVManipulator(int A)
+{
+	ushort uTL = uvCoords[A][0][0];
+	ushort vTL = uvCoords[A][0][1];
+	ushort uBL = uvCoords[A][1][0];
+	ushort vBL = uvCoords[A][1][1];
+	ushort uBR = uvCoords[A][2][0];
+	ushort vBR = uvCoords[A][2][1];
+	ushort uTR = uvCoords[A][3][0];
+	ushort vTR = uvCoords[A][3][1];
+}
 
 /*
  * Used to convert a chunk block coord into a int and back to a float.
@@ -327,10 +377,10 @@ template MeshPacker()
 	int zOff;
 
 	void pack(int x, int y, int z, ubyte texture, ubyte light,
-		  sideNormal normal, ubyte uv_off, int manip)
+		  sideNormal normal, ushort u, ushort v)
 	{
-		float u = (texture % 16 + uv_off % 2) / 16.0f;
-		float v = (texture / 16 + uv_off / 2) / 16.0f;
+		float uF = (texture % 16 + cast(float)u / UV_SIZE_DIVISOR) / 16.0f;
+		float vF = (texture / 16 + cast(float)v / UV_SIZE_DIVISOR) / 16.0f;
 
 		int nx = normalTable[normal*3+0];
 		int ny = normalTable[normal*3+1];
@@ -338,10 +388,7 @@ template MeshPacker()
 
 		mixin PositionCalculator!();
 
-		if (manip == uvManip.HALF_V & (uv_off >> 1))
-			v -= (1 / 16.0f) / 2;
-
-		mb.vert(xF, yF, zF, u, v, nx, ny, nz);
+		mb.vert(xF, yF, zF, uF, vF, nx, ny, nz);
 	}
 }
 
@@ -359,23 +406,20 @@ template CompactMeshPacker()
 	int zOff;
 
 	void pack(int x, int y, int z, ubyte texture, ubyte light,
-		  sideNormal normal, ubyte uv_off, int manip)
+		  sideNormal normal, ushort u, ushort v)
 	{
-		int u = (texture & 0x0f) * 16;
-		int v = (texture & 0xf0);
-		u += (uv_off % 2) * 16;
-		v += (uv_off / 2) * 16;
-
-		if (manip == uvManip.HALF_V & (uv_off >> 1))
-			v -= 8;
+		int uI = (texture & 0x0f) * 16;
+		int vI = (texture & 0xf0);
+		uI += u;
+		vI += v;
 
 		mixin PositionCalculator!();
 
 		verts[iv].position[0] = xF;
 		verts[iv].position[1] = yF;
 		verts[iv].position[2] = zF;
-		verts[iv].u = cast(ushort)u;
-		verts[iv].v = cast(ushort)v;
+		verts[iv].u = cast(ushort)uI;
+		verts[iv].v = cast(ushort)vI;
 		verts[iv].light = light;
 		verts[iv].normal = normal;
 		verts[iv].texture = texture;
@@ -397,22 +441,20 @@ template CompactMeshPackerIndexed()
 	int yOff;
 	int zOff;
 
-	void pack(int x, int y, int z, ubyte texture, ubyte light, ubyte normal, ubyte uv_off, int manip)
+	void pack(int x, int y, int z, ubyte texture, ubyte light,
+		  sideNormal normal, ushort u, ushort v)
 	{
 		int tex = texture;
-		int u = (uv_off % 2) * 256;
-		int v = (uv_off / 2) * 256;
-
-		if (manip == uvManip.HALF_V & (uv_off >> 1))
-			v -= 8*16;
+		int uI = u << 4;
+		int vI = v << 4;
 
 		mixin PositionCalculator!();
 
 		verts[iv].position[0] = xF;
 		verts[iv].position[1] = yF;
 		verts[iv].position[2] = zF;
-		verts[iv].u = cast(ushort)u;
-		verts[iv].v = cast(ushort)v;
+		verts[iv].u = cast(ushort)uI;
+		verts[iv].v = cast(ushort)vI;
 		verts[iv].light = light;
 		verts[iv].normal = normal;
 		verts[iv].texture = cast(ubyte)tex;
@@ -432,60 +474,88 @@ template QuadEmitter(alias T)
 			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			  ubyte texture, sideNormal normal)
 	{
-		pack(x1, y, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x1, y, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
-		pack(x2, y, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x2, y, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
+		pack(x1, y, z1, texture, aoTL, normal, uvCoord.LEFT, uvCoord.TOP);
+		pack(x1, y, z2, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
+		pack(x2, y, z2, texture, aoBR, normal, uvCoord.RIGHT, uvCoord.BOTTOM);
+		pack(x2, y, z1, texture, aoTR, normal, uvCoord.RIGHT, uvCoord.TOP);
 	}
 
 	void emitQuadAOYN(int x1, int x2, int y, int z1, int z2,
 			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			  ubyte texture, sideNormal normal)
 	{
-		pack(x1, y, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x2, y, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
-		pack(x2, y, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x1, y, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x1, y, z1, texture, aoTL, normal, uvCoord.LEFT, uvCoord.TOP);
+		pack(x2, y, z1, texture, aoTR, normal, uvCoord.RIGHT, uvCoord.TOP);
+		pack(x2, y, z2, texture, aoBR, normal, uvCoord.RIGHT, uvCoord.BOTTOM);
+		pack(x1, y, z2, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
 	}
 
 	void emitQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			   ubyte texture, sideNormal normal)
 	{
-		pack(x2, y1, z1, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x2, y2, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
-		pack(x1, y2, z2, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x1, y1, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x2, y1, z1, texture, aoBR, normal, uvCoord.RIGHT, uvCoord.BOTTOM);
+		pack(x2, y2, z1, texture, aoTR, normal, uvCoord.RIGHT, uvCoord.TOP);
+		pack(x1, y2, z2, texture, aoTL, normal, uvCoord.LEFT, uvCoord.TOP);
+		pack(x1, y1, z2, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
 	}
 
 	void emitQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			   ubyte texture, sideNormal normal)
 	{
-		pack(x1, y1, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.NONE);
-		pack(x1, y2, z2, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.NONE);
-		pack(x2, y2, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.NONE);
-		pack(x2, y1, z1, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.NONE);
+		pack(x1, y1, z2, texture, aoBR, normal, uvCoord.RIGHT, uvCoord.BOTTOM);
+		pack(x1, y2, z2, texture, aoTR, normal, uvCoord.RIGHT, uvCoord.TOP);
+		pack(x2, y2, z1, texture, aoTL, normal, uvCoord.LEFT, uvCoord.TOP);
+		pack(x2, y1, z1, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
+	}
+
+	void emitQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+			   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			   ubyte texture, sideNormal normal, uvManip manip)
+	{
+		mixin UVManipulator!(manip);
+
+		pack(x2, y1, z1, texture, aoBR, normal, uBR, vBR);
+		pack(x2, y2, z1, texture, aoTR, normal, uTR, vTR);
+		pack(x1, y2, z2, texture, aoTL, normal, uTL, vTL);
+		pack(x1, y1, z2, texture, aoBL, normal, uBL, vBL);
+	}
+
+	void emitQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+			   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			   ubyte texture, sideNormal normal, uvManip manip)
+	{
+		mixin UVManipulator!(manip);
+
+		pack(x1, y1, z2, texture, aoBR, normal, uBR, vBR);
+		pack(x1, y2, z2, texture, aoTR, normal, uTR, vTR);
+		pack(x2, y2, z1, texture, aoTL, normal, uTL, vTL);
+		pack(x2, y1, z1, texture, aoBL, normal, uBL, vBL);
 	}
 
 	void emitHalfQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
 			       ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			       ubyte texture, sideNormal normal)
 	{
-		pack(x2, y1, z1, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
-		pack(x2, y2, z1, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
-		pack(x1, y2, z2, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
-		pack(x1, y1, z2, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
+		mixin UVManipulator!(uvManip.HALF_V);
+
+		pack(x2, y1, z1, texture, aoBR, normal, uBR, vBR);
+		pack(x2, y2, z1, texture, aoTR, normal, uTR, vTR);
+		pack(x1, y2, z2, texture, aoTL, normal, uTL, vTL);
+		pack(x1, y1, z2, texture, aoBL, normal, uBL, vBL);
 	}
 
 	void emitHalfQuadAOXZM(int x1, int x2, int y1, int y2, int z1, int z2,
 			       ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			       ubyte texture, sideNormal normal)
 	{
-		pack(x1, y1, z2, texture, aoBR, normal, uvCorner.BOTTOM_RIGHT, uvManip.HALF_V);
-		pack(x1, y2, z2, texture, aoTR, normal, uvCorner.TOP_RIGHT, uvManip.HALF_V);
-		pack(x2, y2, z1, texture, aoTL, normal, uvCorner.TOP_LEFT, uvManip.HALF_V);
-		pack(x2, y1, z1, texture, aoBL, normal, uvCorner.BOTTOM_LEFT, uvManip.HALF_V);
+		mixin UVManipulator!(uvManip.HALF_V);
+
+		pack(x1, y1, z2, texture, aoBR, normal, uBR, vBR);
+		pack(x1, y2, z2, texture, aoTR, normal, uTR, vTR);
+		pack(x2, y2, z1, texture, aoTL, normal, uTL, vTL);
+		pack(x2, y1, z1, texture, aoBL, normal, uBL, vBL);
 	}
 
 	void emitQuadYP(int x1, int x2, int y, int z1, int z2,
@@ -510,6 +580,18 @@ template QuadEmitter(alias T)
 			 ubyte tex, sideNormal normal)
 	{
 		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void emitQuadXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+			 ubyte tex, sideNormal normal, uvManip manip)
+	{
+		emitQuadAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal, manip);
+	}
+
+	void emitQuadXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+			 ubyte tex, sideNormal normal, uvManip manip)
+	{
+		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal, manip);
 	}
 
 	void emitDiagonalQuads(int x1, int x2, int y1, int y2, int z1, int z2, ubyte tex)
