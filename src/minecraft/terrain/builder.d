@@ -834,7 +834,8 @@ template QuadBuilder(alias T)
 		if (set & sideMask.YN)
 			makeY(dec, x, y, z, sideNormal.YN);
 
-		makeHalfY(dec, x, y, z);
+		if (set & sideMask.YP)
+			makeHalfY(dec, x, y, z);
 
 		if (set & sideMask.ZN)
 			makeHalfXZ(dec, x, y, z, sideNormal.ZN);
@@ -1004,13 +1005,10 @@ template BlockDispatcher(alias T)
 
 		auto dec = &slabTile[d];
 
-		/* all set */
-		if (set == 0)
-			return;
-
 		if (type == 44)
-			makeHalfXYZ(dec, x, y, z, set);
-		else
+			makeHalfXYZ(dec, x, y, z, set | sideMask.YP);
+
+		else if (set != 0) /* nothing to do */
 			makeXYZ(dec, x, y, z, set);
 	}
 
