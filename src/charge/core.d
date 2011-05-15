@@ -25,15 +25,22 @@ private
 	import charge.sys.properties;
 	import charge.sys.file;
 	import charge.sys.resource;
+	import charge.platform.homefolder;
 }
 
 class Core
 {
-private:
+public:
+	const int defaultWidth = 800;
+	const int defaultHeight = 600;
+	const bool defaultFullscreen = false;
+	const char[] defaultTitle = "Charged Miners";
 
+private:
 	mixin Logging;
 	static Core instance;
 
+	char[] settingsFile;
 	Properties p;
 
 	int screenshotNum;
@@ -150,7 +157,7 @@ public:
 	bool init()
 	{
 		initBuiltins();
-		initProperties();
+		initSettings();
 
 		loadLibraries();
 
@@ -194,6 +201,8 @@ public:
 
 	bool close()
 	{
+		saveSettings();
+
 		Pool().clean();
 
 		closeSfx();
@@ -220,15 +229,32 @@ private:
 		fm.addBuiltin("res/spotlight.png", defaultPicture);
 	}
 
-	void initProperties()
+	void initSettings()
 	{
-		char[] file = "settings.ini";
-		p = Properties(file);
+		settingsFile = chargeConfigFolder ~ "/settings.ini";
+		p = Properties(settingsFile);
 
 		if (p is null) {
-			l.warn("failed to load settings useing defaults");
+			l.warn("Failed to load settings useing defaults");
+
 			p = new Properties;
+			p.add("w", defaultWidth);
+			p.add("h", defaultHeight);
+			p.add("fullscreen", defaultFullscreen);
+			p.add("title", defaultTitle);
 		}
+	}
+
+	void saveSettings()
+	{
+		try {
+			if (!exists(chargeConfigFolder))
+				mkdir(chargeConfigFolder);
+		} catch (Exception e) {
+			l.error("Could not create config folder (%s)", chargeConfigFolder);
+		}
+
+		p.save(settingsFile);
 	}
 
 	void loadLibraries()
@@ -297,29 +323,31 @@ private:
 		SDL_Init(SDL_INIT_VIDEO);
 		TTF_Init();
 
-		char* title = p.getStringz("title", "Charge");
+		width = p.getUint("w", defaultWidth);
+		height = p.getUint("h", defaultHeight);
+		fullscreen = p.getBool("fullscreen", defaultFullscreen);
+		char* title = p.getStringz("title", defaultTitle);
+
+		l.bug("w: ", width, " h: ", height);
+
 		SDL_WM_SetCaption(title, title);
 
-		uint x = p.getUint("x", 400);
-		uint y = p.getUint("y", 300);
-		l.info("x: ", x, " y: ", y);
-		width = x; height = y;
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-		fullscreen = p.getBool("fullscreen", false);
 		uint bits = SDL_OPENGL | SDL_RESIZABLE;
 		if (fullscreen)
 			bits |= SDL_FULLSCREEN;
 
 		s = SDL_SetVideoMode(
-				x,
-				y,
+				width,
+				height,
 				0,
 				bits
 			);
 
-		width = x = s.w;
-		height = y = s.h;
+		// Readback size
+		width = s.w;
+		height = s.h;
 
 		loadGL(&loadFunc);
 
@@ -328,7 +356,7 @@ private:
 			l.fatal("Could not load GLU, crashing bye bye!");
 		loadGLU(&glu.symbol);
 
-		DefaultTarget.initDefaultTarget(x, y);
+		DefaultTarget.initDefaultTarget(width, height);
 
 		gfxLoaded = true;
 	}
