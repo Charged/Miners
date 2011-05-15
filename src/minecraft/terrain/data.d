@@ -129,8 +129,8 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "portal" },
 	{  true, DataBlock, {  6,  7 }, {  6,  6 }, "jack-o-lantern" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "cake block" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "redstone repeater off" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "redstone repeater on" },
+	{ false, Stuff,     {  3,  8 }, {  3,  8 }, "redstone repeater off" },
+	{ false, Stuff,     {  3,  9 }, {  3,  9 }, "redstone repeater on" },
 	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
 	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },                   // 96
 ];

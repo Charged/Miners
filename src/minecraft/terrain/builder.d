@@ -1170,6 +1170,23 @@ template BlockDispatcher(alias T)
 			makeXYZ(dec, x, y, z, set);
 	}
 
+	void standing_torch(int x, int y, int z, ubyte tex) {
+		// Renders a torch in the center of a block. Block coordinates need
+		// to be shifted.
+		int x1 = x,   x2 = x+16;
+		int y1 = y,   y2 = y+16;
+		int z1 = z+9, z2 = z+7;
+
+		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZN);
+		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZP);
+
+		x1 = x+9; x2 = x+7;
+		z1 = z;   z2 = z+16;
+
+		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, sideNormal.XP);
+	}
+
 	void torch(ubyte type, int x, int y, int z) {
 		auto dec = &tile[type];
 		ubyte tex = calcTextureXZ(dec);
@@ -1184,18 +1201,7 @@ template BlockDispatcher(alias T)
 		y <<= shift;
 		z <<= shift;
 
-		int x1 = x,   x2 = x+16;
-		int y1 = y,   y2 = y+16;
-		int z1 = z+9, z2 = z+7;
-
-		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZN);
-		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZP);
-
-		x1 = x+9; x2 = x+7;
-		z1 = z;   z2 = z+16;
-
-		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, sideNormal.XN);
-		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, sideNormal.XP);
+		standing_torch(x, y, z, tex);
 	}
 
 	void redstone_wire(int x, int y, int z) {
@@ -1760,6 +1766,47 @@ template BlockDispatcher(alias T)
 		emitQuadXZP(x+15, x+15, y, y2, z, z2, tex, sideNormal.XP);
 	}
 
+	void redstone_repeater(ubyte type, int x, int y, int z) {
+		auto dec = &tile[type];
+		ubyte tex = calcTextureY(dec);
+		auto d = data.getDataUnsafe(x, y, z);
+		auto active = (type == 93);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int y1 = y,   x1 = x,    z1 = z;
+		int y2 = y+2, x2 = x+16, z2 = z+16;
+
+		// Sides
+		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN, uvManip.HALF_V);
+		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP, uvManip.HALF_V);
+		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN, uvManip.HALF_V);
+		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP, uvManip.HALF_V);
+
+		// Top
+		uvManip manip = [uvManip.NONE, uvManip.ROT_90, uvManip.ROT_180, uvManip.ROT_270][d & 3];
+		emitQuadYP(x, x+16, y+2, z, z+16, tex, sideNormal.YP, manip);
+
+		// Torches
+		dec = &tile[(active) ? 75 : 76];
+		tex = calcTextureXZ(dec);
+
+		x1 = [x,   x+5, x,   x-5][d & 3];
+		z1 = [z-5, z,   z+5, z  ][d & 3];
+		standing_torch(x1, y-3, z1, tex);
+
+		// Moving torch, delay is position offset in pixels.
+		auto delay = (d >> 2) * 2;
+
+		// Offset by +1/-1 to move torch in default position.
+		x2 = [x,         x+1-delay, x,         x-1+delay][d & 3];
+		z2 = [z-1+delay, z,         z+1-delay, z        ][d & 3];
+		standing_torch(x2, y-3, z2, tex);
+	}
+
 	void b(uint x, uint y, uint z) {
 		static int count = 0;
 		ubyte type = data.get(x, y, z);
@@ -1863,6 +1910,10 @@ template BlockDispatcher(alias T)
 				break;
 			case 91:
 				jack_o_lantern(x, y, z);
+				break;
+			case 93:
+			case 94:
+				redstone_repeater(type, x, y, z);
 				break;
 			default:
 				if (tile[type].filled)
