@@ -16,11 +16,24 @@ class Properties
 	mixin Logging;
 protected:
 	char[][char[]] map;
+	char[][] order;
 
 public:
 	void add(char[] key, char[] value)
 	{
+		if ((key in map) is null)
+			order ~= key;
 		map[key] = value;
+	}
+
+	void add(char[] key, bool value)
+	{
+		add(key, std.string.toString(value));
+	}
+
+	void add(char[] key, real value)
+	{
+		add(key, std.string.toString(value));
 	}
 
 	char[] get(char[] key, char[] def)
@@ -86,6 +99,25 @@ public:
 		writefln(map);
 	}
 
+	bool save(char[] filename)
+	{
+		BufferedFile f;
+
+		try {
+			f = new BufferedFile(filename, FileMode.Out);
+		} catch (Exception e) {
+			return false;
+		}
+
+		foreach(o; order) {
+			f.writefln(o, ":", map[o]);
+		}
+		f.flush();
+		f.close();
+
+		return true;
+	}
+
 	static Properties opCall(char[] filename)
 	{
 		BufferedFile f;
@@ -102,7 +134,6 @@ public:
 
 		auto p = new Properties();
 
-		char[][char[]] map;
 		foreach(ulong n, char[] line; f) {
 			if (line.length == 0)
 				continue;
