@@ -11,6 +11,7 @@ import lib.sdl.sdl;
 
 import charge.charge;
 
+import minecraft.importer;
 import minecraft.lua.runner;
 import minecraft.world;
 import minecraft.runner;
@@ -146,20 +147,19 @@ protected:
 
 	bool checkLevel(char[] level)
 	{
-		auto dat = std.string.format(level, "/level.dat");
-		auto region = std.string.format(level, "/region");
+		auto ni = checkMinecraftLevel(level);
 
-		if (!exists(dat)) {
+		if (ni is null) {
 			l.fatal("Could not find level.dat in the level directory");
 			l.fatal("This probably isn't a level, exiting the viewer.");
-			l.fatal("looked for this file: %s", dat);
+			l.fatal("looked in this folder %s", level);
 			return false;
 		}
 
-		if (!exists(region)) {
+		if (!ni.beta) {
 			l.fatal("Could not find the region folder in the level directory");
-			l.fatal("This probably isn't a level, exiting the viewer.");
-			l.fatal("looked for this folder: %s", region);
+			l.fatal("This probably isn't a beta level, exiting the viewer.");
+			l.fatal("looked in this folder %s", level);
 			return false;
 		}
 
@@ -168,16 +168,28 @@ protected:
 
 	void guessLevel()
 	{
-		if (level is null) {
-			auto home = std.string.toString(getenv("HOME"));
-			if (home is null) {
-				auto str = "could not guess default level location (HOME env not found)";
-				l.fatal(str);
-				throw new Exception("");
-			}
+		version(darwin) {
+			if (level !is null)
+				return getMinecraftSaveFolder() ~ "/World1";
+		}
 
-			level = std.string.format(home, "/.minecraft/saves/World1");
-			l.fatal(`Guessing level location: "%s"`, level);
+		if (level !is null)
+			return;
+
+		auto dir = getMinecraftSaveFolder();
+		auto levels = scanForLevels(dir);
+
+		// Randomly pick the last level - http://xkcd.com/221/
+		foreach (l; levels) {
+			if (!l.beta)
+				continue;
+
+			level = l.dir;
+		}
+
+		if (level is null) {
+			l.warn("Could not find any Minecraft saves");
+			l.warn("Looked here %s", dir);
 		}
 	}
 

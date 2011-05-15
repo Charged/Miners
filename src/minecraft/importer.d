@@ -3,10 +3,118 @@
 module minecraft.importer;
 
 import std.math;
+import std.file;
 import std.string;
 import std.stream;
+
 import charge.util.base36;
+import charge.util.vector;
+import charge.platform.homefolder;
+
 import lib.nbt.nbt;
+
+/**
+ * Return the folder where the Minecraft config, saves & texture packs lives.
+ */
+char[] getMinecraftFolder()
+{
+	// The minecraft config folder move around a bit.
+	version(linux) {
+		char[] mcFolder = homeFolder ~ "/.minecraft";
+	} else version (darwin) {
+		char[] mcFolder = applicationConfigFolder ~ "/minecraft";
+	} else version (Windows) {
+		char[] mcFolder = applicationConfigFolder ~ "/.minecraft";
+	} else {
+		static assert(false);
+	}
+
+	return mcFolder;
+}
+
+/**
+ * Returns the save folder for Minecraft.
+ */
+char[] getMinecraftSaveFolder(char[] dir = null)
+{
+	if (dir is null)
+		dir = getMinecraftFolder();
+
+	return format("%s/saves", dir);
+}
+
+/**
+ * Holds information about a single minecraft level.
+ */
+struct MinecraftLevelInfo
+{
+	char[] dir; /**< Directory holding this level */
+	bool beta; /**< Is this level a beta level */
+	bool nether; /**< Does this level have a nether directory */
+}
+
+/**
+ * Checks a Minecraft level.
+ *
+ * Returns null if no level.dat was found inside the directory.
+ */
+MinecraftLevelInfo* checkMinecraftLevel(char[] level)
+{
+	auto dat = format(level, "/level.dat");
+	auto region = format(level, "/region");
+	auto nether = format(level, "/DIM-1");
+
+	if (!exists(dat))
+		return null;
+
+	auto li = new MinecraftLevelInfo();
+
+	li.dir = level;
+
+	if (exists(region))
+		li.beta = true;
+
+	if (exists(nether))
+		li.nether = true;
+
+	return li;
+}
+
+/**
+ * Scan a directory for Minecraft worlds.
+ *
+ * If null or no argument given scans the guesstimated Minecraft save folder.
+ *
+ * Returns a array of MinecraftLevelInfo's.
+ */
+MinecraftLevelInfo[] scanForLevels(char[] dir = null)
+{
+	charge.util.vector.VectorData!(MinecraftLevelInfo) levels;
+
+	// If no directory given guesstimate the Minecraft save folder.
+	if (dir is null)
+		dir = getMinecraftSaveFolder();
+
+	// Called for each file/directory found in directory
+	bool cb(DirEntry *de) {
+
+		// Early out any files that are in the save directory
+		if (!de.isdir)
+			return true;
+
+		// Check if the level is okay
+		auto li = checkMinecraftLevel(de.name);
+		if (li is null)
+			return true;
+
+		levels ~= *li;
+		return true;
+	}
+
+	listdir(dir, &cb);
+
+	return levels.adup;
+}
 
 /**
  * Return the file name for a Alpha chunk.
