@@ -8,42 +8,11 @@ import std.stream;
 import charge.util.base36;
 import lib.nbt.nbt;
 
-char[] getChunkName(char[] dir, int x, int z)
+/**
+ * Return the file name for a Alpha chunk.
+ */
+char[] getAlphaChunkName(char[] dir, int x, int z)
 {
-	struct Position {
-		union {
-			uint pos;
-			struct {
-				ubyte pad;
-				ubyte b3;
-				ubyte b2;
-				ubyte b1;
-			}
-		}
-		ubyte size;
-	}
-	Position p;
-
-	auto region = format("r.%s.%s.mcr",
-			     encode(cast(uint)floor(x/32.0)),
-			     encode(cast(uint)floor(z/32.0)));
-	int hX = x % 32;
-	int hZ = z % 32;
-	hX = hX < 0 ? 32 + hX : hX;
-	hZ = hZ < 0 ? 32 + hZ : hZ;
-
-	int hoffset = 4 * (hX + hZ * 32);
-
-	auto f = new BufferedFile(format("%s/region/%s", dir, region));
-	f.seek(hoffset, SeekPos.Set);
-	f.read(p.b1);
-	f.read(p.b2);
-	f.read(p.b3);
-	f.read(p.size);
-	f.close();
-
-	std.stdio.writefln("(% 3s, % 3s), @%04s (%s) @%08s %sPages", x, z, hoffset, region, p.pos, p.size);
-
 	auto ret = format("%s/%s/%s/c.%s.%s.dat", dir,
 			  encode(cast(uint)x % 64),
 			  encode(cast(uint)z % 64),
@@ -51,6 +20,11 @@ char[] getChunkName(char[] dir, int x, int z)
 	return ret;
 }
 
+/**
+ * Extract the blocks and metadata from a NBT node.
+ *
+ * Tested with Beta, should work with Alpha.
+ */
 bool getBlocksFromNode(nbt_node *file, out ubyte *blocks_out, out ubyte *data_out)
 {
 	nbt_node *level;
@@ -92,29 +66,30 @@ err:
 	return false;
 }
 
-ubyte* getBlocksFromFile(char[] filename)
+/**
+ * Gets the blocks from a alpha chunk at (x, z).
+ */
+bool getAlphaBlocksForChunk(char[] dir, int x, int z,
+			      out ubyte *blocks, out ubyte *data)
 {
 	nbt_node *file;
-
+	auto filename = getAlphaChunkName(dir, x, z);
 
 	file = nbt_parse_path(toStringz(filename));
 	if (!file)
-		return null;
+		return false;
 
 	scope(exit)
 		nbt_free(file);
 
-	ubyte *blocks;
-	ubyte *data;
-	if (!getBlocksFromNode(file, blocks, data))
-		return null;
-	
-	std.c.stdlib.free(data);
-	return blocks;
+	return getBlocksFromNode(file, blocks, data);
 }
 
-
-bool getBlocksForChunk(char[] dir, int x, int z, out ubyte *blocks, out ubyte *data)
+/**
+ * Gets the blocks and data from a beta level directory from chunk at (x, z).
+ */
+bool getBetaBlocksForChunk(char[] dir, int x, int z,
+			   out ubyte *blocks, out ubyte *data)
 {
 	auto region = format("%s/region/r.%s.%s.mcr", dir,
 			     encode(cast(uint)floor(x/32.0)),
@@ -167,8 +142,6 @@ bool getBlocksForChunk(char[] dir, int x, int z, out ubyte *blocks, out ubyte *d
 	auto tree = nbt_parse_compressed(chunkData.ptr+5, chunkExactSize-1);
 	scope(exit)
 		nbt_free(tree);
-
-	//std.stdio.writefln("(% 3s, % 3s), (% 3s, % 3s), @% 5s @% 16s %s KiB (%s)" , x, z, hX, hZ, headerOffset, chunkOffset, (chunkSize)/1024, region);
 
 	return getBlocksFromNode(tree, blocks, data);
 }

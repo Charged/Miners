@@ -349,7 +349,7 @@ protected:
 
 		ubyte *blocks;
 		ubyte *data;
-		if (getBlocksForChunk(dir, x, z, blocks, data))
+		if (getBetaBlocksForChunk(dir, x, z, blocks, data))
 			c.giveBlocksAndData(blocks, data);
 
 		return c;
