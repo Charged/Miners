@@ -35,6 +35,7 @@ enum uvCoord : ushort {
 enum uvManip {
 	NONE,
 	HALF_V,
+	HALF_U,
 	FLIP_U,
 	ROT_90,
 	ROT_180,
@@ -59,6 +60,12 @@ uvCoord uvCoords[uvManip.SIZE][4][2] = [
 		[uvCoord.LEFT,  uvCoord.MIDDLE],
 		[uvCoord.RIGHT, uvCoord.MIDDLE],
 		[uvCoord.RIGHT, uvCoord.TOP],
+	],
+	[ // uvManip.HALF_U
+		[uvCoord.LEFT,   uvCoord.TOP],
+		[uvCoord.LEFT,   uvCoord.BOTTOM],
+		[uvCoord.MIDDLE, uvCoord.BOTTOM],
+		[uvCoord.MIDDLE, uvCoord.TOP],
 	],
 	[ // uvManip.FLIP_U
 		[uvCoord.RIGHT, uvCoord.TOP],
@@ -1351,24 +1358,27 @@ template BlockDispatcher(alias T)
 		int yb = [YM, YM, Y1, YM][d];
 		int yc = [YM, Y1, YM, YM][d];
 		int yd = [Y1, YM, YM, YM][d];
+
 		if (midfront & sideMask.ZN)
-			emitQuadXZN(x1, x2, ya, Y2, z1, z1, tex, sideNormal.ZN);
+			emitQuadXZN(x1, x2, ya, Y2, z1, z1, tex, sideNormal.ZN, uvManip.HALF_V);
 		if (midfront & sideMask.ZP)
-			emitQuadXZP(x1, x2, yb, Y2, z2, z2, tex, sideNormal.ZP);
+			emitQuadXZP(x1, x2, yb, Y2, z2, z2, tex, sideNormal.ZP, uvManip.HALF_V);
 		if (midfront & sideMask.XN)
-			emitQuadXZN(x1, x1, yc, Y2, z1, z2, tex, sideNormal.XN);
+			emitQuadXZN(x1, x1, yc, Y2, z1, z2, tex, sideNormal.XN, uvManip.HALF_V);
 		if (midfront & sideMask.XP)
-			emitQuadXZP(x2, x2, yd, Y2, z1, z2, tex, sideNormal.XP);
+			emitQuadXZP(x2, x2, yd, Y2, z1, z2, tex, sideNormal.XP, uvManip.HALF_V);
 
 		// Top
+		uvManip manip = [uvManip.HALF_U, uvManip.HALF_U, uvManip.HALF_V, uvManip.HALF_V][d];
+
 		if (set & sideMask.YP)
-			emitQuadYP(x1, x2, Y2, z1, z2, tex, sideNormal.YP);
+			emitQuadYP(x1, x2, Y2, z1, z2, tex, sideNormal.YP, manip);
 
 		int x3 = [X1, XM, X1, X1][d];
 		int x4 = [XM, X2, X2, X2][d];
 		int z3 = [Z1, Z1, Z1, ZM][d];
 		int z4 = [Z2, Z2, ZM, Z2][d];
-		emitQuadYP(x3, x4, YM, z3, z4, tex, sideNormal.YP);
+		emitQuadYP(x3, x4, YM, z3, z4, tex, sideNormal.YP, manip);
 	}
 
 	void door(ubyte type, int x, int y, int z) {
