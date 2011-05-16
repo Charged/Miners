@@ -40,22 +40,35 @@ Hopefully in the future this will not be needed for running.
 D Compiler
 ----------
 
-At the moment only GDC seems capable of compiling Charge for any platform.
-Since LDC does not support Phobos which Charge uses (minimally, tangobos might
-be able to support it, any patches that improves tangobos support is sought).
-DMD compiles the binary but it crashes in weird places inside C libraries.
+Both GDC and DMD can compile Charge. Since LDC does not support Phobos which
+Charge uses (minimally, tangobos might be able to support it, any patches
+that improves tangobos support is sought).
 
+Linux
+*****
+
+For Linux's with GDC packaged (like Ubuntu) it is the recommended compiler.
 To get GDC on Ubuntu do this:
 
 ::
 
   $ sudo apt-get install gdc
 
+For DMD known working are DMD 1.062 and above, please note that as of DMD 1.064
+you need to remove the -L--export-dynamic flag from dmd.conf or you will get
+crashes inside of C libraries (this will be fixed in Charge instead soon). To
+setup DMD just follow the Mac instructions.
 
-On Mac know working compilers are DMD 1.062 and DMD 1.064, DMD 1.066 is known
-broken, just excract the contents of dmd.1.<version>.zip <somewhere> and set
-the DMD enviromental variable to be "<somewhere>/osx/bin/dmd" or put the
-folder "<somewhere>/osx/bin" on the path.
+Mac
+***
+
+There are no packages of GDC for Mac so DMD should be used. DMD 1.062, 1.064 &
+1.068 and above is known to be working. To install it just excract the contents
+of dmd.1.<version>.zip <somewhere> and set the DMD enviromental variable to be
+"<somewhere>/osx/bin/dmd" or put the folder "<somewhere>/osx/bin" on the path.
+
+Other
+*****
 
 For other platforms you need probably need to compile it you can get the
 latest version from here https://bitbucket.org/goshawk/gdc/wiki/Home
