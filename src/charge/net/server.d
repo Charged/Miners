@@ -72,19 +72,18 @@ public:
 	{
 		alias Packet.Header Header;
 		Address a;
-		intptr_t n;
 		Header *h;
 		// Windows is stupid and you must take the entire package
 		uint8_t peek[1024];
 
 		while(true) {
-			n = s.receive(peek, SocketFlags.PEEK);
+			auto n = s.receive(peek, SocketFlags.PEEK);
 
 			void buffer[];
 
 			if (n <= 0) {
 				break;
-			} else if (n < cast(int)Header.sizeof) {
+			} else if (n < Header.sizeof) {
 				l.warn("invalid header for packet");
 				// Safe because n can not be < 0
 				buffer.length = cast(size_t)n;
