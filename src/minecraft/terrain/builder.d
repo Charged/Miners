@@ -640,6 +640,26 @@ template QuadEmitter(alias T)
 		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, normal, manip);
 	}
 
+	void emitTiltedQuadXZP(int bx1, int bx2, int tx1, int tx2, int y1, int y2,
+			       int bz1, int bz2, int tz1, int tz2,
+			       ubyte tex, sideNormal normal)
+	{
+		pack(bx2, y1, bz1, tex, 0, normal, uvCoord.RIGHT, uvCoord.BOTTOM);
+		pack(tx2, y2, tz1, tex, 0, normal, uvCoord.RIGHT, uvCoord.TOP);
+		pack(tx1, y2, tz2, tex, 0, normal, uvCoord.LEFT, uvCoord.TOP);
+		pack(bx1, y1, bz2, tex, 0, normal, uvCoord.LEFT, uvCoord.BOTTOM);
+	}
+
+	void emitTiltedQuadXZN(int bx1, int bx2, int tx1, int tx2, int y1, int y2,
+			       int bz1, int bz2, int tz1, int tz2,
+			       ubyte tex, sideNormal normal)
+	{
+		pack(bx1, y1, bz2, tex, 0, normal, uvCoord.RIGHT, uvCoord.BOTTOM);
+		pack(tx1, y2, tz2, tex, 0, normal, uvCoord.RIGHT, uvCoord.TOP);
+		pack(tx2, y2, tz1, tex, 0, normal, uvCoord.LEFT, uvCoord.TOP);
+		pack(bx2, y1, bz1, tex, 0, normal, uvCoord.LEFT, uvCoord.BOTTOM);
+	}
+
 	void emitDiagonalQuads(int x1, int x2, int y1, int y2, int z1, int z2, ubyte tex)
 	{
 		emitQuadAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0, tex, sideNormal.XNZN);
@@ -1192,16 +1212,38 @@ template BlockDispatcher(alias T)
 		ubyte tex = calcTextureXZ(dec);
 		auto d = data.getDataUnsafe(x, y, z);
 
-		// TODO Support other directions
-		if (d != 5)
-			return;
-
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x <<= shift;
 		y <<= shift;
 		z <<= shift;
 
-		standing_torch(x, y, z, tex);
+		if (d >= 5)
+			return standing_torch(x, y, z, tex);
+
+		d--;
+
+		int bxoff = [-8, +8,  0,  0][d];
+		int txoff = bxoff / 4;
+		int bzoff = [ 0,  0, -8, +8][d];
+		int tzoff = bzoff / 4;
+
+		int x1 = x,   x2 = x+16;
+		int y1 = y+3, y2 = y+19;
+		int z1 = z+9, z2 = z+7;
+
+		emitTiltedQuadXZN(x1+bxoff, x2+bxoff, x1+txoff, x2+txoff, y1, y2,
+				  z2+bzoff, z2+bzoff, z2+tzoff, z2+tzoff, tex, sideNormal.ZN);
+		emitTiltedQuadXZP(x1+bxoff, x2+bxoff, x1+txoff, x2+txoff, y1, y2,
+				  z1+bzoff, z1+bzoff, z1+tzoff, z1+tzoff, tex, sideNormal.ZP);
+
+		x1 = x+9; x2 = x+7;
+		z1 = z;   z2 = z+16;
+
+		emitTiltedQuadXZN(x2+bxoff, x2+bxoff, x2+txoff, x2+txoff, y1, y2,
+				  z1+bzoff, z2+bzoff, z1+tzoff, z2+tzoff, tex, sideNormal.XN);
+		emitTiltedQuadXZP(x1+bxoff, x1+bxoff, x1+txoff, x1+txoff, y1, y2,
+				  z1+bzoff, z2+bzoff, z1+tzoff, z2+tzoff, tex, sideNormal.XP);
+
 	}
 
 	void redstone_wire(int x, int y, int z) {
