@@ -108,6 +108,112 @@ template UVManipulator(int A)
 	ushort vTR = uvCoords[A][3][1];
 }
 
+/**
+ * Transform texture coords according to an offset and uvManip.
+ *
+ * With the top-left corner as origin, L and R are the distance
+ * to the origin on the u-axis, and T and B on the v-axis.
+ */
+ushort[][] MappedUVManipulator(int L, int R, int T, int B,
+			       int u_offset, int v_offset, int manip)
+{
+	L += u_offset;
+	R += u_offset;
+	T += v_offset;
+	B += v_offset;
+
+	ushort uv[][];
+
+	switch (manip) {
+		case uvManip.ROT_90:
+			uv = [
+				[T, UV_SIZE_DIVISOR-L],
+				[B, UV_SIZE_DIVISOR-L],
+				[B, UV_SIZE_DIVISOR-R],
+				[T, UV_SIZE_DIVISOR-R]
+			];
+			break;
+		case uvManip.ROT_180:
+			uv = [
+				[UV_SIZE_DIVISOR-L, UV_SIZE_DIVISOR-T],
+				[UV_SIZE_DIVISOR-L, UV_SIZE_DIVISOR-B],
+				[UV_SIZE_DIVISOR-R, UV_SIZE_DIVISOR-B],
+				[UV_SIZE_DIVISOR-R, UV_SIZE_DIVISOR-T]
+			];
+			break;
+		case uvManip.ROT_270:
+			uv = [
+				[UV_SIZE_DIVISOR-T, L],
+				[UV_SIZE_DIVISOR-B, L],
+				[UV_SIZE_DIVISOR-B, R],
+				[UV_SIZE_DIVISOR-T, R]
+			];
+			break;
+		case uvManip.FLIP_U:
+			uv = [
+				[UV_SIZE_DIVISOR-L, T],
+				[UV_SIZE_DIVISOR-L, B],
+				[UV_SIZE_DIVISOR-R, B],
+				[UV_SIZE_DIVISOR-R, T]
+			];
+			break;
+		case uvManip.NONE:
+		default:
+			uv = [
+				[L, T],
+				[L, B],
+				[R, B],
+				[R, T]
+			];
+	}
+
+	return uv;
+}
+
+/**
+ * Calculate texture coords for a quad on the xz-plane, showing parts
+ * of the texture without stretching it.
+ */
+ushort[][] MappedUVYManipulator(int x1, int x2, int z1, int z2,
+		   	         int u_offset, int v_offset, int manip)
+{
+	ushort L = cast(ushort)(x1 % UV_SIZE_DIVISOR);
+	ushort T = cast(ushort)(z1 % UV_SIZE_DIVISOR);
+	ushort R = L + (x2-x1);
+	ushort B = T + (z2-z1);
+
+	return MappedUVManipulator(L, R, T, B, u_offset, v_offset, manip);
+}
+
+/**
+ * Calculate texture coords for a quad on the xz-plane, showing parts
+ * of the texture without stretching it.
+ */
+ushort[][] MappedUVXZManipulator(int x1, int x2, int y1, int y2, int z1, int z2,
+		   	         int u_offset, int v_offset, sideNormal normal, int manip)
+{
+	ushort L = 0, T = 0, R = 0, B = 0;
+
+	if (normal == sideNormal.ZP) {
+		L = cast(ushort)(x1 % UV_SIZE_DIVISOR);
+		R = L + (x2 - x1);
+	} else if (normal == sideNormal.ZN) {
+		R = UV_SIZE_DIVISOR - x1 % UV_SIZE_DIVISOR;
+		L = R - (x2 - x1);
+	} else if (normal == sideNormal.XP) {
+		L = cast(ushort)(z1 % UV_SIZE_DIVISOR);
+		R = L + (z2 - z1);
+	} else {
+		R = UV_SIZE_DIVISOR - z1 % UV_SIZE_DIVISOR;
+		L = R - (z2 - z1);
+	}
+
+	B = cast(ushort)(UV_SIZE_DIVISOR - y1 % UV_SIZE_DIVISOR);
+	T = B - (y2 - y1);
+
+	return MappedUVManipulator(L, R, T, B, u_offset, v_offset, manip);
+}
+
 /*
  * Used to convert a chunk block coord into a int and back to a float.
  *
@@ -520,6 +626,28 @@ template QuadEmitter(alias T)
 		pack(x2, y, z1, texture, aoTR, normal, uTR, vTR);
 	}
 
+	void emitQuadMappedUVAOYP(int x1, int x2, int y, int z1, int z2,
+				  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				  ubyte texture, sideNormal normal,
+				  int u_offset, int v_offset, uvManip manip)
+	{
+		ushort uv[][] = MappedUVYManipulator(x1, x2, z1, z2, u_offset, v_offset, manip);
+
+		pack(x1, y, z1, texture, aoTL, normal, uv[0][0], uv[0][1]);
+		pack(x1, y, z2, texture, aoBL, normal, uv[1][0], uv[1][1]);
+		pack(x2, y, z2, texture, aoBR, normal, uv[2][0], uv[2][1]);
+		pack(x2, y, z1, texture, aoTR, normal, uv[3][0], uv[3][1]);
+	}
+
+	void emitQuadMappedUVAOYP(int x1, int x2, int y, int z1, int z2,
+				  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				  ubyte texture, sideNormal normal,
+				  int u_offset, int v_offset)
+	{
+		emitQuadMappedUVAOYP(x1, x2, y, z1, z2, aoBL, aoBR, aoTL, aoTR,
+				     texture, normal, u_offset, v_offset, uvManip.NONE);
+	}
+
 	void emitQuadAOYN(int x1, int x2, int y, int z1, int z2,
 			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			  ubyte texture, sideNormal normal)
@@ -528,6 +656,28 @@ template QuadEmitter(alias T)
 		pack(x2, y, z1, texture, aoTR, normal, uvCoord.RIGHT, uvCoord.TOP);
 		pack(x2, y, z2, texture, aoBR, normal, uvCoord.RIGHT, uvCoord.BOTTOM);
 		pack(x1, y, z2, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
+	}
+
+	void emitQuadMappedUVAOYN(int x1, int x2, int y, int z1, int z2,
+				  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				  ubyte texture, sideNormal normal,
+				  int u_offset, int v_offset, uvManip manip)
+	{
+		ushort uv[][] = MappedUVYManipulator(x1, x2, z1, z2, u_offset, v_offset, manip);
+
+		pack(x1, y, z1, texture, aoTL, normal, uv[0][0], uv[0][1]);
+		pack(x2, y, z1, texture, aoTR, normal, uv[3][0], uv[3][1]);
+		pack(x2, y, z2, texture, aoBR, normal, uv[2][0], uv[2][1]);
+		pack(x1, y, z2, texture, aoBL, normal, uv[1][0], uv[1][1]);
+	}
+
+	void emitQuadMappedUVAOYN(int x1, int x2, int y, int z1, int z2,
+				  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				  ubyte texture, sideNormal normal,
+				  int u_offset, int v_offset)
+	{
+		emitQuadMappedUVAOYN(x1, x2, y, z1, z2, aoBL, aoBR, aoTL, aoTR,
+				     texture, normal, u_offset, v_offset, uvManip.NONE);
 	}
 
 	void emitQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
@@ -540,6 +690,28 @@ template QuadEmitter(alias T)
 		pack(x1, y1, z2, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
 	}
 
+	void emitQuadMappedUVAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+				   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				   ubyte texture, sideNormal normal,
+				   int u_offset, int v_offset, uvManip manip)
+	{
+		ushort uv[][] = MappedUVXZManipulator(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
+
+		pack(x2, y1, z1, texture, aoBR, normal, uv[2][0], uv[2][1]);
+		pack(x2, y2, z1, texture, aoTR, normal, uv[3][0], uv[3][1]);
+		pack(x1, y2, z2, texture, aoTL, normal, uv[0][0], uv[0][1]);
+		pack(x1, y1, z2, texture, aoBL, normal, uv[1][0], uv[1][1]);
+	}
+
+	void emitQuadMappedUVAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+				   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				   ubyte texture, sideNormal normal,
+				   int u_offset, int v_offset)
+	{
+		emitQuadMappedUVAOXZP(x1, x2, y1, y2, z1, z2, aoBL, aoBR, aoTL, aoTR,
+				      texture, normal, u_offset, v_offset, uvManip.NONE);
+	}
+
 	void emitQuadAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
 			   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 			   ubyte texture, sideNormal normal)
@@ -548,6 +720,28 @@ template QuadEmitter(alias T)
 		pack(x1, y2, z2, texture, aoTR, normal, uvCoord.RIGHT, uvCoord.TOP);
 		pack(x2, y2, z1, texture, aoTL, normal, uvCoord.LEFT, uvCoord.TOP);
 		pack(x2, y1, z1, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
+	}
+
+	void emitQuadMappedUVAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+				   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				   ubyte texture, sideNormal normal,
+				   int u_offset, int v_offset, uvManip manip)
+	{
+		ushort uv[][] = MappedUVXZManipulator(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
+
+		pack(x1, y1, z2, texture, aoBR, normal, uv[2][0], uv[2][1]);
+		pack(x1, y2, z2, texture, aoTR, normal, uv[3][0], uv[3][1]);
+		pack(x2, y2, z1, texture, aoTL, normal, uv[0][0], uv[0][1]);
+		pack(x2, y1, z1, texture, aoBL, normal, uv[1][0], uv[1][1]);
+	}
+
+	void emitQuadMappedUVAOXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+				   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+				   ubyte texture, sideNormal normal,
+				   int u_offset, int v_offset)
+	{
+		emitQuadMappedUVAOXZN(x1, x2, y1, y2, z1, z1, aoBL, aoBR, aoTL, aoTR,
+				      texture, normal, u_offset, v_offset, uvManip.NONE);
 	}
 
 	void emitQuadAOXZP(int x1, int x2, int y1, int y2, int z1, int z2,
@@ -610,10 +804,40 @@ template QuadEmitter(alias T)
 		emitQuadAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal, manip);
 	}
 
+	void emitQuadMappedUVYP(int x1, int x2, int y, int z1, int z2,
+				  ubyte texture, sideNormal normal,
+				  int u_offset, int v_offset, uvManip manip)
+	{
+		emitQuadMappedUVAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0,
+				     texture, normal, u_offset, v_offset, manip);
+	}
+
+	void emitQuadMappedUVYP(int x1, int x2, int y, int z1, int z2,
+				  ubyte texture, sideNormal normal)
+	{
+		emitQuadMappedUVAOYP(x1, x2, y, z1, z2, 0, 0, 0, 0,
+				     texture, normal, 0, 0, uvManip.NONE);
+	}
+
 	void emitQuadYN(int x1, int x2, int y, int z1, int z2,
 			ubyte tex, sideNormal normal)
 	{
 		emitQuadAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void emitQuadMappedUVYN(int x1, int x2, int y, int z1, int z2,
+				  ubyte texture, sideNormal normal,
+				  int u_offset, int v_offset, uvManip manip)
+	{
+		emitQuadMappedUVAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0,
+				     texture, normal, u_offset, v_offset, manip);
+	}
+
+	void emitQuadMappedUVYN(int x1, int x2, int y, int z1, int z2,
+				  ubyte texture, sideNormal normal)
+	{
+		emitQuadMappedUVAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0,
+				     texture, normal, 0, 0, uvManip.NONE);
 	}
 
 	void emitQuadXZP(int x1, int x2, int y1, int y2, int z1, int z2,
@@ -658,6 +882,36 @@ template QuadEmitter(alias T)
 		pack(tx1, y2, tz2, tex, 0, normal, uvCoord.RIGHT, uvCoord.TOP);
 		pack(tx2, y2, tz1, tex, 0, normal, uvCoord.LEFT, uvCoord.TOP);
 		pack(bx2, y1, bz1, tex, 0, normal, uvCoord.LEFT, uvCoord.BOTTOM);
+	}
+
+	void emitQuadMappedUVXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+				 ubyte tex, sideNormal normal,
+				 int u_offset, int v_offset, uvManip manip)
+	{
+		emitQuadMappedUVAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0,
+				      tex, normal, u_offset, v_offset, manip);
+	}
+
+	void emitQuadMappedUVXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+				 ubyte tex, sideNormal normal,
+				 int u_offset, int v_offset, uvManip manip)
+	{
+		emitQuadMappedUVAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0,
+				      tex, normal, u_offset, v_offset, manip);
+	}
+
+	void emitQuadMappedUVXZP(int x1, int x2, int y1, int y2, int z1, int z2,
+				 ubyte tex, sideNormal normal)
+	{
+		emitQuadMappedUVAOXZP(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0,
+			      tex, normal, 0, 0, uvManip.NONE);
+	}
+
+	void emitQuadMappedUVXZN(int x1, int x2, int y1, int y2, int z1, int z2,
+				 ubyte tex, sideNormal normal)
+	{
+		emitQuadMappedUVAOXZN(x1, x2, y1, y2, z1, z2, 0, 0, 0, 0,
+			      tex, normal, 0, 0, uvManip.NONE);
 	}
 
 	void emitDiagonalQuads(int x1, int x2, int y1, int y2, int z1, int z2, ubyte tex)
