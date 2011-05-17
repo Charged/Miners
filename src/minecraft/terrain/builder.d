@@ -2113,10 +2113,10 @@ template BlockDispatcher(alias T)
 		int y2 = y+2, x2 = x+16, z2 = z+16;
 
 		// Sides
-		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN, uvManip.HALF_V);
-		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP, uvManip.HALF_V);
-		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN, uvManip.HALF_V);
-		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP, uvManip.HALF_V);
+		emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadMappedUVXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		emitQuadMappedUVXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadMappedUVXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
 
 		// Top
 		uvManip manip = [uvManip.NONE, uvManip.ROT_90, uvManip.ROT_180, uvManip.ROT_270][d & 3];
