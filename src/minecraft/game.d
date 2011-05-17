@@ -347,6 +347,7 @@ protected:
 		buildTime.stop();
 		idleTime.start();
 
+		// Didn't build anything, just sleep.
 		if (!built)
 			super.idle(time);
 	}
