@@ -229,14 +229,18 @@ protected:
 		auto corner_dst = redstoneWireTile[0][RedstoneWireType.Corner];
 		auto tjunction_dst = redstoneWireTile[0][RedstoneWireType.Tjunction];
 
-		copyTilePart(pic, src.xz.u*16, src.xz.v*16+4, 12, 12,
-			     corner_dst.xz.u*16, corner_dst.xz.v*16+4);
+		// AFAIK there are no non-square tile maps.
+		uint tile_size = pic.width / 16;
+		int h = tile_size / 2;
+		int f = tile_size;
+		copyTilePart(pic, src.xz.u*f, src.xz.v*f+h, f-h, f-h,
+			     corner_dst.xz.u*f, corner_dst.xz.v*f+h);
 
-		copyTilePart(pic, src.xz.u*16, src.xz.v*16, 12, 16,
-				tjunction_dst.xz.u*16, tjunction_dst.xz.v*16);
+		copyTilePart(pic, src.xz.u*f, src.xz.v*f, f-h, f,
+				tjunction_dst.xz.u*f, tjunction_dst.xz.v*f);
 
 		// Copy all four wire tiles.
-		for (int i=0; i<4; i++) {
+		for (int i = 0; i < 4; i++) {
 			src = redstoneWireTile[0][i];
 			auto dst = redstoneWireTile[1][i];
 			copyTile(pic, src.xz.u, src.xz.v, dst.xz.u, dst.xz.v);
