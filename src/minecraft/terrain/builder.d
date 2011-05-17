@@ -1456,20 +1456,23 @@ template BlockDispatcher(alias T)
 	}
 
 	void standing_torch(int x, int y, int z, ubyte tex) {
-		// Renders a torch in the center of a block. Block coordinates need
-		// to be shifted.
-		int x1 = x,   x2 = x+16;
+		// Renders a torch with its center at x,z in shifted coordinates.
+		int x1 = x-8, x2 = x+8;
 		int y1 = y,   y2 = y+16;
-		int z1 = z+9, z2 = z+7;
+		int z1 = z+1, z2 = z-1;
 
 		emitQuadXZN(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZN);
 		emitQuadXZP(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZP);
 
-		x1 = x+9; x2 = x+7;
-		z1 = z;   z2 = z+16;
+		x1 = x+1; x2 = x-1;
+		z1 = z-8; z2 = z+8;
 
 		emitQuadXZN(x2, x2, y1, y2, z1, z2, tex, sideNormal.XN);
 		emitQuadXZP(x1, x1, y1, y2, z1, z2, tex, sideNormal.XP);
+
+		// Use center part of the texture as top.
+		emitQuadMappedUVYP(x-1, x+1, y+10, z-1, z+1, tex, sideNormal.YP,
+				   8 - x % 16, 8 - z % 16 -1, uvManip.NONE);
 	}
 
 	void torch(ubyte type, int x, int y, int z) {
@@ -1483,7 +1486,7 @@ template BlockDispatcher(alias T)
 		z <<= shift;
 
 		if (d >= 5)
-			return standing_torch(x, y, z, tex);
+			return standing_torch(x+8, y, z+8, tex);
 
 		d--;
 
@@ -1509,6 +1512,14 @@ template BlockDispatcher(alias T)
 		emitTiltedQuadXZP(x1+bxoff, x1+bxoff, x1+txoff, x1+txoff, y1, y2,
 				  z1+bzoff, z2+bzoff, z1+tzoff, z2+tzoff, tex, sideNormal.XP);
 
+		// Use center part of the texture as top.
+		int xoff = [-4, +4,  0,  0][d];
+		int zoff = [ 0,  0, -4, +4][d];
+		int uoff = [+4, -4,  0,  0][d];
+		int voff = [-1, -1, +3, -5][d];
+
+		emitQuadMappedUVYP(x+7+xoff, x+9+xoff, y+13, z+7+zoff, z+9+zoff,
+				   tex, sideNormal.YP, uoff, voff, uvManip.NONE);
 	}
 
 	void redstone_wire(int x, int y, int z) {
@@ -2137,16 +2148,16 @@ template BlockDispatcher(alias T)
 		dec = &tile[(active) ? 75 : 76];
 		tex = calcTextureXZ(dec);
 
-		x1 = [x,   x+5, x,   x-5][d & 3];
-		z1 = [z-5, z,   z+5, z  ][d & 3];
+		x1 = [x+8, x+13, x+8,  x+3][d & 3];
+		z1 = [z+3, z+8,  z+13, z+8][d & 3];
 		standing_torch(x1, y-3, z1, tex);
 
 		// Moving torch, delay is position offset in pixels.
 		auto delay = (d >> 2) * 2;
 
 		// Offset by +1/-1 to move torch in default position.
-		x2 = [x,         x+1-delay, x,         x-1+delay][d & 3];
-		z2 = [z-1+delay, z,         z+1-delay, z        ][d & 3];
+		x2 = [x+8,       x+9-delay, x+8,       x+7+delay][d & 3];
+		z2 = [z+7+delay, z+8,       z+9-delay, z+8      ][d & 3];
 		standing_torch(x2, y-3, z2, tex);
 	}
 
