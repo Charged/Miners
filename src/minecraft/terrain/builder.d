@@ -177,6 +177,11 @@ ushort[][] MappedUVManipulator(int L, int R, int T, int B,
 ushort[][] MappedUVYManipulator(int x1, int x2, int z1, int z2,
 		   	         int u_offset, int v_offset, int manip)
 {
+	// Result of modulo operation in D has the same sign as the divident, we don't
+	// want this behaviour for negative inputs, so we move these into a safe range.
+	x1 += 256; x2 += 256;
+	z1 += 256; z2 += 256;
+
 	ushort L = cast(ushort)(x1 % UV_SIZE_DIVISOR);
 	ushort T = cast(ushort)(z1 % UV_SIZE_DIVISOR);
 	ushort R = L + (x2-x1);
@@ -192,6 +197,12 @@ ushort[][] MappedUVYManipulator(int x1, int x2, int z1, int z2,
 ushort[][] MappedUVXZManipulator(int x1, int x2, int y1, int y2, int z1, int z2,
 		   	         int u_offset, int v_offset, sideNormal normal, int manip)
 {
+	// Result of modulo operation in D has the same sign as the divident, we don't
+	// want this behaviour for negative inputs, so we move these into a safe range.
+	x1 += 256; x2 += 256;
+	z1 += 256; z2 += 256;
+	y1 += 256; y2 += 256;
+
 	ushort L = 0, T = 0, R = 0, B = 0;
 
 	if (normal == sideNormal.ZP) {
