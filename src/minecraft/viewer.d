@@ -8,17 +8,16 @@ import lib.sdl.sdl;
 import charge.charge;
 
 import minecraft.world;
+import minecraft.runner;
 import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 
 /**
  * Inbuilt ViewerRunner
  */
-class ViewerRunner
+class ViewerRunner : public Runner
 {
 public:
-	World w;
-
 	/* Light related */
 	GfxSimpleLight sl;
 	double light_heading;
@@ -28,7 +27,6 @@ public:
 	/* Camera related */
 	GfxProjCamera pcam;
 	GfxIsoCamera icam;
-	GfxCamera cam;
 	GameMover pm;
 	GameMover im;
 	GameMover m;
@@ -45,7 +43,7 @@ private:
 public:
 	this(World w)
 	{
-		this.w = w;
+		super(w);
 
 		w.vt.setViewRadii(250/16 + 1);
 

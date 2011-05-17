@@ -12,6 +12,7 @@ import lib.sdl.sdl;
 import charge.charge;
 
 import minecraft.importer;
+import minecraft.runner;
 import minecraft.lua.runner;
 import minecraft.world;
 import minecraft.viewer;
@@ -36,6 +37,7 @@ private:
 
 	ViewerRunner vr;
 	ScriptRunner sr;
+	Runner runner;
 
 	/*
 	 * For tracking the camera
@@ -90,12 +92,14 @@ public:
 		auto scriptName = "res/script.lua";
 		try {
 			sr = new ScriptRunner(w, scriptName);
-			camera = sr.c.c;
+			runner = sr;
 		} catch (Exception e) {
 			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
 			vr = new ViewerRunner(w);
-			camera = vr.cam;
+			runner = vr;
 		}
+
+		camera = runner.cam;
 
 		start = SDL_GetTicks();
 
@@ -110,6 +114,7 @@ public:
 	{
 		delete sr;
 		delete vr;
+		runner = null;
 		delete w;
 		delete rm;
 
@@ -203,10 +208,8 @@ protected:
 	{
 		super.resize(w, h);
 
-		if (sr !is null)
-			sr.resize(w, h);
-		if (vr !is null)
-			vr.resize(w, h);
+		if (runner !is null)
+			runner.resize(w, h);
 	}
 
 	void logic()
@@ -217,15 +220,15 @@ protected:
 
 		w.tick();
 
-		if (vr !is null)
-			vr.logic();
-
+		// Special case lua runner.
 		if (sr !is null) {
 			logicTime.stop();
 			luaTime.start();
 			sr.logic();
 			luaTime.stop();
 			logicTime.start();
+		} else if (runner !is null) {
+			runner.logic();
 		}
 
 		// Center the map around the camera.
@@ -338,7 +341,7 @@ protected:
 		buildTime.start();
 
 		// Do the build
-		built = w.vt.buildOne();
+		built = runner.build();
 
 		// Delete unused resources
 		charge.sys.resource.Pool().collect();

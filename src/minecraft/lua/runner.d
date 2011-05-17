@@ -8,11 +8,12 @@ import charge.charge;
 import charge.game.lua;
 
 import minecraft.world;
+import minecraft.runner;
 import minecraft.lua.actors;
 import minecraft.terrain.vol;
 import minecraft.terrain.chunk;
 
-class ScriptRunner
+class ScriptRunner : public Runner
 {
 public:
 	World w;
@@ -31,7 +32,7 @@ private:
 public:
 	this(World w, char[] filename)
 	{
-		this.w = w;
+		super(w);
 
 		if (!exists(filename)) {
 			l.warn("No such file (%s) (this is not a error)", filename);
@@ -75,6 +76,7 @@ public:
 
 		sl = new SunLight(w);
 		c = new Camera(w);
+		cam = c.c;
 
 		mouse = CtlInput().mouse;
 		keyboard = CtlInput().keyboard;
