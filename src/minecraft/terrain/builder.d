@@ -1954,11 +1954,11 @@ template BlockDispatcher(alias T)
 		int z1 = z+1, z2 = z+15;
 		int y1 = y, y2 = y+1;
 
-		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
-		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
-		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
-		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
-		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+		emitQuadMappedUVXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadMappedUVXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadMappedUVXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		emitQuadMappedUVYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
 	void snow(int x, int y, int z) {
