@@ -2032,6 +2032,42 @@ template BlockDispatcher(alias T)
 		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
 	}
 
+	void cake(int x, int y, int z) {
+		auto dec = &tile[92];
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		ubyte top_tex = calcTextureY(dec);
+		ubyte side_tex = calcTextureXZ(dec);
+		ubyte tex = 0;
+
+		// How much is missing from the cake.
+		int width = 2*d + 1;
+
+		emitQuadMappedUVYP(x+width, x+16, y+8, z, z+16, top_tex, sideNormal.YP);
+
+		emitQuadMappedUVXZN(x+width, x+16, y, y+8, z+1,  z+1,  side_tex, sideNormal.ZN, 0, -8, uvManip.NONE);
+		emitQuadMappedUVXZP(x+width, x+16, y, y+8, z+15, z+15, side_tex, sideNormal.ZP, 0, -8, uvManip.NONE);
+		emitQuadMappedUVXZP(x+15,    x+15, y, y+8, z,    z+16, side_tex, sideNormal.XP, 0, -8, uvManip.NONE);
+
+		// Render side where the cake was/will be cut.
+		if (d > 0)
+			tex = calcTextureXZ(&cakeTile[0]);
+		else
+			tex = side_tex;
+		emitQuadMappedUVXZN(x+width, x+width, y, y+8, z, z+16, tex, sideNormal.XN, 0,-8, uvManip.NONE);
+
+		if (set & sideMask.YN) {
+			tex = calcTextureY(&cakeTile[1]);
+			emitQuadMappedUVYN(x+width, x+16, y, z, z+16, tex, sideNormal.YN);
+		}
+	}
+
 	void cactus(int x, int y, int z) {
 		const type = 81;
 		auto dec = &tile[type];
@@ -2206,6 +2242,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 91:
 				jack_o_lantern(x, y, z);
+				break;
+			case 92:
+				cake(x, y, z);
 				break;
 			case 93:
 			case 94:

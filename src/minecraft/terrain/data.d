@@ -128,7 +128,7 @@ BlockDescriptor tile[256] = [
 	{  true, Block,     {  9,  6 }, {  9,  6 }, "glowstone block" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "portal" },
 	{  true, DataBlock, {  6,  7 }, {  6,  6 }, "jack-o-lantern" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "cake block" },
+	{ false, Stuff,     { 10,  7 }, {  9,  7 }, "cake block" },
 	{ false, Stuff,     {  3,  8 }, {  3,  8 }, "redstone repeater off" },
 	{ false, Stuff,     {  3,  9 }, {  3,  9 }, "redstone repeater on" },
 	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
@@ -241,4 +241,9 @@ BlockDescriptor redstoneWireTile[2][4] = [
 		{ false, Stuff, {  6, 11 }, {  6, 11 }, "corner" },
 		{ false, Stuff, {  7, 11 }, {  7, 11 }, "T-junction" },
 	]
+];
+
+BlockDescriptor cakeTile[2] = [
+	{ false, Stuff,     { 11,  7 }, { 11,  7 }, "cake cut side" },
+	{ false, Stuff,     { 12,  7 }, { 12,  7 }, "cake bottom" },
 ];
