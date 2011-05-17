@@ -14,7 +14,7 @@ import charge.charge;
 import minecraft.importer;
 import minecraft.lua.runner;
 import minecraft.world;
-import minecraft.runner;
+import minecraft.viewer;
 import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 import minecraft.gfx.renderer;
@@ -34,7 +34,7 @@ private:
 	World w;
 	RenderManager rm;
 
-	GameLogic gl;
+	ViewerRunner vr;
 	ScriptRunner sr;
 
 	/*
@@ -93,8 +93,8 @@ public:
 			camera = sr.c.c;
 		} catch (Exception e) {
 			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
-			gl = new GameLogic(w);
-			camera = gl.cam;
+			vr = new ViewerRunner(w);
+			camera = vr.cam;
 		}
 
 		start = SDL_GetTicks();
@@ -109,7 +109,7 @@ public:
 	~this()
 	{
 		delete sr;
-		delete gl;
+		delete vr;
 		delete w;
 		delete rm;
 
@@ -205,8 +205,8 @@ protected:
 
 		if (sr !is null)
 			sr.resize(w, h);
-		if (gl !is null)
-			gl.resize(w, h);
+		if (vr !is null)
+			vr.resize(w, h);
 	}
 
 	void logic()
@@ -217,8 +217,8 @@ protected:
 
 		w.tick();
 
-		if (gl !is null)
-			gl.logic();
+		if (vr !is null)
+			vr.logic();
 
 		if (sr !is null) {
 			logicTime.stop();

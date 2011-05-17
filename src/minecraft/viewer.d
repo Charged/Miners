@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module minecraft.runner;
+module minecraft.viewer;
 
 import std.math;
 import lib.sdl.sdl;
@@ -12,9 +12,9 @@ import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 
 /**
- * Inbuilt GameLogic handler
+ * Inbuilt ViewerRunner
  */
-class GameLogic
+class ViewerRunner
 {
 public:
 	World w;
