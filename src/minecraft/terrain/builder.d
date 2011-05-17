@@ -1929,16 +1929,16 @@ template BlockDispatcher(alias T)
 
 		// Don't render the face where the button is attached to the block.
 		if (set & sideMask.ZN || d != 2)
-			emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+			emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
 		if (set & sideMask.ZP || d != 3)
-			emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+			emitQuadMappedUVXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
 		if (set & sideMask.XN || d != 0)
-			emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+			emitQuadMappedUVXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
 		if (set & sideMask.XP || d != 1)
-			emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+			emitQuadMappedUVXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
 
-		emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
-		emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+		emitQuadMappedUVYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		emitQuadMappedUVYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
 	void pressure_plate(ubyte type, int x, int y, int z) {
