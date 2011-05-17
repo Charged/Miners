@@ -1964,30 +1964,30 @@ template BlockDispatcher(alias T)
 		int y1 = y, y2 = y+16;
 
 		// Pole.
-		emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
-		emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
-		emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
-		emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		emitQuadMappedUVXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		emitQuadMappedUVXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+		emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		emitQuadMappedUVXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
 
 		if (set & sideMask.YN)
-			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+			emitQuadMappedUVYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
 		if (set & sideMask.YP)
-			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+			emitQuadMappedUVYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 
 		// Bars in north or east direction.
 		if (north) {
 			z1 = z-6;
 			z2 = z+6;
 
-			emitQuadYP(x1+1, x2-1, y+15, z1, z2, tex, sideNormal.YP);
-			emitQuadYN(x1+1, x2-1, y+12, z1, z2, tex, sideNormal.YN);
-			emitQuadXZP(x2-1, x2-1, y+12, y+15, z1, z2, tex, sideNormal.XP);
-			emitQuadXZN(x1+1, x1+1, y+12, y+15, z1, z2, tex, sideNormal.XN);
+			emitQuadMappedUVYP(x1+1, x2-1, y+15, z1, z2, tex, sideNormal.YP, 0, -8, uvManip.NONE);
+			emitQuadMappedUVYN(x1+1, x2-1, y+12, z1, z2, tex, sideNormal.YN, 0, -8, uvManip.NONE);
+			emitQuadMappedUVXZP(x2-1, x2-1, y+12, y+15, z1, z2, tex,sideNormal.XP, -8, 0, uvManip.NONE);
+			emitQuadMappedUVXZN(x1+1, x1+1, y+12, y+15, z1, z2, tex,sideNormal.XN, 8, 0, uvManip.NONE);
 
-			emitQuadYP(x1+1, x2-1, y+9, z1, z2, tex, sideNormal.YP);
-			emitQuadYN(x1+1, x2-1, y+6, z1, z2, tex, sideNormal.YN);
-			emitQuadXZP(x2-1, x2-1, y+6, y+9, z1, z2, tex, sideNormal.XP);
-			emitQuadXZN(x1+1, x1+1, y+6, y+9, z1, z2, tex, sideNormal.XN);
+			emitQuadMappedUVYP(x1+1, x2-1, y+9, z1, z2, tex, sideNormal.YP, 0, -8, uvManip.NONE);
+			emitQuadMappedUVYN(x1+1, x2-1, y+6, z1, z2, tex, sideNormal.YN, 0, -8, uvManip.NONE);
+			emitQuadMappedUVXZP(x2-1, x2-1, y+6, y+9, z1, z2, tex,sideNormal.XP, -8, 0, uvManip.NONE);
+			emitQuadMappedUVXZN(x1+1, x1+1, y+6, y+9, z1, z2, tex,sideNormal.XN, 8, 0, uvManip.NONE);
 		}
 
 		if (east) {
@@ -1996,15 +1996,15 @@ template BlockDispatcher(alias T)
 			x1 = x-6;
 			x2 = x+6;
 
-			emitQuadYP(x1, x2, y+15, z1+1, z2-1, tex, sideNormal.YP);
-			emitQuadYN(x1, x2, y+12, z1+1, z2-1, tex, sideNormal.YN);
-			emitQuadXZP(x1, x2, y+12, y+15, z2-1, z2-1, tex, sideNormal.XP);
-			emitQuadXZN(x1, x2, y+12, y+15, z1+1, z1+1, tex, sideNormal.XN);
+			emitQuadMappedUVYP(x1, x2, y+15, z1+1, z2-1, tex, sideNormal.YP, -8, 0, uvManip.NONE);
+			emitQuadMappedUVYN(x1, x2, y+12, z1+1, z2-1, tex, sideNormal.YN, -8, 0, uvManip.NONE);
+			emitQuadMappedUVXZP(x1, x2, y+12, y+15, z2-1, z2-1, tex, sideNormal.ZP, -8, 0, uvManip.NONE);
+			emitQuadMappedUVXZN(x1, x2, y+12, y+15, z1+1, z1+1, tex, sideNormal.ZN, 8, 0, uvManip.NONE);
 
-			emitQuadYP(x1, x2, y+9, z1+1, z2-1, tex, sideNormal.YP);
-			emitQuadYN(x1, x2, y+6, z1+1, z2-1, tex, sideNormal.YN);
-			emitQuadXZP(x1, x2, y+6, y+9, z2-1, z2-1, tex, sideNormal.XP);
-			emitQuadXZN(x1, x2, y+6, y+9, z1+1, z1+1, tex, sideNormal.XN);
+			emitQuadMappedUVYP(x1, x2, y+9, z1+1, z2-1, tex, sideNormal.YP, -8, 0, uvManip.NONE);
+			emitQuadMappedUVYN(x1, x2, y+6, z1+1, z2-1, tex, sideNormal.YN, -8, 0, uvManip.NONE);
+			emitQuadMappedUVXZP(x1, x2, y+6, y+9, z2-1, z2-1, tex, sideNormal.ZP, -8, 0, uvManip.NONE);
+			emitQuadMappedUVXZN(x1, x2, y+6, y+9, z1+1, z1+1, tex, sideNormal.ZN, 8,0, uvManip.NONE);
 		}
 	}
 
