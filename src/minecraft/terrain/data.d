@@ -247,3 +247,12 @@ BlockDescriptor cakeTile[2] = [
 	{ false, Stuff,     { 11,  7 }, { 11,  7 }, "cake cut side" },
 	{ false, Stuff,     { 12,  7 }, { 12,  7 }, "cake bottom" },
 ];
+
+BlockDescriptor chestTile[6] = [
+	{  true, DataBlock, { 10,  1 }, {  9,  1 }, "single chest" },
+	{  true, DataBlock, { 11,  1 }, {  9,  1 }, "single chest front" },
+	{  true, DataBlock, {  9,  2 }, {  9,  1 }, "double chest front left" },
+	{  true, DataBlock, { 10,  2 }, {  9,  1 }, "double chest front right" },
+	{  true, DataBlock, {  9,  3 }, {  9,  1 }, "double chest back left" },
+	{  true, DataBlock, { 10,  3 }, {  9,  1 }, "double chest back right" },
+];

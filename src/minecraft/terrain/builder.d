@@ -1522,6 +1522,57 @@ template BlockDispatcher(alias T)
 				   tex, sideNormal.YP, uoff, voff, uvManip.NONE);
 	}
 
+	void chest(int x, int y, int z) {
+		const type = 54;
+		auto dec = &chestTile[0];
+		int set = data.getSolidSet(x, y, z);
+
+		// Look for adjacent chests.
+		ubyte north = data.get(x, y, z-1) == type;
+		ubyte south = data.get(x, y, z+1) == type;
+		ubyte east = data.get(x-1, y, z) == type;
+		ubyte west = data.get(x+1, y, z) == type;
+
+		// No chest around, render a single chest.
+		if (!north && !south && !east && !west) {
+			auto frontDec = &chestTile[1];
+			return makeFacedBlock(dec, frontDec, x, y, z, sideNormal.ZP, set);
+		}
+
+		// Double chest along the z-axis will face west.
+		if (north || south) {
+			auto front_dec = (north) ? &chestTile[2] : &chestTile[3];
+			auto back_dec = (north) ? &chestTile[5] : &chestTile[4];
+
+			if (set & sideMask.ZN)
+				makeXZ(dec, x, y, z, sideNormal.ZN);
+			if (set & sideMask.ZP)
+				makeXZ(dec, x, y, z, sideNormal.ZP);
+			if (set & sideMask.XN)
+				makeXZ(back_dec, x, y, z, sideNormal.XN);
+			if (set & sideMask.XP)
+				makeXZ(front_dec, x, y, z, sideNormal.XP);
+		// Double chest along the x-axis will face south.
+		} else {
+			auto front_dec = (west) ? &chestTile[2] : &chestTile[3];
+			auto back_dec = (west) ? &chestTile[5] : &chestTile[4];
+
+			if (set & sideMask.ZN)
+				makeXZ(back_dec, x, y, z, sideNormal.ZN);
+			if (set & sideMask.ZP)
+				makeXZ(front_dec, x, y, z, sideNormal.ZP);
+			if (set & sideMask.XN)
+				makeXZ(dec, x, y, z, sideNormal.XN);
+			if (set & sideMask.XP)
+				makeXZ(dec, x, y, z, sideNormal.XP);
+		}
+
+		if (set & sideMask.YN)
+			makeY(dec, x, y, z, sideNormal.YN);
+		if (set & sideMask.YP)
+			makeY(dec, x, y, z, sideNormal.YP);
+	}
+
 	void redstone_wire(int x, int y, int z) {
 		bool shouldLinkTo(ubyte type) {
 			return type == 55 || type == 75 || type == 76;
@@ -2209,6 +2260,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 52:
 				solid(52, x, y, z);
+				break;
+			case 54:
+				chest(x, y, z);
 				break;
 			case 55:
 				redstone_wire(x, y, z);
