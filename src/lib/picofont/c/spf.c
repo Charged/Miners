@@ -89,7 +89,8 @@ FNT_xy FNT_Generate(const char* text, unsigned int len, unsigned int w, unsigned
 		if(chr != 0 && w != 0){
 			for(y = 0; y < FNT_FONTHEIGHT; y++){
 				for(x = 0; x < FNT_FONTWIDTH; x++){
-					if(fnt[text[i] * FNT_FONTHEIGHT + y] >> (7 - x) & 1){
+					unsigned char c = (unsigned char)text[i];
+					if(fnt[c * FNT_FONTHEIGHT + y] >> (7 - x) & 1){
 						pixels[((col - 1) * FNT_FONTWIDTH) + x + (y + row * FNT_FONTHEIGHT) * w] = value;
 					}
 				}
