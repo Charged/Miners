@@ -371,7 +371,7 @@ protected:
 		int height = 8 + 4 + headerText.height * 2 + 4 + 8 + introText.height + 8;
 
 		int center = width / 2;
-		int maxWidth = cast(int)fmax(headerText.width*2, introText.width) + 16;
+		int maxWidth = cast(int)fmax(headerText.width*2+8, introText.width) + 16;
 		int maxHeight = 8 + 4 + headerText.height*2 + 4 + 8 + introText.height + 8;
 
 		if (infoTexture !is null)
