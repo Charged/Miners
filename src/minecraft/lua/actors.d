@@ -355,6 +355,49 @@ struct WorldWrapper
 		return 1;
 	}
 
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto w = s.checkClass!(World)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
+		case "aa":
+			s.pushBool(w.rm.aa);
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	extern (C) static int newIndex(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto w = s.checkClass!(World)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key)	{
+		case "aa":
+			w.rm.aa = s.toBool(3);
+			break;
+		default:
+			s.error("No memeber of that that name");
+			break;
+		}
+
+		return 0;
+	}
+
+
 	extern (C) static int switchRenderer(lua_State *l)
 	{
 		auto s = LuaState(l);
@@ -367,21 +410,6 @@ struct WorldWrapper
 		}
 
 		return 0;
-	}
-
-	extern (C) static int toggleAA(lua_State *l)
-	{
-		auto s = LuaState(l);
-		auto w = s.checkClass!(World)(1, false);
-
-		try {
-			w.rm.aa = !w.rm.aa;
-		} catch (Exception e) {
-			s.error(e);
-		}
-
-		s.pushBool(w.rm.aa);
-		return 1;
 	}
 
 	extern (C) static int screenshot(lua_State *l)
@@ -402,10 +430,12 @@ struct WorldWrapper
 		s.registerClass!(World);
 		s.pushCFunction(&ObjectWrapper.toString);
 		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&index);
+		s.setFieldz(-2, "__index");
+		s.pushCFunction(&newIndex);
+		s.setFieldz(-2, "__newindex");
 		s.pushCFunction(&switchRenderer);
 		s.setFieldz(-2, "switchRenderer");
-		s.pushCFunction(&toggleAA);
-		s.setFieldz(-2, "toggleAA");
 		s.pushCFunction(&screenshot);
 		s.setFieldz(-2, "screenshot");
 		s.pop();
