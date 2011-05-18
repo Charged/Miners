@@ -116,7 +116,7 @@ public:
 		spotlight_shader.sampler("spotTex", 3);
 
 		glUseProgram(fog_shader.id);
-		spotlight_shader.sampler("depthTex", 2);
+		fog_shader.sampler("depthTex", 2);
 
 		glUseProgram(0);
 
