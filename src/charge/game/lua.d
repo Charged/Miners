@@ -774,7 +774,6 @@ struct MouseWrapper
 			m.grab = s.toBool(3);
 			break;
 		case "show":
-			std.stdio.writefln("show %s", s.toBool(3));
 			m.show = s.toBool(3);
 			break;
 		default:
