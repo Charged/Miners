@@ -3,3 +3,17 @@
 
  * Improve math functions
 	Especially matrix manipulation.
+
+ * Add missing blocks
+	- Beds
+	- Rails
+	- Levers
+	- Portal
+
+ * Improve blocks
+	- Snow (Right now, snow occupies a whole block.)
+	- Wallsigns (Use correct textures.)
+	- Signposts (Use correct textures and implement all rotations.)
+	- Water/Lava (Consider the fluid level.)
+	- Doors (Fix texture mapping and face visibility.)
+	- Chests (Improve orientation based on nearby blocks.)
