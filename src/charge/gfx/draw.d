@@ -64,6 +64,24 @@ public:
 			gluOrtho2D(0.0, rt.width, rt.height, 0.0);
 	}
 
+	void save()
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+	}
+
+	void translate(int x, int y)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glTranslated(x, y, 0);
+	}
+
+	void restore()
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
+	}
+
 	/**
 	 * Start drawing operations.
 	 */
