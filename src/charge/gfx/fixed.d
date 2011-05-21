@@ -51,6 +51,8 @@ protected:
 		c.transform();
 
 		renderLoop(rq, w);
+
+		glDisable(GL_DEPTH_TEST);
 	}
 
 	void renderLoop(RenderQueue rq, World w)
