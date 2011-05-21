@@ -61,13 +61,13 @@ public:
 	this(char[][] args)
 	{
 		super(args);
-		parseArgs(args);
-
-		writefln("   -a, --all             - build all chunks near the camera on start");
-		writefln("   -l, --level <level>   - to specify level directory");
-		writefln("       --license         - print licenses");
 
 		running = true;
+
+		parseArgs(args);
+
+		if (!running)
+			return;
 
 		guessLevel();
 
@@ -117,17 +117,19 @@ public:
 		delete rm;
 
 		delete d;
-		debugText.dereference();
-		cameraText.dereference();
 
 		if (infoTexture !is null)
 			infoTexture.dereference();
+		if (debugText !is null)
+			debugText.dereference();
+		if (cameraText !is null)
+			cameraText.dereference();
 	}
 
 protected:
 	void parseArgs(char[][] args)
 	{
-		for(int i; i < args.length; i++) {
+		for(int i = 1; i < args.length; i++) {
 			switch(args[i]) {
 			case "-l":
 			case "-level":
@@ -143,7 +145,18 @@ protected:
 			case "--all":
 				build_all = true;
 				break;
+
+
 			default:
+				writefln("Unknown argument %s", args[i]);
+			case "-h":
+			case "-help":
+			case "--help":
+				writefln("   -a, --all             - build all chunks near the camera on start");
+				writefln("   -l, --level <level>   - to specify level directory");
+				writefln("       --license         - print licenses");
+				running = false;
+				break;
 			}
 		}
 	}
