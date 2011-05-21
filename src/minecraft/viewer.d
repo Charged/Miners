@@ -15,7 +15,7 @@ import minecraft.terrain.vol;
 /**
  * Inbuilt ViewerRunner
  */
-class ViewerRunner : public Runner
+class ViewerRunner : public GameRunnerBase
 {
 public:
 	/* Light related */
@@ -34,16 +34,15 @@ public:
 	double cam_pitch;
 	bool cam_moveing;
 
-	CtlMouse mouse;
 	bool grabbed;
 
 private:
 	mixin SysLogging;
 
 public:
-	this(World w)
+	this(GameRouter r, World w, RenderManager rm)
 	{
-		super(w);
+		super(r, w, rm);
 
 		w.vt.setViewRadii(250/16 + 1);
 
@@ -80,31 +79,15 @@ public:
 		w.gfx.fog.start = 150;
 		w.gfx.fog.stop = 250;
 		w.gfx.fog.color = Color4f(89.0/255, 178.0/255, 220.0/255);
-
-		auto kb = CtlInput().keyboard;
-		kb.up ~= &this.keyUp;
-		kb.down ~= &this.keyDown;
-
-		mouse = CtlInput().mouse;
-		mouse.up ~= &this.mouseUp;
-		mouse.down ~= &this.mouseDown;
-		mouse.move ~= &this.mouseMove;
 	}
 
 	~this()
 	{
+		dropControl();
+
 		delete sl;
 		delete cam;
 		delete m;
-
-		auto kb = CtlInput().keyboard;
-		kb.up.disconnect(&this.keyUp);
-		kb.down.disconnect(&this.keyDown);
-
-		auto m = CtlInput().mouse;
-		m.up.disconnect(&this.mouseUp);
-		m.down.disconnect(&this.mouseDown);
-		m.move.disconnect(&this.mouseMove);
 	}
 
 	void keyDown(CtlKeyboard kb, int sym)
@@ -228,5 +211,6 @@ public:
 	void logic()
 	{
 		m.tick();
+		super.logic();
 	}
 }

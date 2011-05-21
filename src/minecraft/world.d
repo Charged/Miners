@@ -64,6 +64,9 @@ public:
 	GfxTexture tex;
 	GfxTextureArray ta;
 
+	GfxDefaultTarget defaultTarget;
+	GfxDoubleTarget dt;
+
 	GfxRenderer r; // Current renderer
 	GfxRenderer dr; // Inbuilt deferred or Fixed func
 	MinecraftDeferredRenderer mdr; // Special deferred renderer
@@ -88,6 +91,7 @@ public:
 		canDoForward = MinecraftForwardRenderer.check();
 		canDoDeferred = MinecraftDeferredRenderer.check();
 
+		defaultTarget = GfxDefaultTarget();
 		setupTextures();
 		setupRenderers();
 	}
@@ -116,6 +120,25 @@ public:
 
 		r = rs[current_renderer];
 		bt = rsbt[current_renderer];
+	}
+
+	void render(GfxWorld w, GfxCamera c)
+	{
+		render(w, c, defaultTarget);
+	}
+
+	void render(GfxWorld w, GfxCamera c, GfxRenderTarget rt)
+	{
+		if (aa && (dt is null || rt.width != dt.width/2 || rt.height != dt.height/2))
+			dt = new GfxDoubleTarget(rt.width, rt.height);
+
+		r.target = aa ? cast(GfxRenderTarget)dt : cast(GfxRenderTarget)rt;
+
+		r.render(c, w);
+
+		if (aa)
+			dt.resolve(rt);
+
 	}
 
 protected:

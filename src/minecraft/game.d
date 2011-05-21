@@ -22,7 +22,7 @@ import minecraft.gfx.renderer;
 
 
 
-class Game : public GameSimpleApp
+class Game : public GameSimpleApp, public GameRouter
 {
 private:
 	/* program args */
@@ -34,17 +34,14 @@ private:
 
 	World w;
 	RenderManager rm;
+	GfxDefaultTarget defaultTarget;
 
 	ViewerRunner vr;
 	ScriptRunner sr;
 	Runner runner;
 
-	/*
-	 * For tracking the camera
-	 */
-	GfxCamera camera;
-	int x; int z;
-
+	Runner[] deleteRunner;
+	Runner nextRunner;
 
 	bool built; /**< Have we built a chunk */
 
@@ -78,6 +75,7 @@ public:
 			throw new Exception("Invalid level");
 
 		rm = new RenderManager();
+		defaultTarget = GfxDefaultTarget();
 
 		w = new World(level, rm);
 
@@ -91,15 +89,15 @@ public:
 
 		auto scriptName = "res/script.lua";
 		try {
-			sr = new ScriptRunner(w, scriptName);
+			sr = new ScriptRunner(this, w, rm, scriptName);
 			runner = sr;
 		} catch (Exception e) {
 			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
-			vr = new ViewerRunner(w);
+			vr = new ViewerRunner(this, w, rm);
 			runner = vr;
 		}
 
-		camera = runner.cam;
+		runner.assumeControl();
 
 		start = SDL_GetTicks();
 
@@ -214,11 +212,18 @@ protected:
 
 	void logic()
 	{
+		// Delete and switch runners.
+		manageRunners();
+
+		// If we have no runner stop running.
+		if (runner is null) {
+			running = false;
+			return;
+		}
+
 		// This make sure we at least always
 		// builds at least one chunk per frame.
 		built = false;
-
-		w.tick();
 
 		// Special case lua runner.
 		if (sr !is null) {
@@ -229,20 +234,6 @@ protected:
 			logicTime.start();
 		} else if (runner !is null) {
 			runner.logic();
-		}
-
-		// Center the map around the camera.
-		{
-			auto p = camera.position;
-			int x = cast(int)p.x;
-			int z = cast(int)p.z;
-			x = p.x < 0 ? (x - 16) / 16 : x / 16;
-			z = p.z < 0 ? (z - 16) / 16 : z / 16;
-			
-			if (this.x != x || this.z != z)
-				w.vt.setCenter(x, z);
-			this.x = x;
-			this.z = z;
 		}
 
 		ticks++;
@@ -281,22 +272,13 @@ protected:
 	{
 		if (ticks < 2)
 			return;
+		ticks = 0;
 
 		num_frames++;
 
-		ticks = 0;
+		auto rt = defaultTarget;
 
-		static charge.gfx.target.DoubleTarget dt;
-		GfxDefaultTarget rt = GfxDefaultTarget();
-		if (rm.aa && dt is null)
-			dt = new charge.gfx.target.DoubleTarget(rt.width, rt.height);
-		rt.clear();
-		rm.r.target = rm.aa ? cast(GfxRenderTarget)dt : cast(GfxRenderTarget)rt;
-
-		rm.r.render(camera, w.gfx);
-
-		if (rm.aa)
-			dt.resolve(rt);
+		runner.render(rt);
 
 		{
 			d.target = rt;
@@ -314,14 +296,17 @@ protected:
 			d.fill(Color4f(0, 0, 0, .8), true, x, 8, w, h);
 			d.blit(debugText, x+8, 16);
 
-			auto p = camera.position;
-			char[] info = std.string.format("Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
-			GfxFont.render(cameraText, info);
+			auto grd = cast(GameRunnerBase)runner;
+			if (grd !is null) {
+				auto p = grd.cam.position;
+				char[] info = std.string.format("Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
+				GfxFont.render(cameraText, info);
 
-			w = cameraText.width + 16;
-			h = cameraText.height + 16;
-			d.fill(Color4f(0, 0, 0, .8), true, 8, 8, w, h);
-			d.blit(cameraText, 16, 16);
+				w = cameraText.width + 16;
+				h = cameraText.height + 16;
+				d.fill(Color4f(0, 0, 0, .8), true, 8, 8, w, h);
+				d.blit(cameraText, 16, 16);
+			}
 
 			d.stop();
 		}
@@ -362,6 +347,61 @@ protected:
 	void close()
 	{
 	}
+
+	/*
+	 *
+	 * Managing runners functions.
+	 *
+	 */
+
+	void switchTo(GameRunner gr)
+	{
+		auto r = cast(Runner)gr;
+		assert(r !is null);
+
+		nextRunner = r;
+	}
+
+	void deleteMe(GameRunner gr)
+	{
+		auto r = cast(Runner)gr;
+		assert(r !is null);
+
+		deleteRunner ~= r;
+	}
+
+	void manageRunners()
+	{
+		// Delete any pending runners.
+		if (deleteRunner.length) {
+			foreach(r; deleteRunner) {
+				if (r is runner)
+					runner = null;
+				if (r is sr)
+					sr = null;
+				if (r is vr)
+					vr = null;
+				delete r;
+			}
+			deleteRunner = null;
+		}
+
+		// Do the switch of runners.
+		if (nextRunner !is null) {
+			if (runner !is null)
+				runner.dropControl();
+
+			runner = nextRunner;
+
+			runner.assumeControl();
+		}
+	}
+
+	/*
+	 *
+	 * Intro text functions.
+	 *
+	 */
 
 	void makeInfoTexture(/*GfxRenderTarget rt*/)
 	{
