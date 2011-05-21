@@ -133,6 +133,7 @@ alias charge.gfx.fixed.FixedRenderer GfxFixedRenderer;
 alias charge.gfx.deferred.DeferredRenderer GfxDeferredRenderer;
 alias charge.gfx.target.RenderTarget GfxRenderTarget;
 alias charge.gfx.target.DefaultTarget GfxDefaultTarget;
+alias charge.gfx.target.DoubleTarget GfxDoubleTarget;
 
 alias charge.phy.phy.phyLoaded phyLoaded;
 alias charge.phy.actor.Actor PhyActor;
