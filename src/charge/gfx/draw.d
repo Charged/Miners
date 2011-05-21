@@ -91,6 +91,9 @@ public:
 			return;
 
 		glDisable(GL_BLEND);
+
+		auto rt = DefaultTarget();
+		rt.setTarget();
 	}
 
 	/**
