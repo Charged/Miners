@@ -89,7 +89,7 @@ MinecraftLevelInfo* checkMinecraftLevel(char[] level)
  */
 MinecraftLevelInfo[] scanForLevels(char[] dir = null)
 {
-	charge.util.vector.VectorData!(MinecraftLevelInfo) levels;
+	VectorData!(MinecraftLevelInfo) levels;
 
 	// If no directory given guesstimate the Minecraft save folder.
 	if (dir is null)
