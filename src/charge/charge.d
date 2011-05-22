@@ -64,6 +64,7 @@ public
 	static import charge.game.world;
 	static import charge.game.app;
 	static import charge.game.lua;
+	static import charge.game.runner;
 	static import charge.game.movers;
 	static import charge.game.actors.car;
 	static import charge.game.actors.playerspawn;
@@ -167,6 +168,8 @@ alias charge.game.world.World GameWorld;
 alias charge.game.app.App GameApp;
 alias charge.game.app.SimpleApp GameSimpleApp;
 alias charge.game.lua.LuaState GameLuaState;
+alias charge.game.runner.Runner GameRunner;
+alias charge.game.runner.Router GameRouter;
 alias charge.game.movers.Mover GameMover;
 alias charge.game.movers.IsoCameraMover GameIsoCameraMover;
 alias charge.game.movers.ProjCameraMover GameProjCameraMover;
