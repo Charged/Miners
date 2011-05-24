@@ -48,9 +48,36 @@ char[] getMinecraftSaveFolder(char[] dir = null)
  */
 struct MinecraftLevelInfo
 {
+	char[] name; /**< Level name */
 	char[] dir; /**< Directory holding this level */
 	bool beta; /**< Is this level a beta level */
 	bool nether; /**< Does this level have a nether directory */
+}
+
+/**
+ * Gets information from a level.dat.
+ */
+bool getInfoFromLevelDat(char[] level, out char[] name)
+{
+	auto dat = format(level, "/level.dat\0");
+	nbt_node *data;
+	nbt_node *levelName;
+
+	auto file = nbt_parse_path(dat.ptr);
+	if (!file)
+		return false;
+	scope(exit)
+		nbt_free(file);
+
+	data = nbt_find_by_name(file, "Data");
+	if (!data)
+		return false;
+
+	levelName = nbt_find_by_name(data, "LevelName");
+	if (levelName && levelName.type == TAG_STRING)
+		name = toString(levelName.tag_string).dup; // Need to dup
+
+	return true;
 }
 
 /**
@@ -60,15 +87,16 @@ struct MinecraftLevelInfo
  */
 MinecraftLevelInfo* checkMinecraftLevel(char[] level)
 {
-	auto dat = format(level, "/level.dat");
 	auto region = format(level, "/region");
 	auto nether = format(level, "/DIM-1");
+	char[] name;
 
-	if (!exists(dat))
+	if (!getInfoFromLevelDat(level, name))
 		return null;
 
 	auto li = new MinecraftLevelInfo();
 
+	li.name = name;
 	li.dir = level;
 
 	if (exists(region))
