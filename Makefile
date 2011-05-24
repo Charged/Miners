@@ -112,7 +112,7 @@ $(TARGET): $(OBJ)
 clean:
 	@rm -rf $(TARGET) .obj
 
-run: $(TARGET) res
+run: $(TARGET)
 	@./$(TARGET)
 
 debug: $(TARGET)
@@ -128,8 +128,5 @@ touch: dotouch all
 
 dotouch:
 	@find src/robbers -name "*.d" | xargs touch
-
-res:
-	@wget -nv -r -l1 --no-parent -nH --cut-dirs=2 -A.jpg -A.ini -A.bin -A.bmp -A.xml -A.wav http://irc.walkyrie.se/charged-miners/res/ -Pres
 
 .PHONY: all clean run debug server xml touch dotouch
