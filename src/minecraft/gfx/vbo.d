@@ -140,8 +140,8 @@ public:
 	void add(GfxVBO vbo, int x, int z)
 	{
 		Entry e;
-		e.aabb.min = Point3d(x * 16, -64, z * 16);
-		e.aabb.max = Point3d((x+1) * 16, 64, (z+1) * 16);
+		e.aabb.min = Point3d(x * 16, -0, z * 16);
+		e.aabb.max = Point3d((x+1) * 16, 128, (z+1) * 16);
 		e.vbo = vbo;
 		array ~= e;
 	}

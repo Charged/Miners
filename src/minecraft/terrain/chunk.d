@@ -48,7 +48,7 @@ public:
 		this.xPos = xPos;
 		this.zPos = zPos;
 		this.xOff = xPos * 16;
-		this.yOff = -64;
+		this.yOff = 0;
 		this.zOff = zPos * 16;
 
 		// Setup pointers
