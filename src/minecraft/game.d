@@ -16,6 +16,7 @@ import minecraft.runner;
 import minecraft.lua.runner;
 import minecraft.world;
 import minecraft.viewer;
+import minecraft.menu;
 import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 import minecraft.gfx.renderer;
@@ -35,6 +36,7 @@ private:
 	RenderManager rm;
 	GfxDefaultTarget defaultTarget;
 
+	MenuRunner mr;
 	ScriptRunner sr;
 	Runner runner;
 
@@ -70,12 +72,15 @@ public:
 		rm = new RenderManager();
 		defaultTarget = GfxDefaultTarget();
 
-		guessLevel();
+		// Run the level selector if we where not given a level.
+		if (level is null) {
+			nextRunner = new MenuRunner(this);
+		} else {
+			if (!checkLevel(level))
+				throw new Exception("Invalid level");
 
-		if (!checkLevel(level))
-			throw new Exception("Invalid level");
-
-		nextRunner = loadLevel(level);
+			nextRunner = loadLevel(level);
+		}
 
 		manageRunners();
 
@@ -84,12 +89,17 @@ public:
  		d = new GfxDraw();
 		debugText = new GfxDynamicTexture("mc/debugText");
 		cameraText = new GfxDynamicTexture("mc/cameraText");
-
-		makeInfoTexture();
 	}
 
 	~this()
 	{
+		if (sr !is null)
+			deleteMe(sr);
+		if (mr !is null)
+			deleteMe(mr);
+
+		manageRunners();
+
 		if (runner !is null)
 			deleteMe(runner);
 
@@ -98,8 +108,6 @@ public:
 		delete rm;
 		delete d;
 
-		if (infoTexture !is null)
-			infoTexture.dereference();
 		if (debugText !is null)
 			debugText.dereference();
 		if (cameraText !is null)
@@ -269,6 +277,9 @@ protected:
 
 		num_frames++;
 
+		if (runner is null)
+			return;
+
 		auto rt = defaultTarget;
 
 		runner.render(rt);
@@ -276,12 +287,6 @@ protected:
 		{
 			d.target = rt;
 			d.start();
-
-			// TODO: Disabled for now
-			if (false)
-				d.blit(infoTexture,
-				       (rt.width - infoTexture.width) / 2,
-				       (rt.height - infoTexture.height) / 2);
 
 			auto w = debugText.width + 16;
 			auto h = debugText.height + 16;
@@ -311,7 +316,7 @@ protected:
 	{
 		// If we have built at least one chunk this frame and have very little
 		// time left don't build again. But we always build one each frame.
-		if (built && time < 10)
+		if (built && time < 10 || runner is null)
 			return super.idle(time);
 
 		// Account this time for build instead of idle
@@ -399,6 +404,8 @@ protected:
 					runner = null;
 				if (r is sr)
 					sr = null;
+				if (r is mr)
+					mr = null;
 				delete r;
 			}
 			deleteRunner = null;
@@ -417,71 +424,4 @@ protected:
 			nextRunner = null;
 		}
 	}
-
-	/*
-	 *
-	 * Intro text functions.
-	 *
-	 */
-
-	void makeInfoTexture(/*GfxRenderTarget rt*/)
-	{
-		auto introText = new GfxDynamicTexture("mc/introText");
-		auto headerText = new GfxDynamicTexture("mc/headerText");
-
-		GfxFont.render(headerText, headerTextChars);
-		GfxFont.render(introText, introTextChars);
-
-		int width = 8 + cast(int)fmax(4 + headerText.width * 2 + 4, introText.width) + 8;
-		int height = 8 + 4 + headerText.height * 2 + 4 + 8 + introText.height + 8;
-
-		int center = width / 2;
-		int maxWidth = cast(int)fmax(headerText.width*2+8, introText.width) + 16;
-		int maxHeight = 8 + 4 + headerText.height*2 + 4 + 8 + introText.height + 8;
-
-		if (infoTexture !is null)
-			infoTexture.dereference();
-		infoTexture = GfxTextureTarget("mc/infoText", width, height);
-
-		auto d = new GfxDraw();
-		d.target = infoTexture;
-		d.start();
-
-		// Background
-		d.fill(Color4f(0, 0, 0, .8), false, 0, 0, width, height);
-
-		// Title bar background
-		d.fill(Color4f(0, 0, 1.0, 0.8), false,
-		       8, 8, maxWidth-16, headerText.height*2+8);
-
-		// Header text
-		d.blit(headerText, Color4f.White, true,
-		       0, 0,                                         // srcX, srcY
-		       headerText.width, headerText.height,          // srcW, srcH
-		       center - headerText.width, 8 + 4,             // dstX, dstY
-		       headerText.width * 2, headerText.height * 2); // dstW, dstH
-
-		// Intro text
-		d.blit(introText, center - introText.width / 2, 8+4+headerText.height*2+4+8);
-
-		d.stop();
-
-		introText.dereference();
-		headerText.dereference();
-
-		// Make sure the target is unbound.
-		auto rt = GfxDefaultTarget();
-		rt.setTarget();
-	}
-
-	const char[] headerTextChars = `Charged Miners`;
-
-	const char[] introTextChars =
-`Welcome to charged miners, I see that this is the
-first time that you are running this application.
-
-
-
-            Press any key to continue.
-`;
 }
