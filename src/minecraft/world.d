@@ -146,7 +146,13 @@ public:
 protected:
 	void setupTextures()
 	{
-		auto pic = Picture("mc/terrain", "res/terrain.png");
+		auto pic = Picture("mc/terrain", "terrain.png");
+
+		if (pic is null)
+			pic = Picture("mc/terrain", "res/terrain.png");
+
+		if (pic is null)
+			throw new Exception("Could not find terrain.png");
 
 		// Doesn't support biomes right now fixup the texture before use.
 		applyStaticBiome(pic);
