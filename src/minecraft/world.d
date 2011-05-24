@@ -94,6 +94,8 @@ public:
 		defaultTarget = GfxDefaultTarget();
 		setupTextures();
 		setupRenderers();
+
+		aa = true;
 	}
 
 	~this()
