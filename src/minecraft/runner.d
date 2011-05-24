@@ -42,6 +42,7 @@ public:
 	int z; /**< Current chunk of camera */
 
 	bool inControl;
+	bool grabbed;
 	CtlKeyboard keyboard;
 	CtlMouse mouse;
 
@@ -56,6 +57,7 @@ public:
 		this.rm = rm;
 		keyboard = CtlInput().keyboard;
 		mouse = CtlInput().mouse;
+		grabbed = true;
 	}
 
 	~this()
@@ -99,6 +101,9 @@ public:
 		if (inControl)
 			return;
 
+		// Remember grab status.
+		grab = grabbed;
+
 		keyboard.up ~= &this.keyUp;
 		keyboard.down ~= &this.keyDown;
 
@@ -122,6 +127,19 @@ public:
 		mouse.move.disconnect(&this.mouseMove);
 
 		inControl = false;
+	}
+
+	bool grab(bool val)
+	{
+		mouse.grab = val;
+		mouse.show = !val;
+		grabbed = val;
+		return grabbed;
+	}
+
+	bool grab()
+	{
+		return grabbed;
 	}
 
 	abstract void keyDown(CtlKeyboard kb, int sym);

@@ -34,8 +34,6 @@ public:
 	double cam_pitch;
 	bool cam_moveing;
 
-	bool grabbed;
-
 private:
 	mixin SysLogging;
 
@@ -140,9 +138,7 @@ public:
 		case SDLK_g:
 			if (!kb.ctrl)
 				break;
-			grabbed = !grabbed;
-			mouse.grab = grabbed;
-			mouse.show = !grabbed;
+			grab = !grab;
 			break;
 		case SDLK_o:
 			Core().screenShot();
