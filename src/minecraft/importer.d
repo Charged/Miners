@@ -7,6 +7,7 @@ import std.file;
 import std.string;
 import std.stream;
 
+import charge.math.point3d;
 import charge.util.base36;
 import charge.util.vector;
 import charge.platform.homefolder;
@@ -48,20 +49,22 @@ char[] getMinecraftSaveFolder(char[] dir = null)
  */
 struct MinecraftLevelInfo
 {
-	char[] name; /**< Level name */
-	char[] dir; /**< Directory holding this level */
-	bool beta; /**< Is this level a beta level */
-	bool nether; /**< Does this level have a nether directory */
+	char[] name;   /**< Level name */
+	char[] dir;    /**< Directory holding this level */
+	bool beta;     /**< Is this level a beta level */
+	bool nether;   /**< Does this level have a nether directory */
+	Point3d spawn; /**< Spawn point */
 }
 
 /**
  * Gets information from a level.dat.
  */
-bool getInfoFromLevelDat(char[] level, out char[] name)
+bool getInfoFromLevelDat(char[] level, out char[] name, out Point3d spawn)
 {
 	auto dat = format(level, "/level.dat\0");
 	nbt_node *data;
 	nbt_node *levelName;
+	nbt_node *spwn;
 
 	auto file = nbt_parse_path(dat.ptr);
 	if (!file)
@@ -77,6 +80,15 @@ bool getInfoFromLevelDat(char[] level, out char[] name)
 	if (levelName && levelName.type == TAG_STRING)
 		name = toString(levelName.tag_string).dup; // Need to dup
 
+	spawn = Point3d(0, 64, 0);
+	foreach(int i, n; ["SpawnX", "SpawnY", "SpawnZ"]) {
+		spwn = nbt_find_by_name(data, n.ptr);
+		if (!spwn || spwn.type != TAG_INT)
+			continue;
+
+		(&spawn.x)[i] = spwn.tag_int;
+	}
+
 	return true;
 }
 
@@ -90,14 +102,16 @@ MinecraftLevelInfo* checkMinecraftLevel(char[] level)
 	auto region = format(level, "/region");
 	auto nether = format(level, "/DIM-1");
 	char[] name;
+	Point3d spawn;
 
-	if (!getInfoFromLevelDat(level, name))
+	if (!getInfoFromLevelDat(level, name, spawn))
 		return null;
 
 	auto li = new MinecraftLevelInfo();
 
 	li.name = name;
 	li.dir = level;
+	li.spawn = spawn;
 
 	if (exists(region))
 		li.beta = true;
