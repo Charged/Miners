@@ -62,10 +62,10 @@ public:
 			if (e.type == SDL_QUIT)
 				quit();
 
-			/* Hack */
-			if (e.type == SDL_KEYUP)
-				if (e.key.keysym.sym == SDLK_ESCAPE)
-					quit();
+			// Hack
+			//if (e.type == SDL_KEYUP)
+			//	if (e.key.keysym.sym == SDLK_ESCAPE)
+			//		quit();
 
 			if (e.type == SDL_KEYDOWN) {
 				auto k = keyboardArray[0];
