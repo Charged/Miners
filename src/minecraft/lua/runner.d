@@ -26,7 +26,7 @@ private:
 	mixin SysLogging;
 
 public:
-	this(GameRouter r, World w, RenderManager rm, char[] filename)
+	this(Router r, World w, RenderManager rm, char[] filename)
 	{
 		super(r, w, rm);
 
@@ -118,6 +118,7 @@ public:
 			delete s;
 			delete c;
 			delete sl;
+			delete w;
 		}
 	}
 

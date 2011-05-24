@@ -22,7 +22,7 @@ import minecraft.gfx.renderer;
 
 
 
-class Game : public GameSimpleApp, public GameRouter
+class Game : public GameSimpleApp, public Router
 {
 private:
 	/* program args */
@@ -32,11 +32,9 @@ private:
 	charge.game.app.TimeKeeper luaTime;
 	charge.game.app.TimeKeeper buildTime;
 
-	World w;
 	RenderManager rm;
 	GfxDefaultTarget defaultTarget;
 
-	ViewerRunner vr;
 	ScriptRunner sr;
 	Runner runner;
 
@@ -69,35 +67,17 @@ public:
 		if (!running)
 			return;
 
+		rm = new RenderManager();
+		defaultTarget = GfxDefaultTarget();
+
 		guessLevel();
 
 		if (!checkLevel(level))
 			throw new Exception("Invalid level");
 
-		rm = new RenderManager();
-		defaultTarget = GfxDefaultTarget();
+		nextRunner = loadLevel(level);
 
-		w = new World(level, rm);
-
-		if (build_all) {
-			l.fatal("Building all, please wait...");
-			auto t1 = SDL_GetTicks();
-			w.vt.buildAll();
-			auto t2 = SDL_GetTicks();
-			l.fatal("Build time: %s seconds", (t2 - t1) / 1000.0);
-		}
-
-		auto scriptName = "res/script.lua";
-		try {
-			sr = new ScriptRunner(this, w, rm, scriptName);
-			runner = sr;
-		} catch (Exception e) {
-			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
-			vr = new ViewerRunner(this, w, rm);
-			runner = vr;
-		}
-
-		runner.assumeControl();
+		manageRunners();
 
 		start = SDL_GetTicks();
 
@@ -110,12 +90,12 @@ public:
 
 	~this()
 	{
-		delete sr;
-		delete vr;
-		runner = null;
-		delete w;
-		delete rm;
+		if (runner !is null)
+			deleteMe(runner);
 
+		manageRunners();
+
+		delete rm;
 		delete d;
 
 		if (infoTexture !is null)
@@ -383,6 +363,33 @@ protected:
 		deleteRunner ~= r;
 	}
 
+	Runner loadLevel(char[] dir)
+	{
+		Runner r;
+		World w;
+
+		w = new World(dir, rm);
+
+		auto scriptName = "res/script.lua";
+		try {
+			r = new ScriptRunner(this, w, rm, scriptName);
+		} catch (Exception e) {
+			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
+			r = new ViewerRunner(this, w, rm);
+		}
+
+		// No other place to put it.
+		if (build_all) {
+			l.fatal("Building all, please wait...");
+			auto t1 = SDL_GetTicks();
+			w.vt.buildAll();
+			auto t2 = SDL_GetTicks();
+			l.fatal("Build time: %s seconds", (t2 - t1) / 1000.0);
+		}
+
+		return r;
+	}
+
 	void manageRunners()
 	{
 		// Delete any pending runners.
@@ -392,8 +399,6 @@ protected:
 					runner = null;
 				if (r is sr)
 					sr = null;
-				if (r is vr)
-					vr = null;
 				delete r;
 			}
 			deleteRunner = null;
@@ -405,8 +410,11 @@ protected:
 				runner.dropControl();
 
 			runner = nextRunner;
+			sr = cast(ScriptRunner)runner;
 
 			runner.assumeControl();
+
+			nextRunner = null;
 		}
 	}
 

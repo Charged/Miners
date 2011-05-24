@@ -40,7 +40,7 @@ private:
 	mixin SysLogging;
 
 public:
-	this(GameRouter r, World w, RenderManager rm)
+	this(Router r, World w, RenderManager rm)
 	{
 		super(r, w, rm);
 
@@ -88,6 +88,7 @@ public:
 		delete sl;
 		delete cam;
 		delete m;
+		delete w;
 	}
 
 	void keyDown(CtlKeyboard kb, int sym)

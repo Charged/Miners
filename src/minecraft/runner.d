@@ -10,13 +10,21 @@ import minecraft.world;
 import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
 
+
 /**
  * Specialized runner for Minecraft.
  */
 class Runner : public GameRunner
 {
-
 	abstract bool build();
+}
+
+/**
+ * Specialized router for Minecraft.
+ */
+interface Router : public GameRouter
+{
+	Runner loadLevel(char[] dir);
 }
 
 /**
@@ -25,7 +33,7 @@ class Runner : public GameRunner
 class GameRunnerBase : public Runner
 {
 public:
-	GameRouter r;
+	Router r;
 	World w;
 	RenderManager rm;
 
@@ -41,7 +49,7 @@ private:
 	mixin SysLogging;
 
 public:
-	this(GameRouter r, World w, RenderManager rm)
+	this(Router r, World w, RenderManager rm)
 	{
 		this.r = r;
 		this.w = w;
