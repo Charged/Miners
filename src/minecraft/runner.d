@@ -73,19 +73,7 @@ public:
 	{
 		w.tick();
 
-		// Center the map around the camera.
-		{
-			auto p = cam.position;
-			int x = cast(int)p.x;
-			int z = cast(int)p.z;
-			x = p.x < 0 ? (x - 16) / 16 : x / 16;
-			z = p.z < 0 ? (z - 16) / 16 : z / 16;
-
-			if (this.x != x || this.z != z)
-				w.vt.setCenter(x, z);
-			this.x = x;
-			this.z = z;
-		}
+		centerMap();
 	}
 
 	bool build()
@@ -127,6 +115,24 @@ public:
 		mouse.move.disconnect(&this.mouseMove);
 
 		inControl = false;
+	}
+
+protected:
+	/**
+	 * Center the map around the camera.
+	 */
+	void centerMap()
+	{
+		auto p = cam.position;
+		int x = cast(int)p.x;
+		int z = cast(int)p.z;
+		x = p.x < 0 ? (x - 16) / 16 : x / 16;
+		z = p.z < 0 ? (z - 16) / 16 : z / 16;
+
+		if (this.x != x || this.z != z)
+			w.vt.setCenter(x, z);
+		this.x = x;
+		this.z = z;
 	}
 
 	bool grab(bool val)
