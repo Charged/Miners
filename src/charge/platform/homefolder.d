@@ -3,6 +3,8 @@
 module charge.platform.homefolder;
 
 import std.c.stdlib;
+import std.file;
+import std.stdio;
 import std.string;
 
 char[] homeFolder;
@@ -27,4 +29,13 @@ static this()
 	}
 
 	chargeConfigFolder = applicationConfigFolder ~ "/charge";
+
+	// Ensure that the config folder exists.
+	try {
+		if (!exists(chargeConfigFolder))
+			mkdir(chargeConfigFolder);
+	} catch (Exception e) {
+		// Can't do any logging since the logging module looks for the homeFolder.
+		writefln("Could not create config folder (%s)", chargeConfigFolder);
+	}
 }

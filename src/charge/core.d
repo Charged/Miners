@@ -247,13 +247,6 @@ private:
 
 	void saveSettings()
 	{
-		try {
-			if (!exists(chargeConfigFolder))
-				mkdir(chargeConfigFolder);
-		} catch (Exception e) {
-			l.error("Could not create config folder (%s)", chargeConfigFolder);
-		}
-
 		p.save(settingsFile);
 	}
 
