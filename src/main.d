@@ -13,22 +13,40 @@ static import minecraft.game;
 
 import license;
 
-bool printLicense(char[][] args)
+bool printLicense()
 {
+	foreach(license; licenseArray)
+		writefln(license);
+	return false;
+}
+
+bool filterArgs(inout char[][] args)
+{
+	char[][] ret;
+	int i;
+	ret.length = args.length;
+
 	foreach(arg; args) {
-		if (arg == "-license" || arg == "--license") {
-			foreach(license; licenseArray)
-				writefln(license);
-			return true;
+		if (arg == "-license" || arg == "--license")
+			return printLicense();
+
+		// Ignore the -psn_ argument we get on Mac when launched by Finder.
+		version(darwin) {
+			if (arg.length > 4 && arg[0 .. 4] == "-psn")
+				continue;
 		}
+
+		ret[i++] = arg;
 	}
 
-	return false;
+	ret.length = 1;
+	args = ret;
+	return true;
 }
 
 int chargeMain(char[][] args)
 {
-	if (printLicense(args))
+	if (!filterArgs(args))
 		return 0;
 
 	auto c = Core();
