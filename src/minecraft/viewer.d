@@ -50,9 +50,11 @@ public:
 		GfxDefaultTarget rt = GfxDefaultTarget();
 		cam = pcam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, .1, 250);
 		m = pm = new GameProjCameraMover(cam);
-		cam.position = Point3d(0.0, 5.0, 15.0);
+		cam.position = w.spawn + Vector3d(0.5, 1.5, 0.5);
 		cam_heading = 0.0;
 		cam_pitch = 0.0;
+
+		centerMap();
 
 		sl = new GfxSimpleLight();
 		// Night

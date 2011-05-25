@@ -6,6 +6,7 @@ import std.math;
 
 import charge.charge;
 
+import minecraft.importer;
 import minecraft.terrain.chunk;
 import minecraft.terrain.data;
 import minecraft.terrain.vol;
@@ -17,19 +18,39 @@ public:
 
 	RenderManager rm; /** Shared with other worlds */
 	VolTerrain vt;
+	Point3d spawn;
 
 private:
 	mixin SysLogging;
 
 public:
-	this(char[] level, RenderManager rm)
+	this(MinecraftLevelInfo *info, RenderManager rm)
 	{
 		super();
 		this.rm = rm;
+		this.spawn = info.spawn;
 
-		vt = new VolTerrain(this, level, rm.tex);
+		vt = new VolTerrain(this, info.dir, rm.tex);
 		vt.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
 		vt.setBuildType(rm.bt);
+
+		// Find the actuall spawn height
+		auto x = cast(int)spawn.x;
+		auto z = cast(int)spawn.z;
+		auto xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		auto zPos = z < 0 ? (z - 15) / 16 : z / 16;
+
+		vt.setCenter(xPos, zPos);
+		vt.loadChunk(xPos, zPos);
+
+		auto p = vt.getPointerY(x, z);
+		for (int i = 127; i >= 0; i--) {
+			if (p[i] == 0)
+				continue;
+
+			spawn.y = i + 2; // On top of the block
+			break;
+		}
 	}
 
 	~this()

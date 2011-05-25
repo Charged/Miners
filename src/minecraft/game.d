@@ -372,8 +372,11 @@ protected:
 	{
 		Runner r;
 		World w;
+		auto info = checkMinecraftLevel(dir);
+		if (info is null)
+			return null;
 
-		w = new World(dir, rm);
+		w = new World(info, rm);
 
 		auto scriptName = "res/script.lua";
 		try {
