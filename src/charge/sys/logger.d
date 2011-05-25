@@ -6,6 +6,8 @@ import std.stdio;
 import std.string;
 import std.stdarg;
 
+import charge.platform.homefolder;
+
 enum Level
 {
 	Trace = 0,
@@ -46,10 +48,23 @@ template Logging()
 
 private class StdOutWriter : public Writer
 {
+private:
+	FILE *file;
 public:
 	static this()
 	{
 		instance = new StdOutWriter();
+	}
+
+	this()
+	{
+		auto n = format("%s/log.txt\0", chargeConfigFolder);
+		file = fopen(n.ptr, "w");
+
+		if (file is null)
+			file = stdout;
+		else
+			fprintf(file, "%s Logger: Opened log\n", TextLevels[Level.Info].ptr);
 	}
 
 	void log(ClassInfo info, Level level, TypeInfo[] arguments, va_list argptr)
@@ -57,7 +72,7 @@ public:
 		char[] name = info.name;
 		name = name[cast(size_t)(rfind(name, '.') + 1) .. length];
 
-		writef(TextLevels[level], " ", name, ": ");
+		fprintf(file, "%s %.*s: ", TextLevels[level].ptr, cast(uint)name.length, name.ptr);
 		writefx(arguments, argptr, true);
 	}
 
@@ -72,21 +87,21 @@ public:
 		void putc(dchar c)
 		{
 			if (c <= 0x7F) {
-				FPUTC(c, stdout);
+				FPUTC(c, file);
 			} else {
 				char[4] buf;
 				char[] b;
 
 				b = std.utf.toUTF8(buf, c);
 				for (size_t i = 0; i < b.length; i++)
-					FPUTC(b[i], stdout);
+					FPUTC(b[i], file);
 			}
     	}
 
 		std.format.doFormat(&putc, arguments, argptr);
 
 		if (newline)
-			FPUTC('\n', stdout);
+			FPUTC('\n', file);
 	}
 
 	static Writer instance;
