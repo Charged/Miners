@@ -190,6 +190,17 @@ public:
 		return null;
 	}
 
+	ubyte* getPointerY(int x, int z)
+	{
+		auto xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		auto zPos = z < 0 ? (z - 15) / 16 : z / 16;
+
+		x = x < 0 ? 15 - ((-x-1) % 16) : x % 16;
+		z = z < 0 ? 15 - ((-z-1) % 16) : z % 16;
+
+		return getPointerY(xPos, zPos, x, z);
+	}
+
 	ubyte* getPointerY(int xPos, int zPos, int x, int z)
 	{
 		xPos += x < 0 ? (x - 15) / 16 : x / 16;
@@ -201,6 +212,37 @@ public:
 		if (c)
 			return c.getPointerY(x, z);
 		return null;
+	}
+
+	/**
+	 * Creates and if a level was specified loads data.
+	 */
+	Chunk loadChunk(int x, int z)
+	{
+		auto rx = cast(int)floor(x/32.0) - rxOff;
+		auto rz = cast(uint)floor(z/32.0) - rzOff;
+
+		if (rx < 0 || rz < 0)
+			assert(null is "tried to load chunk outside of regions");
+		else if (rx >= width || rz >= depth)
+			assert(null is "tried to load chunk outside of regions");
+
+		auto r = region[rx][rz];
+		if (r is null)
+			region[rx][rz] = r = new Region(this, rx+rxOff, rz+rzOff);
+
+		auto c = r.createChunkUnsafe(x, z);
+
+		// Don't load chunk data if no level was specified.
+		if (dir is null)
+			return c;
+
+		ubyte *blocks;
+		ubyte *data;
+		if (getBetaBlocksForChunk(dir, x, z, blocks, data))
+			c.giveBlocksAndData(blocks, data);
+
+		return c;
 	}
 
 	void setCenter(int xNew, int zNew)
@@ -322,37 +364,6 @@ protected:
 			return null;
 
 		return region[rx][rz];
-	}
-
-	/**
-	 * Creates and if a level was specified loads data.
-	 */
-	Chunk loadChunk(int x, int z)
-	{
-		auto rx = cast(int)floor(x/32.0) - rxOff;
-		auto rz = cast(uint)floor(z/32.0) - rzOff;
-
-		if (rx < 0 || rz < 0)
-			assert(null is "tried to load chunk outside of regions");
-		else if (rx >= width || rz >= depth)
-			assert(null is "tried to load chunk outside of regions");
-
-		auto r = region[rx][rz];
-		if (r is null)
-			region[rx][rz] = r = new Region(this, rx+rxOff, rz+rzOff);
-
-		auto c = r.createChunkUnsafe(x, z);
-
-		// Don't load chunk data if no level was specified.
-		if (dir is null)
-			return c;
-
-		ubyte *blocks;
-		ubyte *data;
-		if (getBetaBlocksForChunk(dir, x, z, blocks, data))
-			c.giveBlocksAndData(blocks, data);
-
-		return c;
 	}
 }
 
