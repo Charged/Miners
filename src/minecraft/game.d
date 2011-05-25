@@ -133,9 +133,8 @@ protected:
 			case "--all":
 				build_all = true;
 				break;
-
-
 			default:
+				l.fatal("Unknown argument %s", args[i]);
 				writefln("Unknown argument %s", args[i]);
 			case "-h":
 			case "-help":
