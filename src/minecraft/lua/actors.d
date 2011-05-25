@@ -364,6 +364,9 @@ struct WorldWrapper
 
 		key = s.toString(2);
 		switch(key) {
+		case "spawn":
+			s.pushPoint3d(w.spawn);
+			break;
 		case "aa":
 			s.pushBool(w.rm.aa);
 			break;
