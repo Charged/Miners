@@ -5,6 +5,7 @@ module minecraft.world;
 import std.math;
 
 import charge.charge;
+import charge.platform.homefolder;
 
 import minecraft.importer;
 import minecraft.terrain.chunk;
@@ -165,12 +166,26 @@ public:
 	}
 
 protected:
+	Picture getTerrain()
+	{
+		char[][] locations = [
+			"terrain.png",
+			"res/terrain.png",
+			chargeConfigFolder ~ "/terrain.png",
+		];
+
+		foreach(l; locations) {
+			auto pic = Picture("mc/terrain", l);
+			if (pic !is null)
+				return pic;
+		}
+
+		return null;
+	}
+
 	void setupTextures()
 	{
-		auto pic = Picture("mc/terrain", "terrain.png");
-
-		if (pic is null)
-			pic = Picture("mc/terrain", "res/terrain.png");
+		auto pic = getTerrain();
 
 		if (pic is null)
 			throw new Exception("Could not find terrain.png");
