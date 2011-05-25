@@ -170,33 +170,6 @@ protected:
 		return true;
 	}
 
-	void guessLevel()
-	{
-		version(darwin) {
-			if (level !is null)
-				return getMinecraftSaveFolder() ~ "/World1";
-		}
-
-		if (level !is null)
-			return;
-
-		auto dir = getMinecraftSaveFolder();
-		auto levels = scanForLevels(dir);
-
-		// Randomly pick the last level - http://xkcd.com/221/
-		foreach (l; levels) {
-			if (!l.beta)
-				continue;
-
-			level = l.dir;
-		}
-
-		if (level is null) {
-			l.warn("Could not find any Minecraft saves");
-			l.warn("Looked here %s", dir);
-		}
-	}
-
 	/*
 	 *
 	 * Callback functions
