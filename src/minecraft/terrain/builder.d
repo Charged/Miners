@@ -2242,6 +2242,7 @@ template BlockDispatcher(alias T)
 			case 6:
 				sapling(x, y, z);
 				break;
+			case 31:
 			case 37:
 			case 38:
 			case 39:

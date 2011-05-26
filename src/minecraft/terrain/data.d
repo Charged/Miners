@@ -67,7 +67,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  0,  4 }, {  0,  4 }, "detector rail" },
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
 	{ false, Stuff,     {  0,  4 }, {  0,  4 }, "web" },
-	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
+	{ false, Stuff,     {  7,  2 }, {  7,  2 }, "tall grass" },
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },                   // 32
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },

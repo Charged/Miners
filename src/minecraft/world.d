@@ -263,6 +263,7 @@ protected:
 
 		modulateColor(pic, 0, 0, grass); // Top grass
 		modulateColor(pic, 6, 2, grass); // Side grass blend
+		modulateColor(pic, 7, 2, grass); // Tall grass
 		modulateColor(pic, 4, 3, leavesRegular); // Tree leaves
 		modulateColor(pic, 4, 8, leavesSpruce); // Spruce leaves
 		modulateColor(pic, 9, 9, leavesBirch); // Birch leaves
