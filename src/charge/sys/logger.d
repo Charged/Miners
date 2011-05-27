@@ -65,6 +65,7 @@ public:
 			file = stdout;
 		else
 			fprintf(file, "%s Logger: Opened log\n", TextLevels[Level.Info].ptr);
+		fflush(file);
 	}
 
 	void log(ClassInfo info, Level level, TypeInfo[] arguments, va_list argptr)
@@ -74,6 +75,7 @@ public:
 
 		fprintf(file, "%s %.*s: ", TextLevels[level].ptr, cast(uint)name.length, name.ptr);
 		writefx(arguments, argptr, true);
+		fflush(file);
 	}
 
 	void writefx(TypeInfo[] arguments, va_list argptr, bool newline = false)
@@ -118,7 +120,7 @@ class Logger
 	{
 		this.c = c;
 		this.w = StdOutWriter.instance;
-		this.l = Level.Warn;
+		this.l = Level.Debug;
 	}
 
 	void trace(...)
