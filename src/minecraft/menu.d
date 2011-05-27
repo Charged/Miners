@@ -91,6 +91,10 @@ public:
 		auto d = new GfxDraw();
 		d.target = rt;
 		d.start();
+
+		if (levelRunner is null)
+			d.fill(Color4f(0, 0, 0, 1), false, 0, 0, rt.width, rt.height);
+
 		d.blit(menuTexture, hc.x, hc.y);
 		d.stop();
 	}
