@@ -37,6 +37,7 @@ public:
 
 		// Find the actuall spawn height
 		auto x = cast(int)spawn.x;
+		auto y = cast(int)spawn.y;
 		auto z = cast(int)spawn.z;
 		auto xPos = x < 0 ? (x - 15) / 16 : x / 16;
 		auto zPos = z < 0 ? (z - 15) / 16 : z / 16;
@@ -45,11 +46,13 @@ public:
 		vt.loadChunk(xPos, zPos);
 
 		auto p = vt.getPointerY(x, z);
-		for (int i = 127; i >= 0; i--) {
-			if (p[i] == 0)
+		for (int i = y; i < 128; i++) {
+			if (tile[p[i]].filled)
+				continue;
+			if (tile[p[i+1]].filled)
 				continue;
 
-			spawn.y = i + 2; // On top of the block
+			spawn.y = i;
 			break;
 		}
 	}
