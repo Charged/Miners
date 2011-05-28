@@ -10,6 +10,7 @@ import std.c.stdlib;
 import lib.sdl.sdl;
 
 import charge.charge;
+import charge.sys.file;
 
 import minecraft.importer;
 import minecraft.runner;
@@ -49,11 +50,13 @@ private:
 	int start;
 	int num_frames;
 
-
 	GfxDraw d;
 	GfxDynamicTexture debugText;
 	GfxDynamicTexture cameraText;
 	GfxTextureTarget infoTexture;
+
+	// Extracted files from minecraft
+	void[] terrainFile;
 
 public:
 	mixin SysLogging;
@@ -68,6 +71,9 @@ public:
 
 		if (!running)
 			return;
+
+		// Borrow terrain.png from minecraft.jar if it can be found.
+		setupMinecraftTexture();
 
 		rm = new RenderManager();
 		defaultTarget = GfxDefaultTarget();
@@ -112,6 +118,12 @@ public:
 			debugText.dereference();
 		if (cameraText !is null)
 			cameraText.dereference();
+
+		if (terrainFile !is null) {
+			auto fm = FileManager();
+			fm.remBuiltin("terrain.png");
+			std.c.stdlib.free(terrainFile.ptr);
+		}
 	}
 
 protected:
@@ -146,6 +158,22 @@ protected:
 				break;
 			}
 		}
+	}
+
+	void setupMinecraftTexture()
+	{
+		try {
+			terrainFile = extractMinecraftTexture();
+		} catch (Exception e) {
+			l.info("Could not extract terrain.png from minecraft.jar because:");
+			l.bug(e.classinfo.name, " ", e);
+		}
+
+		if (terrainFile is null)
+			return;
+
+		auto fm = FileManager();
+		fm.addBuiltin("terrain.png", terrainFile);
 	}
 
 	bool checkLevel(char[] level)

@@ -6,10 +6,12 @@ import std.math;
 import std.file;
 import std.string;
 import std.stream;
+import std.mmfile;
 
-import charge.math.point3d;
+import charge.util.zip;
 import charge.util.base36;
 import charge.util.vector;
+import charge.math.point3d;
 import charge.platform.homefolder;
 
 import lib.nbt.nbt;
@@ -31,6 +33,24 @@ char[] getMinecraftFolder()
 	}
 
 	return mcFolder;
+}
+
+/**
+ * Locate minecraft.jar and extract terrain.png.
+ *
+ * Returns the terrain.png file a C allocated array.
+ */
+void[] extractMinecraftTexture()
+{
+	auto dir = getMinecraftFolder();
+	auto file = dir ~ "/bin/minecraft.jar";
+	void[] data;
+
+	auto mmap = new MmFile(file);
+	data = cUncompressFromFile(mmap[], "terrain.png");
+	delete mmap;
+
+	return data;
 }
 
 /**
