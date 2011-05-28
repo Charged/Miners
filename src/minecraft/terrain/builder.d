@@ -1329,10 +1329,18 @@ template BlockDispatcher(alias T)
 	}
 
 	void grass(int x, int y, int z) {
+		int set = data.getSolidSet(x, y, z);
+		auto grassDec = &tile[2];
+		auto dirtDec = &tile[3];
+		auto snowDec = &tile[78];
+
 		if (data.get(x, y + 1, z) == 78 /* snow */)
-			solid(78, x, y, z);
+			makeXYZ(snowDec, x, y, z, set & ~sideMask.YN);
 		else
-			solid(2 /* grass */, x, y, z);
+			makeXYZ(grassDec, x, y, z, set & ~sideMask.YN);
+
+		if (set & sideMask.YN)
+			makeY(dirtDec, x, y, z, sideNormal.YN);
 	}
 
 	void water(int x, int y, int z) {
