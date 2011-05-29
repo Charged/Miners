@@ -24,6 +24,9 @@ import minecraft.gfx.renderer;
 
 
 
+/**
+ * Main hub of the minecraft game.
+ */
 class Game : public GameSimpleApp, public Router
 {
 private:
@@ -72,20 +75,14 @@ public:
 		if (!running)
 			return;
 
-		// Borrow terrain.png from minecraft.jar if it can be found.
-		setupMinecraftTexture();
-
-		rm = new RenderManager();
 		defaultTarget = GfxDefaultTarget();
 
-		// Run the level selector if we where not given a level.
-		if (level is null) {
-			nextRunner = new MenuRunner(this);
-		} else {
-			if (!checkLevel(level))
-				throw new Exception("Invalid level");
-
-			nextRunner = loadLevel(level);
+		try {
+			doInit();
+		} catch (GameException ge) {
+			nextRunner = new MenuRunner(this, ge);
+		} catch (Exception e) {
+			nextRunner = new MenuRunner(this, new GameException(null, e));
 		}
 
 		manageRunners();
@@ -127,6 +124,29 @@ public:
 	}
 
 protected:
+	/**
+	 * Initialize everything.
+	 *
+	 * Throw GameException if something went wrong.
+	 * Throw Exception if something went horribly wrong.
+	 */
+	void doInit()
+	{
+		// Borrow terrain.png from minecraft.jar if it can be found.
+		setupMinecraftTexture();
+
+		rm = new RenderManager();
+
+		// Run the level selector if we where not given a level.
+		if (level is null) {
+			nextRunner = new MenuRunner(this);
+		} else {
+			if (!checkLevel(level))
+				throw new GameException("Invalid level given", null);
+			nextRunner = loadLevel(level);
+		}
+	}
+
 	void parseArgs(char[][] args)
 	{
 		for(int i = 1; i < args.length; i++) {
