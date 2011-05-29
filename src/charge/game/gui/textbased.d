@@ -4,6 +4,8 @@ module charge.game.gui.textbased;
 
 import std.math;
 
+import charge.util.signal;
+
 import charge.math.color;
 import charge.gfx.font;
 import charge.gfx.draw;
@@ -155,6 +157,7 @@ class Button : public BaseText
 public:
 	char[] text;
 	uint minwidth;
+	Signal!(Button) pressed;
 
 public:
 	this(Container c, int x, int y, char[] text, uint minwidth = 0)
@@ -167,6 +170,16 @@ public:
 		makeGfx(makeTextGuiButton(text, minwidth));
 		w = gfx.width;
 		h = gfx.height;
+	}
+
+	~this()
+	{
+		pressed.destruct();
+	}
+
+	void mouseDown(Mouse m, int x, int y, uint button)
+	{
+		pressed(this);
 	}
 }
 
