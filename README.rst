@@ -4,7 +4,7 @@ Charge
 
 Charge game engine, but better know as Charge Miners a Minecraft Viewer.
 
-.. image:: https://github.com/Wallbraker/Charged-Miners/wiki/shot-1.png
+.. image:: https://github.com/Wallbraker/Charged-Miners/wiki/shot-1.jpg
 
 
 Getting started
@@ -120,3 +120,8 @@ Things to consider:
  * Patches that you want to be committed to the main repository will need to
    have your signoff (just commit with --signoff and git will add it for you).
  * Have fun and there will be cake! That is all!
+
+
+
+.. image:: https://github.com/Wallbraker/Charged-Miners/wiki/shot-2.jpg
+

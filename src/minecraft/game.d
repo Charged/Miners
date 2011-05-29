@@ -284,7 +284,7 @@ protected:
 
 		runner.render(rt);
 
-		{
+		if (false) {
 			d.target = rt;
 			d.start();
 
