@@ -32,15 +32,22 @@ protected:
 	CtlMouse mouse;
 	bool inControl;
 
+	bool errorMode;
+
 private:
 	mixin SysLogging;
 
 public:
-	this(Router r)
+	this(Router r, GameException ge = null)
 	{
 		this.router = r;
 
-		makeLevelSelector();
+		if (ge is null) {
+			makeLevelSelector();
+		} else {
+			makeErrorText(ge.toString(), ge.next);
+			errorMode = true;
+		}
 
 		keyboard = CtlInput().keyboard;
 		mouse = CtlInput().mouse;
@@ -116,6 +123,9 @@ private:
 		if (sym != 27) // Escape
 			return;
 
+		if (errorMode)
+			return router.deleteMe(this);
+
 		if (levelRunner is null)
 			return;
 
@@ -123,6 +133,42 @@ private:
 			router.switchTo(levelRunner);
 		else
 			router.switchTo(this);
+	}
+
+	void makeErrorText(char[] errorText, Exception e)
+	{
+		if (menuTexture !is null)
+			menuTexture.dereference();
+
+		assert(hc is null);
+		hc = new HeaderContainer(Color4f(0, 0, 0, 0.8),
+					 "Charged Miners",
+					 Color4f(0, 0, 1, 0.8));
+
+		auto text = new Text(hc, 0, 0, errorText);
+
+		// And some extra info if we get a Exception.
+		if (e !is null) {
+			auto t = format(e.classinfo.name, " ", e);
+			text = new Text(hc, 0, text.h + 8, t);
+		}
+
+		// Add a quit button at the bottom.
+		auto qb = new Button(hc, 0, text.y + text.h + 8, "Quit", 8);
+		qb.pressed ~= &menuQuit;
+
+		hc.repack();
+		auto center = hc.plane.w / 2;
+
+		// Center the children
+		foreach(c; hc.getChildren) {
+			c.x = center - c.w/2;
+		}
+
+		// Paint the texture.
+		hc.paint();
+
+		menuTexture = hc.getTarget();
 	}
 
 	void makeLevelSelector()
@@ -139,7 +185,7 @@ private:
 		auto cb = new Button(hc, 0, it.h + ls.h + 16, "Close", 8);
 		auto qb = new Button(hc, cb.w + 16, it.h + ls.h + 16, "Quit", 8);
 		cb.pressed ~= &selectMenuClose;
-		qb.pressed ~= &selectMenuQuit;
+		qb.pressed ~= &menuQuit;
 		hc.repack();
 
 		auto center = hc.plane.w / 2;
@@ -159,13 +205,14 @@ private:
 		menuTexture = hc.getTarget();
 	}
 
+
 	/*
 	 *
-	 * Select menu callbacks and text.
+	 * Common callbacks.
 	 *
 	 */
 
-	void selectMenuQuit(Button b)
+	void menuQuit(Button b)
 	{
 		if (levelRunner !is null) {
 			router.deleteMe(levelRunner);
@@ -173,6 +220,13 @@ private:
 		}
 		router.deleteMe(this);
 	}
+
+
+	/*
+	 *
+	 * Select menu callbacks and text.
+	 *
+	 */
 
 	void selectMenuClose(Button b)
 	{
