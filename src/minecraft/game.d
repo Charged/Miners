@@ -5,12 +5,14 @@ module minecraft.game;
 import std.math;
 import std.file;
 import std.stdio;
+import std.string;
 import std.c.stdlib;
 
 import lib.sdl.sdl;
 
 import charge.charge;
 import charge.sys.file;
+import charge.platform.homefolder;
 
 import minecraft.importer;
 import minecraft.runner;
@@ -60,6 +62,7 @@ private:
 
 	// Extracted files from minecraft
 	void[] terrainFile;
+	const terrainFilename = "%terrain.png";
 
 public:
 	mixin SysLogging;
@@ -118,7 +121,7 @@ public:
 
 		if (terrainFile !is null) {
 			auto fm = FileManager();
-			fm.remBuiltin("terrain.png");
+			fm.remBuiltin(terrainFilename);
 			std.c.stdlib.free(terrainFile.ptr);
 		}
 	}
@@ -135,7 +138,18 @@ protected:
 		// Borrow terrain.png from minecraft.jar if it can be found.
 		setupMinecraftTexture();
 
-		rm = new RenderManager();
+		// Most common problem people have is missing terrain.png
+		Picture pic = getMinecraftTexture();
+		if (pic is null) {
+			auto t = format(terrainNotFoundText, chargeConfigFolder);
+			throw new GameException(t, null);
+		}
+
+		// I just wanted a comment here to make the code look prettier.
+		rm = new RenderManager(pic);
+
+		// Not needed anymore.
+		pic.dereference();
 
 		// Run the level selector if we where not given a level.
 		if (level is null) {
@@ -193,7 +207,32 @@ protected:
 			return;
 
 		auto fm = FileManager();
-		fm.addBuiltin("terrain.png", terrainFile);
+		fm.addBuiltin(terrainFilename, terrainFile);
+	}
+
+	/**
+	 * Load the Minecraft texture.
+	 */
+	Picture getMinecraftTexture()
+	{
+		char[][] locations = [
+			"terrain.png",
+			"res/terrain.png",
+			chargeConfigFolder ~ "/terrain.png",
+			terrainFilename
+		];
+
+		// Skip the imported texture if it was not found
+		if (terrainFile is null)
+			locations.length = locations.length - 1;
+
+		foreach(l; locations) {
+			auto pic = Picture("mc/terrain", l);
+			if (pic !is null)
+				return pic;
+		}
+
+		return null;
 	}
 
 	bool checkLevel(char[] level)
@@ -447,4 +486,18 @@ protected:
 			nextRunner = null;
 		}
 	}
+
+	/*
+	 *
+	 * Error messages.
+	 *
+	 */
+
+	const char[] terrainNotFoundText =
+`Could not find terrain.png! You have a couple of options, easiest is just to
+install Minecraft and Charged Miners will get it from there. Another option is
+to get one from a texture pack and place it in either the working directory of
+the executable. Or in the Charged Miners config folder located here:
+
+%s`;
 }

@@ -111,13 +111,13 @@ private:
 	mixin SysLogging;
 
 public:
-	this()
+	this(Picture terrain)
 	{
 		canDoForward = MinecraftForwardRenderer.check();
 		canDoDeferred = MinecraftDeferredRenderer.check();
 
 		defaultTarget = GfxDefaultTarget();
-		setupTextures();
+		setupTextures(terrain);
 		setupRenderers();
 
 		aa = true;
@@ -169,30 +169,8 @@ public:
 	}
 
 protected:
-	Picture getTerrain()
+	void setupTextures(Picture pic)
 	{
-		char[][] locations = [
-			"terrain.png",
-			"res/terrain.png",
-			chargeConfigFolder ~ "/terrain.png",
-		];
-
-		foreach(l; locations) {
-			auto pic = Picture("mc/terrain", l);
-			if (pic !is null)
-				return pic;
-		}
-
-		return null;
-	}
-
-	void setupTextures()
-	{
-		auto pic = getTerrain();
-
-		if (pic is null)
-			throw new Exception("Could not find terrain.png");
-
 		// Doesn't support biomes right now fixup the texture before use.
 		applyStaticBiome(pic);
 
@@ -205,9 +183,6 @@ protected:
 			ta = ta.fromTileMap("mc/terrain", pic, 16, 16);
 			ta.filter = GfxTexture.Filter.NearestLinear;
 		}
-
-		pic.dereference();
-		pic = null;
 	}
 
 	void setupRenderers()
