@@ -72,6 +72,13 @@ public:
 		builtins[filename] = data;
 	}
 
+	void remBuiltin(char[] filename)
+	{
+		assert(null !is (filename in builtins));
+
+		builtins.remove(filename);
+	}
+
 private:
 	File get(char[] file)
 	{
