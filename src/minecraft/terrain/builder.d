@@ -1190,7 +1190,8 @@ template QuadBuilder(alias T)
 			makeXZ(dec, x, y, z, sideNormal.ZP);
 	}
 
-	void makeHalfY(BlockDescriptor *dec, uint x, uint y, uint z)
+	void makeHalfY(BlockDescriptor *dec, uint x, uint y, uint z,
+		       uint height = VERTEX_SIZE_DIVISOR / 2)
 	{
 		auto aoy = y;
 		mixin AOScannerY!();
@@ -1206,7 +1207,7 @@ template QuadBuilder(alias T)
 		z2 <<= shift;
 
 		y <<= shift;
-		y += VERTEX_SIZE_DIVISOR / 2;
+		y += height;
 
 		ubyte texture = calcTextureY(dec);
 
@@ -1215,7 +1216,8 @@ template QuadBuilder(alias T)
 			     texture, sideNormal.YP);
 	}
 
-	void makeHalfXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
+	void makeHalfXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal,
+			uint height = VERTEX_SIZE_DIVISOR / 2)
 	{
 		bool positive = isNormalPositive(normal);
 		bool normalIsZ = isNormalZ(normal);
@@ -1249,42 +1251,57 @@ template QuadBuilder(alias T)
 		x1 <<= shift;
 		x2 <<= shift;
 		y1 <<= shift;
-		y2 = y1 + VERTEX_SIZE_DIVISOR / 2;
+		y2 = y1 + height;
 		z1 <<= shift;
 		z2 <<= shift;
 
 		ubyte texture = calcTextureXZ(dec);
 
-		if (positive) {
-			emitHalfQuadAOXZP(x1, x2, y1, y2, z1, z2,
-					  aoBL, aoBR, aoTL, aoTR,
-					  texture, normal);
+		if (height == VERTEX_SIZE_DIVISOR / 2) {
+			if (positive) {
+				emitHalfQuadAOXZP(x1, x2, y1, y2, z1, z2,
+						  aoBL, aoBR, aoTL, aoTR,
+						  texture, normal);
+			} else {
+				emitHalfQuadAOXZM(x1, x2, y1, y2, z1, z2,
+						  aoBL, aoBR, aoTL, aoTR,
+						  texture, normal);
+			}
 		} else {
-			emitHalfQuadAOXZM(x1, x2, y1, y2, z1, z2,
-					  aoBL, aoBR, aoTL, aoTR,
-					  texture, normal);
+			if (positive) {
+				emitQuadMappedUVAOXZP(x1, x2, y1, y2, z1, z2,
+						      aoBL, aoBR, aoTL, aoTR,
+						      texture, normal,
+						      0, 0, uvManip.NONE);
+			} else {
+				emitQuadMappedUVAOXZN(x1, x2, y1, y2, z1, z2,
+						      aoBL, aoBR, aoTL, aoTR,
+						      texture, normal,
+						      0, 0, uvManip.NONE);
+			}
 		}
 	}
 
-	void makeHalfXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
+	void makeHalfXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set,
+			 uint height = VERTEX_SIZE_DIVISOR / 2)
 	{
 		if (set & sideMask.XN)
-			makeHalfXZ(dec, x, y, z, sideNormal.XN);
+			makeHalfXZ(dec, x, y, z, sideNormal.XN, height);
 
 		if (set & sideMask.XP)
-			makeHalfXZ(dec, x, y, z, sideNormal.XP);
+			makeHalfXZ(dec, x, y, z, sideNormal.XP, height);
 
 		if (set & sideMask.YN)
 			makeY(dec, x, y, z, sideNormal.YN);
 
 		if (set & sideMask.YP)
-			makeHalfY(dec, x, y, z);
+			makeHalfY(dec, x, y, z, height);
 
 		if (set & sideMask.ZN)
-			makeHalfXZ(dec, x, y, z, sideNormal.ZN);
+			makeHalfXZ(dec, x, y, z, sideNormal.ZN, height);
 
 		if (set & sideMask.ZP)
-			makeHalfXZ(dec, x, y, z, sideNormal.ZP);
+			makeHalfXZ(dec, x, y, z, sideNormal.ZP, height);
 	}
 
 	void makeFacedBlock(BlockDescriptor *dec, BlockDescriptor *decFace,
@@ -1332,7 +1349,7 @@ template BlockDispatcher(alias T)
 		int set = data.getSolidSet(x, y, z);
 		auto grassDec = &tile[2];
 		auto dirtDec = &tile[3];
-		auto snowDec = &tile[78];
+		auto snowDec = &snowyGrassBlock;
 
 		if (data.get(x, y + 1, z) == 78 /* snow */)
 			makeXYZ(snowDec, x, y, z, set & ~sideMask.YN);
@@ -2021,8 +2038,16 @@ template BlockDispatcher(alias T)
 	}
 
 	void snow(int x, int y, int z) {
-		// Make snow into full block for now
-		solid(80, x, y, z);
+		const type = 78;
+		auto dec = &tile[type];
+		int set = data.getSolidOrTypeSet(type, x, y, z);
+
+		/* all set */
+		if (set == 0)
+			return;
+
+		set |= sideMask.YP;
+		makeHalfXYZ(dec, x, y, z, set, 2);
 	}
 
 	void fence(int x, int y, int z) {

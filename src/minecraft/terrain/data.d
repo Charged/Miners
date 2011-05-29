@@ -114,7 +114,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  3,  7 }, {  3,  7 }, "redstone torch off" },
 	{ false, Stuff,     {  3,  6 }, {  3,  6 }, "redstone torch on" },
 	{ false, Stuff,     {  1,  0 }, {  1,  0 }, "stone button" },
-	{ false, Stuff,     {  4,  4 }, {  2,  4 }, "snow" },
+	{ false, Stuff,     {  2,  4 }, {  2,  4 }, "snow" },
 	{  true, Block,     {  3,  4 }, {  3,  4 }, "ice" },
 	{  true, Block,     {  2,  4 }, {  2,  4 }, "snow block" },            // 80
 	{ false, Stuff,     {  6,  4 }, {  5,  4 }, "cactus" },
@@ -134,6 +134,9 @@ BlockDescriptor tile[256] = [
 	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
 	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },                   // 96
 ];
+
+BlockDescriptor snowyGrassBlock =
+	{  true, Block, { 4,  4 }, { 2,  4 }, "snowy grass" };
 
 BlockDescriptor woolTile[256] = [
 	{  true, Block,     {  0,  4 }, {  0,  4 }, "white", },                // 0
