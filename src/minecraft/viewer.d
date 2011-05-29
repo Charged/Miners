@@ -172,6 +172,9 @@ public:
 				cam_pitch += yrel / 500.0;
 			}
 
+			if (cam_pitch < -PI_2) cam_pitch = -PI_2;
+			if (cam_pitch >  PI_2) cam_pitch =  PI_2;
+
 			cam.rotation = Quatd(cam_heading, cam_pitch, 0);
 		}
 
