@@ -46,6 +46,7 @@ private:
 	int screenshotNum;
 	uint width, height;
 	bool fullscreen;
+	bool resizeSupported;
 
 	/* surface for window */
 	SDL_Surface *s;
@@ -176,6 +177,9 @@ public:
 
 	void resize(uint w, uint h, bool fullscreen)
 	{
+		if (!resizeSupported)
+			return;
+
 		l.info("Resizing window (%s, %s) %s", w, h,
 			fullscreen ? "fullscren" : "windowed");
 		this.fullscreen = fullscreen;
@@ -327,7 +331,9 @@ private:
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-		uint bits = SDL_OPENGL | SDL_RESIZABLE;
+		uint bits = SDL_OPENGL;
+		if (resizeSupported)
+ 			bits |= SDL_RESIZABLE;
 		if (fullscreen)
 			bits |= SDL_FULLSCREEN;
 
