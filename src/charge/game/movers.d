@@ -60,35 +60,41 @@ public:
 class ProjCameraMover : public Mover
 {
 public:
+	double normalScale;
+	double fastScale;
+
+public:
 	this(Movable m)
 	{
 		super(m);
+		this.normalScale = 0.1;
+		this.fastScale = 0.6;
 	}
 
 	void tick()
 	{
-		if (forward != backward) {
-			auto v = m.rotation.rotateHeading();
-			v.scale(backward ? -0.1 : 0.1);
-			if (speed)
-				v.scale(3.0);
-			m.position = m.position + v;
-		}
+		Vector3d vec = Vector3d(0, 0, 0);
+
+		if (up) vec += Vector3d.Up;
+		if (forward) vec += m.rotation.rotateHeading();
+		if (backward) vec -= m.rotation.rotateHeading();
 
 		if (left != right) {
 			auto v = m.rotation.rotateLeft();
-			v.scale(right ? -0.1 : 0.1);
-			if (speed)
-				v.scale(3.0);
-			m.position = m.position + v;
+			v.scale(right ? -1 : 1);
+			vec += v;
 		}
 
-		if (up) {
-			auto v = Vector3d.Up;
-			v.scale(0.1);
-			if (speed)
-				v.scale(3.0);
-			m.position = m.position + v;
-		}
+		if (vec.lengthSqrd == 0.0)
+			return;
+
+		vec.normalize();
+
+		if (speed)
+			vec.scale(fastScale);
+		else
+			vec.scale(normalScale);
+
+		m.position = m.position + vec;
 	}
 }
