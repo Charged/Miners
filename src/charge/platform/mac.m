@@ -301,7 +301,7 @@ static void CustomApplicationMain(int argc, char **argv)
 
 	/* Hand off to main application code */
 	gCalledAppMainline = TRUE;
-	status = charge_main(gArgc, gArgv);
+	status = _d_run_main(gArgc, gArgv, &_Dmain);
 
 	/* We're done, thank you for playing */
 	exit(status);
@@ -355,10 +355,8 @@ static void CustomApplicationMain(int argc, char **argv)
 
 /**
  * Main entry point to executable.
- *
- * XXX: Work around issue in phobos.
  */
-int _charge_run_main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	/* Copy the arguments into a global variable */
 	/* This is passed if we are launched by double-clicking */

@@ -44,7 +44,7 @@ bool filterArgs(inout char[][] args)
 	return true;
 }
 
-int chargeMain(char[][] args)
+int main(char[][] args)
 {
 	if (!filterArgs(args))
 		return 0;
@@ -67,51 +67,4 @@ int chargeMain(char[][] args)
 	//delete c;
 
 	return 0;
-}
-
-version(darwin)
-{
-	extern(C) int _charge_run_main(int argc, char** argv);
-
-	version(DigitalMars)
-	{
-		char[][] saved_args;
-
-		int main(char[][] args)
-		{
-			saved_args = args;
-			scope(exit) saved_args = null;
-
-			char *ptr = args[0].ptr;
-			return _charge_run_main(1, &ptr);
-		}
-
-		extern(C) int charge_main(int argc, char** argv)
-		{
-			return chargeMain(saved_args);
-		}
-	}
-	else
-	{
-		/*
-		 * This only works on GDC, DMD has diffrent _d_run_main prototype.
-		 */
-		extern (C) int _d_run_main(int argc, char **argv, void * p);
-		extern(C) int charge_main(int argc, char** argv)
-		{
-			return _d_run_main(argc, argv, &chargeMain);
-		}
-
-		extern(C) int main(int argc, char **argv)
-		{
-			return _SDL_run_main(argc, argv);
-		}
-	}
-}
-else
-{
-	int main(char[][] args)
-	{
-		return chargeMain(args);
-	}
 }

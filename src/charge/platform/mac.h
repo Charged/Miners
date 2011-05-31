@@ -18,10 +18,9 @@
 
 /**
  * Used to launch the application on mac.
- *
- * XXX: This will go away.
  */
-int charge_main(int argc, char **argv);
+int _d_run_main(int argc, char **argv, void *func);
+int _Dmain(size_t len, void* array);
 
 /**
  * Use this flag to determine whether we use SDLMain.nib or not.
