@@ -45,6 +45,7 @@ LDFLAGS ?= $(DEBUG_DFLAGS)
 DDEFINES = $(ODE_DDEFINES)
 TARGET = Charge
 CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
+MCOMP_FLAGS = $(CARCH) -I/Library/Frameworks/SDL.framework/Headers -c -o $@ $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
 LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(ODE_LDFLAGS) $(LDFLAGS)
 
@@ -61,7 +62,8 @@ ifeq ($(UNAME),Darwin)
 	PLATFORM=mac
 
 	# Extra to get the program working correctly
-	EXTRA_OBJ = $(OBJ_DIR)/SDLmain.o
+	MSRC = $(shell find src -name "*.m")
+	EXTRA_OBJ = $(patsubst src/%.m, $(OBJ_DIR)/%.$(OBJ_TYPE), $(MSRC))
 	CARCH= -arch i386 -arch x86_64
 	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa $(LDFLAGS)
 else
@@ -88,12 +90,13 @@ DSRC = $(shell find src -name "*.d")
 DOBJ = $(patsubst src/%.d, $(OBJ_DIR)/%.$(OBJ_TYPE), $(DSRC))
 OBJ := $(COBJ) $(DOBJ) $(EXTRA_OBJ)
 
+
 all: $(TARGET)
 
-#Special target for MacOSX
-$(OBJ_DIR)/SDLmain.o : src/charge/platform/SDLmain.m Makefile
-	@echo "  CC     src/charge/platform/SDLmain.m"
-	@gcc $(CARCH) -I/Library/Frameworks/SDL.framework/Headers -c -o $@ src/charge/platform/SDLmain.m
+$(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.m Makefile
+	@echo "  CC     src/$*.m"
+	@mkdir -p $(dir $@)
+	@$(CC) $(MCOMP_FLAGS) src/$*.m
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c Makefile
 	@echo "  CC     src/$*.c"
