@@ -256,9 +256,19 @@ private:
 
 	void loadLibraries()
 	{
-		sdl = Library.loads(libSDLname);
-		ttf = Library.loads(libSDLttf);
-		image = Library.loads(libSDLImage);
+		version (darwin) {
+			auto libSDLnames = [privateFrameworksPath ~ "/" ~ libSDLname[0]] ~ libSDLname;
+			auto libSDLttfs = [privateFrameworksPath ~ "/" ~ libSDLttf[0]] ~ libSDLttf;
+			auto libSDLImages = [privateFrameworksPath ~ "/" ~ libSDLImage[0]] ~ libSDLImage;
+		} else {
+			alias libSDLname libSDLnames;
+			alias libSDLttf libSDLttfs;
+			alias libSDLImage libSDLImages;
+		}
+
+		sdl = Library.loads(libSDLnames);
+		ttf = Library.loads(libSDLttfs);
+		image = Library.loads(libSDLImages);
 		openal = Library.loads(libOpenALname);
 		alut = Library.loads(libALUTname);
 

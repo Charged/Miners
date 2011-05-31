@@ -10,6 +10,9 @@ import std.string;
 char[] homeFolder;
 char[] applicationConfigFolder;
 char[] chargeConfigFolder;
+char[] privateFrameworksPath;
+
+extern(C) char* macGetPrivateFrameworksPath();
 
 static this()
 {
@@ -30,6 +33,11 @@ static this()
 
 	chargeConfigFolder = applicationConfigFolder ~ "/charge";
 
+	version(darwin) {
+		auto s = macGetPrivateFrameworksPath();
+		privateFrameworksPath = toString(s);
+	}
+
 	// Ensure that the config folder exists.
 	try {
 		if (!exists(chargeConfigFolder))
@@ -38,4 +46,9 @@ static this()
 		// Can't do any logging since the logging module looks for the homeFolder.
 		writefln("Could not create config folder (%s)", chargeConfigFolder);
 	}
+}
+
+static ~this()
+{
+	std.c.stdlib.free(privateFrameworksPath.ptr);
 }
