@@ -51,6 +51,27 @@ struct Vector3d
 		return Vector3d(vec.x + x, vec.y + y, vec.z + z);
 	}
 
+	Vector3d opAddAssign(Vector3d vec)
+	{
+		x += vec.x;
+		y += vec.y;
+		z += vec.z;
+		return *this;
+	}
+
+	Vector3d opSub(Vector3d vec)
+	{
+		return Vector3d(vec.x - x, vec.y - y, vec.z - z);
+	}
+
+	Vector3d opSubAssign(Vector3d vec)
+	{
+		x -= vec.x;
+		y -= vec.y;
+		z -= vec.z;
+		return *this;
+	}
+
 	Point3d opAdd(Point3d vec)
 	{
 		return Point3d(vec.x + x, vec.y + y, vec.z + z);
