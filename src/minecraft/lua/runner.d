@@ -108,6 +108,10 @@ public:
 		}
 
 		initialized = true;
+
+		// Make sure the script has the right screen size.
+		auto rt = GfxDefaultTarget();
+		resize(rt.width, rt.height);
 	}
 
 	~this()

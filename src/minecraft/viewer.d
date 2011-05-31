@@ -44,10 +44,11 @@ public:
 
 		w.vt.setViewRadii(250/16 + 1);
 
-		cam = icam = new GfxIsoCamera(800/16f, 600/16f, -200, 200);
+		GfxDefaultTarget rt = GfxDefaultTarget();
+
+		cam = icam = new GfxIsoCamera(rt.width/16f, rt.height/16f, -200, 200);
 		m = im = new GameIsoCameraMover(cam);
 
-		GfxDefaultTarget rt = GfxDefaultTarget();
 		cam = pcam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, .1, 250);
 		m = pm = new GameProjCameraMover(cam);
 		cam.position = w.spawn + Vector3d(0.5, 1.5, 0.5);
