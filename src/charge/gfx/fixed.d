@@ -46,6 +46,14 @@ protected:
 	void render(Camera c, RenderQueue rq, World w)
 	{
 		renderTarget.setTarget();
+
+		if (w.fog !is null) {
+			auto fc = &w.fog.color;
+			glClearColor(fc.r, fc.g, fc.b, 1.0);
+		} else {
+			glClearColor(   0,    0,    0, 1.0);
+		}
+
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 		c.transform();

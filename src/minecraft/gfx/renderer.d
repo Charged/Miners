@@ -112,6 +112,13 @@ protected:
 			glUseProgram(0);
 		}
 
+		if (w.fog !is null) {
+			glFogfv(GL_FOG_COLOR, w.fog.color.ptr);
+			glFogf(GL_FOG_START, w.fog.start);
+			glFogf(GL_FOG_END, w.fog.stop);
+		}
+		// TODO no fog
+
 		for (r = rq.pop; r !is null; r = rq.pop) {
 			m = cast(GfxSimpleMaterial)r.getMaterial();
 			if (m is null)
@@ -384,7 +391,15 @@ void main()
 	float nDotL = max(dot(normalize(normal), -lightDir), 0.0);
 	float l = nDotL * light;
 
-	gl_FragColor = vec4(color.rgb * l * lightDiffuse.rgb + color.rgb * lightAmbient.rgb * light, 1);
+	// Lightning
+	color.rgb = color.rgb * l * lightDiffuse.rgb + color.rgb * lightAmbient.rgb * light;
+
+	// Fog
+	float depth = gl_FragCoord.z / gl_FragCoord.w;
+	float fogFactor = smoothstep(gl_Fog.end, gl_Fog.start, depth);
+	color.rgb = mix(gl_Fog.color.rgb, color.rgb, fogFactor);
+
+	gl_FragColor = vec4(color.rgb, 1);
 }
 ";
 
@@ -410,7 +425,15 @@ void main()
 	float nDotL = max(dot(normalize(normal), -lightDir), 0.0);
 	float l = nDotL * light;
 
-	gl_FragColor = vec4(color.rgb * l * lightDiffuse.rgb + color.rgb * lightAmbient.rgb * light, 1);
+	// Lighting
+	color.rgb = color.rgb * l * lightDiffuse.rgb + color.rgb * lightAmbient.rgb * light;
+
+	// Fog
+	float depth = gl_FragCoord.z / gl_FragCoord.w;
+	float fogFactor = smoothstep(gl_Fog.end, gl_Fog.start, depth);
+	color.rgb = mix(gl_Fog.color.rgb, color.rgb, fogFactor);
+
+	gl_FragColor = vec4(color.rgb, 1);
 }
 ";
 
