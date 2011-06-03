@@ -29,6 +29,7 @@ import minecraft.classic.runner;
 import minecraft.importer.info;
 import minecraft.importer.network;
 import minecraft.importer.texture;
+import minecraft.flayer.runner;
 
 
 
@@ -117,6 +118,8 @@ public:
 		}
 
 		manageRunners();
+
+		mr.manageThis(new FlayerRunner(this, opts));
 
 		start = SDL_GetTicks();
 
