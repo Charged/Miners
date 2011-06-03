@@ -15,7 +15,7 @@ import minecraft.terrain.vol;
 class World : public GameWorld
 {
 public:
-	char[] level;
+	char[] dir;
 
 	RenderManager rm; /** Shared with other worlds */
 	VolTerrain vt;
@@ -29,9 +29,10 @@ public:
 	{
 		super();
 		this.rm = rm;
-		this.spawn = info.spawn;
+		this.spawn = info ? info.spawn : Point3d(0, 64, 0);
+		this.dir = info ? info.dir : null;
 
-		vt = new VolTerrain(this, info.dir, rm.tex);
+		vt = new VolTerrain(this, dir, rm.tex);
 		vt.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
 		vt.setBuildType(rm.bt);
 
