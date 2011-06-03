@@ -75,6 +75,8 @@ public:
 
 	void logic()
 	{
+		if (levelRunner !is null)
+			return levelRunner.logic();
 	}
 
 	void render(GfxRenderTarget rt)
@@ -119,6 +121,12 @@ public:
 	{
 		ih.dropControl();
 		inControl = false;
+	}
+
+	void manageThis(Runner r)
+	{
+		delete levelRunner;
+		levelRunner = r;
 	}
 
 private:

@@ -480,6 +480,7 @@ protected:
 
 			runner = nextRunner;
 			sr = cast(ScriptRunner)runner;
+			mr = cast(MenuRunner)runner;
 
 			runner.assumeControl();
 
