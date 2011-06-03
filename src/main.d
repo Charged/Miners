@@ -39,7 +39,7 @@ bool filterArgs(inout char[][] args)
 		ret[i++] = arg;
 	}
 
-	ret.length = 1;
+	ret.length = i;
 	args = ret;
 	return true;
 }
