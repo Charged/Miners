@@ -269,6 +269,17 @@ public:
 		charge.sys.resource.Pool().collect();
 	}
 
+	/**
+	 * Start over from the begining when building chunks.
+	 */
+	void buildReset()
+	{
+		// Reset the saved position for the buildOne function
+		save_build_i = 0;
+		save_build_j = 0;
+		save_build_k = 0;
+	}
+
 	bool buildOne()
 	{
 		bool dob(int x, int z) {
