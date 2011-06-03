@@ -220,7 +220,7 @@ public:
 	Chunk loadChunk(int x, int z)
 	{
 		auto rx = cast(int)floor(x/32.0) - rxOff;
-		auto rz = cast(uint)floor(z/32.0) - rzOff;
+		auto rz = cast(int)floor(z/32.0) - rzOff;
 
 		if (rx < 0 || rz < 0)
 			assert(null is "tried to load chunk outside of regions");
