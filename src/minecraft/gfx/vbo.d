@@ -58,7 +58,7 @@ protected:
 	this(charge.sys.resource.Pool p, Vertex[] verts, int x, int z)
 	{
 		auto str = std.string.format("mc/vbo/chunk.%s.%s.compact-mesh", x, z);
-		super(p, str, false, verts.ptr,
+		super(p, str, true, verts.ptr,
 		      verts.length * Vertex.sizeof,
 		      cast(uint)verts.length,
 		      null, 0, 0);
@@ -83,7 +83,7 @@ protected:
 	this(charge.sys.resource.Pool p, int[] array, int x, int z)
 	{
 		auto str = std.string.format("mc/vbo/chunk.%s.%s.compact", x, z);
-		super(p, str, false, array.ptr,
+		super(p, str, true, array.ptr,
 		      array.length * int.sizeof,
 		      cast(uint)array.length,// / 2,
 		      null, 0, 0);
