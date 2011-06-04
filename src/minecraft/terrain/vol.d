@@ -307,7 +307,7 @@ public:
 					if (dob(offset(j), offset(k))) {
 						save_build_i = i;
 						save_build_j = j;
-						save_build_k = k;
+						save_build_k = k+1;
 						return true;
 					}
 				}
@@ -315,7 +315,8 @@ public:
 			}
 			j = 0;
 		}
-		// This make all buildOne calls just skip the loops
+
+		// Once we are done skip the loops.
 		save_build_i = i;
 		save_build_j = j;
 		save_build_k = k;
