@@ -119,10 +119,7 @@ public:
 			}
 		}
 
-		// Reset the saved position for the buildOne function
-		save_build_i = 0;
-		save_build_j = 0;
-		save_build_k = 0;
+		buildReset();
 
 		if (cvgrm !is null)
 			delete cvgrm;
@@ -261,10 +258,7 @@ public:
 			}
 		}
 
-		// Reset the saved position for the buildOne function
-		save_build_i = 0;
-		save_build_j = 0;
-		save_build_k = 0;
+		buildReset();
 
 		charge.sys.resource.Pool().collect();
 	}
