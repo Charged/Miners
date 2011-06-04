@@ -18,29 +18,46 @@ import minecraft.terrain.builder;
 class Chunk
 {
 public:
-	GameWorld w;
-	bool gfx;
-	ChunkVBOArray cva;
-	ChunkVBORigidMesh cvrm;
-	ChunkVBOCompactMesh cvcm;
-	VolTerrain vt;
-	const int width = 16;
-	const int height = 128;
-	const int depth = 16;
-	const int blocks_size = width * height * depth;
-	const int data_size = blocks_size;
-	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */
-	ubyte *blocks;
-	ubyte *data;
 	int xPos;
 	int zPos;
+
 	int xOff;
 	int yOff;
 	int zOff;
-	GfxPointLight lights[];
-	static int used_mem;
-	bool empty;
 
+	// Tracking block and gfx status
+	bool empty; /**< The chunk is full of air and the memory is shared */
+	bool valid; /**< The chunk has valid data (okay to build mesh) */
+	bool dirty; /**< The data in the chunk has changed */
+	bool gfx; /**< The chunk has been built */
+	bool loaded; /**< The chunk has been loaded of disk (can still be empty) */
+
+	const int width = 16;
+	const int height = 128;
+	const int depth = 16;
+
+	const int blocks_size = width * height * depth;
+	const int data_size = blocks_size;
+
+protected:
+	GameWorld w;
+	VolTerrain vt;
+
+	// VBO's.
+	ChunkVBOArray cva;
+	ChunkVBORigidMesh cvrm;
+	ChunkVBOCompactMesh cvcm;
+
+	// Blocks and Data.
+	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */
+	ubyte *blocks;
+	ubyte *data;
+
+	static int used_mem;
+
+	GfxPointLight lights[];
+
+public:
 	this(VolTerrain vt, GameWorld w, int xPos, int zPos)
 	{
 		this.w = w;
@@ -50,6 +67,8 @@ public:
 		this.xOff = xPos * 16;
 		this.yOff = 0;
 		this.zOff = zPos * 16;
+
+		this.dirty = true;
 
 		// Setup pointers
 		this.empty = true;
@@ -143,6 +162,49 @@ public:
 		blocks = empty_blocks;
 		data = empty_blocks;
 		empty = true;
+	}
+
+	/**
+	 * Should this chunk be built;
+	 */
+	final bool shouldBuild()
+	{
+		return !gfx || dirty;
+	}
+
+	/**
+	 * Mark this chunk as dirty.
+	 */
+	final void markDirty()
+	{
+		dirty = true;
+	}
+
+	/**
+	 * Mark this chunk and all neighbours as dirty.
+	 */
+	void markNeighborsDirty()
+	{
+		Chunk c;
+
+		void mark(int x, int z) {
+			c = vt.getChunk(x, z);
+			if (c !is null)
+				c.markDirty();
+		}
+
+		mark(xPos-1, zPos-1);
+		mark(xPos-1, zPos  );
+		mark(xPos-1, zPos+1);
+
+		mark(xPos,   zPos-1);
+		mark(xPos,   zPos+1);
+
+		mark(xPos+1, zPos-1);
+		mark(xPos+1, zPos  );
+		mark(xPos+1, zPos+1);
+
+		markDirty();
 	}
 
 	void build()
