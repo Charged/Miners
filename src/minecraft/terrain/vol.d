@@ -234,10 +234,19 @@ public:
 		if (dir is null)
 			return c;
 
+		if (c.loaded)
+			return c;
+
 		ubyte *blocks;
 		ubyte *data;
-		if (getBetaBlocksForChunk(dir, x, z, blocks, data))
+		if (getBetaBlocksForChunk(dir, x, z, blocks, data)) {
 			c.giveBlocksAndData(blocks, data);
+			c.valid = true;
+		}
+		c.loaded = true;
+
+		// Make the neighbors be built again.
+		c.markNeighborsDirty();
 
 		return c;
 	}
@@ -277,20 +286,27 @@ public:
 	bool buildOne()
 	{
 		bool dob(int x, int z) {
+			bool valid = true;
 			x += xCenter;
 			z += zCenter;
 
 			auto c = getChunk(x, z);
-			if (c !is null && c.gfx)
+			if (c !is null && !c.shouldBuild())
 				return false;
 
 			for (int i = x-1; i < x+2; i++) {
 				for (int j = z-1; j < z+2; j++) {
-					loadChunk(i, j);
+					auto ch = loadChunk(i, j);
+					if (ch is null)
+						valid = false;
+					else
+						valid = valid && ch.valid;
 				}
 			}
 
-			getRegion(x, z).buildUnsafe(x, z);
+			if (valid)
+				getRegion(x, z).buildUnsafe(x, z);
+
 			return true;
 		}
 
@@ -418,11 +434,17 @@ public:
 	final void buildUnsafe(int x, int z)
 	{
 		auto c = getChunkUnsafe(x, z);
-		if (c is null || c.gfx)
+		if (c is null || !c.shouldBuild())
 			return;
+
+		if (c.gfx) {
+			c.unbuild();
+			numBuilt--;
+		}
 
 		c.build();
 		numBuilt++;
+		c.dirty = false;
 	}
 
 	final void unbuild(int x, int z)
