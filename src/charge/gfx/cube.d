@@ -25,145 +25,145 @@ static Vertex vert[24] = [
 	{ // X-
 		[-0.5f, -0.5f, -0.5f], // Pos
 		[-1.0f,  0.0f,  0.0f], // Normal
-		[ 0.0f,  0.0f],        // UV
+		[ 0.0f,  1.0f],        // UV
 		[ 0.0f,  0.0f,  1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[-0.5f, -0.5f,  0.5f], // Pos
 		[-1.0f,  0.0f,  0.0f], // Normal
-		[ 1.0f,  0.0f],        // UV
+		[ 1.0f,  1.0f],        // UV
 		[ 0.0f,  0.0f,  1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[-0.5f,  0.5f,  0.5f], // Pos
 		[-1.0f,  0.0f,  0.0f], // Normal
-		[ 1.0f,  1.0f],        // UV
+		[ 1.0f,  0.0f],        // UV
 		[ 0.0f,  0.0f,  1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[-0.5f,  0.5f, -0.5f], // Pos
 		[-1.0f,  0.0f,  0.0f], // Normal
-		[ 0.0f,  1.0f],        // UV
+		[ 0.0f,  0.0f],        // UV
 		[ 0.0f,  0.0f,  1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, { // X+
 		[ 0.5f, -0.5f, -0.5f], // Pos
 		[ 1.0f,  0.0f,  0.0f], // Normal
-		[ 1.0f,  0.0f],        // UV
+		[ 1.0f,  1.0f],        // UV
 		[ 0.0f,  0.0f, -1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[ 0.5f,  0.5f, -0.5f], // Pos
 		[ 1.0f,  0.0f,  0.0f], // Normal
-		[ 1.0f,  1.0f],        // UV
+		[ 1.0f,  0.0f],        // UV
 		[ 0.0f,  0.0f, -1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[ 0.5f,  0.5f,  0.5f], // Pos
 		[ 1.0f,  0.0f,  0.0f], // Normal
-		[ 0.0f,  1.0f],        // UV
+		[ 0.0f,  0.0f],        // UV
 		[ 0.0f,  0.0f, -1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[ 0.5f, -0.5f,  0.5f], // Pos
 		[ 1.0f,  0.0f,  0.0f], // Normal
-		[ 0.0f,  0.0f],        // UV
+		[ 0.0f,  1.0f],        // UV
 		[ 0.0f,  0.0f, -1.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, { // Y- Bottom
 		[-0.5f, -0.5f, -0.5f], // Pos
 		[ 0.0f, -1.0f,  0.0f], // Normal
-		[ 0.0f,  0.0f],        // UV
+		[ 1.0f,  0.0f],        // UV
 		[ 1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, {
 		[ 0.5f, -0.5f, -0.5f], // Pos
 		[ 0.0f, -1.0f,  0.0f], // Normal
-		[ 1.0f,  0.0f],        // UV
+		[ 0.0f,  0.0f],        // UV
 		[ 1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, {
 		[ 0.5f, -0.5f,  0.5f], // Pos
 		[ 0.0f, -1.0f,  0.0f], // Normal
-		[ 1.0f,  1.0f],        // UV
+		[ 0.0f,  1.0f],        // UV
 		[ 1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, {
 		[-0.5f, -0.5f,  0.5f], // Pos
 		[ 0.0f, -1.0f,  0.0f], // Normal
-		[ 0.0f,  1.0f],        // UV
+		[ 1.0f,  1.0f],        // UV
 		[ 1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, { // Y+ Top
 		[-0.5f,  0.5f, -0.5f], // Pos
 		[ 0.0f,  1.0f,  0.0f], // Normal
-		[ 1.0f,  0.0f],        // UV
+		[ 0.0f,  0.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, {
 		[-0.5f,  0.5f,  0.5f], // Pos
 		[ 0.0f,  1.0f,  0.0f], // Normal
-		[ 1.0f,  1.0f],        // UV
+		[ 0.0f,  1.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, {
 		[ 0.5f,  0.5f,  0.5f], // Pos
 		[ 0.0f,  1.0f,  0.0f], // Normal
-		[ 0.0f,  1.0f],        // UV
+		[ 1.0f,  1.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, {
 		[ 0.5f,  0.5f, -0.5f], // Pos
 		[ 0.0f,  1.0f,  0.0f], // Normal
-		[ 0.0f,  0.0f],        // UV
+		[ 1.0f,  0.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  0.0f,  1.0f]  // Binomial
 	}, { // Z- Front
 		[-0.5f, -0.5f, -0.5f], // Pos
 		[ 0.0f,  0.0f, -1.0f], // Normal
-		[ 1.0f,  0.0f],        // UV
+		[ 1.0f,  1.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[-0.5f,  0.5f, -0.5f], // Pos
 		[ 0.0f,  0.0f, -1.0f], // Normal
-		[ 1.0f,  1.0f],        // UV
+		[ 1.0f,  0.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[ 0.5f,  0.5f, -0.5f], // Pos
 		[ 0.0f,  0.0f, -1.0f], // Normal
-		[ 0.0f,  1.0f],        // UV
+		[ 0.0f,  0.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[ 0.5f, -0.5f, -0.5f], // Pos
 		[ 0.0f,  0.0f, -1.0f], // Normal
-		[ 0.0f,  0.0f],        // UV
+		[ 0.0f,  1.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, { // Z- Back
 		[-0.5f, -0.5f,  0.5f], // Pos
 		[ 0.0f,  0.0f,  1.0f], // Normal
-		[ 0.0f,  0.0f],        // UV
+		[ 0.0f,  1.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[ 0.5f, -0.5f,  0.5f], // Pos
 		[ 0.0f,  0.0f,  1.0f], // Normal
-		[ 1.0f,  0.0f],        // UV
+		[ 1.0f,  1.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[ 0.5f,  0.5f,  0.5f], // Pos
 		[ 0.0f,  0.0f,  1.0f], // Normal
-		[ 1.0f,  1.0f],        // UV
+		[ 1.0f,  0.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}, {
 		[-0.5f,  0.5f,  0.5f], // Pos
 		[ 0.0f,  0.0f,  1.0f], // Normal
-		[ 0.0f,  1.0f],        // UV
+		[ 0.0f,  0.0f],        // UV
 		[-1.0f,  0.0f,  0.0f], // Tanget
 		[ 0.0f,  1.0f,  0.0f]  // Binomial
 	}
