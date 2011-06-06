@@ -17,3 +17,8 @@
 	- Water/Lava (Consider the fluid level.)
 	- Doors (Fix texture mapping and face visibility.)
 	- Chests (Improve orientation based on nearby blocks.)
+
+ * Lessen SDL dependancy
+	- Borrow a png extractor/compactor.
+	- Drop SDL_ttf, not needed anymore.
+	- Create a nix core for headless apps, like servers.
