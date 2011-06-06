@@ -2,47 +2,34 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.platform.sdl;
 
+import std.file;
+import std.string;
+
 import charge.core;
+import charge.gfx.gfx;
+import charge.gfx.target;
+import charge.sys.logger;
+import charge.sys.resource;
+import charge.sys.properties;
+import charge.platform.common;
+import charge.platform.homefolder;
 
-private
-{
-	static import std.string;
-	import std.file;
-	import std.stdio;
-	import std.string;
-
-	import lib.loader;
-	import lib.al.al;
-	import lib.gl.gl;
-	import lib.ode.ode;
-	import lib.sdl.sdl;
-	import lib.sdl.image;
-	import lib.sdl.ttf;
-
-	import charge.sfx.sfx;
-	import charge.gfx.gfx;
-	import charge.gfx.target;
-	import charge.phy.phy;
-	import charge.sys.logger;
-	import charge.sys.properties;
-	import charge.sys.file;
-	import charge.sys.resource;
-	import charge.platform.homefolder;
-}
+import lib.loader;
+import lib.gl.gl;
+import lib.sdl.sdl;
+import lib.sdl.image;
+import lib.sdl.ttf;
 
 extern(C) Core chargeCore()
 {
 	return CoreSDL();
 }
 
-class CoreSDL : public Core
+class CoreSDL : public CommonCore
 {
 private:
 	mixin Logging;
-	static Core instance;
-
-	char[] settingsFile;
-	Properties p;
+	static CoreSDL instance;
 
 	int screenshotNum;
 	uint width, height;
@@ -52,17 +39,11 @@ private:
 	SDL_Surface *s;
 
 	/* run time libraries */
-	Library ode;
 	Library glu;
 	Library sdl;
 	Library ttf;
 	Library image;
-	Library openal;
-	Library alut;
 
-	/* for sound, should be move to sfx */
-	ALCdevice* alDevice;
-	ALCcontext* alContext;
 
 	/* name of libraries to load */
 	version(Windows)
@@ -70,30 +51,21 @@ private:
 		const char[][] libSDLname = ["SDL.dll"];
 		const char[][] libSDLImage = ["SDL_image.dll"];
 		const char[][] libSDLttf = ["SDL_ttf.dll"];
-		const char[][] libODEname = ["ode.dll"];
 		const char[][] libGLUname = ["glu32.dll"];
-		const char[][] libOpenALname = ["OpenAL32.dll"];
-		const char[][] libALUTname = ["alut.dll"];
 	}
 	else version(linux)
 	{
 		const char[][] libSDLname = ["libSDL.so", "libSDL-1.2.so.0"];
 		const char[][] libSDLImage = ["libSDL_image.so", "libSDL_image-1.2.so.0"];
 		const char[][] libSDLttf = ["libSDL_ttf.so", "libSDL_ttf-2.0.so.0"];
-		const char[][] libODEname = ["libode.so"];
 		const char[][] libGLUname = ["libGLU.so", "libGLU.so.1"];
-		const char[][] libOpenALname = ["libopenal.so", "libopenal.so.1"];
-		const char[][] libALUTname = ["libalut.so"];
 	}
 	else version(darwin)
 	{
 		const char[][] libSDLname = ["SDL.framework/SDL"];
 		const char[][] libSDLImage = ["SDL_image.framework/SDL_image"];
 		const char[][] libSDLttf = ["SDL_ttf.framework/SDL_ttf"];
-		const char[][] libODEname = ["./libode.dylib"];
 		const char[][] libGLUname = ["OpenGL.framework/OpenGL"];
-		const char[][] libOpenALname = ["OpenAL.framework/OpenAL"];
-		const char[][] libALUTname = ["./libalut.dylib"];
 	}
 
 
@@ -223,39 +195,10 @@ private:
 	 *
 	 */
 
-	void initBuiltins()
-	{
-		auto fm = FileManager();
-
-		void[] defaultPicture = import("default.png");
-
-		fm.addBuiltin("res/default.png", defaultPicture);
-		fm.addBuiltin("res/spotlight.png", defaultPicture);
-	}
-
-	void initSettings()
-	{
-		settingsFile = chargeConfigFolder ~ "/settings.ini";
-		p = Properties(settingsFile);
-
-		if (p is null) {
-			l.warn("Failed to load settings useing defaults");
-
-			p = new Properties;
-			p.add("w", defaultWidth);
-			p.add("h", defaultHeight);
-			p.add("fullscreen", defaultFullscreen);
-			p.add("title", defaultTitle);
-		}
-	}
-
-	void saveSettings()
-	{
-		p.save(settingsFile);
-	}
-
 	void loadLibraries()
 	{
+		super.loadLibraries();
+
 		version (darwin) {
 			auto libSDLnames = [privateFrameworksPath ~ "/" ~ libSDLname[0]] ~ libSDLname;
 			auto libSDLttfs = [privateFrameworksPath ~ "/" ~ libSDLttf[0]] ~ libSDLttf;
@@ -269,8 +212,6 @@ private:
 		sdl = Library.loads(libSDLnames);
 		ttf = Library.loads(libSDLttfs);
 		image = Library.loads(libSDLImages);
-		openal = Library.loads(libOpenALname);
-		alut = Library.loads(libALUTname);
 
 		if (!sdl)
 			l.fatal("Could not load SDL, crashing bye bye!");
@@ -280,13 +221,8 @@ private:
 
 		if (!image)
 			l.fatal("Could not load SDL-image, crashing bye bye!");
-
-		if (!openal)
-			l.fatal("Could not load OpenAL, crashing bye bye!");
-
-		if (!alut)
-			l.bug("ALUT not found, nothing to see here move along.");
 	}
+
 
 	/*
 	 *
@@ -294,32 +230,6 @@ private:
 	 *
 	 */
 
-	void initPhy(Properties p)
-	{
-		version(DynamicODE) {
-			ode = Library.loads(libODEname);
-			if (ode is null) {
-				l.info("Didn't load ODE, this not an error.");
-				return;
-			}
-			loadODE(&ode.symbol);
-		}
-
-		dInitODE2(0);
-		dAllocateODEDataForThread(dAllocateMaskAll);
-
-		phyLoaded = true;
-	}
-
-	void closePhy()
-	{
-		if (!phyLoaded)
-			return;
-
-		dCloseODE();
-
-		phyLoaded = false;
-	}
 
 	void initGfx(Properties p)
 	{
@@ -376,35 +286,8 @@ private:
 		gfxLoaded = false;
 	}
 
-	void initSfx(Properties p)
-	{
-		loadAL(&openal.symbol);
-		alDevice = alcOpenDevice(null);
-
-		if (alDevice) {
-			alContext = alcCreateContext(alDevice, null);
-			alcMakeContextCurrent(alContext);
-
-			sfxLoaded = true;
-		}
-
-		if (alut !is null)
-			loadALUT(&alut.symbol);
-	}
-
-	void closeSfx()
-	{
-		if (alContext)
-			alcDestroyContext(alContext);
-		if (alDevice)
-			alcCloseDevice(alDevice);
-
-		sfxLoaded = false;
-	}
-
 	void* loadFunc(char[] c)
 	{
 		return SDL_GL_GetProcAddress(std.string.toStringz(c));
 	}
-
 }
