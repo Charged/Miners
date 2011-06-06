@@ -129,8 +129,6 @@ protected:
 				drawGroup(cvgmc, m);
 				continue;
 			}
-
-			continue;
 		}
 
 		glDisable(GL_CULL_FACE);
@@ -319,6 +317,10 @@ protected:
 				drawGroup(cvg, m);
 				continue;
 			}
+
+			setupMaterial(m);
+
+			r.drawAttrib();
 		}
 
 		glActiveTexture(GL_TEXTURE0);
