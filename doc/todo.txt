@@ -20,5 +20,4 @@
 
  * Lessen SDL dependancy
 	- Borrow a png extractor/compactor.
-	- Drop SDL_ttf, not needed anymore.
 	- Create a nix core for headless apps, like servers.

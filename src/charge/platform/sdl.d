@@ -18,7 +18,6 @@ import lib.loader;
 import lib.gl.gl;
 import lib.sdl.sdl;
 import lib.sdl.image;
-import lib.sdl.ttf;
 
 extern(C) Core chargeCore()
 {
@@ -41,7 +40,6 @@ private:
 	/* run time libraries */
 	Library glu;
 	Library sdl;
-	Library ttf;
 	Library image;
 
 
@@ -50,21 +48,18 @@ private:
 	{
 		const char[][] libSDLname = ["SDL.dll"];
 		const char[][] libSDLImage = ["SDL_image.dll"];
-		const char[][] libSDLttf = ["SDL_ttf.dll"];
 		const char[][] libGLUname = ["glu32.dll"];
 	}
 	else version(linux)
 	{
 		const char[][] libSDLname = ["libSDL.so", "libSDL-1.2.so.0"];
 		const char[][] libSDLImage = ["libSDL_image.so", "libSDL_image-1.2.so.0"];
-		const char[][] libSDLttf = ["libSDL_ttf.so", "libSDL_ttf-2.0.so.0"];
 		const char[][] libGLUname = ["libGLU.so", "libGLU.so.1"];
 	}
 	else version(darwin)
 	{
 		const char[][] libSDLname = ["SDL.framework/SDL"];
 		const char[][] libSDLImage = ["SDL_image.framework/SDL_image"];
-		const char[][] libSDLttf = ["SDL_ttf.framework/SDL_ttf"];
 		const char[][] libGLUname = ["OpenGL.framework/OpenGL"];
 	}
 
@@ -201,23 +196,17 @@ private:
 
 		version (darwin) {
 			auto libSDLnames = [privateFrameworksPath ~ "/" ~ libSDLname[0]] ~ libSDLname;
-			auto libSDLttfs = [privateFrameworksPath ~ "/" ~ libSDLttf[0]] ~ libSDLttf;
 			auto libSDLImages = [privateFrameworksPath ~ "/" ~ libSDLImage[0]] ~ libSDLImage;
 		} else {
 			alias libSDLname libSDLnames;
-			alias libSDLttf libSDLttfs;
 			alias libSDLImage libSDLImages;
 		}
 
 		sdl = Library.loads(libSDLnames);
-		ttf = Library.loads(libSDLttfs);
 		image = Library.loads(libSDLImages);
 
 		if (!sdl)
 			l.fatal("Could not load SDL, crashing bye bye!");
-
-		if (!ttf)
-			l.fatal("Could not load SDL-ttf, crashing bye bye!");
 
 		if (!image)
 			l.fatal("Could not load SDL-image, crashing bye bye!");
@@ -234,11 +223,9 @@ private:
 	void initGfx(Properties p)
 	{
 		loadSDL(&sdl.symbol);
-		loadSDLttf(&ttf.symbol);
 		loadSDLImage(&image.symbol);
 
 		SDL_Init(SDL_INIT_VIDEO);
-		TTF_Init();
 
 		width = p.getUint("w", defaultWidth);
 		height = p.getUint("h", defaultHeight);
