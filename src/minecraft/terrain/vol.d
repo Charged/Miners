@@ -456,7 +456,7 @@ public:
 		if (c is null || !c.gfx)
 			return;
 
-		c.build();
+		c.unbuild();
 		numBuilt--;
 	}
 
