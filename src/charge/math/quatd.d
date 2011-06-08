@@ -87,13 +87,13 @@ struct Quatd
 	Vector3d opMul(Vector3d vec)
 	{
 		Quatd q = {vec.x * x + vec.y * y + vec.z * z,
-						vec.x * w + vec.z * y - vec.y * z,
-						vec.y * w + vec.x * z - vec.z * x,
-						vec.z * w + vec.y * x - vec.x * y};
+			   vec.x * w + vec.z * y - vec.y * z,
+			   vec.y * w + vec.x * z - vec.z * x,
+			   vec.z * w + vec.y * x - vec.x * y};
 
 		auto v = Vector3d(w * q.x + x * q.w + y * q.z - z * q.y,
-						w * q.y + y * q.w + z * q.x - x * q.z,
-						w * q.z + z * q.w + x * q.y - y * q.x);
+				  w * q.y + y * q.w + z * q.x - x * q.z,
+				  w * q.z + z * q.w + x * q.y - y * q.x);
 
 		return v;
 	}
