@@ -36,17 +36,17 @@ Minecraft
 
 Add missing blocks
 ------------------
- * Beds
- * Levers
- * Portal
- * Trapdoors
- * Dead Shrubs
+ * Beds {medium}
+ * Portal {easy}
+ * Trapdoors {easy}
+ * Dead Shrubs {easy}
+ * Levers {HARD}
 
 Improve blocks
 --------------
- * Wallsigns (Use correct textures.)
- * Signposts (Use correct textures and implement all rotations.)
- * Water/Lava (Consider the fluid level.)
- * Doors (Fix texture mapping and face visibility.)
- * Chests (Improve orientation based on nearby blocks.)
- * Tall grass (Render all 3 types, dead shrub, grass and fern.)
+ * Doors (Fix texture mapping and face visibility) {easy}
+ * Chests (Improve orientation based on nearby blocks) {easy}
+ * Tall grass (Render all 3 types, dead shrub, grass and fern) {easy}
+ * Water/Lava (Consider the fluid level) {medium}
+ * Wallsigns (Use correct textures) {HARD}
+ * Signposts (Use correct textures and implement all rotations) {HARD}
