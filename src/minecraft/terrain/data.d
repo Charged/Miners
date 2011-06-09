@@ -260,7 +260,10 @@ BlockDescriptor chestTile[6] = [
 	{  true, DataBlock, { 10,  3 }, {  9,  1 }, "double chest back right" },
 ];
 
-BlockDescriptor railTile[2] = [
+BlockDescriptor railTile[5] = [
 	{ false, Stuff,     {  0,  7 }, {  0,  7 }, "rails corner" },
 	{ false, Stuff,     {  0,  8 }, {  0,  8 }, "rails line" },
+	{ false, Stuff,     {  3, 10 }, {  3, 10 }, "powered rail off" },
+	{ false, Stuff,     {  3, 11 }, {  3, 11 }, "powered rail on" },
+	{ false, Stuff,     {  3, 12 }, {  3, 12 }, "detector rail" },
 ];

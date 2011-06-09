@@ -1926,7 +1926,7 @@ template BlockDispatcher(alias T)
 			emitQuadXZN(x1, x2, y1, y2, z1, z2, tex, normal);
 	}
 
-	void rails(int x, int y, int z) {
+	void rails(ubyte type, int x, int y, int z) {
 		auto d = data.getDataUnsafe(x, y, z);
 		int set = data.getSolidSet(x, y, z);
 		ubyte tex = 0;
@@ -1937,14 +1937,24 @@ template BlockDispatcher(alias T)
 		y <<= shift;
 		z <<= shift;
 
+		if (type == 28) {
+			// detector rail
+			tex = calcTextureY(&railTile[4]);
+		} else if (type == 27) {
+			// powered rail (on / off)
+			tex = calcTextureY(&railTile[(d & 8) ? 3 : 2]);
+			d = d & 7;
+		} else {
+			// regular rail (corner / line)
+			tex = calcTextureY(&railTile[(d > 5) ? 0 : 1]);
+		}
+
 		if (d < 2 || d > 5) {
 			// straight lines or corner pieces
 			if (d < 2) {
-				tex = calcTextureY(&railTile[1]);
 				manip = (d == 0) ? uvManip.NONE : uvManip.ROT_90;
 			} else {
 				d -= 6;
-				tex = calcTextureY(&railTile[0]);
 				manip = cast(uvManip)([uvManip.NONE, uvManip.ROT_90,
 						       uvManip.ROT_180, uvManip.ROT_270][d]);
 			}
@@ -1955,8 +1965,6 @@ template BlockDispatcher(alias T)
 		} else {
 			// ascending tracks
 			d -= 2;
-			tex = calcTextureY(&railTile[1]);
-
 			auto direction = [sideNormal.XP, sideNormal.XN,
 					  sideNormal.ZN, sideNormal.ZP][d];
 
@@ -2423,8 +2431,10 @@ template BlockDispatcher(alias T)
 			case 65:
 				ladder(type, x, y, z);
 				break;
+			case 27:
+			case 28:
 			case 66:
-				rails(x, y, z);
+				rails(type, x, y, z);
 				break;
 			case 53:
 			case 67:
