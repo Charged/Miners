@@ -37,7 +37,7 @@ Minecraft
 Add missing blocks
 ------------------
  * Beds
- * Rails
+ * Powered Rails
  * Levers
  * Portal
 

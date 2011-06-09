@@ -669,6 +669,18 @@ template QuadEmitter(alias T)
 		pack(x1, y, z2, texture, aoBL, normal, uvCoord.LEFT, uvCoord.BOTTOM);
 	}
 
+	void emitQuadAOYN(int x1, int x2, int y, int z1, int z2,
+			  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
+			  ubyte texture, sideNormal normal, uvManip manip)
+	{
+		mixin UVManipulator!(manip);
+
+		pack(x1, y, z1, texture, aoTL, normal, uTL, vTL);
+		pack(x2, y, z1, texture, aoTR, normal, uTR, vTR);
+		pack(x2, y, z2, texture, aoBR, normal, uBR, vBR);
+		pack(x1, y, z2, texture, aoBL, normal, uBL, vBL);
+	}
+
 	void emitQuadMappedUVAOYN(int x1, int x2, int y, int z1, int z2,
 				  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 				  ubyte texture, sideNormal normal,
@@ -834,6 +846,12 @@ template QuadEmitter(alias T)
 			ubyte tex, sideNormal normal)
 	{
 		emitQuadAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal);
+	}
+
+	void emitQuadYN(int x1, int x2, int y, int z1, int z2,
+			ubyte tex, sideNormal normal, uvManip manip)
+	{
+		emitQuadAOYN(x1, x2, y, z1, z2, 0, 0, 0, 0, tex, normal, manip);
 	}
 
 	void emitQuadMappedUVYN(int x1, int x2, int y, int z1, int z2,
@@ -1033,6 +1051,48 @@ template QuadEmitter(alias T)
 		pack(x2, y3, z2, texture, aoTC, normal, uvCoord.CENTER, uvCoord.TOP);
 		pack(x3, y3, z1, texture, aoTL, normal, uvCoord.RIGHT,  uvCoord.TOP);
 		pack(x3, y1, z1, texture, aoBL, normal, uvCoord.RIGHT,  uvCoord.BOTTOM);
+	}
+
+	void emitAscendingRailQuadYP(int x1, int x2, int y1, int y2, int z1, int z2,
+				    ubyte texture, sideNormal direction)
+	{
+		// swap Y values if it ascends in the opposite direction
+		if (direction == sideNormal.XN || direction == sideNormal.ZN) {
+			int tmp = y1; y1 = y2; y2 = tmp;
+		}
+
+		if (direction == sideNormal.XP || direction == sideNormal.XN) {
+			pack(x1, y1, z2, texture, 0, sideNormal.YP, uvCoord.LEFT, uvCoord.TOP);
+			pack(x2, y2, z2, texture, 0, sideNormal.YP, uvCoord.LEFT, uvCoord.BOTTOM);
+			pack(x2, y2, z1, texture, 0, sideNormal.YP, uvCoord.RIGHT, uvCoord.BOTTOM);
+			pack(x1, y1, z1, texture, 0, sideNormal.YP, uvCoord.RIGHT, uvCoord.TOP);
+		} else if (direction == sideNormal.ZP || direction == sideNormal.ZN) {
+			pack(x2, y2, z2, texture, 0, sideNormal.YP, uvCoord.LEFT, uvCoord.TOP);
+			pack(x2, y1, z1, texture, 0, sideNormal.YP, uvCoord.LEFT, uvCoord.BOTTOM);
+			pack(x1, y1, z1, texture, 0, sideNormal.YP, uvCoord.RIGHT, uvCoord.BOTTOM);
+			pack(x1, y2, z2, texture, 0, sideNormal.YP, uvCoord.RIGHT, uvCoord.TOP);
+		}
+	}
+
+	void emitAscendingRailQuadYN(int x1, int x2, int y1, int y2, int z1, int z2,
+				    ubyte texture, sideNormal direction)
+	{
+		// swap Y values if it ascends in the opposite direction
+		if (direction == sideNormal.XN || direction == sideNormal.ZN) {
+			int tmp = y1; y1 = y2; y2 = tmp;
+		}
+
+		if (direction == sideNormal.XP || direction == sideNormal.XN) {
+			pack(x1, y1, z2, texture, 0, sideNormal.YN, uvCoord.LEFT, uvCoord.TOP);
+			pack(x1, y1, z1, texture, 0, sideNormal.YN, uvCoord.RIGHT, uvCoord.TOP);
+			pack(x2, y2, z1, texture, 0, sideNormal.YN, uvCoord.RIGHT, uvCoord.BOTTOM);
+			pack(x2, y2, z2, texture, 0, sideNormal.YN, uvCoord.LEFT, uvCoord.BOTTOM);
+		} else if (direction == sideNormal.ZP || direction == sideNormal.ZN) {
+			pack(x2, y2, z2, texture, 0, sideNormal.YN, uvCoord.LEFT, uvCoord.TOP);
+			pack(x1, y2, z2, texture, 0, sideNormal.YN, uvCoord.RIGHT, uvCoord.TOP);
+			pack(x1, y1, z1, texture, 0, sideNormal.YN, uvCoord.RIGHT, uvCoord.BOTTOM);
+			pack(x2, y1, z1, texture, 0, sideNormal.YN, uvCoord.LEFT, uvCoord.BOTTOM);
+		}
 	}
 }
 
@@ -1866,6 +1926,45 @@ template BlockDispatcher(alias T)
 			emitQuadXZN(x1, x2, y1, y2, z1, z2, tex, normal);
 	}
 
+	void rails(int x, int y, int z) {
+		auto d = data.getDataUnsafe(x, y, z);
+		int set = data.getSolidSet(x, y, z);
+		ubyte tex = 0;
+		uvManip manip = uvManip.NONE;
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		if (d < 2 || d > 5) {
+			// straight lines or corner pieces
+			if (d < 2) {
+				tex = calcTextureY(&railTile[1]);
+				manip = (d == 0) ? uvManip.NONE : uvManip.ROT_90;
+			} else {
+				d -= 6;
+				tex = calcTextureY(&railTile[0]);
+				manip = cast(uvManip)([uvManip.NONE, uvManip.ROT_90,
+						       uvManip.ROT_180, uvManip.ROT_270][d]);
+			}
+
+			emitQuadYP(x, x+16, y+1, z, z+16, tex, sideNormal.YP, manip);
+			if (set & sideMask.YN)
+				emitQuadYN(x, x+16, y+1, z, z+16, tex, sideNormal.YN, manip);
+		} else {
+			// ascending tracks
+			d -= 2;
+			tex = calcTextureY(&railTile[1]);
+
+			auto direction = [sideNormal.XP, sideNormal.XN,
+					  sideNormal.ZN, sideNormal.ZP][d];
+
+			emitAscendingRailQuadYP(x, x+16, y+1, y+17, z, z+16, tex, direction);
+			emitAscendingRailQuadYN(x, x+16, y+1, y+17, z, z+16, tex, direction);
+		}
+	}
+
 	void leaves(int x, int y, int z) {
 		auto d = data.getDataUnsafe(x, y, z);
 		auto dec = &leavesTile[d & 3];
@@ -2323,6 +2422,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 65:
 				ladder(type, x, y, z);
+				break;
+			case 66:
+				rails(x, y, z);
 				break;
 			case 53:
 			case 67:

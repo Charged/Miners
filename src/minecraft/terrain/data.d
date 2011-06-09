@@ -102,7 +102,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  4,  0 }, {  0,  0 }, "sign post" },
 	{ false, Stuff,     {  1,  5 }, {  1,  6 }, "wooden door" },           // 64
 	{ false, Stuff,     {  3,  5 }, {  3,  5 }, "ladder" },
-	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "rails" },
+	{ false, Stuff,     {  0,  8 }, {  0,  8 }, "rails" },
 	{ false, Stuff,     {  0,  1 }, {  0,  1 }, "clobblestone stairs" },
 	{ false, Stuff,     {  4,  0 }, {  4,  0 }, "wall sign" },
 	{ false, Stuff,     {  0,  0 }, {  0,  0 }, "lever" },
@@ -258,4 +258,9 @@ BlockDescriptor chestTile[6] = [
 	{  true, DataBlock, { 10,  2 }, {  9,  1 }, "double chest front right" },
 	{  true, DataBlock, {  9,  3 }, {  9,  1 }, "double chest back left" },
 	{  true, DataBlock, { 10,  3 }, {  9,  1 }, "double chest back right" },
+];
+
+BlockDescriptor railTile[2] = [
+	{ false, Stuff,     {  0,  7 }, {  0,  7 }, "rails corner" },
+	{ false, Stuff,     {  0,  8 }, {  0,  8 }, "rails line" },
 ];
