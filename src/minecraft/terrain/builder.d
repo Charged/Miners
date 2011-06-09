@@ -1511,9 +1511,8 @@ template BlockDispatcher(alias T)
 		emitDiagonalQuads(x1, x2, y1, y2, z1, z2, tex);
 	}
 
-	void plants(ubyte type, int x, int y, int z) {
-		auto desc = &tile[type];
-		auto tex = calcTextureXZ(desc);
+	void plants(BlockDescriptor *dec, int x, int y, int z) {
+		auto tex = calcTextureXZ(dec);
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x <<= shift;
@@ -2383,12 +2382,16 @@ template BlockDispatcher(alias T)
 				sapling(x, y, z);
 				break;
 			case 31:
+				auto d = data.getDataUnsafe(x, y, z);
+				plants(&tallGrassTile[d], x, y, z);
+				break;
+			case 32:
 			case 37:
 			case 38:
 			case 39:
 			case 40:
 			case 83:
-				plants(type, x, y, z);
+				plants(&tile[type], x, y, z);
 				break;
 			case 43:
 			case 44:

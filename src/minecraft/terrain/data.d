@@ -68,7 +68,7 @@ BlockDescriptor tile[256] = [
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
 	{ false, Stuff,     {  0,  4 }, {  0,  4 }, "web" },
 	{ false, Stuff,     {  7,  2 }, {  7,  2 }, "tall grass" },
-	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },                   // 32
+	{ false, NA,        {  7,  3 }, {  7,  3 }, "dead shrub" },            // 32
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
 	{ false, NA,        {  0,  4 }, {  0,  4 }, "n/a" },
 	{  true, DataBlock, {  0,  4 }, {  0,  4 }, "wool" },
@@ -168,6 +168,12 @@ BlockDescriptor saplingTile[4] = [
 	{ false, Stuff,     { 15,  3 }, { 15,  3 }, "spruce" },
 	{ false, Stuff,     { 15,  4 }, { 15,  4 }, "birch" },
 	{ false, Stuff,     { 15,  0 }, { 15,  0 }, "normal" },
+];
+
+BlockDescriptor tallGrassTile[4] = [
+	{ false, Stuff,     {  7,  3 }, {  7,  3 }, "dead shrub" },
+	{ false, Stuff,     {  7,  2 }, {  7,  2 }, "tall grass" },
+	{ false, Stuff,     {  8,  3 }, {  8,  3 }, "fern" },
 ];
 
 BlockDescriptor craftingTableAltTile =

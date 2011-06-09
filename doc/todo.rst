@@ -39,14 +39,12 @@ Add missing blocks
  * Beds {medium}
  * Portal {easy}
  * Trapdoors {easy}
- * Dead Shrubs {easy}
  * Levers {HARD}
 
 Improve blocks
 --------------
  * Doors (Fix texture mapping and face visibility) {easy}
  * Chests (Improve orientation based on nearby blocks) {easy}
- * Tall grass (Render all 3 types, dead shrub, grass and fern) {easy}
  * Water/Lava (Consider the fluid level) {medium}
  * Wallsigns (Use correct textures) {HARD}
  * Signposts (Use correct textures and implement all rotations) {HARD}
