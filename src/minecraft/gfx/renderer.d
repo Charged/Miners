@@ -6,7 +6,7 @@ import minecraft.gfx.vbo;
 import minecraft.gfx.imports;
 
 
-class MinecraftForwardRenderer : public GfxFixedRenderer
+class MinecraftForwardRenderer : public GfxForwardRenderer
 {
 private:
 	GfxTexture tex;
@@ -98,19 +98,10 @@ protected:
 
 		auto shader = textureArraySupported ? material_shader_indexed : material_shader;
 
-		foreach(l; w.lights) {
-			auto sl = cast(GfxSimpleLight)l;
-			if (sl is null)
-				continue;
+		auto sl = setupSimpleLight(w);
 
-			auto direction = view * sl.rotation.rotateHeading;
-		
-			glUseProgram(shader.id);
-			shader.float3("lightDir", direction);
-			shader.float4("lightDiffuse", sl.diffuse);
-			shader.float4("lightAmbient", sl.ambient);
-			glUseProgram(0);
-		}
+		auto direction = view * sl.rotation.rotateHeading;
+		setupSimpleLight(shader, sl, direction);
 
 		if (w.fog !is null) {
 			glFogfv(GL_FOG_COLOR, w.fog.color.ptr);
@@ -129,6 +120,11 @@ protected:
 				drawGroup(cvgmc, m);
 				continue;
 			}
+
+			if (sl !is null)
+				render(m, r, sl);
+			else
+				render(m, r);
 		}
 
 		glDisable(GL_CULL_FACE);
