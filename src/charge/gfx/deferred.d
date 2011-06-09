@@ -184,7 +184,7 @@ protected:
 		deferredTarget.setTarget();
 
 		glClearDepth(1);
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
@@ -212,6 +212,8 @@ protected:
 		// Rendertarget
 		renderTarget.setTarget();
 
+		// Clear the accumilation buffer
+		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// State
@@ -718,6 +720,8 @@ protected:
 		fog_shader.float4("color", 1, fog.color.ptr);
 		fog_shader.float1("start", fog.start);
 		fog_shader.float1("stop", fog.stop);
+
+		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glBegin(GL_QUADS);
