@@ -131,6 +131,7 @@ alias charge.gfx.camera.OrthoCamera GfxOrthoCamera;
 alias charge.gfx.camera.IsoCamera GfxIsoCamera;
 alias charge.gfx.renderer.Renderer GfxRenderer;
 alias charge.gfx.fixed.FixedRenderer GfxFixedRenderer;
+alias charge.gfx.forward.ForwardRenderer GfxForwardRenderer;
 alias charge.gfx.deferred.DeferredRenderer GfxDeferredRenderer;
 alias charge.gfx.target.RenderTarget GfxRenderTarget;
 alias charge.gfx.target.DefaultTarget GfxDefaultTarget;
