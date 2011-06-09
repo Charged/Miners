@@ -424,17 +424,28 @@ protected:
 		}
 
 		for (auto r = rq.pop; r !is null; r = rq.pop) {
-			auto m = cast(SimpleMaterial)r.getMaterial();
-			if (m !is null && m.fake) {
-				glEnable(GL_TEXTURE_2D);
-				glBindTexture(GL_TEXTURE_2D, m.tex.id);
-				glUseProgram(material_shader_fake.id);
-			} else {
-				glUseProgram(material_shader_color.id);
-				glDisable(GL_TEXTURE_2D);
-			}
-			r.drawAttrib();
+			auto sm = cast(SimpleMaterial)r.getMaterial();
+			if (sm is null)
+				continue;
+
+			drawToShadow(r, sm);
 		}
+	}
+
+	void drawToShadow(Renderable r, SimpleMaterial sm)
+	{
+		Shader s;
+
+		if (sm.fake) {
+			s =  material_shader_fake;
+			glUseProgram(s.id);
+			glBindTexture(GL_TEXTURE_2D, sm.tex.id);
+		} else {
+			s =  material_shader_color;
+			glUseProgram(s.id);
+		}
+
+		r.drawAttrib(s);
 	}
 
 	void drawDirectionLightSha(SimpleLight dl, Camera c, World w,
@@ -671,7 +682,7 @@ protected:
 
 	void renderLoop(RenderQueue rq, World w)
 	{
-		SimpleMaterial m;
+		SimpleMaterial sm;
 		Renderable r;
 
 		glEnable(GL_CULL_FACE);
@@ -680,13 +691,11 @@ protected:
 		glEnable(GL_TEXTURE_2D);
 
 		for (r = rq.pop; r !is null; r = rq.pop) {
-			m = cast(SimpleMaterial)r.getMaterial();
-			if (m is null)
+			sm = cast(SimpleMaterial)r.getMaterial();
+			if (sm is null)
 				continue;
 
-			setupMaterial(m);
-
-			r.drawAttrib();
+			drawToDeferred(r, sm);
 		}
 
 		glActiveTexture(GL_TEXTURE0);
@@ -695,22 +704,27 @@ protected:
 		glDisable(GL_CULL_FACE);
 	}
 
-	void setupMaterial(SimpleMaterial m)
+	void drawToDeferred(Renderable r, SimpleMaterial m)
 	{
 		Texture t;
+		Shader s;
 
 		if (m.tex is null) {
-			glUseProgram(material_shader_color.id);
-			material_shader_color.float4("color", m.color);
-			return;
+			s = material_shader_color;
+			glUseProgram(s.id);
+			s.float4("color", m.color);
+		} else {
+			glBindTexture(GL_TEXTURE_2D, m.tex.id);
+
+			if (m.fake)
+				s = material_shader_fake;
+			else
+				s = material_shader_tex;
+
+			glUseProgram(s.id);
 		}
 
-		glBindTexture(GL_TEXTURE_2D, m.tex.id);
-
-		if (m.fake)
-			glUseProgram(material_shader_fake.id);
-		else
-			glUseProgram(material_shader_tex.id);
+		r.drawAttrib(s);
 	}
 
 

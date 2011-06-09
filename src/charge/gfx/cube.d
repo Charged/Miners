@@ -6,6 +6,7 @@ import charge.math.movable;
 
 import charge.gfx.gl;
 import charge.gfx.world;
+import charge.gfx.shader;
 import charge.gfx.material;
 import charge.gfx.renderqueue;
 import charge.gfx.cull;
@@ -244,7 +245,7 @@ public:
 		glPopMatrix();
 	}
 
-	void drawAttrib()
+	void drawAttrib(Shader s)
 	{
 		gluPushAndTransform(pos, rot);
 		glScaled(x, y, z);

@@ -2,13 +2,14 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.renderqueue;
 
+import charge.gfx.shader;
 import charge.gfx.material;
 
 interface Renderable
 {
 	Material getMaterial();
 	void drawFixed();
-	void drawAttrib();
+	void drawAttrib(Shader s);
 }
 
 class RenderQueue

@@ -180,7 +180,7 @@ public:
 
 	abstract void drawFixed();
 
-	abstract void drawAttrib();
+	abstract void drawAttrib(GfxShader s);
 
 	abstract void drawShader(GfxShader shader);
 }
@@ -206,7 +206,7 @@ public:
 		glPopMatrix();
 	}
 
-	void drawAttrib()
+	void drawAttrib(GfxShader s)
 	{
 		gluPushAndTransform(pos, rot);
 
@@ -239,7 +239,7 @@ public:
 
 	}
 
-	void drawAttrib()
+	void drawAttrib(GfxShader s)
 	{
 		const vertexSize = ChunkVBOCompactMesh.Vertex.sizeof;
 		const void* vertOffset = null;
@@ -296,7 +296,7 @@ public:
 
 	}
 
-	void drawAttrib()
+	void drawAttrib(GfxShader s)
 	{
 
 	}

@@ -207,7 +207,7 @@ protected:
 		if (t is null)
 			s.float4("diffuse", sm.color);
 
-		r.drawAttrib();
+		r.drawAttrib(s);
 	}
 
 	/*

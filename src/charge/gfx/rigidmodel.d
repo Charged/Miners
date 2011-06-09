@@ -5,8 +5,9 @@ module charge.gfx.rigidmodel;
 import charge.math.movable;
 import charge.math.mesh;
 
-import charge.gfx.world;
 import charge.gfx.cull;
+import charge.gfx.world;
+import charge.gfx.shader;
 import charge.gfx.renderqueue;
 import charge.gfx.material;
 import charge.gfx.gl;
@@ -83,7 +84,7 @@ protected:
 		glPopMatrix();
 	}
 
-	void drawAttrib()
+	void drawAttrib(Shader s)
 	{
 		gluPushAndTransform(pos, rot);
 		glScaled(x, y, z);

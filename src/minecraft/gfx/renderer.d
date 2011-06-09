@@ -132,18 +132,22 @@ protected:
 
 	void drawGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m)
 	{
+		GfxShader s;
+
 		if (cvgcm.result_num < 1)
 			return;
 
 		if (textureArraySupported) {
-			glUseProgram(material_shader_indexed.id);
+			s = material_shader_indexed;
+			glUseProgram(s.id);
 			glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, ta.id);
 		} else {
-			glUseProgram(material_shader.id);
+			s = material_shader;
+			glUseProgram(s.id);
 			glBindTexture(GL_TEXTURE_2D, tex.id);
 		}
 
-		cvgcm.drawAttrib();
+		cvgcm.drawAttrib(s);
 
 		glUseProgram(0);
 	}
@@ -250,7 +254,7 @@ protected:
 		glUseProgram(material_shader.id);
 		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, ta.id);
 
-		cvgcm.drawAttrib();
+		cvgcm.drawAttrib(material_shader);
 
 		glUseProgram(0);
 	}
@@ -314,9 +318,7 @@ protected:
 				continue;
 			}
 
-			setupMaterial(m);
-
-			r.drawAttrib();
+			drawToDeferred(r, m);
 		}
 
 		glActiveTexture(GL_TEXTURE0);
