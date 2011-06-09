@@ -15,6 +15,21 @@ struct cMemoryArray(T)
 	T *mem;
 	size_t len;
 
+	/**
+	 * Allocate at least the same amount as the given array and copy.
+	 */
+	void allocCopy(T[] array)
+	{
+		if (len) {
+			if (!ensure(array.length))
+				throw new std.outofmemory.OutOfMemoryException();
+		} else {
+			length = array.length;
+		}
+
+		mem[0 .. array.length] = array[0 .. $];
+	}
+
 	T* realloc(size_t newLen)
 	{
 		auto ret = std.c.stdlib.realloc(mem, newLen * T.sizeof);
