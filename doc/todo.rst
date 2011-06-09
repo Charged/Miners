@@ -38,7 +38,6 @@ Add missing blocks
 ------------------
  * Beds {medium}
  * Portal {easy}
- * Trapdoors {easy}
  * Levers {HARD}
 
 Improve blocks

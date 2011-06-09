@@ -2351,6 +2351,49 @@ template BlockDispatcher(alias T)
 		standing_torch(x2, y-3, z2, tex);
 	}
 
+	void trapdoor(int x, int y, int z) {
+		auto dec = &tile[96];
+		ubyte tex = calcTextureY(dec);
+		int set = data.getSolidSet(x, y, z);
+		auto d = data.getDataUnsafe(x, y, z);
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		auto closed = !(d & 4);
+		d &= 3;
+
+		int y1 = 0, y2 = 0, x1 = 0, x2 = 0, z1 = 0, z2 = 0;
+
+		if (closed) {
+			y1 = y;   x1 = x;    z1 = z;
+			y2 = y+3; x2 = x+16; z2 = z+16;
+		} else {
+			x1 = [x,    x,    x+13, x   ][d];
+			x2 = [x+16, x+16, x+16, x+3 ][d];
+			z1 = [z+13, z,    z,    z   ][d];
+			z2 = [z+16, z+3,  z+16, z+16][d];
+			y1 = y;
+			y2 = y+16;
+		}
+
+		if (set & sideMask.ZN)
+			emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+		if (set & sideMask.ZP)
+			emitQuadMappedUVXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		if (set & sideMask.XN)
+			emitQuadMappedUVXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+		if (set & sideMask.XP)
+			emitQuadMappedUVXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+
+		if (set & sideMask.YN)
+			emitQuadMappedUVYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+		if (set & sideMask.YP || closed)
+			emitQuadMappedUVYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+	}
+
 	void b(uint x, uint y, uint z) {
 		static int count = 0;
 		ubyte type = data.get(x, y, z);
@@ -2474,6 +2517,9 @@ template BlockDispatcher(alias T)
 			case 93:
 			case 94:
 				redstone_repeater(type, x, y, z);
+				break;
+			case 96:
+				trapdoor(x, y, z);
 				break;
 			default:
 				if (tile[type].filled)

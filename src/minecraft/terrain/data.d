@@ -132,7 +132,7 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  3,  8 }, {  3,  8 }, "redstone repeater off" },
 	{ false, Stuff,     {  3,  9 }, {  3,  9 }, "redstone repeater on" },
 	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
-	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },                   // 96
+	{ false, Stuff,     {  4,  5 }, {  4,  5 }, "trap door" },             // 96
 ];
 
 BlockDescriptor snowyGrassBlock =
