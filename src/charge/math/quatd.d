@@ -51,11 +51,14 @@ struct Quatd
 	{
 		Quatd q;
 
+		vec.normalize();
+
 		q.w = cos( angle * 0.5 );
 		q.x = vec.x * sin( angle * 0.5 );
 		q.y = vec.y * sin( angle * 0.5 );
 		q.z = vec.z * sin( angle * 0.5 );
 
+		q.normalize();
 		return q;
 	}
 
