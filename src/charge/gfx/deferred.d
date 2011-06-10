@@ -439,7 +439,7 @@ protected:
 		if (sm.fake) {
 			s =  material_shader_fake;
 			glUseProgram(s.id);
-			glBindTexture(GL_TEXTURE_2D, sm.tex.id);
+			glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
 		} else {
 			s =  material_shader_color;
 			glUseProgram(s.id);
@@ -709,20 +709,13 @@ protected:
 		Texture t;
 		Shader s;
 
-		if (m.tex is null) {
-			s = material_shader_color;
-			glUseProgram(s.id);
-			s.float4("color", m.color);
-		} else {
-			glBindTexture(GL_TEXTURE_2D, m.tex.id);
+		if (m.fake)
+			s = material_shader_fake;
+		else
+			s = material_shader_tex;
 
-			if (m.fake)
-				s = material_shader_fake;
-			else
-				s = material_shader_tex;
-
-			glUseProgram(s.id);
-		}
+		glUseProgram(s.id);
+		glBindTexture(GL_TEXTURE_2D, m.tex.id);
 
 		r.drawAttrib(s);
 	}

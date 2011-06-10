@@ -30,10 +30,7 @@ private:
 	mixin Logging;
 
 protected:
-	static Shader materialShaderTexFake;
 	static Shader materialShaderTex;
-	static Shader materialShaderColor;
-	static Shader materialShaderBlack;
 
 public:
 	this()
@@ -57,27 +54,9 @@ public:
 
 		materialShaderTex =
 			ShaderMaker(materialVertMesh,
-				       materialFragTex,
-				       ["vs_position", "vs_uv", "vs_normal"],
-				       ["diffuseTex"]);
-
-		materialShaderTexFake =
-			ShaderMaker(materialVertMesh,
-				       materialFragTexFake,
-				       ["vs_position", "vs_uv", "vs_normal"],
-				       ["diffuseTex"]);
-
-		materialShaderColor =
-			ShaderMaker(materialVertMesh,
-				       materialFragColor,
-				       ["vs_position", "vs_uv", "vs_normal"],
-				       null);
-
-		materialShaderBlack =
-			ShaderMaker(materialVertMesh,
-				       materialFragBlack,
-				       ["vs_position", "vs_uv", "vs_normal"],
-				       null);
+				    materialFragTex,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
 
 		// In theory we need to check for VBO's and stuff,
 		// but ffs who don't have those now adays?
@@ -116,6 +95,8 @@ protected:
 		}
 		// TODO: no fog
 
+		glAlphaFunc(GL_GEQUAL, 0.5f);
+
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
@@ -126,6 +107,11 @@ protected:
 			auto sm = cast(SimpleMaterial)r.getMaterial();
 			if (sm is null)
 				continue;
+
+			if (sm.fake)
+				glEnable(GL_ALPHA_TEST);
+			else
+				glDisable(GL_ALPHA_TEST);
 
 			if (sl !is null)
 				render(sm, r, sl);
@@ -160,8 +146,6 @@ protected:
 		auto direction = view * sl.rotation.rotateHeading;
 
 		setupSimpleLight(materialShaderTex, sl, direction);
-		setupSimpleLight(materialShaderTexFake, sl, direction);
-		setupSimpleLight(materialShaderColor, sl, direction);
 
 		return sl;
 	}
@@ -187,25 +171,13 @@ protected:
 
 	void render(SimpleMaterial sm, Renderable r, SimpleLight sl)
 	{
-		Shader s;
+		Shader s = materialShaderTex;
 
-		if (sm.fake)
-			s = materialShaderTexFake;
-		else
-			s = materialShaderTex;
+		auto t = sm.texSafe;
+		assert(t !is null);
 
-		auto t = sm.tex;
-
-		if (t is null) {
-			s = materialShaderColor;
-		} else {
-			glBindTexture(GL_TEXTURE_2D, t.id);
-		}
-
+		glBindTexture(GL_TEXTURE_2D, t.id);
 		glUseProgram(s.id);
-
-		if (t is null)
-			s.float4("diffuse", sm.color);
 
 		r.drawAttrib(s);
 	}
@@ -218,36 +190,6 @@ protected:
 	 * normal - normal in camera space.
 	 * uv     - texture coordenate.
 	 */
-
-	const char[] materialFragTexFake = "
-uniform sampler2D diffuseTex;
-
-uniform vec3 lightDir;
-uniform vec4 lightDiffuse;
-uniform vec4 lightAmbient;
-
-varying vec3 normal;
-varying vec2 uv;
-
-void main()
-{
-	vec4 color = texture2D(diffuseTex, uv);
-	if (color.a < 0.5)
-		discard;
-
-	float nDotL = max(dot(normalize(normal), -lightDir), 0.0);
-
-	// Lightning
-	color.rgb = color.rgb * nDotL * lightDiffuse.rgb + color.rgb * lightAmbient.rgb;
-
-	// Fog
-	float depth = gl_FragCoord.z / gl_FragCoord.w;
-	float fogFactor = smoothstep(gl_Fog.end, gl_Fog.start, depth);
-	color.rgb = mix(gl_Fog.color.rgb, color.rgb, fogFactor);
-
-	gl_FragColor = vec4(color.rgb, 1);
-}
-";
 
 	const char[] materialFragTex = "
 uniform sampler2D diffuseTex;
@@ -277,35 +219,10 @@ void main()
 }
 ";
 
-	const char[] materialFragColor = "
-uniform vec4 diffuse;
-
-uniform vec3 lightDir;
-uniform vec4 lightDiffuse;
-uniform vec4 lightAmbient;
-
+	const char[] materialFragBlack = "
 varying vec3 normal;
 varying vec2 uv;
 
-void main()
-{
-	float nDotL = max(dot(normalize(normal), -lightDir), 0.0);
-
-	vec4 color = diffuse;
-
-	// Lightning
-	color.rgb = color.rgb * nDotL * lightDiffuse.rgb + color.rgb * lightAmbient.rgb;
-
-	// Fog
-	float depth = gl_FragCoord.z / gl_FragCoord.w;
-	float fogFactor = smoothstep(gl_Fog.end, gl_Fog.start, depth);
-	color.rgb = mix(gl_Fog.color.rgb, color.rgb, fogFactor);
-
-	gl_FragColor = color;
-}
-";
-
-	const char[] materialFragBlack = "
 void main()
 {
 	vec4 color = vec4(0, 0, 0, 1);

@@ -99,20 +99,26 @@ public:
 class SimpleMaterial : public Material
 {
 public:
-	Texture tex;
 	Color4f color;
+	Texture tex; /**< Does not hold a reference */
+	Texture texSafe; /**< Will always be valid */
 	bool fake;
 
 	this()
 	{
 		color = Color4f.White;
-		super.setTexture("tex", "res/default.png");
+
+		texSafe = ColorTexture(color);
+
+		assert(texSafe !is null);
 	}
 
 	~this()
 	{
-		if (this.tex)
-			this.tex.dereference();
+		texSafe.dereference();
+		// Does not hold a reference
+		tex = null;
+		texSafe = null;
 	}
 
 	MaterialProperty[] getPropList()
@@ -125,18 +131,25 @@ public:
 		return list;
 	}
 
-	bool setTexture(char[] name, Texture tex)
+	bool setTexture(char[] name, Texture texture)
 	{
 		if (name is null)
 			return false;
 
 		switch(name) {
 			case "tex":
-				if (this.tex)
-					this.tex.dereference();
-				this.tex = tex;
-				if (this.tex)
+				// Tex does not hold a reference
+				tex = texture;
+				if (tex !is null)
 					tex.reference();
+
+				// Update the safe texture
+				texSafe.dereference();
+
+				texSafe = tex;
+				// Must always be safe to access set to color
+				if (texSafe is null)
+					texSafe = ColorTexture(color);
 				break;
 			default:
 				return false;
@@ -152,7 +165,9 @@ public:
 
 		switch(name) {
 			case "color":
-				this.color = Color4f(color);
+				color = color;
+				// Update the color texture if set
+				setTexture("tex", tex);
 				break;
 			default:
 				return false;
@@ -181,7 +196,7 @@ public:
 
 		switch(name) {
 			case "tex":
-				tex = this.tex;
+				tex = tex;
 				break;
 			default:
 				return false;
