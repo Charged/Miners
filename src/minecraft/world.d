@@ -94,11 +94,12 @@ public:
 	GfxDoubleTarget dt;
 
 	GfxRenderer r; // Current renderer
-	GfxRenderer dr; // Inbuilt deferred or Fixed func
+	GfxRenderer ifc; // Inbuilt fixed func
+	GfxRenderer ifr; // Inbuilt forward renderer
 	MinecraftDeferredRenderer mdr; // Special deferred renderer
 	MinecraftForwardRenderer mfr; // Special forward renderer
-	GfxRenderer rs[4]; // Null terminated list of renderer
-	VolTerrain.BuildTypes rsbt[4]; // A list of build types for the renderers
+	GfxRenderer rs[5]; // Null terminated list of renderer
+	VolTerrain.BuildTypes rsbt[5]; // A list of build types for the renderers
 	VolTerrain.BuildTypes bt; // Current build type
 	int num_renderers;
 	int current_renderer;
@@ -135,7 +136,8 @@ public:
 			tex = null;
 		}
 
-		delete dr;
+		delete ifc;
+		delete ifr;
 		delete mfr;
 		delete mdr;
 	}
@@ -189,9 +191,15 @@ protected:
 	void setupRenderers()
 	{
 		GfxRenderer.init();
-		r = new GfxFixedRenderer();
+		ifc = new GfxFixedRenderer();
 		rsbt[num_renderers] = VolTerrain.BuildTypes.RigidMesh;
-		rs[num_renderers++] = r;
+		rs[num_renderers++] = ifc;
+
+		if (canDoForward) {
+			ifr = new GfxForwardRenderer();
+			rsbt[num_renderers] = VolTerrain.BuildTypes.RigidMesh;
+			rs[num_renderers++] = ifr;
+		}
 
 		if (canDoForward) {
 			try {
