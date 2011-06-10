@@ -32,9 +32,16 @@ private:
 	DeferredTarget deferredTarget;
 	DepthTargetArray depthTarget;
 
-	static Shader material_shader_tex;
-	static Shader material_shader_fake;
-	static Shader material_shader_color;
+	enum matShdr {
+		TEX,
+		FAKE,
+		COLOR,
+		OFF,
+		NUM = OFF * 2
+	}
+
+	static Shader matShader[matShdr.NUM];
+
 	static Shader directionlight_shader;
 	static Shader directionlightshadow_shader;
 	static Shader pointlight_shader;
@@ -66,32 +73,55 @@ public:
 			return false;
 		}
 
+
+		/*
+		 * Mesh shaders.
+		 */
+		matShader[matShdr.TEX] =
+			ShaderMaker(material_shader_mesh_vert,
+				    material_shader_tex_frag,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
+		matShader[matShdr.FAKE] =
+			ShaderMaker(material_shader_mesh_vert,
+				    material_shader_tex_frag,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
+		matShader[matShdr.COLOR] =
+			ShaderMaker(material_shader_mesh_vert,
+				    material_shader_tex_frag,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
+
+		/*
+		 * Skeleton shaders.
+		 */
+		matShader[matShdr.TEX + matShdr.OFF] =
+			ShaderMaker(material_shader_skel_vert,
+				    material_shader_tex_frag,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
+		matShader[matShdr.FAKE + matShdr.OFF] =
+			ShaderMaker(material_shader_skel_vert,
+				    material_shader_tex_frag,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
+		matShader[matShdr.COLOR + matShdr.OFF] =
+			ShaderMaker(material_shader_skel_vert,
+				    material_shader_tex_frag,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
+
+
 		pointlight_shader = ShaderMaker(pointlight_shader_vertex,
 		                                pointlight_shader_geom,
 		                                pointlight_shader_frag,
 		                                GL_POINTS, GL_TRIANGLE_STRIP, 4);
-		material_shader_tex = ShaderMaker(material_shader_vert,
-						  material_shader_tex_frag,
-						  ["vs_position", "vs_uv", "vs_normal"],
-						  ["diffuseTex"]);
-		material_shader_fake = ShaderMaker(material_shader_vert,
-						   material_shader_fake_frag,
-						   ["vs_position", "vs_uv", "vs_normal"],
-						   ["diffuseTex"]);
-		material_shader_color = ShaderMaker(material_shader_vert,
-						    material_shader_color_frag,
-						    ["vs_position", "vs_uv", "vs_normal"],
-						    null);
+
 		directionlight_shader = ShaderMaker(deferred_base_vert, directionlight_shader_frag);
 		directionlightshadow_shader = ShaderMaker(deferred_base_vert, directionlightshadow_shader_frag);
 		spotlight_shader = ShaderMaker(deferred_base_vert, spotlight_shader_frag);
 		fog_shader = ShaderMaker(deferred_base_vert, fog_shader_frag);
-
-		glUseProgram(material_shader_tex.id);
-		material_shader_tex.sampler("diffuseTex", 0);
-
-		glUseProgram(material_shader_fake.id);
-		material_shader_fake.sampler("diffuseTex", 0);
 
 		glUseProgram(pointlight_shader.id);
 		pointlight_shader.sampler("colorTex", 0);
@@ -435,13 +465,14 @@ protected:
 	void drawToShadow(Renderable r, SimpleMaterial sm)
 	{
 		Shader s;
+		int off = sm.skel * matShdr.OFF;
 
 		if (sm.fake) {
-			s =  material_shader_fake;
+			s =  matShader[matShdr.FAKE + off];
 			glUseProgram(s.id);
 			glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
 		} else {
-			s =  material_shader_color;
+			s =  matShader[matShdr.COLOR + off];
 			glUseProgram(s.id);
 		}
 
@@ -704,18 +735,20 @@ protected:
 		glDisable(GL_CULL_FACE);
 	}
 
-	void drawToDeferred(Renderable r, SimpleMaterial m)
+	void drawToDeferred(Renderable r, SimpleMaterial sm)
 	{
 		Texture t;
 		Shader s;
+		int off = sm.skel * matShdr.OFF;
 
-		if (m.fake)
-			s = material_shader_fake;
+
+		if (sm.fake)
+			s =  matShader[matShdr.FAKE + off];
 		else
-			s = material_shader_tex;
+			s =  matShader[matShdr.TEX + off];
 
+		glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
 		glUseProgram(s.id);
-		glBindTexture(GL_TEXTURE_2D, m.tex.id);
 
 		r.drawAttrib(s);
 	}
@@ -783,7 +816,7 @@ protected:
 	 */
 
 
-	const char[] material_shader_vert = "
+	const char[] material_shader_mesh_vert = "
 varying vec2 uv;
 varying vec3 normal;
 
@@ -796,6 +829,44 @@ void main()
 	uv = vs_uv;
 	normal = gl_NormalMatrix * vs_normal;
 	gl_Position = gl_ModelViewProjectionMatrix * vs_position;
+}
+";
+
+	const char[] material_shader_skel_vert = "
+varying vec3 normal;
+varying vec2 uv;
+
+uniform vec4 bones[128];
+
+attribute vec4 vs_position;
+attribute vec2 vs_uv;
+attribute vec4 vs_normal; // And bone
+
+vec3 qrot(vec4 rot, vec3 pos)
+{
+	return pos + 2.0 * cross(cross(pos, rot.xyz) + rot.w*pos, rot.xyz);
+}
+
+vec3 applyBone(vec4 rot, vec3 trans, vec3 pos)
+{
+	return qrot(rot, pos) + trans;
+}
+
+void main()
+{
+	int index = int(floor(vs_normal.w) * 2);
+	vec4 quat = bones[index];
+	vec3 trans = bones[index+1].xyz;
+
+	vec4 pos;
+	pos.xyz = applyBone(quat, trans, vs_position);
+	pos.w = vs_position.w;
+
+	// Rotate normal
+	normal = gl_NormalMatrix * qrot(quat, vs_normal.xyz);
+	uv = vs_uv;
+
+	gl_Position = gl_ModelViewProjectionMatrix * pos;
 }
 ";
 

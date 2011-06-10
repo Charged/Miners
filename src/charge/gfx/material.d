@@ -103,6 +103,7 @@ public:
 	Texture tex; /**< Does not hold a reference */
 	Texture texSafe; /**< Will always be valid */
 	bool fake;
+	bool skel; /**< This is here temporary */
 
 	this()
 	{

@@ -38,6 +38,7 @@ public
 	static import charge.gfx.draw;
 	static import charge.gfx.font;
 	static import charge.gfx.rigidmodel;
+	static import charge.gfx.skeleton;
 	static import charge.gfx.light;
 	static import charge.gfx.texture;
 	static import charge.gfx.material;
@@ -111,6 +112,7 @@ alias charge.gfx.cube.Cube GfxCube;
 alias charge.gfx.draw.Draw GfxDraw;
 alias charge.gfx.font.Font GfxFont;
 alias charge.gfx.rigidmodel.RigidModel GfxRigidModel;
+alias charge.gfx.skeleton.SimpleSkeleton GfxSimpleSkeleton;
 alias charge.gfx.light.Light GfxLight;
 alias charge.gfx.light.SimpleLight GfxSimpleLight;
 alias charge.gfx.light.PointLight GfxPointLight;

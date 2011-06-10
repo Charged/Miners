@@ -30,7 +30,8 @@ private:
 	mixin Logging;
 
 protected:
-	static Shader materialShaderTex;
+	static Shader materialShaderMeshTex;
+	static Shader materialShaderSkelTex;
 
 public:
 	this()
@@ -52,8 +53,14 @@ public:
 			return false;
 		}
 
-		materialShaderTex =
+		materialShaderMeshTex =
 			ShaderMaker(materialVertMesh,
+				    materialFragTex,
+				    ["vs_position", "vs_uv", "vs_normal"],
+				    ["diffuseTex"]);
+
+		materialShaderSkelTex =
+			ShaderMaker(materialVertSkel,
 				    materialFragTex,
 				    ["vs_position", "vs_uv", "vs_normal"],
 				    ["diffuseTex"]);
@@ -121,6 +128,7 @@ protected:
 
 		glUseProgram(0);
 		glDisable(GL_CULL_FACE);
+		glDisable(GL_ALPHA_TEST);
 	}
 
 	/**
@@ -145,7 +153,8 @@ protected:
 
 		auto direction = view * sl.rotation.rotateHeading;
 
-		setupSimpleLight(materialShaderTex, sl, direction);
+		setupSimpleLight(materialShaderMeshTex, sl, direction);
+		setupSimpleLight(materialShaderSkelTex, sl, direction);
 
 		return sl;
 	}
@@ -171,7 +180,12 @@ protected:
 
 	void render(SimpleMaterial sm, Renderable r, SimpleLight sl)
 	{
-		Shader s = materialShaderTex;
+		Shader s;
+
+		if (sm.skel)
+			s = materialShaderSkelTex;
+		else
+			s = materialShaderMeshTex;
 
 		auto t = sm.texSafe;
 		assert(t !is null);
@@ -254,6 +268,45 @@ void main()
 	uv = vs_uv;
 	normal = gl_NormalMatrix * vs_normal;
 	gl_Position = gl_ModelViewProjectionMatrix * vs_position;
+}
+";
+
+	const char[] materialVertSkel = "
+varying vec3 normal;
+varying vec2 uv;
+
+uniform vec4 bones[128];
+
+attribute vec4 vs_position;
+attribute vec2 vs_uv;
+attribute vec4 vs_normal; // And bone
+
+vec3 qrot(vec4 rot, vec3 pos)
+{
+	return pos + 2.0 * cross(cross(pos, rot.xyz) + rot.w*pos, rot.xyz);
+}
+
+vec3 applyBone(vec4 rot, vec3 trans, vec3 pos)
+{
+	return qrot(rot, pos) + trans;
+}
+
+void main()
+{
+	int index = int(floor(vs_normal.w) * 2);
+	vec4 quat = bones[index];
+	vec3 trans = bones[index+1].xyz;
+
+	vec4 pos;
+	pos.xyz = applyBone(quat, trans, vs_position);
+	pos.w = vs_position.w;
+
+	uv = vs_uv;
+	normal = gl_NormalMatrix * qrot(quat, vs_normal.xyz);
+
+
+
+	gl_Position = gl_ModelViewProjectionMatrix * pos;
 }
 ";
 }
