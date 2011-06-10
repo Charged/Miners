@@ -8,6 +8,7 @@ import std.stdio;
 import charge.sys.resource;
 import charge.sys.logger;
 import charge.sys.file;
+import charge.math.color;
 import charge.math.picture;
 import charge.gfx.gl;
 import charge.gfx.target;
@@ -146,6 +147,8 @@ public:
 		//glTexParameterf(glTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 		glTexParameterf(glTarget, GL_TEXTURE_MAG_FILTER, mag);
 		glTexParameterf(glTarget, GL_TEXTURE_MIN_FILTER, min);
+
+		glBindTexture(glTarget, 0);
 	}
 
 private:
@@ -174,6 +177,82 @@ private:
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 
 		return id;
+	}
+
+}
+
+class ColorTexture : public Texture
+{
+private:
+	mixin Logging;
+
+public:
+	static ColorTexture opCall(Color3f c)
+	{
+		return opCall(Color4f(c));
+	}
+
+	static ColorTexture opCall(Color4f c)
+	{
+		Color4b rgba;
+		rgba.r = cast(ubyte)(c.r * 255);
+		rgba.g = cast(ubyte)(c.g * 255);
+		rgba.b = cast(ubyte)(c.b * 255);
+		rgba.a = cast(ubyte)(c.a * 255);
+
+		return opCall(rgba);
+	}
+
+	static ColorTexture opCall(Color4b c)
+	{
+		return opCall(Pool(), c);
+	}
+
+	static ColorTexture opCall(Pool p, Color4b c)
+	{
+		auto path = "charge/gfx/texture/color";
+		auto str = std.string.format("%s%02x%02x%0x%02x", path, c.r, c.g, c.b, c.a);
+
+
+		auto r = p.resource(uri, str);
+		auto t = cast(ColorTexture)r;
+		if (r !is null) {
+			assert(t !is null);
+			return t;
+		}
+
+		l.info("created %s", str);
+
+		return new ColorTexture(p, str, c);
+	}
+
+protected:
+	this(Pool p, char[] str, Color4b c)
+	{
+		GLuint id;
+
+		glGenTextures(1, cast(GLuint*)&id);
+
+		glBindTexture(GL_TEXTURE_2D, id);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+		glTexImage2D(
+			GL_TEXTURE_2D,    //target
+			0,                //level
+			4,                //internalformat
+			1,                //width
+			1,                //height
+			0,                //border
+			GL_RGBA,          //format
+			GL_UNSIGNED_BYTE, //type
+			c.ptr);           //pixels
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		super(p, str, false, GL_TEXTURE_2D, id, 1, 1);
+
+		filter = Texture.Filter.Nearest;
 	}
 
 }
