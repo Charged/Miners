@@ -1489,6 +1489,79 @@ template BlockDispatcher(alias T)
 		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
 	}
 
+	void bed(int x, int y, int z) {
+		int set = data.getSolidSet(x, y, z);
+		ubyte d = data.getDataUnsafe(x, y, z);
+		ubyte tex = 0;
+
+		ubyte direction = d & 3;
+		bool cushion = (d & 8) == 8;
+		int dec_index = [0, 3][cushion];
+
+		const shift = VERTEX_SIZE_BIT_SHIFT;
+		x <<= shift;
+		y <<= shift;
+		z <<= shift;
+
+		int y1 = y, y2 = y + 8;
+		int x1 = x, x2 = x + 16;
+		int z1 = z, z2 = z + 16;
+
+		uvManip rotation = [uvManip.ROT_90, uvManip.ROT_180,
+				    uvManip.ROT_270, uvManip.NONE][direction];
+
+		// use wood as bottom texture
+		tex = calcTextureY(&tile[5]);
+		emitQuadMappedUVYN(x1, x2, y1+4, z1, z2, tex, sideNormal.YN, 0, 0, rotation);
+
+		// top
+		tex = calcTextureY(&bedTile[dec_index]);
+		emitQuadMappedUVYP(x1, x2, y2, z1, z2, tex, sideNormal.YP, 0, 0, rotation);
+
+		// draw one side
+		dec_index++;
+		tex = calcTextureXZ(&bedTile[dec_index]);
+
+		// direction % 2 is the axis the bed is facing (0 is X, 1 is Z)
+		x2 = [x1, x2][direction % 2];
+		z2 = [z2, z1][direction % 2];
+		sideNormal side_normal = [sideNormal.XN, sideNormal.ZN][direction % 2];
+		bool flip_tex = direction > 1;
+
+		if (set & (1 << side_normal))
+			emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z2, tex, side_normal, 0, -8, flip_tex ? uvManip.FLIP_U : uvManip.NONE);
+
+		// draw opposite side
+		if (isNormalX(side_normal)) {
+			side_normal = sideNormal.XP;
+			x1 = x2 += 16;
+		} else if (isNormalZ(side_normal)) {
+			side_normal = sideNormal.ZP;
+			z1 = z2 += 16;
+		}
+
+		if (set & (1 << side_normal)) {
+			emitQuadMappedUVXZP(x1, x2, y1, y2, z1, z2, tex, side_normal, 0, -8, flip_tex ? uvManip.NONE : uvManip.FLIP_U);
+		}
+
+		// draw front
+		auto params = [
+			[x,    x+16, z,    z,    sideNormal.ZN],
+			[x+16, x+16, z,    z+16, sideNormal.XP],
+			[x,    x+16, z+16, z+16, sideNormal.ZP],
+			[x,    x,    z,    z+16, sideNormal.XN]
+		][(direction + cushion*2) % 4]; // offset array access by two for cushion part (equals a rotation by 180 degrees)
+		sideNormal front_normal = cast(sideNormal)(params[4]);
+
+		if (set & (1 << front_normal)) {
+			dec_index++;
+			tex = calcTextureXZ(&bedTile[dec_index]);
+
+			auto emit = [&emitQuadMappedUVXZN, &emitQuadMappedUVXZP][isNormalPositive(front_normal)];
+			emit(params[0], params[1], y1, y2, params[2], params[3], tex, front_normal, 0, -8, uvManip.NONE);
+		}
+	}
+
 	void wool(int x, int y, int z) {
 		auto dec = &woolTile[data.getDataUnsafe(x, y, z)];
 		solidDec(dec, x, y, z);
@@ -2417,6 +2490,9 @@ template BlockDispatcher(alias T)
 				break;
 			case 23:
 				dispenser(x, y, z);
+				break;
+			case 26:
+				bed(x, y, z);
 				break;
 			case 35:
 				wool(x, y, z);

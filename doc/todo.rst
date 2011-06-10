@@ -36,7 +36,6 @@ Minecraft
 
 Add missing blocks
 ------------------
- * Beds {medium}
  * Portal {easy}
  * Levers {HARD}
 

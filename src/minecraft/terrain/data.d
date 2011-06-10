@@ -273,3 +273,12 @@ BlockDescriptor railTile[5] = [
 	{ false, Stuff,     {  3, 11 }, {  3, 11 }, "powered rail on" },
 	{ false, Stuff,     {  3, 12 }, {  3, 12 }, "detector rail" },
 ];
+
+BlockDescriptor bedTile[6] = [
+	{ false, Stuff,     { 0,  0 }, { 6,  8 }, "blanket top" },
+	{ false, Stuff,     { 6,  9 }, { 0,  0 }, "blanket side" },
+	{ false, Stuff,     { 5,  9 }, { 0,  0 }, "blanket back" },
+	{ false, Stuff,     { 0,  0 }, { 7,  8 }, "cushion top" },
+	{ false, Stuff,     { 7,  9 }, { 0,  0 }, "cushion side" },
+	{ false, Stuff,     { 8,  9 }, { 0,  0 }, "cushion front" },
+];
