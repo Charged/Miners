@@ -41,7 +41,6 @@ Add missing blocks
 
 Improve blocks
 --------------
- * Doors (Fix texture mapping and face visibility) {easy}
  * Chests (Improve orientation based on nearby blocks) {easy}
  * Water/Lava (Consider the fluid level) {medium}
  * Wallsigns (Use correct textures) {HARD}

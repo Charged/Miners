@@ -1937,37 +1937,48 @@ template BlockDispatcher(alias T)
 		y <<= shift;
 		z <<= shift;
 
-		int x1 = [x,    x,    x+13, x   ][d & 3];
-		int x2 = [x+3,  x+16, x+16, x+16][d & 3];
+		d &= 3;
+
+		int x1 = [x,    x,    x+13, x   ][d];
+		int x2 = [x+3,  x+16, x+16, x+16][d];
 		int y1 = y;
 		int y2 = y+16;
-		int z1 = [z,    z,    z,    z+13][d & 3];
-		int z2 = [z+16, z+3,  z+16, z+16][d & 3];
+		int z1 = [z,    z,    z,    z+13][d];
+		int z2 = [z+16, z+3,  z+16, z+16][d];
 
 		if (flip) {
-			if (set & sideMask.ZN)
-				emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN, uvManip.FLIP_U);
-			if (set & sideMask.ZP)
-				emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP, uvManip.FLIP_U);
-			if (set & sideMask.XN)
-				emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN, uvManip.FLIP_U);
-			if (set & sideMask.XP)
-				emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP, uvManip.FLIP_U);
+			if (set & sideMask.ZN || d == 3)
+				emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN,
+						    0, 0, (d == 1) ? uvManip.FLIP_U : uvManip.NONE);
+			if (set & sideMask.ZP || d == 1)
+				emitQuadMappedUVXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP,
+						    0, 0, (d == 3) ? uvManip.FLIP_U : uvManip.NONE);
+			if (set & sideMask.XN || d == 2)
+				emitQuadMappedUVXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN,
+						    0, 0, (d == 0) ? uvManip.FLIP_U : uvManip.NONE);
+			if (set & sideMask.XP || d == 0)
+				emitQuadMappedUVXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP,
+						    0, 0, (d == 2) ? uvManip.FLIP_U : uvManip.NONE);
 		} else {
 			if (set & sideMask.ZN)
-				emitQuadXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+				emitQuadMappedUVXZN(x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN,
+						    0, 0, (d == 3) ? uvManip.FLIP_U : uvManip.NONE);
 			if (set & sideMask.ZP)
-				emitQuadXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+				emitQuadMappedUVXZP(x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP,
+						    0, 0, (d != 3) ? uvManip.FLIP_U : uvManip.NONE);
 			if (set & sideMask.XN)
-				emitQuadXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+				emitQuadMappedUVXZN(x1, x1, y1, y2, z1, z2, tex, sideNormal.XN,
+						    0, 0, (d == 2) ? uvManip.FLIP_U : uvManip.NONE);
 			if (set & sideMask.XP)
-				emitQuadXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+				emitQuadMappedUVXZP(x2, x2, y1, y2, z1, z2, tex, sideNormal.XP,
+						    0, 0, (d != 2) ? uvManip.FLIP_U : uvManip.NONE);
 		}
 
+		tex = calcTextureY(dec);
 		if (set & sideMask.YN)
-			emitQuadYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
+			emitQuadMappedUVYN(x1, x2, y1, z1, z2, tex, sideNormal.YN);
 		if (set & sideMask.YP)
-			emitQuadYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
+			emitQuadMappedUVYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
 	void ladder(ubyte type, int x, int y, int z) {
