@@ -289,6 +289,8 @@ protected:
 				drawGroup(cvga, m);
 				continue;
 			}
+
+			drawToShadow(r, m);
 		}
 	}
 
