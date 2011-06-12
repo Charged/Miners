@@ -22,6 +22,7 @@ import minecraft.viewer;
 import minecraft.menu;
 import minecraft.terrain.chunk;
 import minecraft.terrain.vol;
+import minecraft.actors.helper;
 import minecraft.gfx.renderer;
 
 
@@ -39,6 +40,7 @@ private:
 	charge.game.app.TimeKeeper luaTime;
 	charge.game.app.TimeKeeper buildTime;
 
+	ResourceStore rs;
 	RenderManager rm;
 	GfxDefaultTarget defaultTarget;
 
@@ -111,6 +113,7 @@ public:
 
 		manageRunners();
 
+		delete rs;
 		delete rm;
 		delete d;
 
@@ -144,6 +147,9 @@ protected:
 			auto t = format(terrainNotFoundText, chargeConfigFolder);
 			throw new GameException(t, null);
 		}
+
+		// Another comment that I made after the one below.
+		rs = new ResourceStore();
 
 		// I just wanted a comment here to make the code look prettier.
 		rm = new RenderManager(pic);
@@ -435,7 +441,7 @@ protected:
 		if (info is null)
 			return null;
 
-		w = new World(info, rm);
+		w = new World(info, rm, rs);
 
 		auto scriptName = "res/script.lua";
 		try {

@@ -11,6 +11,7 @@ import minecraft.importer;
 import minecraft.terrain.chunk;
 import minecraft.terrain.data;
 import minecraft.terrain.vol;
+import minecraft.actors.helper;
 
 class World : public GameWorld
 {
@@ -18,6 +19,7 @@ public:
 	char[] dir;
 
 	RenderManager rm; /** Shared with other worlds */
+	ResourceStore rs; /** Shared with other worlds */
 	VolTerrain vt;
 	Point3d spawn;
 
@@ -25,10 +27,11 @@ private:
 	mixin SysLogging;
 
 public:
-	this(MinecraftLevelInfo *info, RenderManager rm)
+	this(MinecraftLevelInfo *info, RenderManager rm, ResourceStore rs)
 	{
 		super();
 		this.rm = rm;
+		this.rs = rs;
 		this.spawn = info ? info.spawn : Point3d(0, 64, 0);
 		this.dir = info ? info.dir : null;
 
