@@ -226,8 +226,8 @@ protected:
 			}
 		}
 
-		// Pick the most advanced renderer
-		current_renderer = num_renderers - 1;
+		// Pick the one before deferred renderer
+		current_renderer = num_renderers - (mdr is null ? 1 : 2);
 		r = rs[current_renderer];
 		bt = rsbt[current_renderer];
 	}
