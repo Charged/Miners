@@ -283,7 +283,7 @@ attribute vec4 vs_normal; // And bone
 
 vec3 qrot(vec4 rot, vec3 pos)
 {
-	return pos + 2.0 * cross(cross(pos, rot.xyz) + rot.w*pos, rot.xyz);
+	return pos + 2.0 * cross(rot.xyz, cross(rot.xyz, pos) + rot.w*pos);
 }
 
 vec3 applyBone(vec4 rot, vec3 trans, vec3 pos)
