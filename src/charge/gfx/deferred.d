@@ -854,18 +854,20 @@ vec3 applyBone(vec4 rot, vec3 trans, vec3 pos)
 
 void main()
 {
-	int index = int(floor(vs_normal.w) * 2);
+	// UV is super simple
+	uv = vs_uv;
+
+	// Look up the bone that we need to fetch
+	int index = int(floor(vs_normal.w) * 2.0);
 	vec4 quat = bones[index];
 	vec3 trans = bones[index+1].xyz;
 
-	vec4 pos;
-	pos.xyz = applyBone(quat, trans, vs_position);
-	pos.w = vs_position.w;
-
-	// Rotate normal
+	// Rotate the normal
 	normal = gl_NormalMatrix * qrot(quat, vs_normal.xyz);
-	uv = vs_uv;
 
+	// Rotate and transform the position
+	vec4 pos = vs_position;
+	pos.xyz = applyBone(quat, trans, pos.xyz);
 	gl_Position = gl_ModelViewProjectionMatrix * pos;
 }
 ";
