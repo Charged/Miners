@@ -10,7 +10,7 @@ import charge.game.lua;
 import minecraft.world;
 import minecraft.runner;
 import minecraft.lua.actors;
-import minecraft.terrain.vol;
+import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 
 class ScriptRunner : public GameRunnerBase

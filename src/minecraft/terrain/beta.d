@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module minecraft.terrain.vol;
+module minecraft.terrain.beta;
 
 import std.math;
 
@@ -14,7 +14,7 @@ import minecraft.gfx.renderer;
 import minecraft.importer;
 import minecraft.terrain.chunk;
 
-class VolTerrain : public GameActor
+class BetaTerrain : public GameActor
 {
 private:
 	//mixin SysLogging;
@@ -396,7 +396,7 @@ public:
 	const int depth = 32;
 	Chunk[width][depth] chunk;
 
-	VolTerrain vt;
+	BetaTerrain bt;
 
 	int numBuilt;
 
@@ -414,9 +414,9 @@ public:
 private:
 
 public:
-	this(VolTerrain vt, int xPos, int zPos)
+	this(BetaTerrain bt, int xPos, int zPos)
 	{
-		this.vt = vt;
+		this.bt = bt;
 		this.xPos = xPos;
 		this.zPos = zPos;
 
@@ -509,7 +509,7 @@ public:
 		if (chunk[x][z] !is null)
 			return chunk[x][z];
 
-		return chunk[x][z] = new Chunk(vt, vt.w, x+xOff, z+zOff);
+		return chunk[x][z] = new Chunk(bt, bt.w, x+xOff, z+zOff);
 	}
 
 	final Chunk getChunkUnsafe(int x, int z)

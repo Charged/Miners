@@ -6,7 +6,6 @@ import charge.charge;
 
 import minecraft.gfx.vbo;
 
-import minecraft.terrain.vol;
 import minecraft.terrain.data;
 import minecraft.terrain.chunk;
 import minecraft.terrain.workspace;

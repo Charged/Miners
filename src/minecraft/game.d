@@ -20,8 +20,8 @@ import minecraft.lua.runner;
 import minecraft.world;
 import minecraft.viewer;
 import minecraft.menu;
+import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
-import minecraft.terrain.vol;
 import minecraft.actors.helper;
 import minecraft.gfx.renderer;
 
@@ -455,7 +455,7 @@ protected:
 		if (build_all) {
 			l.fatal("Building all, please wait...");
 			auto t1 = SDL_GetTicks();
-			w.vt.buildAll();
+			w.bt.buildAll();
 			auto t2 = SDL_GetTicks();
 			l.fatal("Build time: %s seconds", (t2 - t1) / 1000.0);
 		}

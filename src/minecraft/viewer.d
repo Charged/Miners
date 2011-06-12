@@ -10,7 +10,6 @@ import charge.charge;
 import minecraft.world;
 import minecraft.runner;
 import minecraft.terrain.chunk;
-import minecraft.terrain.vol;
 import minecraft.actors.otherplayer;
 
 /**
@@ -43,7 +42,7 @@ public:
 	{
 		super(r, w, rm);
 
-		w.vt.setViewRadii(250/16 + 1);
+		w.bt.setViewRadii(250/16 + 1);
 
 		// Put a player model at spawn
 		new OtherPlayer(w, 0, w.spawn + Vector3d(.5, 0, .5), 0, 0);

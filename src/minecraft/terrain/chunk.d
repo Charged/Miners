@@ -11,7 +11,7 @@ import minecraft.importer;
 import minecraft.gfx.vbo;
 import minecraft.gfx.imports;
 import minecraft.gfx.renderer;
-import minecraft.terrain.vol;
+import minecraft.terrain.beta;
 import minecraft.terrain.data;
 import minecraft.terrain.builder;
 
@@ -41,7 +41,7 @@ public:
 
 protected:
 	GameWorld w;
-	VolTerrain vt;
+	BetaTerrain bt;
 
 	// VBO's.
 	ChunkVBOArray cva;
@@ -58,10 +58,10 @@ protected:
 	GfxPointLight lights[];
 
 public:
-	this(VolTerrain vt, GameWorld w, int xPos, int zPos)
+	this(BetaTerrain bt, GameWorld w, int xPos, int zPos)
 	{
 		this.w = w;
-		this.vt = vt;
+		this.bt = bt;
 		this.xPos = xPos;
 		this.zPos = zPos;
 		this.xOff = xPos * 16;
@@ -188,7 +188,7 @@ public:
 		Chunk c;
 
 		void mark(int x, int z) {
-			c = vt.getChunk(x, z);
+			c = bt.getChunk(x, z);
 			if (c !is null)
 				c.markDirty();
 		}
@@ -214,27 +214,27 @@ public:
 		if (empty)
 			return;
 
-		if (vt.cvgrm !is null) {
+		if (bt.cvgrm !is null) {
 			cvrm = buildRigidMeshFromChunk(this);
 			if (cvrm !is null)
-				vt.cvgrm.add(cvrm, xPos, zPos);
+				bt.cvgrm.add(cvrm, xPos, zPos);
 		}
 
-		if (vt.cvgcm !is null) {
-			if (vt.buildIndexed)
+		if (bt.cvgcm !is null) {
+			if (bt.buildIndexed)
 				cvcm = buildCompactMeshIndexedFromChunk(this);
 			else
 				cvcm = buildCompactMeshFromChunk(this);
 
 			if (cvcm !is null)
-				vt.cvgcm.add(cvcm, xPos, zPos);
+				bt.cvgcm.add(cvcm, xPos, zPos);
 		}
 
-		if (vt.cvga !is null) {
+		if (bt.cvga !is null) {
 			// TODO: Disabled for now
 			cva = null;//buildArrayFromChunk(this);
 			if (cva !is null)
-				vt.cvga.add(cva, xPos, zPos);
+				bt.cvga.add(cva, xPos, zPos);
 		}
 	}
 
@@ -248,15 +248,15 @@ public:
 		if (gfx) {
 
 			if (cvrm) {
-				vt.cvgrm.remove(cvrm);
+				bt.cvgrm.remove(cvrm);
 				cvrm = null;
 			}
 			if (cvcm !is null) {
-				vt.cvgcm.remove(cvcm);
+				bt.cvgcm.remove(cvcm);
 				cvcm = null;
 			}
 			if (cva !is null) {
-				vt.cvga.remove(cva);
+				bt.cvga.remove(cva);
 				cva = null;
 			}
 			gfx = false;
@@ -277,9 +277,9 @@ public:
 			return 0;
 
 		if (x < 0 || z < 0)
-			return vt.get(xPos, zPos, x, y, z);
+			return bt.get(xPos, zPos, x, y, z);
 		else if (x >= width || z >= depth)
-			return vt.get(xPos, zPos, x, y, z);
+			return bt.get(xPos, zPos, x, y, z);
 		else
 			return getUnsafe(x, y, z);
 	}
@@ -292,9 +292,9 @@ public:
 	final ubyte* getPointerY(int x, int z)
 	{
 		if (x < 0 || z < 0)
-			return vt.getPointerY(xPos, zPos, x, z);
+			return bt.getPointerY(xPos, zPos, x, z);
 		else if (x >= width || z >= depth)
-			return vt.getPointerY(xPos, zPos, x, z);
+			return bt.getPointerY(xPos, zPos, x, z);
 		else
 			return getUnsafePointerY(x, z);
 	}
@@ -321,9 +321,9 @@ public:
 	final ubyte* getDataPointerY(int x, int z)
 	{
 		if (x < 0 || z < 0)
-			return vt.getDataPointerY(xPos, zPos, x, z);
+			return bt.getDataPointerY(xPos, zPos, x, z);
 		else if (x >= width || z >= depth)
-			return vt.getDataPointerY(xPos, zPos, x, z);
+			return bt.getDataPointerY(xPos, zPos, x, z);
 		else
 			return getDataUnsafePointerY(x, z);
 	}

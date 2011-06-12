@@ -10,7 +10,7 @@ import charge.platform.homefolder;
 import minecraft.importer;
 import minecraft.terrain.chunk;
 import minecraft.terrain.data;
-import minecraft.terrain.vol;
+import minecraft.terrain.beta;
 import minecraft.actors.helper;
 
 class World : public GameWorld
@@ -20,7 +20,7 @@ public:
 
 	RenderManager rm; /** Shared with other worlds */
 	ResourceStore rs; /** Shared with other worlds */
-	VolTerrain vt;
+	BetaTerrain bt;
 	Point3d spawn;
 
 private:
@@ -35,9 +35,9 @@ public:
 		this.spawn = info ? info.spawn : Point3d(0, 64, 0);
 		this.dir = info ? info.dir : null;
 
-		vt = new VolTerrain(this, dir, rm.tex);
-		vt.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
-		vt.setBuildType(rm.bt);
+		bt = new BetaTerrain(this, dir, rm.tex);
+		bt.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
+		bt.setBuildType(rm.bt);
 
 		// Find the actuall spawn height
 		auto x = cast(int)spawn.x;
@@ -46,10 +46,10 @@ public:
 		auto xPos = x < 0 ? (x - 15) / 16 : x / 16;
 		auto zPos = z < 0 ? (z - 15) / 16 : z / 16;
 
-		vt.setCenter(xPos, zPos);
-		vt.loadChunk(xPos, zPos);
+		bt.setCenter(xPos, zPos);
+		bt.loadChunk(xPos, zPos);
 
-		auto p = vt.getPointerY(x, z);
+		auto p = bt.getPointerY(x, z);
 		for (int i = y; i < 128; i++) {
 			if (tile[p[i]].filled)
 				continue;
@@ -63,13 +63,13 @@ public:
 
 	~this()
 	{
-		//delete vt;
+		delete bt;
 	}
 
 	void switchRenderer()
 	{
 		rm.switchRenderer();
-		vt.setBuildType(rm.bt);
+		bt.setBuildType(rm.bt);
 	}
 
 protected:
@@ -102,8 +102,8 @@ public:
 	MinecraftDeferredRenderer mdr; // Special deferred renderer
 	MinecraftForwardRenderer mfr; // Special forward renderer
 	GfxRenderer rs[5]; // Null terminated list of renderer
-	VolTerrain.BuildTypes rsbt[5]; // A list of build types for the renderers
-	VolTerrain.BuildTypes bt; // Current build type
+	BetaTerrain.BuildTypes rsbt[5]; // A list of build types for the renderers
+	BetaTerrain.BuildTypes bt; // Current build type
 	int num_renderers;
 	int current_renderer;
 
@@ -195,19 +195,19 @@ protected:
 	{
 		GfxRenderer.init();
 		ifc = new GfxFixedRenderer();
-		rsbt[num_renderers] = VolTerrain.BuildTypes.RigidMesh;
+		rsbt[num_renderers] = BetaTerrain.BuildTypes.RigidMesh;
 		rs[num_renderers++] = ifc;
 
 		if (canDoForward) {
 			ifr = new GfxForwardRenderer();
-			rsbt[num_renderers] = VolTerrain.BuildTypes.RigidMesh;
+			rsbt[num_renderers] = BetaTerrain.BuildTypes.RigidMesh;
 			rs[num_renderers++] = ifr;
 		}
 
 		if (canDoForward) {
 			try {
 				mfr = new MinecraftForwardRenderer(tex, ta);
-				rsbt[num_renderers] = VolTerrain.BuildTypes.CompactMesh;
+				rsbt[num_renderers] = BetaTerrain.BuildTypes.CompactMesh;
 				rs[num_renderers++] = mfr;
 			} catch (Exception e) {
 				l.warn("No fancy renderer \"%s\"", e);
@@ -219,7 +219,7 @@ protected:
 				MinecraftDeferredRenderer.init();
 
 				mdr = new MinecraftDeferredRenderer(ta);
-				rsbt[num_renderers] = VolTerrain.BuildTypes.CompactMesh;
+				rsbt[num_renderers] = BetaTerrain.BuildTypes.CompactMesh;
 				rs[num_renderers++] = mdr;
 			} catch (Exception e) {
 				l.warn("No fancy renderer \"%s\"", e);
