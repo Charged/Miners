@@ -9,7 +9,6 @@ import minecraft.gfx.imports;
 /**
  * ChunkVBO which is just the inbuilt RigidMeshVBO.
  */
-
 class ChunkVBORigidMesh : public charge.gfx.vbo.RigidMeshVBO
 {
 public:
@@ -66,36 +65,11 @@ protected:
 
 }
 
-/**
- * A super compact VBO that packs all the data into 4 bytes.
- */
-class ChunkVBOArray : public GfxVBO
-{
-protected:
-
-public:
-	static ChunkVBOArray opCall(int[] array, int x, int z)
-	{
-		return new ChunkVBOArray(charge.sys.resource.Pool(), array, x, z);
-	}
-
-protected:
-	this(charge.sys.resource.Pool p, int[] array, int x, int z)
-	{
-		auto str = std.string.format("mc/vbo/chunk.%s.%s.compact", x, z);
-		super(p, str, true, array.ptr,
-		      array.length * int.sizeof,
-		      cast(uint)array.length,// / 2,
-		      null, 0, 0);
-	}
-
-}
-
 
 /**
  * Base class for all Chunk VBO Groups, handles general managment.
  */
-class ChunkVBOGroup : public GfxActor, public GfxRenderable
+abstract class ChunkVBOGroup : public GfxActor, public GfxRenderable
 {
 public:
 	mixin SysLogging;
@@ -177,13 +151,8 @@ public:
 		result_num = i;
 		rq.push(0.0, this);
 	}
-
-	abstract void drawFixed();
-
-	abstract void drawAttrib(GfxShader s);
-
-	abstract void drawShader(GfxShader shader);
 }
+
 
 /**
  * Chunk group for RigidMesh VBO's.
@@ -215,13 +184,8 @@ public:
 
 		glPopMatrix();
 	}
-
-	void drawShader(GfxShader shader)
-	{
-
-	}
-
 }
+
 
 /**
  * Chunk group for CompactMesh VBO's.
@@ -272,58 +236,4 @@ public:
 
 		glPopMatrix();
 	}
-
-	void drawShader(GfxShader shader)
-	{
-
-	}
-
-}
-
-/**
- * Chunk group for the super compact array VBO's.
- */
-class ChunkVBOGroupArray : public ChunkVBOGroup
-{
-public:
-	this(GfxWorld w)
-	{
-		super(w);
-	}
-
-	void drawFixed()
-	{
-
-	}
-
-	void drawAttrib(GfxShader s)
-	{
-
-	}
-
-	void drawShader(GfxShader shader)
-	{
-		gluPushAndTransform(pos, rot);
-
-		glEnableVertexAttribArray(0); // data
-
-		for (int i; i < result_num; i++) {
-			auto vbo = resultVBO[i];
-			float offset[2];
-			offset[0] = cast(float)resultAABB[i].min.x;
-			offset[1] = cast(float)resultAABB[i].min.z;
-
-			shader.float2("offset", offset);
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo.vboVerts);
-			glVertexAttribPointer(0, 2, GL_SHORT, false, int.sizeof, null);  // data
-			glDrawArrays(GL_QUADS, 0, vbo.numVerts);
-		}
-
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
-		glDisableVertexAttribArray(0); // data
-
-		glPopMatrix();
-	}
-
 }

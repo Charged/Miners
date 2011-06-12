@@ -159,7 +159,6 @@ private:
 	mixin SysLogging;
 	static bool initialized;
 	static GfxShader material_shader;
-	static GfxShader material_shader_array;
 
 	GfxTextureArray ta;
 
@@ -212,16 +211,6 @@ public:
 		if (!check())
 			return false;
 
-		material_shader_array  = GfxShaderMaker(Helper.materialVertArrayIndexed,
-							Helper.materialFragDeferred,
-							["vs_data"],
-							["diffuseTex"]);
-
-		glUseProgram(material_shader_array.id);
-		material_shader_array.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
-		material_shader_array.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
-		glUseProgram(0);
-
 		material_shader = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
 						 Helper.materialFragDeferred,
 						 ["vs_position", "vs_uv", "vs_data"],
@@ -238,17 +227,6 @@ public:
 	}
 
 protected:
-	void drawGroup(ChunkVBOGroupArray cvga, GfxSimpleMaterial m)
-	{
-		glUseProgram(material_shader_array.id);
-
-		glDisable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, ta.id);
-		cvga.drawShader(material_shader_array);
-
-		glUseProgram(0);
-	}
-
 	void drawGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m)
 	{
 		glUseProgram(material_shader.id);
@@ -284,12 +262,6 @@ protected:
 				continue;
 			}
 
-			auto cvga = cast(ChunkVBOGroupArray)r;
-			if (cvga !is null) {
-				drawGroup(cvga, m);
-				continue;
-			}
-
 			drawToShadow(r, m);
 		}
 	}
@@ -311,12 +283,6 @@ protected:
 			auto cvgmc = cast(ChunkVBOGroupCompactMesh)r;
 			if (cvgmc !is null) {
 				drawGroup(cvgmc, m);
-				continue;
-			}
-
-			auto cvg = cast(ChunkVBOGroupArray)r;
-			if (cvg !is null) {
-				drawGroup(cvg, m);
 				continue;
 			}
 
@@ -515,50 +481,4 @@ void main()
 	gl_Position = gl_ModelViewProjectionMatrix * vs_position;
 }
 ";
-
-	const char[] materialVertArrayIndexed = "
-#extension GL_EXT_gpu_shader4 : require
-
-uniform vec4 normals[10];
-uniform vec4 uv_mixs[10];
-
-uniform vec2 offset;
-
-varying float light;
-varying vec3 normal;
-varying vec3 uvi;
-
-attribute vec4 vs_data;
-
-void main()
-{
-	ivec2 bits = ivec2(vs_data.xy);
-	ivec3 posInt;
-	int lightInt;
-	vec4 pos;
-	float texture;
-
-	posInt.x = (bits.x & 0x1f);
-	int normalIndex = (bits.x >> 5) & 0x07;
-	texture = float((bits.x >> 8) & 0xff);
-	lightInt = (bits.y >> 12 & 0x0f);
-	posInt.y = ((bits.y >> 5) & 0x7f);
-	posInt.z = (bits.y & 0x1f);
-	pos.xyz = vec3(posInt);
-
-	vec4 mixs = uv_mixs[normalIndex];
-
-	uvi.x = dot(pos.xz, mixs.xy);
-	uvi.y = dot(pos.zy, mixs.zw);
-	uvi.z = texture;
-
-	pos.xyz += vec3(offset.x, -64, offset.y);
-	pos.w = 1.0;
-
-	light = 1.0 - float(lightInt) * 0.3;
-	normal = gl_NormalMatrix * normals[normalIndex].xyz;
-	gl_Position = gl_ModelViewProjectionMatrix * pos;
-}
-";
-
 }

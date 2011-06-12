@@ -23,7 +23,6 @@ public:
 	enum BuildTypes {
 		RigidMesh,
 		CompactMesh,
-		Array,
 	}
 
 	GfxTexture tex;
@@ -38,7 +37,6 @@ public:
 	int rxOff;
 	int rzOff;
 	Region[depth][width] region;
-	ChunkVBOGroupArray cvga;
 	ChunkVBOGroupRigidMesh cvgrm;
 	ChunkVBOGroupCompactMesh cvgcm;
 	BuildTypes currentBuildType;
@@ -61,7 +59,7 @@ public:
 		setCenter(0, 0);
 
 		// Make the code not early out.
-		currentBuildType = BuildTypes.Array;
+		currentBuildType = BuildTypes.CompactMesh;
 
 		// Setup the groups
 		setBuildType(BuildTypes.RigidMesh);
@@ -71,7 +69,6 @@ public:
 		foreach(row; region)
 			foreach(r; row)
 				delete r;
-		delete cvga;
 		delete cvgrm;
 		delete cvgcm;
 	}
@@ -125,10 +122,8 @@ public:
 			delete cvgrm;
 		if (cvgcm !is null)
 			delete cvgcm;
-		if (cvga !is null)
-			delete cvga;
 
-		cvgrm = null; cvgcm = null; cvga = null;
+		cvgrm = null; cvgcm = null;
 
 		switch(type) {
 		case BuildTypes.RigidMesh:
@@ -138,10 +133,6 @@ public:
 			break;
 		case BuildTypes.CompactMesh:
 			cvgcm = new ChunkVBOGroupCompactMesh(w.gfx);
-			// No need to setup material handled by the renderer
-			break;
-		case BuildTypes.Array:
-			cvga = new ChunkVBOGroupArray(w.gfx);
 			// No need to setup material handled by the renderer
 			break;
 		default:

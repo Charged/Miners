@@ -44,7 +44,6 @@ protected:
 	BetaTerrain bt;
 
 	// VBO's.
-	ChunkVBOArray cva;
 	ChunkVBORigidMesh cvrm;
 	ChunkVBOCompactMesh cvcm;
 
@@ -229,13 +228,6 @@ public:
 			if (cvcm !is null)
 				bt.cvgcm.add(cvcm, xPos, zPos);
 		}
-
-		if (bt.cvga !is null) {
-			// TODO: Disabled for now
-			cva = null;//buildArrayFromChunk(this);
-			if (cva !is null)
-				bt.cvga.add(cva, xPos, zPos);
-		}
 	}
 
 	void unbuild()
@@ -254,10 +246,6 @@ public:
 			if (cvcm !is null) {
 				bt.cvgcm.remove(cvcm);
 				cvcm = null;
-			}
-			if (cva !is null) {
-				bt.cvga.remove(cva);
-				cva = null;
 			}
 			gfx = false;
 		}
