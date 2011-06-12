@@ -34,6 +34,18 @@ Better server infrastructure
 Minecraft
 =========
 
+Mobs GFX
+--------
+ * Import mob textures from minecraft {easy}
+ * PlayerSkeleton UV coords {easy}
+ * PlayerSkeleton animation {medium/HARD}
+ * Pig Model {easy}
+ * Cow Model {medium}
+ * Sheep Model {medium}
+ * Creeper Model {SCARY}
+ * Ghast Model {medium}
+ * You get the point {medium}
+
 Add missing blocks
 ------------------
  * Portal {easy}
