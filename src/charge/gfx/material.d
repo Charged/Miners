@@ -32,6 +32,31 @@ struct MaterialProperty
 class Material
 {
 public:
+	final bool opIndexAssign(char[] tex, char[] name)
+	{
+		return setTexture(name, tex);
+	}
+
+	final bool opIndexAssign(Texture tex, char[] name)
+	{
+		return setTexture(name, tex);
+	}
+
+	final bool opIndexAssign(Color3f color, char[] name)
+	{
+		return setColor3f(name, color);
+	}
+
+	final bool opIndexAssign(Color4f color, char[] name)
+	{
+		return setColor4f(name, color);
+	}
+
+	final bool opIndexAssign(bool option, char[] name)
+	{
+		return setOption(name, option);
+	}
+
 	final bool setTexture(char[] name, char[] filename)
 	{
 		if (name is null)
@@ -294,25 +319,25 @@ public:
 			switch(prop.type) {
 				case MaterialProperty.TEXTURE:
 					char[] t = e.value;
-					m.setTexture(prop.name, t);
+					m[prop.name] = t;
 					break;
 				case MaterialProperty.COLOR3:
 					Color3f c;
 					char[] t = e.value;
 					if (exColor3f(t, c))
-						m.setColor3f(prop.name, c);
+						m[prop.name] = c;
 					break;
 				case MaterialProperty.COLOR4:
 					Color4f c;
 					char[] t = e.value;
 					if (exColor4f(t, c))
-						m.setColor4f(prop.name, c);
+						m[prop.name] = c;
 					break;
 				case MaterialProperty.OPTION:
 					bool b;
 					char[] t = e.value;
 					if (exBool(t, b))
-						m.setOption(prop.name, b);
+						m[prop.name] = b;
 					break;
 				default:
 					break;

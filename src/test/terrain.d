@@ -84,7 +84,7 @@ public:
 		gfx.position = Point3d(16 * -64, 0.1, 16 * -64);
 
 		gfx.setMaterial(new GfxSimpleMaterial());
-		gfx.getMaterial().setTexture("tex", "res/water_tile.png");
+		gfx.getMaterial()["tex"] = "res/water_tile.png";
 		rm.dereference();
 	}
 

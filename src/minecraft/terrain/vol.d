@@ -133,8 +133,8 @@ public:
 		switch(type) {
 		case BuildTypes.RigidMesh:
 			cvgrm = new ChunkVBOGroupRigidMesh(w.gfx);
-			cvgrm.getMaterial().setTexture("tex", tex);
-			cvgrm.getMaterial().setOption("fake", true);
+			cvgrm.getMaterial()["tex"] = tex;
+			cvgrm.getMaterial()["fake"] = true;
 			break;
 		case BuildTypes.CompactMesh:
 			cvgcm = new ChunkVBOGroupCompactMesh(w.gfx);
