@@ -17,7 +17,6 @@ import charge.platform.homefolder;
 import lib.loader;
 import lib.gl.gl;
 import lib.sdl.sdl;
-import lib.sdl.image;
 
 extern(C) Core chargeCore()
 {
@@ -40,26 +39,22 @@ private:
 	/* run time libraries */
 	Library glu;
 	Library sdl;
-	Library image;
 
 
 	/* name of libraries to load */
 	version(Windows)
 	{
 		const char[][] libSDLname = ["SDL.dll"];
-		const char[][] libSDLImage = ["SDL_image.dll"];
 		const char[][] libGLUname = ["glu32.dll"];
 	}
 	else version(linux)
 	{
 		const char[][] libSDLname = ["libSDL.so", "libSDL-1.2.so.0"];
-		const char[][] libSDLImage = ["libSDL_image.so", "libSDL_image-1.2.so.0"];
 		const char[][] libGLUname = ["libGLU.so", "libGLU.so.1"];
 	}
 	else version(darwin)
 	{
 		const char[][] libSDLname = ["SDL.framework/SDL"];
-		const char[][] libSDLImage = ["SDL_image.framework/SDL_image"];
 		const char[][] libGLUname = ["OpenGL.framework/OpenGL"];
 	}
 
@@ -196,20 +191,13 @@ private:
 
 		version (darwin) {
 			auto libSDLnames = [privateFrameworksPath ~ "/" ~ libSDLname[0]] ~ libSDLname;
-			auto libSDLImages = [privateFrameworksPath ~ "/" ~ libSDLImage[0]] ~ libSDLImage;
 		} else {
 			alias libSDLname libSDLnames;
-			alias libSDLImage libSDLImages;
 		}
 
 		sdl = Library.loads(libSDLnames);
-		image = Library.loads(libSDLImages);
-
 		if (!sdl)
 			l.fatal("Could not load SDL, crashing bye bye!");
-
-		if (!image)
-			l.fatal("Could not load SDL-image, crashing bye bye!");
 	}
 
 
@@ -223,7 +211,6 @@ private:
 	void initGfx(Properties p)
 	{
 		loadSDL(&sdl.symbol);
-		loadSDLImage(&image.symbol);
 
 		SDL_Init(SDL_INIT_VIDEO);
 
