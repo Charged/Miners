@@ -30,6 +30,18 @@ struct cMemoryArray(T)
 		mem[0 .. array.length] = array[0 .. $];
 	}
 
+	/**
+	 * Make the given array the array that this tracks.
+	 *
+	 * Warning! The array must be C allocated.
+	 */
+	void steal(T[] array)
+	{
+		free();
+		mem = array.ptr;
+		len = array.length;
+	}
+
 	T* realloc(size_t newLen)
 	{
 		auto ret = std.c.stdlib.realloc(mem, newLen * T.sizeof);
@@ -78,5 +90,34 @@ struct cMemoryArray(T)
 	T* ptr()
 	{
 		return mem;
+	}
+
+	T[] steal()
+	{
+		auto ret = mem[0 .. len];
+		mem = null;
+		len = 0;
+		return ret;
+	}
+
+	T opIndex(size_t index)
+	{
+		return mem[index];
+	}
+
+	T opIndexAssign(T t, size_t index)
+	{
+		mem[index] = t;
+		return t;
+	}
+
+	T[] opSlice()
+	{
+		return mem[0 .. len];
+	}
+
+	T[] opSlice(ulong i1, ulong i2)
+	{
+		return mem[i1 .. i2];
 	}
 }
