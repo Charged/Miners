@@ -2,7 +2,20 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.core;
 
-extern(C) Core chargeCore();
+enum coreFlag
+{
+	CTL  = (1 << 0),
+	GFX  = (1 << 1),
+	SFX  = (1 << 2),
+	NET  = (1 << 3),
+	PHY  = (1 << 4),
+	AUTO = (1 << 5),
+}
+
+/**
+ * Get a new core created with the given flags.
+ */
+extern(C) Core chargeCore(coreFlag flags);
 
 abstract class Core
 {
@@ -12,16 +25,25 @@ public:
 	const bool defaultFullscreen = false;
 	const char[] defaultTitle = "Charged Miners";
 
+	coreFlag flags;
 	bool resizeSupported;
 
 public:
 	static Core opCall()
 	{
-		return chargeCore();
+		assert(instance !is null);
+		return instance;
 	}
 
-	abstract bool init();
-	abstract bool close();
+	static Core opCall(coreFlag flags)
+	{
+		assert(flags != 0);
+
+		instance = chargeCore(flags);
+		return instance;
+	}
+
+	abstract void close();
 
 
 	/*
@@ -35,4 +57,13 @@ public:
 	abstract void resize(uint w, uint h, bool fullscreen);
 
 	abstract void screenShot();
+
+protected:
+	this(coreFlag flags)
+	{
+		this.flags = flags;
+	}
+
+private:
+	static Core instance;
 }

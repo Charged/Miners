@@ -23,7 +23,6 @@ protected:
 	char[] settingsFile;
 	Properties p;
 
-
 	/* run time libraries */
 	Library ode;
 	Library openal;
@@ -63,6 +62,31 @@ protected:
 		l = Logger(Core.classinfo);
 	}
 
+	this(coreFlag flags)
+	{
+		super(flags);
+
+		const phyFlags = coreFlag.PHY | coreFlag.AUTO;
+		const sfxFlags = coreFlag.SFX | coreFlag.AUTO;
+
+		initBuiltins();
+		initSettings();
+
+		// Load libraries
+		if (flags & phyFlags)
+			loadPhy();
+
+		if (flags & sfxFlags)
+			loadSfx();
+
+		// Init sub system
+		if (flags & phyFlags)
+			initPhy(p);
+
+		if (flags & sfxFlags)
+			initSfx(p);
+	}
+
 
 	/*
 	 *
@@ -71,17 +95,8 @@ protected:
 	 */
 
 
-	void loadLibraries()
+	void loadPhy()
 	{
-		openal = Library.loads(libOpenALname);
-		alut = Library.loads(libALUTname);
-
-		if (!openal)
-			l.fatal("Could not load OpenAL, crashing bye bye!");
-
-		if (!alut)
-			l.info("ALUT not found, this is not an error.");
-
 		version(DynamicODE) {
 			ode = Library.loads(libODEname);
 			if (ode is null) {
@@ -93,6 +108,18 @@ protected:
 		} else {
 			odeLoaded = true;
 		}
+	}
+
+	void loadSfx()
+	{
+		openal = Library.loads(libOpenALname);
+		alut = Library.loads(libALUTname);
+
+		if (!openal)
+			l.fatal("Could not load OpenAL, crashing bye bye!");
+
+		if (!alut)
+			l.info("ALUT not found, this is not an error.");
 	}
 
 	void initBuiltins()

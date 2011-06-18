@@ -49,8 +49,7 @@ int chargeMain(char[][] args)
 	if (!filterArgs(args))
 		return 0;
 
-	auto c = Core();
-	c.init();
+	auto c = Core(coreFlag.AUTO);
 
 //	auto g = new test.lua.Game(args);
 //	auto g = new test.bill.Game(args);
@@ -63,7 +62,10 @@ int chargeMain(char[][] args)
 
 	delete g;
 
+	// XXX: this should be just delete
 	c.close();
+	//delete c;
+
 	return 0;
 }
 

@@ -18,20 +18,21 @@ import lib.loader;
 import lib.gl.gl;
 import lib.sdl.sdl;
 
-extern(C) Core chargeCore()
+extern(C) Core chargeCore(coreFlag flags)
 {
-	return CoreSDL();
+	return new CoreSDL(flags);
 }
 
 class CoreSDL : public CommonCore
 {
 private:
 	mixin Logging;
-	static CoreSDL instance;
 
 	int screenshotNum;
 	uint width, height;
 	bool fullscreen;
+
+	coreFlag flags;
 
 	/* surface for window */
 	SDL_Surface *s;
@@ -58,18 +59,27 @@ private:
 		const char[][] libGLUname = ["OpenGL.framework/OpenGL"];
 	}
 
-
-	static this()
-	{
-		instance = new CoreSDL();
-	}
-
-	this()
-	{
-
-	}
-
 public:
+	this(coreFlag flags)
+	{
+		super(flags);
+
+		loadLibraries();
+
+		initGfx(p);
+	}
+
+	void close()
+	{
+		saveSettings();
+
+		Pool().clean();
+
+		closeSfx();
+		closePhy();
+		closeGfx();
+	}
+
 	void screenShot()
 	{
 		char[] filename;
@@ -112,26 +122,6 @@ public:
 		SDL_SaveBMP(temp, toStringz(filename));
 	}
 
-	static Core opCall()
-	{
-		return instance;
-	}
-
-	bool init()
-	{
-		initBuiltins();
-		initSettings();
-
-		loadLibraries();
-
-		initSfx(p);
-		initGfx(p);
-		initPhy(p);
-
-//		SDL_WM_IconifyWindow();
-		return true;
-	}
-
 	void resize(uint w, uint h)
 	{
 		resize(w, h, fullscreen);
@@ -165,19 +155,6 @@ public:
 		DefaultTarget.initDefaultTarget(w, h);
 	}
 
-	bool close()
-	{
-		saveSettings();
-
-		Pool().clean();
-
-		closeSfx();
-		closePhy();
-		closeGfx();
-
-		return true;
-	}
-
 private:
 	/*
 	 *
@@ -187,8 +164,6 @@ private:
 
 	void loadLibraries()
 	{
-		super.loadLibraries();
-
 		version (darwin) {
 			auto libSDLnames = [privateFrameworksPath ~ "/" ~ libSDLname[0]] ~ libSDLname;
 		} else {
