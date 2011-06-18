@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module charge.platform.sdl;
+module charge.platform.core.sdl;
 
 import std.file;
 import std.string;
@@ -11,8 +11,8 @@ import charge.gfx.target;
 import charge.sys.logger;
 import charge.sys.resource;
 import charge.sys.properties;
-import charge.platform.common;
 import charge.platform.homefolder;
+import charge.platform.core.common;
 
 import lib.loader;
 import lib.gl.gl;
