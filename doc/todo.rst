@@ -8,7 +8,7 @@ Charge
 Code standard
 -------------
  * More comments
- * Prefix all member fields with m_*
+ * Prefix all member fields with m_* or m*
  * Unifiy location of fields (to begining of class).
 
 Improve time tracker
@@ -28,7 +28,6 @@ Better server infrastructure
 ::
 
  (SDL) Sound file loader
- (SDL-Image) PNG extractor/compactor.
 
 
 Minecraft
