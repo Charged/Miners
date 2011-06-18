@@ -14,27 +14,27 @@ Dependencies
 ------------
 
 In order to run Charge you need to install the following libraries: SDL,
-SDL-Image, SDL-ttf, OpenAL and OpenGL. A D compiler is needed to build Charge
-but should you have have downloaded prebuilt binaries this is not needed (see
-below on which). It is not needed to install the development version of the
-libraries (other then libphobos if you are building Charge of course, but this
-should come with the D compiler).
+OpenAL and OpenGL. A D compiler is needed to build Charge but should you have
+have downloaded prebuilt binaries this is not needed (see below on which). It
+is not needed to install the development version of the libraries (other then
+libphobos if you are building Charge of course, but this should come with the
+D compiler).
 
 For Ubuntu you can use this command:
 
 ::
 
- $ sudo apt-get install libsdl-image1.2 libsdl-ttf2.0-0 libsdl1.2debian libopenal1
+ $ sudo apt-get install libsdl1.2debian libopenal1
 
 For Fedora you can do this with:
 
 ::
 
- $ sudo yum install SDL SDL_image SDL_ttf openal-soft
+ $ sudo yum install SDL openal-soft
 
-On Mac you will need to download and install the SDL, SDL-image & SDL-ttf
-frameworks into /Library/Frameworks, both for compiling and running.
-Hopefully in the future this will not be needed for running.
+On Mac you will need to download and install the SDL framework into
+/Library/Frameworks, both for compiling and running. Hopefully in the future
+this will not be needed for running.
 
 
 D Compiler
