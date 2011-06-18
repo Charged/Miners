@@ -118,6 +118,6 @@ struct cMemoryArray(T)
 
 	T[] opSlice(ulong i1, ulong i2)
 	{
-		return mem[i1 .. i2];
+		return mem[cast(size_t)i1 .. cast(size_t)i2];
 	}
 }
