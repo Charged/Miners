@@ -139,24 +139,31 @@ protected:
 	 */
 	void doInit()
 	{
+		GfxTexture t;
+		GfxTextureArray ta;
+
 		// Borrow terrain.png from minecraft.jar if it can be found.
 		setupMinecraftTexture();
 
 		// Most common problem people have is missing terrain.png
 		Picture pic = getMinecraftTexture();
 		if (pic is null) {
-			auto t = format(terrainNotFoundText, chargeConfigFolder);
-			throw new GameException(t, null);
+			auto text = format(terrainNotFoundText, chargeConfigFolder);
+			throw new GameException(text, null);
 		}
+
+		// Do the manipulation of the texture to fit us
+		manipulateTexture(pic);
 
 		// Another comment that I made after the one below.
 		rs = new ResourceStore();
 
 		// I just wanted a comment here to make the code look prettier.
-		rm = new RenderManager(pic);
+		rm = new RenderManager();
 
-		// Need to manipulate the texture a bit
-		rs.setTextures(rm.tex, rm.ta);
+		// Create and set the textures
+		createTextures(pic, rm.textureArray, t, ta);
+		rs.setTextures(t, ta);
 
 		// Not needed anymore.
 		pic.dereference();
@@ -243,6 +250,17 @@ protected:
 		}
 
 		return null;
+	}
+
+	void createTextures(Picture pic, bool array, out GfxTexture t, out GfxTextureArray ta)
+	{
+		t = GfxTexture("mc/terrain", pic);
+		t.filter = GfxTexture.Filter.Nearest; // Or we get errors near the block edges
+
+		if (array) {
+			ta = ta.fromTileMap("mc/terrain", pic, 16, 16);
+			ta.filter = GfxTexture.Filter.NearestLinear;
+		}
 	}
 
 	bool checkLevel(char[] level)
