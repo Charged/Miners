@@ -19,11 +19,8 @@ class Chunk
 {
 public:
 	int xPos;
+	int yPos;
 	int zPos;
-
-	int xOff;
-	int yOff;
-	int zOff;
 
 	// Tracking block and gfx status
 	bool empty; /**< The chunk is full of air and the memory is shared */
@@ -63,10 +60,6 @@ public:
 		this.bt = bt;
 		this.xPos = xPos;
 		this.zPos = zPos;
-		this.xOff = xPos * 16;
-		this.yOff = 0;
-		this.zOff = zPos * 16;
-
 		this.dirty = true;
 
 		// Setup pointers
