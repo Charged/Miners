@@ -8,36 +8,63 @@ import charge.charge;
 import charge.platform.homefolder;
 
 import minecraft.importer;
-import minecraft.terrain.chunk;
 import minecraft.terrain.data;
 import minecraft.terrain.beta;
+import minecraft.terrain.chunk;
+import minecraft.terrain.common;
 import minecraft.actors.helper;
 
-class World : public GameWorld
+abstract class World : public GameWorld
 {
 public:
-	char[] dir;
-
 	RenderManager rm; /** Shared with other worlds */
 	ResourceStore rs; /** Shared with other worlds */
-	BetaTerrain bt;
+	Terrain t;
 	Point3d spawn;
 
 private:
 	mixin SysLogging;
 
 public:
-	this(MinecraftLevelInfo *info, RenderManager rm, ResourceStore rs)
+	this(RenderManager rm, ResourceStore rs)
 	{
 		super();
 		this.rm = rm;
 		this.rs = rs;
+	}
+
+	~this()
+	{
+		delete t;
+	}
+
+	void switchRenderer()
+	{
+		rm.switchRenderer();
+		t.setBuildType(rm.bt);
+	}
+
+protected:
+
+}
+
+class BetaWorld : public World
+{
+public:
+	BetaTerrain bt;
+	char[] dir;
+
+public:
+	this(MinecraftLevelInfo *info, RenderManager rm, ResourceStore rs)
+	{
 		this.spawn = info ? info.spawn : Point3d(0, 64, 0);
 		this.dir = info ? info.dir : null;
+		super(rm, rs);
 
 		bt = new BetaTerrain(this, dir, rm.tex);
-		bt.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
-		bt.setBuildType(rm.bt);
+		t = bt;
+		t.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
+		t.setBuildType(rm.bt);
 
 		// Find the actuall spawn height
 		auto x = cast(int)spawn.x;
@@ -60,20 +87,6 @@ public:
 			break;
 		}
 	}
-
-	~this()
-	{
-		delete bt;
-	}
-
-	void switchRenderer()
-	{
-		rm.switchRenderer();
-		bt.setBuildType(rm.bt);
-	}
-
-protected:
-
 }
 
 

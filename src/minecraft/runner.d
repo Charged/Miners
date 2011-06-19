@@ -7,7 +7,6 @@ import std.math;
 import charge.charge;
 
 import minecraft.world;
-import minecraft.terrain.chunk;
 
 
 /**
@@ -108,8 +107,8 @@ public:
 
 	bool build()
 	{
-		if (w !is null && w.bt !is null)
-			return w.bt.buildOne();
+		if (w !is null && w.t !is null)
+			return w.t.buildOne();
 		else
 			return false;
 	}
@@ -160,7 +159,7 @@ protected:
 		z = p.z < 0 ? (z - 16) / 16 : z / 16;
 
 		if (this.x != x || this.z != z)
-			w.bt.setCenter(x, z);
+			w.t.setCenter(x, z);
 		this.x = x;
 		this.z = z;
 	}

@@ -436,12 +436,12 @@ protected:
 	Runner loadLevel(char[] dir)
 	{
 		Runner r;
-		World w;
+		BetaWorld w;
 		auto info = checkMinecraftLevel(dir);
 		if (info is null)
 			return null;
 
-		w = new World(info, rm, rs);
+		w = new BetaWorld(info, rm, rs);
 
 		auto scriptName = "res/script.lua";
 		try {

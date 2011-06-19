@@ -42,7 +42,7 @@ public:
 	{
 		super(r, w, rm);
 
-		w.bt.setViewRadii(250/16 + 1);
+		w.t.setViewRadii(250/16 + 1);
 
 		// Put a player model at spawn
 		new OtherPlayer(w, 0, w.spawn + Vector3d(.5, 0, .5), 0, 0);
