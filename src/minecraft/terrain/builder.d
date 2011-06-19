@@ -7,7 +7,6 @@ import charge.charge;
 import minecraft.gfx.vbo;
 
 import minecraft.terrain.data;
-import minecraft.terrain.chunk;
 import minecraft.terrain.workspace;
 
 /*
@@ -2614,20 +2613,20 @@ template BlockDispatcher(alias T)
 	}
 }
 
-ChunkVBORigidMesh buildRigidMeshFromChunk(Chunk chunk)
+ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
+					  int xPos, int yPos, int zPos,
+					  int xOffArg, int yOffArg, int zOffArg)
 {
-	auto data = WorkspaceData.malloc();
 	auto mb = new RigidMeshBuilder(128*1024, 0, RigidMesh.Types.QUADS);
-	scope(exit) { data.free(); delete mb; }
+	scope(exit)
+		delete mb;
 
 	mixin BlockDispatcher!(MeshPacker) dispatch;
 
-	data.copyFromChunk(chunk);
-
 	dispatch.mb = mb;
-	xOff = chunk.xOff << VERTEX_SIZE_BIT_SHIFT;
-	yOff = chunk.yOff << VERTEX_SIZE_BIT_SHIFT;
-	zOff = chunk.zOff << VERTEX_SIZE_BIT_SHIFT;
+	xOff = xOffArg << VERTEX_SIZE_BIT_SHIFT;
+	yOff = yOffArg << VERTEX_SIZE_BIT_SHIFT;
+	zOff = zOffArg << VERTEX_SIZE_BIT_SHIFT;
 
 	for (int x; x < 16; x++) {
 		for (int y; y < 128; y++) {
@@ -2638,23 +2637,23 @@ ChunkVBORigidMesh buildRigidMeshFromChunk(Chunk chunk)
 	}
 
 	// C memory freed above with scope(exit)
-	return ChunkVBORigidMesh(mb, chunk.xPos, chunk.zPos);
+	return ChunkVBORigidMesh(mb, xPos, zPos);
 }
 
-ChunkVBOCompactMesh buildCompactMeshFromChunk(Chunk chunk)
+ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
+					      int xPos, int yPos, int zPos,
+					      int xOffArg, int yOffArg, int zOffArg)
 {
-	auto data = WorkspaceData.malloc();
 	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
-	scope(exit) { data.free(); vertices.free(); }
+	scope(exit)
+		vertices.free();
 
 	mixin BlockDispatcher!(CompactMeshPacker);
 
-	data.copyFromChunk(chunk);
-
 	verts = vertices.realloc(128 * 1024);
-	xOff = chunk.xOff << VERTEX_SIZE_BIT_SHIFT;
-	yOff = chunk.yOff << VERTEX_SIZE_BIT_SHIFT;
-	zOff = chunk.zOff << VERTEX_SIZE_BIT_SHIFT;
+	xOff = xOffArg << VERTEX_SIZE_BIT_SHIFT;
+	yOff = yOffArg << VERTEX_SIZE_BIT_SHIFT;
+	zOff = zOffArg << VERTEX_SIZE_BIT_SHIFT;
 
 	for (int x; x < 16; x++) {
 		for (int y; y < 128; y++) {
@@ -2665,23 +2664,25 @@ ChunkVBOCompactMesh buildCompactMeshFromChunk(Chunk chunk)
 	}
 
 	// C memory freed above with scope(exit)
-	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
+	return ChunkVBOCompactMesh(verts[0 .. iv], xPos, zPos);
 }
 
-ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(Chunk chunk)
+
+
+ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
+						     int xPos, int yPos, int zPos,
+						     int xOffArg, int yOffArg, int zOffArg)
 {
-	auto data = WorkspaceData.malloc();
 	cMemoryArray!(ChunkVBOCompactMesh.Vertex) vertices;
-	scope(exit) { data.free(); vertices.free(); }
+	scope(exit)
+		vertices.free();
 
 	mixin BlockDispatcher!(CompactMeshPackerIndexed);
 
-	data.copyFromChunk(chunk);
-
 	verts = vertices.realloc(128 * 1024);
-	xOff = chunk.xOff << VERTEX_SIZE_BIT_SHIFT;
-	yOff = chunk.yOff << VERTEX_SIZE_BIT_SHIFT;
-	zOff = chunk.zOff << VERTEX_SIZE_BIT_SHIFT;
+	xOff = xOffArg << VERTEX_SIZE_BIT_SHIFT;
+	yOff = yOffArg << VERTEX_SIZE_BIT_SHIFT;
+	zOff = zOffArg << VERTEX_SIZE_BIT_SHIFT;
 
 	for (int x; x < 16; x++) {
 		for (int y; y < 128; y++) {
@@ -2692,5 +2693,43 @@ ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(Chunk chunk)
 	}
 
 	// C memory freed above with scope(exit)
-	return ChunkVBOCompactMesh(verts[0 .. iv], chunk.xPos, chunk.zPos);
+	return ChunkVBOCompactMesh(verts[0 .. iv], xPos, zPos);
+}
+
+
+/*
+ *
+ * Offset helper functions
+ *
+ */
+
+
+ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
+					  int xPos, int yPos, int zPos)
+{
+	int xOff = xPos * (WorkspaceData.ws_width - 2);
+	int yOff = yPos * (WorkspaceData.ws_height - 2);
+	int zOff = zPos * (WorkspaceData.ws_depth - 2);
+
+	return buildRigidMeshFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
+}
+
+ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
+					      int xPos, int yPos, int zPos)
+{
+	int xOff = xPos * (WorkspaceData.ws_width - 2);
+	int yOff = yPos * (WorkspaceData.ws_height - 2);
+	int zOff = zPos * (WorkspaceData.ws_depth - 2);
+
+	return buildCompactMeshFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
+}
+
+ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
+						     int xPos, int yPos, int zPos)
+{
+	int xOff = xPos * (WorkspaceData.ws_width - 2);
+	int yOff = yPos * (WorkspaceData.ws_height - 2);
+	int zOff = zPos * (WorkspaceData.ws_depth - 2);
+
+	return buildCompactMeshIndexedFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
 }

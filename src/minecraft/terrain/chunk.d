@@ -13,6 +13,7 @@ import minecraft.gfx.renderer;
 import minecraft.terrain.beta;
 import minecraft.terrain.data;
 import minecraft.terrain.builder;
+import minecraft.terrain.workspace;
 
 class Chunk
 {
@@ -212,17 +213,23 @@ public:
 		if (empty)
 			return;
 
+		auto data = WorkspaceData.malloc();
+		scope(exit)
+			data.free();
+
+		data.copyFromChunk(this);
+
 		if (bt.cvgrm !is null) {
-			cvrm = buildRigidMeshFromChunk(this);
+			cvrm = buildRigidMesh(data);
 			if (cvrm !is null)
 				bt.cvgrm.add(cvrm, xPos, zPos);
 		}
 
 		if (bt.cvgcm !is null) {
 			if (bt.buildIndexed)
-				cvcm = buildCompactMeshIndexedFromChunk(this);
+				cvcm = buildCompactMeshIndexed(data);
 			else
-				cvcm = buildCompactMeshFromChunk(this);
+				cvcm = buildCompactMesh(data);
 
 			if (cvcm !is null)
 				bt.cvgcm.add(cvcm, xPos, zPos);
@@ -320,4 +327,18 @@ public:
 		return &data[x * depth * height/2 + z * height/2];
 	}
 
+	ChunkVBORigidMesh buildRigidMesh(WorkspaceData *data)
+	{
+		return buildRigidMeshFromChunk(data, xPos, 0, zPos);
+	}
+
+	ChunkVBOCompactMesh buildCompactMesh(WorkspaceData *data)
+	{
+		return buildCompactMeshFromChunk(data, xPos, 0, zPos);
+	}
+
+	ChunkVBOCompactMesh buildCompactMeshIndexed(WorkspaceData *data)
+	{
+		return buildCompactMeshIndexedFromChunk(data, xPos, 0, zPos);
+	}
 }
