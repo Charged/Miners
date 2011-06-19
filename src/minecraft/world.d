@@ -5,11 +5,10 @@ module minecraft.world;
 import std.math;
 
 import charge.charge;
-import charge.platform.homefolder;
 
+import minecraft.gfx.manager;
 import minecraft.terrain.data;
 import minecraft.terrain.beta;
-import minecraft.terrain.chunk;
 import minecraft.terrain.common;
 import minecraft.actors.helper;
 import minecraft.importer.info;
@@ -63,7 +62,7 @@ public:
 
 		bt = new BetaTerrain(this, dir, rs);
 		t = bt;
-		t.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
+		t.buildIndexed = rm.textureArray;
 		t.setBuildType(rm.bt);
 
 		// Find the actuall spawn height
@@ -86,131 +85,5 @@ public:
 			spawn.y = i;
 			break;
 		}
-	}
-}
-
-
-import minecraft.gfx.renderer;
-
-/**
- * Class for managing the different renderers.
- */
-class RenderManager
-{
-public:
-	GfxDefaultTarget defaultTarget;
-	GfxDoubleTarget dt;
-
-	GfxRenderer r; // Current renderer
-	GfxRenderer ifc; // Inbuilt fixed func
-	GfxRenderer ifr; // Inbuilt forward renderer
-	MinecraftDeferredRenderer mdr; // Special deferred renderer
-	MinecraftForwardRenderer mfr; // Special forward renderer
-	GfxRenderer rs[5]; // Null terminated list of renderer
-	BetaTerrain.BuildTypes rsbt[5]; // A list of build types for the renderers
-	BetaTerrain.BuildTypes bt; // Current build type
-	int num_renderers;
-	int current_renderer;
-
-	bool canDoForward;
-	bool canDoDeferred;
-	bool textureArray; /**< Is the texture array version of the terrain needed */
-
-	bool aa;
-
-private:
-	mixin SysLogging;
-
-public:
-	this()
-	{
-		canDoForward = MinecraftForwardRenderer.check();
-		canDoDeferred = MinecraftDeferredRenderer.check();
-
-		defaultTarget = GfxDefaultTarget();
-		setupRenderers();
-
-		textureArray = mfr.textureArraySupported && (canDoForward || canDoDeferred);
-
-		aa = true;
-	}
-
-	~this()
-	{
-		delete ifc;
-		delete ifr;
-		delete mfr;
-		delete mdr;
-	}
-
-	void switchRenderer()
-	{
-		current_renderer++;
-		if (current_renderer >= num_renderers)
-			current_renderer = 0;
-
-		r = rs[current_renderer];
-		bt = rsbt[current_renderer];
-	}
-
-	void render(GfxWorld w, GfxCamera c)
-	{
-		render(w, c, defaultTarget);
-	}
-
-	void render(GfxWorld w, GfxCamera c, GfxRenderTarget rt)
-	{
-		if (aa && (dt is null || rt.width != dt.width/2 || rt.height != dt.height/2))
-			dt = new GfxDoubleTarget(rt.width, rt.height);
-
-		r.target = aa ? cast(GfxRenderTarget)dt : cast(GfxRenderTarget)rt;
-
-		r.render(c, w);
-
-		if (aa)
-			dt.resolve(rt);
-
-	}
-
-protected:
-	void setupRenderers()
-	{
-		GfxRenderer.init();
-		ifc = new GfxFixedRenderer();
-		rsbt[num_renderers] = BetaTerrain.BuildTypes.RigidMesh;
-		rs[num_renderers++] = ifc;
-
-		if (canDoForward) {
-			ifr = new GfxForwardRenderer();
-			rsbt[num_renderers] = BetaTerrain.BuildTypes.RigidMesh;
-			rs[num_renderers++] = ifr;
-		}
-
-		if (canDoForward) {
-			try {
-				mfr = new MinecraftForwardRenderer();
-				rsbt[num_renderers] = BetaTerrain.BuildTypes.CompactMesh;
-				rs[num_renderers++] = mfr;
-			} catch (Exception e) {
-				l.warn("No fancy renderer \"%s\"", e);
-			}
-		}
-
-		if (canDoDeferred) {
-			try {
-				MinecraftDeferredRenderer.init();
-
-				mdr = new MinecraftDeferredRenderer();
-				rsbt[num_renderers] = BetaTerrain.BuildTypes.CompactMesh;
-				rs[num_renderers++] = mdr;
-			} catch (Exception e) {
-				l.warn("No fancy renderer \"%s\"", e);
-			}
-		}
-
-		// Pick the most advanced renderer
-		current_renderer = num_renderers - 1;
-		r = rs[current_renderer];
-		bt = rsbt[current_renderer];
 	}
 }

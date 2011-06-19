@@ -9,6 +9,7 @@ import charge.charge;
 
 import minecraft.world;
 import minecraft.runner;
+import minecraft.gfx.manager;
 import minecraft.terrain.chunk;
 import minecraft.actors.otherplayer;
 

@@ -19,10 +19,10 @@ import minecraft.lua.runner;
 import minecraft.world;
 import minecraft.viewer;
 import minecraft.menu;
+import minecraft.gfx.manager;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 import minecraft.actors.helper;
-import minecraft.gfx.renderer;
 import minecraft.importer.info;
 import minecraft.importer.texture;
 

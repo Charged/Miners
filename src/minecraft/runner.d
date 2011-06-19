@@ -7,6 +7,7 @@ import std.math;
 import charge.charge;
 
 import minecraft.world;
+import minecraft.gfx.manager;
 
 
 /**

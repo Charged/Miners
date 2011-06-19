@@ -10,6 +10,7 @@ import charge.game.lua;
 import minecraft.world;
 import minecraft.runner;
 import minecraft.lua.actors;
+import minecraft.gfx.manager;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 
