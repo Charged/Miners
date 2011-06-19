@@ -13,22 +13,16 @@ import minecraft.gfx.vbo;
 import minecraft.gfx.renderer;
 import minecraft.importer;
 import minecraft.terrain.chunk;
+import minecraft.terrain.common;
 
-class BetaTerrain : public GameActor
+class BetaTerrain : public Terrain
 {
 private:
 	//mixin SysLogging;
 
 public:
-	enum BuildTypes {
-		RigidMesh,
-		CompactMesh,
-	}
-
-	GfxTexture tex;
 	const int width = 16;
 	const int depth = 16;
-	int view_radii;
 	int save_build_i;
 	int save_build_j;
 	int save_build_k;
@@ -37,50 +31,28 @@ public:
 	int rxOff;
 	int rzOff;
 	Region[depth][width] region;
-	ChunkVBOGroupRigidMesh cvgrm;
-	ChunkVBOGroupCompactMesh cvgcm;
-	BuildTypes currentBuildType;
 	char[] dir;
-
-	bool buildIndexed; // The renderer supports array textures.
 
 	this(GameWorld w, char[] dir, GfxTexture tex)
 	{
-		super(w);
-
-		view_radii = 250 / 16 + 1;
-
 		this.rxOff = 0;
 		this.rzOff = 0;
 		this.dir = dir;
-		this.tex = tex;
+		super(w, tex);
 
 		// Make sure all state is setup correctly
 		setCenter(0, 0);
-
-		// Make the code not early out.
-		currentBuildType = BuildTypes.CompactMesh;
-
-		// Setup the groups
-		setBuildType(BuildTypes.RigidMesh);
 	}
 
 	~this() {
 		foreach(row; region)
 			foreach(r; row)
 				delete r;
-		delete cvgrm;
-		delete cvgcm;
 	}
 
 	void buildAll()
 	{
 		while(buildOne()) {}
-	}
-
-	void setRotation(ref Quatd rot)
-	{
-		super.setRotation(rot);
 	}
 
 	void setViewRadii(int radii)
@@ -104,8 +76,6 @@ public:
 		if (type == currentBuildType)
 			return;
 
-		currentBuildType = type;
-
 		// Unbuild all the meshes.
 		for (int x; x < width; x++) {
 			for (int z; z < depth; z++) {
@@ -118,26 +88,8 @@ public:
 
 		buildReset();
 
-		if (cvgrm !is null)
-			delete cvgrm;
-		if (cvgcm !is null)
-			delete cvgcm;
-
-		cvgrm = null; cvgcm = null;
-
-		switch(type) {
-		case BuildTypes.RigidMesh:
-			cvgrm = new ChunkVBOGroupRigidMesh(w.gfx);
-			cvgrm.getMaterial()["tex"] = tex;
-			cvgrm.getMaterial()["fake"] = true;
-			break;
-		case BuildTypes.CompactMesh:
-			cvgcm = new ChunkVBOGroupCompactMesh(w.gfx);
-			// No need to setup material handled by the renderer
-			break;
-		default:
-			assert(false);
-		}
+		// Do the change
+		doBuildTypeChange(type);
 
 		// Build at least one chunk
 		buildOne();
