@@ -7,7 +7,6 @@ import std.math;
 import charge.charge;
 import charge.math.ints;
 
-import minecraft.importer;
 import minecraft.gfx.vbo;
 import minecraft.gfx.imports;
 import minecraft.gfx.renderer;

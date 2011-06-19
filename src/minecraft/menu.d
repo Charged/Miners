@@ -11,7 +11,7 @@ import charge.game.gui.input;
 
 import minecraft.runner;
 import minecraft.viewer;
-import minecraft.importer;
+import minecraft.importer.info;
 
 /**
  * Menu runner

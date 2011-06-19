@@ -8,7 +8,6 @@ import charge.charge;
 
 import minecraft.gfx.vbo;
 import minecraft.gfx.renderer;
-import minecraft.importer;
 
 class Terrain : public GameActor
 {

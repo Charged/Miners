@@ -11,9 +11,9 @@ import charge.charge;
 
 import minecraft.gfx.vbo;
 import minecraft.gfx.renderer;
-import minecraft.importer;
 import minecraft.terrain.chunk;
 import minecraft.terrain.common;
+import minecraft.importer.blocks;
 
 class BetaTerrain : public Terrain
 {

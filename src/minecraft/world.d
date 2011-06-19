@@ -7,12 +7,12 @@ import std.math;
 import charge.charge;
 import charge.platform.homefolder;
 
-import minecraft.importer;
 import minecraft.terrain.data;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 import minecraft.terrain.common;
 import minecraft.actors.helper;
+import minecraft.importer.info;
 
 abstract class World : public GameWorld
 {

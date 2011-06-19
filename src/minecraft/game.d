@@ -14,7 +14,6 @@ import charge.charge;
 import charge.sys.file;
 import charge.platform.homefolder;
 
-import minecraft.importer;
 import minecraft.runner;
 import minecraft.lua.runner;
 import minecraft.world;
@@ -24,6 +23,8 @@ import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 import minecraft.actors.helper;
 import minecraft.gfx.renderer;
+import minecraft.importer.info;
+import minecraft.importer.texture;
 
 
 
