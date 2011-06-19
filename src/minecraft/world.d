@@ -61,7 +61,7 @@ public:
 		this.dir = info ? info.dir : null;
 		super(rm, rs);
 
-		bt = new BetaTerrain(this, dir, rm.tex);
+		bt = new BetaTerrain(this, dir, rs);
 		t = bt;
 		t.buildIndexed = MinecraftForwardRenderer.textureArraySupported;
 		t.setBuildType(rm.bt);
@@ -219,7 +219,7 @@ protected:
 
 		if (canDoForward) {
 			try {
-				mfr = new MinecraftForwardRenderer(tex, ta);
+				mfr = new MinecraftForwardRenderer();
 				rsbt[num_renderers] = BetaTerrain.BuildTypes.CompactMesh;
 				rs[num_renderers++] = mfr;
 			} catch (Exception e) {
@@ -231,7 +231,7 @@ protected:
 			try {
 				MinecraftDeferredRenderer.init();
 
-				mdr = new MinecraftDeferredRenderer(ta);
+				mdr = new MinecraftDeferredRenderer();
 				rsbt[num_renderers] = BetaTerrain.BuildTypes.CompactMesh;
 				rs[num_renderers++] = mdr;
 			} catch (Exception e) {

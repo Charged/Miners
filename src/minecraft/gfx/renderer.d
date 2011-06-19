@@ -9,8 +9,6 @@ import minecraft.gfx.imports;
 class MinecraftForwardRenderer : public GfxForwardRenderer
 {
 private:
-	GfxTexture tex;
-	GfxTextureArray ta;
 	GfxShader material_shader;
 	GfxShader material_shader_indexed;
 
@@ -50,11 +48,8 @@ public:
 		return true;
 	}
 
-	this(GfxTexture tex, GfxTextureArray ta)
+	this()
 	{
-		this.ta = ta;
-		this.tex = tex;
-
 		if (textureArraySupported) {
 			material_shader_indexed = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
 								 Helper.materialFragForwardIndexed,
@@ -75,12 +70,6 @@ public:
 		glUseProgram(material_shader.id);
 		material_shader.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
 		glUseProgram(0);
-	}
-
-	void setTerrainTexture(GfxTexture tex, GfxTextureArray ta)
-	{
-		this.ta = ta;
-		this.tex = tex;
 	}
 
 protected:
@@ -140,11 +129,11 @@ protected:
 		if (textureArraySupported) {
 			s = material_shader_indexed;
 			glUseProgram(s.id);
-			glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, ta.id);
+			glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, m.texSafe.id);
 		} else {
 			s = material_shader;
 			glUseProgram(s.id);
-			glBindTexture(GL_TEXTURE_2D, tex.id);
+			glBindTexture(GL_TEXTURE_2D, m.texSafe.id);
 		}
 
 		cvgcm.drawAttrib(s);
@@ -160,21 +149,12 @@ private:
 	static bool initialized;
 	static GfxShader material_shader;
 
-	GfxTextureArray ta;
-
 public:
-	this(GfxTextureArray ta)
+	this()
 	{
-		this.ta = ta;
-
 		if (!initialized)
 			throw new Exception("Not initialized or failed to init MinecraftRenderer");
 		super();
-	}
-
-	void setTerrainTexture(GfxTextureArray ta)
-	{
-		this.ta = ta;
 	}
 
 	static bool check()
@@ -230,7 +210,7 @@ protected:
 	void drawGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m)
 	{
 		glUseProgram(material_shader.id);
-		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, ta.id);
+		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, m.texSafe.id);
 
 		cvgcm.drawAttrib(material_shader);
 

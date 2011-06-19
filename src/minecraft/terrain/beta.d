@@ -11,6 +11,7 @@ import charge.charge;
 
 import minecraft.gfx.vbo;
 import minecraft.gfx.renderer;
+import minecraft.actors.helper;
 import minecraft.terrain.chunk;
 import minecraft.terrain.common;
 import minecraft.importer.blocks;
@@ -33,12 +34,12 @@ public:
 	Region[depth][width] region;
 	char[] dir;
 
-	this(GameWorld w, char[] dir, GfxTexture tex)
+	this(GameWorld w, char[] dir, ResourceStore rs)
 	{
 		this.rxOff = 0;
 		this.rzOff = 0;
 		this.dir = dir;
-		super(w, tex);
+		super(w, rs);
 
 		// Make sure all state is setup correctly
 		setCenter(0, 0);

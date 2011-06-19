@@ -13,6 +13,9 @@ public:
 	GfxSimpleSkeleton.VBO playerSkeleton;
 	alias PlayerModelData.bones playerBones;
 
+	GfxTexture terrainTexture;
+	GfxTextureArray terrainTextureArray;
+
 	this()
 	{
 		playerSkeleton = typeof(playerSkeleton)(PlayerModelData.verts);
@@ -20,7 +23,32 @@ public:
 
 	~this()
 	{
-		playerSkeleton.dereference();
+		if (playerSkeleton !is null)
+			playerSkeleton.dereference();
+		if (terrainTexture !is null)
+			terrainTexture.dereference();
+		if (terrainTextureArray !is null)
+			terrainTextureArray.dereference();
+
+		playerSkeleton = null;
+		terrainTexture = null;
+		terrainTextureArray = null;
+	}
+
+	void setTextures(GfxTexture t, GfxTextureArray ta)
+	{
+		if (terrainTexture !is null)
+			terrainTexture.dereference();
+		if (terrainTextureArray !is null)
+			terrainTextureArray.dereference();
+
+		terrainTexture = t;
+		terrainTextureArray = ta;
+
+		if (terrainTexture !is null)
+			terrainTexture.reference();
+		if (terrainTextureArray !is null)
+			terrainTextureArray.reference();
 	}
 }
 

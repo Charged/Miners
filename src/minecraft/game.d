@@ -155,6 +155,9 @@ protected:
 		// I just wanted a comment here to make the code look prettier.
 		rm = new RenderManager(pic);
 
+		// Need to manipulate the texture a bit
+		rs.setTextures(rm.tex, rm.ta);
+
 		// Not needed anymore.
 		pic.dereference();
 
