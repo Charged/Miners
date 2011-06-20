@@ -3,6 +3,7 @@
 module minecraft.terrain.workspace;
 
 static import std.c.stdlib;
+static import std.c.string;
 
 import minecraft.terrain.data;
 import minecraft.terrain.chunk;
@@ -30,6 +31,11 @@ struct WorkspaceData
 	void free()
 	{
 		std.c.stdlib.free(cast(void*)this);
+	}
+
+	void zero()
+	{
+		std.c.string.memset(this, 0, (*this).sizeof);
 	}
 
 	/*
