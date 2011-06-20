@@ -19,6 +19,7 @@ import minecraft.lua.runner;
 import minecraft.world;
 import minecraft.viewer;
 import minecraft.menu;
+import minecraft.classic;
 import minecraft.gfx.manager;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
@@ -37,7 +38,9 @@ private:
 	/* program args */
 	char[] level;
 	bool build_all;
+	bool classic;
 
+	/* time keepers */
 	charge.game.app.TimeKeeper luaTime;
 	charge.game.app.TimeKeeper buildTime;
 
@@ -141,6 +144,7 @@ protected:
 	{
 		GfxTexture t;
 		GfxTextureArray ta;
+		Runner r;
 
 		// Borrow terrain.png from minecraft.jar if it can be found.
 		setupMinecraftTexture();
@@ -168,6 +172,15 @@ protected:
 		// Not needed anymore.
 		pic.dereference();
 
+		// Should we use classic
+		if (classic) {
+			r = new ClassicRunner(this, rm, rs);
+
+			mr =  new MenuRunner(this);
+			mr.manageThis(r);
+			return;
+		}
+
 		// Run the level selector if we where not given a level.
 		if (level is null) {
 			nextRunner = new MenuRunner(this);
@@ -182,6 +195,11 @@ protected:
 	{
 		for(int i = 1; i < args.length; i++) {
 			switch(args[i]) {
+			case "-c":
+			case "-classic":
+			case "--classic":
+				classic = true;
+				break;
 			case "-l":
 			case "-level":
 			case "--level":
@@ -204,6 +222,7 @@ protected:
 			case "--help":
 				writefln("   -a, --all             - build all chunks near the camera on start");
 				writefln("   -l, --level <level>   - to specify level directory");
+				writefln("   -c, --classic         - start a classic level (WIP)");
 				writefln("       --license         - print licenses");
 				running = false;
 				break;
