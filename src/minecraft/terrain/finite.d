@@ -241,7 +241,7 @@ protected:
 
 			setVBO(v, x, y, z);
 			if (v !is null)
-				cvgrm.add(v, x, z);
+				cvgrm.add(v, x, y, z);
 		}
 
 		if (cvgcm !is null) {
@@ -252,7 +252,7 @@ protected:
 
 			setVBO(v, x, y, z);
 			if (v !is null)
-				cvgcm.add(v, x, z);
+				cvgcm.add(v, x, y, z);
 		}
 	}
 

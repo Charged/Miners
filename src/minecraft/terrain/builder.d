@@ -2637,7 +2637,7 @@ ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
 	}
 
 	// C memory freed above with scope(exit)
-	return ChunkVBORigidMesh(mb, xPos, zPos);
+	return ChunkVBORigidMesh(mb, xPos, yPos, zPos);
 }
 
 ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
@@ -2664,7 +2664,7 @@ ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
 	}
 
 	// C memory freed above with scope(exit)
-	return ChunkVBOCompactMesh(verts[0 .. iv], xPos, zPos);
+	return ChunkVBOCompactMesh(verts[0 .. iv], xPos, yPos, zPos);
 }
 
 
@@ -2693,7 +2693,7 @@ ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
 	}
 
 	// C memory freed above with scope(exit)
-	return ChunkVBOCompactMesh(verts[0 .. iv], xPos, zPos);
+	return ChunkVBOCompactMesh(verts[0 .. iv], xPos, yPos, zPos);
 }
 
 

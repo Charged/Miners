@@ -12,15 +12,15 @@ import minecraft.gfx.imports;
 class ChunkVBORigidMesh : public charge.gfx.vbo.RigidMeshVBO
 {
 public:
-	static ChunkVBORigidMesh opCall(RigidMeshBuilder mb, int x, int z)
+	static ChunkVBORigidMesh opCall(RigidMeshBuilder mb, int x, int y, int z)
 	{
-		return new ChunkVBORigidMesh(charge.sys.resource.Pool(), mb, x, z);
+		return new ChunkVBORigidMesh(charge.sys.resource.Pool(), mb, x, y, z);
 	}
 
 protected:
-	this(charge.sys.resource.Pool p, RigidMeshBuilder mb, int x, int z)
+	this(charge.sys.resource.Pool p, RigidMeshBuilder mb, int x, int y, int z)
 	{
-		auto name = std.string.format("mc/vbo/chunk.%s.%s.rigid", x, z);
+		auto name = std.string.format("mc/vbo/chunk.%s.%s.%s.rigid", x, y, z);
 		super(p, name, mb);
 	}
 
@@ -48,15 +48,15 @@ public:
 		}
 	}
 
-	static ChunkVBOCompactMesh opCall(Vertex[] verts, int x, int z)
+	static ChunkVBOCompactMesh opCall(Vertex[] verts, int x, int y, int z)
 	{
-		return new ChunkVBOCompactMesh(charge.sys.resource.Pool(), verts, x, z);
+		return new ChunkVBOCompactMesh(charge.sys.resource.Pool(), verts, x, y, z);
 	}
 
 protected:
-	this(charge.sys.resource.Pool p, Vertex[] verts, int x, int z)
+	this(charge.sys.resource.Pool p, Vertex[] verts, int x, int y, int z)
 	{
-		auto str = std.string.format("mc/vbo/chunk.%s.%s.compact-mesh", x, z);
+		auto str = std.string.format("mc/vbo/chunk.%s.%s.%s.compact-mesh", x, y, z);
 		super(p, str, true, verts.ptr,
 		      verts.length * Vertex.sizeof,
 		      cast(uint)verts.length,
@@ -111,11 +111,11 @@ public:
 		this.m = m;
 	}
 
-	void add(GfxVBO vbo, int x, int z)
+	void add(GfxVBO vbo, int x, int y, int z)
 	{
 		Entry e;
-		e.aabb.min = Point3d(x * 16, -0, z * 16);
-		e.aabb.max = Point3d((x+1) * 16, 128, (z+1) * 16);
+		e.aabb.min = Point3d(x * 16, y * 128, z * 16);
+		e.aabb.max = Point3d((x+1) * 16, (y+1) * 128, (z+1) * 16);
 		e.vbo = vbo;
 		array ~= e;
 	}

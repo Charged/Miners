@@ -59,6 +59,7 @@ public:
 		this.w = w;
 		this.bt = bt;
 		this.xPos = xPos;
+		this.yPos = 0;
 		this.zPos = zPos;
 		this.dirty = true;
 
@@ -215,7 +216,7 @@ public:
 		if (bt.cvgrm !is null) {
 			cvrm = buildRigidMesh(data);
 			if (cvrm !is null)
-				bt.cvgrm.add(cvrm, xPos, zPos);
+				bt.cvgrm.add(cvrm, xPos, yPos, zPos);
 		}
 
 		if (bt.cvgcm !is null) {
@@ -225,7 +226,7 @@ public:
 				cvcm = buildCompactMesh(data);
 
 			if (cvcm !is null)
-				bt.cvgcm.add(cvcm, xPos, zPos);
+				bt.cvgcm.add(cvcm, xPos, yPos, zPos);
 		}
 	}
 
