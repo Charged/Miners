@@ -125,8 +125,15 @@ public:
 
 	void manageThis(Runner r)
 	{
-		delete levelRunner;
+		if (levelRunner !is null)
+			router.deleteMe(levelRunner);
+
 		levelRunner = r;
+
+		if (levelRunner !is null)
+			router.switchTo(levelRunner);
+		else
+			router.switchTo(this);
 	}
 
 private:
