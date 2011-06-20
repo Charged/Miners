@@ -130,7 +130,7 @@ public:
 		int zEnd = ws.ws_depth;
 
 		int xOff = xPos * 16 - 1;
-		int yOff = yPos * 16 - 1;
+		int yOff = yPos * 128 - 1;
 		int zOff = zPos * 16 - 1;
 
 		int y = 0;
@@ -155,8 +155,8 @@ public:
 				    xOff >= xSize || zOff >= zSize)
 					continue;
 
-				auto ptr = getBlockPointer(xOff, 0, zOff);
-				ws.blocks[x][z][y .. y + yEnd] = ptr[yOff .. yOff + yEnd];
+				auto ptr = getBlockPointer(xOff, yOff, zOff);
+				ws.blocks[x][z][y .. y + yEnd] = ptr[0 .. yEnd];
 			}
 		}
 
