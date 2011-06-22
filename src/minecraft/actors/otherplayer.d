@@ -23,11 +23,11 @@ public:
 
 		auto b = ResourceStore.playerBones.dup;
 		b[0].rot = Quatd(0.3, 0.2, 0);
-		b[2].rot = Quatd(1.0, Vector3d.Left);
-		b[3].rot = Quatd(-.2, Vector3d.Left);
+		b[2].rot = Quatd(-1, Vector3d.Left);
+		b[3].rot = Quatd(.2, Vector3d.Left);
 
-		b[4].rot = Quatd(-1.0, Vector3d.Left);
-		b[5].rot = Quatd(1.0, Vector3d.Left);
+		b[4].rot = Quatd( 1, Vector3d.Left);
+		b[5].rot = Quatd(-1, Vector3d.Left);
 
 		skel = new typeof(skel)(w.gfx, w.rs.playerSkeleton, b);
 
