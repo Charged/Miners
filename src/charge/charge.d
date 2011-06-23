@@ -26,6 +26,7 @@ public
 	static import charge.net.packet;
 	static import charge.net.client;
 	static import charge.net.server;
+	static import charge.net.threaded;
 	static import charge.net.connection;
 
 	static import charge.sfx.sfx;
@@ -99,6 +100,8 @@ alias charge.net.packet.PacketInStream NetInStream;
 alias charge.net.packet.PacketOutStream NetOutStream;
 alias charge.net.client.Client NetClient;
 alias charge.net.server.Server NetServer;
+alias charge.net.threaded.ThreadedPacketQueue NetThreadedPacketQueue;
+alias charge.net.threaded.ThreadedTcpConnection NetThreadedTcpConnection;
 alias charge.net.connection.Connection NetConnection;
 alias charge.net.connection.ConnectionListener NetConnectionListener;
 
