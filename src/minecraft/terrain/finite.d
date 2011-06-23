@@ -54,10 +54,10 @@ protected:
 public:
 	this(GameWorld w, ResourceStore rs, int x, int y, int z)
 	{
-		if (x < 16 || y < 128 || z < 16 )
+		if (x < 16 || y < 16 || z < 16 )
 			throw new Exception("Size must be at least 16x128x16 for FiniteTerrain");
 
-		if (x % 16 != 0 || y % 128 != 0 || z % 16 != 0)
+		if (x % 16 != 0 || y % 16 != 0 || z % 16 != 0)
 			throw new Exception("Invalid size for FiniteTerrain");
 
 		xSize = x;
@@ -67,6 +67,10 @@ public:
 		xNumChunks = xSize / 16;
 		yNumChunks = ySize / 128;
 		zNumChunks = zSize / 16;
+
+		// Add a extra chunk if ySize % 128 != 0
+		if (yNumChunks * 128 < xSize)
+			yNumChunks++;
 
 		vbos.length = xNumChunks * yNumChunks * zNumChunks;
 
@@ -98,6 +102,14 @@ public:
 	 */
 
 
+	final void setBlocksAndData(ubyte* blocks, ubyte *data)
+	{
+		if (blocks)
+			this.blocks[0 .. sizeBlocks] = blocks[0 .. sizeBlocks];
+		if (data)
+			this.data[0 .. sizeData] = data[0 .. sizeData];
+	}
+
 	final ubyte opIndexAssign(ubyte data, int x, int y, int z)
 	{
 		blocks[(xSize * z + x) * ySize + y] = data;
@@ -120,10 +132,14 @@ public:
 	/**
 	 * Get a WorkspaceData copy of blocks and metadata at the given
 	 * location in "chunk" coords.
+	 *
+	 * Only handles nPos >= 0.
 	 */
 	WorkspaceData* extractWorkspace(int xPos, int yPos, int zPos)
 	{
 		auto ws = WorkspaceData.malloc();
+
+		assert(xPos >= 0 && yPos >= 0 && zPos >= 0);
 
 		int xEnd = ws.ws_width;
 		int yEnd = ws.ws_height;
@@ -131,29 +147,40 @@ public:
 
 		int xOff = xPos * 16 - 1;
 		int yOff = yPos * 128 - 1;
-		int zOff = zPos * 16 - 1;
+		int zOffStart = zPos * 16 - 1;
 
-		int y = 0;
+		int startX, y, startZ;
 
+		// Handle underflow
+		if (xOff < 0) {
+			startX++;
+			xOff++;
+		}
 		if (yOff < 0) {
 			y = 1;
 			yEnd--;
 			yOff++;
 		}
-
-		if (yOff + yEnd >= ySize) {
-			yEnd = ySize - yOff;
+		if (zOffStart < 0) {
+			startZ++;
+			zOffStart++;
 		}
+
+		// Handle overflow
+		if (xOff + xEnd >= xSize)
+			xEnd = xSize - xOff;
+		if (yOff + yEnd >= ySize)
+			yEnd = ySize - yOff;
+		if (zOffStart + zEnd >= zSize)
+			zEnd = zSize - zOffStart;
 
 		// Could be smarter about this
 		ws.zero();
 
-		for (int x; x < xEnd; x++, xOff++) {
-			zOff = zPos * 16 - 1;
-			for (int z; z < zEnd; z++, zOff++) {
-				if (xOff < 0 || zOff < 0 ||
-				    xOff >= xSize || zOff >= zSize)
-					continue;
+		for (int x = startX; x < xEnd; x++, xOff++) {
+			int zOff = zOffStart;
+			for (int z = startZ; z < zEnd; z++, zOff++) {
+				assert(xPos >= 0 && yPos >= 0 && zPos >= 0);
 
 				auto ptr = getBlockPointer(xOff, yOff, zOff);
 				ws.blocks[x][z][y .. y + yEnd] = ptr[0 .. yEnd];
