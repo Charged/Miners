@@ -65,8 +65,11 @@ public:
 
 	void opCatAssign(T[] tarr)
 	{
-		foreach(t; tarr)
-			add(t);
+		if (data.length < tarr.length + num)
+			data.length = data.length * 2 + tarr.length;
+
+		data[num .. num + tarr.length] = tarr[0 .. $];
+		num += tarr.length;
 	}
 
 	int opApply(int delegate(inout T) dg)
@@ -162,6 +165,15 @@ public:
 	void opCatAssign(T t)
 	{
 		add(t);
+	}
+
+	void opCatAssign(T[] tarr)
+	{
+		if (data.length < tarr.length + num)
+			data.length = data.length * 2 + tarr.length;
+
+		data[num .. num + tarr.length] = tarr[0 .. $];
+		num += tarr.length;
 	}
 
 	int opApply(int delegate(inout T) dg)
