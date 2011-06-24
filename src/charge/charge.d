@@ -22,6 +22,7 @@ public
 	static import charge.math.matrix3x3d;
 	static import charge.math.matrix4x4d;
 
+	static import charge.net.util;
 	static import charge.net.packet;
 	static import charge.net.client;
 	static import charge.net.server;

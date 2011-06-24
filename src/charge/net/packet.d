@@ -2,29 +2,14 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.packet;
 
+import charge.net.util;
+
 import std.stdio;
 import std.stdint;
 import std.gc;
 
-T htonl(T)(T t)
-{
-	return t;
-}
+import charge.net.util;
 
-T ntohl(T)(T t)
-{
-	return t;
-}
-
-T htons(T)(T t)
-{
-	return t;
-}
-
-T ntohs(T)(T t)
-{
-	return t;
-}
 
 class PacketOutStream
 {
@@ -164,14 +149,14 @@ public:
 
 		void hton()
 		{
-			length = htons(length);
-			orderId = htonl(orderId);
+			length = .hton(length);
+			orderId = .hton(orderId);
 		}
 
 		void ntoh()
 		{
-			length = ntohs(length);
-			orderId = ntohl(orderId);
+			length = .ntoh(length);
+			orderId = .ntoh(orderId);
 		}
 
 	}
