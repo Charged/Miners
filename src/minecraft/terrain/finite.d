@@ -44,12 +44,11 @@ protected:
 
 	cMemoryArray!(ubyte) store;
 
-	bool gfx;
 	GfxVBO vbos[];
 
-	int xSave;
-	int ySave;
-	int zSave;
+	int xSaved;
+	int ySaved;
+	int zSaved;
 
 public:
 	this(GameWorld w, ResourceStore rs, int x, int y, int z)
@@ -229,22 +228,34 @@ public:
 					unbuild(x, y, z);
 
 		doBuildTypeChange(type);
-
-		gfx = false;
 	}
 
 	bool buildOne()
 	{
-		if (gfx)
-			return false;
+		int x = xSaved;
+		int y = ySaved;
+		int z = zSaved;
 
-		for (int x; x < xNumChunks; x++)
-			for (int z; z < zNumChunks; z++)
-				for (int y; y < yNumChunks; y++)
-					build(x, y, z);
+		for (; x < xNumChunks; x++) {
+			for (; z < zNumChunks; z++) {
+				for (; y < yNumChunks; y++) {
+					if (!build(x, y, z))
+						continue;
+					xSaved = x;
+					ySaved = y++;
+					zSaved = z;
+					return true;
+				}
+				y = 0;
+			}
+			z = 0;
+		}
 
-		gfx = true;
-		return true;
+		xSaved = x;
+		ySaved = y;
+		zSaved = z;
+
+		return false;
 	}
 
 
@@ -256,12 +267,13 @@ protected:
 	 */
 
 
-	void build(int x, int y, int z)
+	bool build(int x, int y, int z)
 	{
 		auto ws = extractWorkspace(x, y, z);
 		GfxVBO v;
 
-		assert(getVBO(x, y, z) is null);
+		if (getVBO(x, y, z) !is null)
+			return false;
 
 		if (cvgrm !is null) {
 			v = buildRigidMeshFromChunk(ws, x, y, z);
@@ -281,6 +293,8 @@ protected:
 			if (v !is null)
 				cvgcm.add(v, x, y, z);
 		}
+
+		return true;
 	}
 
 	void unbuild(int x, int y, int z)
