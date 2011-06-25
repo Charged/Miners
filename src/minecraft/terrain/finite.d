@@ -228,8 +228,21 @@ public:
 					unbuild(x, y, z);
 
 		doBuildTypeChange(type);
+
+		buildReset();
 	}
 
+	/**
+	 * Start over from the begining when building "chunk" meshes.
+	 */
+	void buildReset()
+	{
+		xSaved = ySaved = zSaved = 0;
+	}
+
+	/**
+	 * Build a single "chunk" mesh.
+	 */
 	bool buildOne()
 	{
 		int x = xSaved;
