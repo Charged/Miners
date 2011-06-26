@@ -105,6 +105,10 @@ public:
 
 	~this()
 	{
+	}
+
+	void close()
+	{
 		if (sr !is null)
 			deleteMe(sr);
 		if (mr !is null)
@@ -132,6 +136,7 @@ public:
 			std.c.stdlib.free(terrainFile.ptr);
 		}
 	}
+
 
 protected:
 	/**
@@ -448,15 +453,13 @@ protected:
 	{
 	}
 
-	void close()
-	{
-	}
 
 	/*
 	 *
 	 * Managing runners functions.
 	 *
 	 */
+
 
 	void switchTo(GameRunner gr)
 	{
