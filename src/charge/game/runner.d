@@ -36,6 +36,11 @@ public:
 	 * Uninstall all input listeners.
 	 */
 	abstract void dropControl();
+
+	/**
+	 * Shutdown this runner.
+	 */
+	abstract void close();
 }
 
 /**

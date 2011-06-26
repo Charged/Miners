@@ -94,6 +94,10 @@ public:
 	{
 	}
 
+	void close()
+	{
+	}
+
 	void render(GfxRenderTarget rt)
 	{
 		rm.render(w.gfx, cam, rt);

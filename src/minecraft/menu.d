@@ -69,6 +69,10 @@ public:
 			menuTexture.dereference();
 	}
 
+	void close()
+	{
+	}
+
 	void resize(uint w, uint h)
 	{
 	}

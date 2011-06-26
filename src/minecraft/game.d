@@ -512,12 +512,19 @@ protected:
 		// Delete any pending runners.
 		if (deleteRunner.length) {
 			foreach(r; deleteRunner) {
+				if (r is nextRunner)
+					nextRunner = null;
 				if (r is runner)
 					runner = null;
 				if (r is sr)
 					sr = null;
 				if (r is mr)
 					mr = null;
+
+				// To avoid nasty deadlocks with GC.
+				r.close();
+
+				// Finally delete it.
 				delete r;
 			}
 			deleteRunner = null;
