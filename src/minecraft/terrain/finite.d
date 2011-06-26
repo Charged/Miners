@@ -97,6 +97,7 @@ public:
 
 	~this()
 	{
+		unbuildAll();
 		store.free();
 	}
 
@@ -229,10 +230,7 @@ public:
 		if (currentBuildType == type)
 			return;
 
-		for (int x; x < xNumChunks; x++)
-			for (int z; z < zNumChunks; z++)
-				for (int y; y < yNumChunks; y++)
-					unbuild(x, y, z);
+		unbuildAll();
 
 		doBuildTypeChange(type);
 
@@ -276,6 +274,14 @@ public:
 		zSaved = z;
 
 		return false;
+	}
+
+	void unbuildAll()
+	{
+		for (int x; x < xNumChunks; x++)
+			for (int z; z < zNumChunks; z++)
+				for (int y; y < yNumChunks; y++)
+					unbuild(x, y, z);
 	}
 
 
