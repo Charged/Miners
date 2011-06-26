@@ -199,7 +199,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 			foreach (y, line; lines) {
 				for (int x; x < line.length / 3; x++) {
 					auto dst = (y * width + x) * 4;
-					auto src = (width + x) * 3;
+					auto src = x * 3;
 					ptr[dst .. dst + 3] = line[src .. src + 3];
 					ptr[dst + 3] = 255;
 				}
