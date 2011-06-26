@@ -4,7 +4,9 @@ module minecraft.game;
 
 import std.math;
 import std.file;
+import std.conv;
 import std.stdio;
+import std.regexp;
 import std.string;
 import std.c.stdlib;
 
@@ -25,6 +27,7 @@ import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 import minecraft.classic.runner;
 import minecraft.importer.info;
+import minecraft.importer.network;
 import minecraft.importer.texture;
 
 
@@ -39,6 +42,18 @@ private:
 	char[] level;
 	bool build_all;
 	bool classic;
+	bool classicNetwork;
+
+	/* Classic server information */
+	char[] hostname;
+	ushort port;
+
+	/* Classic user information */
+	char[] username;
+	char[] password;
+
+	/** Regexp for extracting information out of a mc url */
+	RegExp mcUrl;
 
 	/* time keepers */
 	charge.game.app.TimeKeeper luaTime;
@@ -76,6 +91,13 @@ public:
 	this(char[][] args)
 	{
 		super(args);
+
+		mcUrl = RegExp(mcUrlStr);
+
+		// Some defaults
+		port = 25565;
+		username = "Username";
+		password = "-";
 
 		running = true;
 
@@ -223,6 +245,9 @@ protected:
 				build_all = true;
 				break;
 			default:
+				if (tryArgUrl(args[i]))
+					break;
+
 				l.fatal("Unknown argument %s", args[i]);
 				writefln("Unknown argument %s", args[i]);
 			case "-h":
@@ -236,6 +261,37 @@ protected:
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Is this argument a Minecraft Url?
+	 * If so set all the game arguments and switch to classic.
+	 */
+	bool tryArgUrl(char[] arg)
+	{
+		auto r = mcUrl.exec(arg);
+		if (r.length < 8)
+			return false;
+
+		hostname = r[1];
+
+		if (r[5].length > 0)
+			username = r[5];
+		if (r[7].length > 0)
+			password = r[7];
+
+		try {
+			if (r[3].length > 0)
+				port = cast(ushort)toUint(r[3]);
+		} catch (Exception e) {
+		}
+
+		classic = true;
+		classicNetwork = true;
+
+		l.info("Url mc://%s:%s/%s/<redacted>", hostname, port, username);
+
+		return true;
 	}
 
 	void setupMinecraftTexture()

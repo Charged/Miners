@@ -4,6 +4,16 @@ module minecraft.importer.network;
 
 
 /**
+ * String to parse a minecraft url.
+ *
+ * hostname = r[1]
+ * port = r[3]
+ * username = r[5]
+ * password = r[7]
+ */
+const mcUrlStr = "mc://([^/:]+)" "(:([^/]+))?" "(/([^/]+))?" "(/([^/]+))?";
+
+/**
  * Remove any trailing spaces from a string.
  *
  * Used to deal with strings from classic servers.
