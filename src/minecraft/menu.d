@@ -259,7 +259,9 @@ private:
 		if (currentButton is lb)
 			return;
 
-		delete levelRunner;
+		if (levelRunner !is null)
+			router.deleteMe(levelRunner);
+
 		levelRunner = router.loadLevel(lb.info.dir);
 		currentButton = lb;
 	}
