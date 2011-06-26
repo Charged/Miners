@@ -204,7 +204,12 @@ protected:
 
 		// Should we use classic
 		if (classic) {
-			r = new ClassicRunner(this, rm, rs);
+			if (!classicNetwork)
+				r = new ClassicRunner(this, rm, rs);
+			else
+				r = new ClassicRunner(this, rm, rs,
+						      hostname, port,
+						      username, password);
 
 			mr =  new MenuRunner(this);
 			mr.manageThis(r);
