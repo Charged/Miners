@@ -175,6 +175,8 @@ protected:
 		rs.setTextures(t, ta);
 
 		// Not needed anymore.
+		t.dereference();
+		ta.dereference();
 		pic.dereference();
 
 		// Should we use classic
