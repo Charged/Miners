@@ -90,6 +90,6 @@ protected:
 		scope(exit)
 			delete file;
 
-		return pngDecode(file.peekMem);
+		return pngDecode(file.peekMem, true);
 	}
 }
