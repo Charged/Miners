@@ -19,6 +19,9 @@ import minecraft.terrain.workspace;
  */
 class FiniteTerrain : public Terrain
 {
+private:
+	mixin SysLogging;
+
 public:
 	int xSize;
 	int ySize;
@@ -53,11 +56,10 @@ protected:
 public:
 	this(GameWorld w, ResourceStore rs, int x, int y, int z)
 	{
-		if (x < 16 || y < 16 || z < 16 )
-			throw new Exception("Size must be at least 16x128x16 for FiniteTerrain");
+		l.info("Created (%sx%sx%s)", x, y, z);
 
-		if (x % 16 != 0 || y % 16 != 0 || z % 16 != 0)
-			throw new Exception("Invalid size for FiniteTerrain");
+		if (x < 1 || y < 1 || z < 1 )
+			throw new Exception("Size must be at least 1x1x1 for FiniteTerrain");
 
 		xSize = x;
 		ySize = y;
@@ -67,9 +69,14 @@ public:
 		yNumChunks = ySize / 128;
 		zNumChunks = zSize / 16;
 
-		// Add a extra chunk if ySize % 128 != 0
-		if (yNumChunks * 128 < xSize)
+		// Add a extra chunk if nSize % 16 != 0
+		// y axis is aligned to 128 instead do to vbo size.
+		if (xNumChunks * 16 < xSize)
+			xNumChunks++;
+		if (yNumChunks * 128 < ySize)
 			yNumChunks++;
+		if (zNumChunks * 16 < zSize)
+			zNumChunks++;
 
 		vbos.length = xNumChunks * yNumChunks * zNumChunks;
 
