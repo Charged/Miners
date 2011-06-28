@@ -57,6 +57,33 @@ public:
 	}
 
 	/**
+	 * Replace the current level with one from classic data.
+	 *
+	 * Flips and convert the data.
+	 */
+	void newLevelFromClassic(uint xSize, uint ySize, uint zSize, ubyte[] data)
+	{
+		ubyte from, block, meta;
+
+		newLevel(xSize, ySize, zSize);
+
+		// Get the pointer directly to the data
+		auto p = ft.getBlockPointer(0, 0, 0);
+
+		// Flip & convert the world
+		for (int x; x < xSize; x++) {
+			for (int z; z < zSize; z++) {
+				for (int y; y < ySize; y++) {
+					from = data[(xSize*y + x) * zSize + z];
+					convertClassicToBeta(from, block, meta);
+					*p = block;
+					p++;
+				}
+			}
+		}
+	}
+
+	/**
 	 * "Generate" a level.
 	 */
 	void generateLevel(FiniteTerrain ct)
@@ -168,26 +195,9 @@ public:
 
 	void levelFinalize(uint xSize, uint ySize, uint zSize, ubyte[] data)
 	{
-		ubyte from, block, meta;
-
 		l.info("levelFinalize (%sx%sx%s) %s", xSize, ySize, zSize, data.length);
 
-		w.newLevel(xSize, ySize, zSize);
-
-		// Get the pointer directly to the data
-		auto p = w.ft.getBlockPointer(0, 0, 0);
-
-		// Flip & convert the world
-		for (int x; x < xSize; x++) {
-			for (int z; z < zSize; z++) {
-				for (int y; y < ySize; y++) {
-					from = data[(xSize*y + x) * zSize + z];
-					convertClassicToBeta(from, block, meta);
-					*p = block;
-					p++;
-				}
-			}
-		}
+		w.newLevelFromClassic(xSize, ySize, zSize, data);
 	}
 
 	void setBlock(short x, short y, short z, ubyte type)
