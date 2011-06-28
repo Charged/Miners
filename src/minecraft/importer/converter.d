@@ -54,7 +54,7 @@ const ClassicToBeta classicToBetaBlocks[50] = [
 	{ 35,  2,  true, "wool magenta",    "wool mangenta"},  // 32
 	{ 35,  6,  true, "wool pink",       "wool pink"},
 	{ 35, 15,  true, "wool black",      "wool black"},
-	{ 35,  7,  true, "wool gray",       "wool grey"},
+	{ 35,  8,  true, "wool gray",       "wool light grey"},
 	{ 35,  0,  true, "wool white",      "wool white"},
 	{ 37,  0,  true, "flower yellow",   "flower yellow"},
 	{ 38,  0,  true, "flower red",      "flower red"},
