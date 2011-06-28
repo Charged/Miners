@@ -27,6 +27,9 @@ public:
 	int ySize;
 	int zSize;
 
+	/** Height of meta data in bytes */
+	int yMetaSize;
+
 	/**
 	 * Chunks here refere to VBO's.
 	 */
@@ -65,12 +68,14 @@ public:
 		ySize = y;
 		zSize = z;
 
+		yMetaSize = ySize / 2 + (ySize % 2);
+
 		xNumChunks = xSize / 16;
 		yNumChunks = ySize / 128;
 		zNumChunks = zSize / 16;
 
 		// Add a extra chunk if nSize % 16 != 0
-		// y axis is aligned to 128 instead do to vbo size.
+		// y axis is aligned to 128 instead due to vbo size.
 		if (xNumChunks * 16 < xSize)
 			xNumChunks++;
 		if (yNumChunks * 128 < ySize)
@@ -85,7 +90,7 @@ public:
 		zStride = ySize * xSize;
 
 		sizeBlocks = xSize * ySize * zSize;
-		sizeData = sizeBlocks / 2;
+		sizeData = xSize * yMetaSize * zSize;;
 
 		store.length = sizeBlocks + sizeData;
 
@@ -109,12 +114,26 @@ public:
 	 */
 
 
-	final void setBlocksAndData(ubyte* blocks, ubyte *data)
+	final void setBlocksAndMeta(ubyte* blocks, ubyte *meta)
 	{
 		if (blocks)
 			this.blocks[0 .. sizeBlocks] = blocks[0 .. sizeBlocks];
-		if (data)
-			this.data[0 .. sizeData] = data[0 .. sizeData];
+		if (meta)
+			this.data[0 .. sizeData] = meta[0 .. sizeData];
+	}
+
+	final void setMeta(int x, int y, int z, ubyte meta)
+	{
+		auto mPtr = getMetaPointer(x, y, z);
+		auto d = *mPtr;
+
+		if (meta == 1)
+			assert((this)[x, y, z] == 35);
+
+		if (y % 2 == 0)
+			*mPtr = (d & 0xf0) | (0x0f & meta);
+		else
+			*mPtr = (d & 0x0f) | (cast(ubyte)(meta << 4) & 0xf0);
 	}
 
 	final ubyte opIndexAssign(ubyte data, int x, int y, int z)
@@ -137,6 +156,17 @@ public:
 	}
 
 	/**
+	 * Get a pointer to the metadata at location,
+	 *
+	 * Will return the byte that the metadata is located in.
+	 * So yPos = (y / 2).
+	 */
+	final ubyte *getMetaPointer(int x, int y, int z)
+	{
+		return &data[(xSize * z + x) * yMetaSize + (y / 2)];
+	}
+
+	/**
 	 * Get a WorkspaceData copy of blocks and metadata at the given
 	 * location in "chunk" coords.
 	 *
@@ -154,9 +184,10 @@ public:
 
 		int xOff = xPos * 16 - 1;
 		int yOff = yPos * 128 - 1;
+		int yOffMeta = yPos * 128;
 		int zOffStart = zPos * 16 - 1;
 
-		int startX, y, startZ;
+		int startX, y, yMeta, startZ;
 
 		// Handle underflow
 		if (xOff < 0) {
@@ -165,6 +196,7 @@ public:
 		}
 		if (yOff < 0) {
 			y = 1;
+			yMeta = 1;
 			yEnd--;
 			yOff++;
 		}
@@ -181,6 +213,9 @@ public:
 		if (zOffStart + zEnd >= zSize)
 			zEnd = zSize - zOffStart;
 
+		// Need to include the whole last byte
+		int yMetaEnd = yEnd / 2 + (yEnd % 2);
+
 		// Could be smarter about this
 		ws.zero();
 
@@ -191,6 +226,8 @@ public:
 
 				auto ptr = getBlockPointer(xOff, yOff, zOff);
 				ws.blocks[x][z][y .. y + yEnd] = ptr[0 .. yEnd];
+				ptr = getMetaPointer(xOff, yOff, zOff);
+				ws.data[x][z][yMeta .. yMeta + yMetaEnd] = ptr[0 .. yMetaEnd];
 			}
 		}
 
