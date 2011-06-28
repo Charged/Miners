@@ -12,6 +12,7 @@ import minecraft.actors.helper;
 import minecraft.terrain.common;
 import minecraft.terrain.finite;
 import minecraft.classic.connection;
+import minecraft.importer.classic;
 import minecraft.importer.network;
 import minecraft.importer.converter;
 
@@ -34,6 +35,23 @@ public:
 
 		// Set the level with some sort of valid data
 		generateLevel(ft);
+	}
+
+	this(RenderManager rm, ResourceStore rs, char[] filename)
+	{
+		this.spawn = Point3d(64, 67, 64);
+
+		super(rm, rs);
+
+		uint x, y, z;
+		auto b = loadClassicTerrain(filename, x, y, z);
+		if (b is null)
+			throw new Exception("Failed to load level");
+		scope (exit)
+			std.c.stdlib.free(b.ptr);
+
+		// Setup the terrain from the data.
+		newLevelFromClassic(x, y, z, b[0 .. x * y * z]);
 	}
 
 	~this()
@@ -125,6 +143,14 @@ public:
 	this(Router r, RenderManager rm, ResourceStore rs)
 	{
 		w = new ClassicWorld(rm, rs);
+
+		super(r, w, rm);
+	}
+
+	this(Router r, RenderManager rm, ResourceStore rs,
+	     char[] filename)
+	{
+		w = new ClassicWorld(rm, rs, filename);
 
 		super(r, w, rm);
 	}
