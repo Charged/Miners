@@ -87,16 +87,22 @@ public:
 
 		// Get the pointer directly to the data
 		auto p = ft.getBlockPointer(0, 0, 0);
+		auto pm = ft.getMetaPointer(0, 0, 0);
 
 		// Flip & convert the world
-		for (int x; x < xSize; x++) {
-			for (int z; z < zSize; z++) {
+		for (int z; z < zSize; z++) {
+			for (int x; x < xSize; x++) {
 				for (int y; y < ySize; y++) {
-					from = data[(xSize*y + x) * zSize + z];
+					from = data[(zSize*y + z) * xSize + x];
 					convertClassicToBeta(from, block, meta);
 					*p = block;
+					*pm |= meta << (4 * (y % 2));
+					//ft.setMeta(x, y, z, meta);
 					p++;
+					pm += y % 2;
 				}
+				// If height is uneaven we need to increment this.
+				pm += ySize % 2;
 			}
 		}
 	}
