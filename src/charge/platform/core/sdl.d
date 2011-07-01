@@ -170,9 +170,11 @@ private:
 			alias libSDLname libSDLnames;
 		}
 
-		sdl = Library.loads(libSDLnames);
-		if (!sdl)
-			l.fatal("Could not load SDL, crashing bye bye!");
+		version (DynamicSDL) {
+			sdl = Library.loads(libSDLnames);
+			if (!sdl)
+				l.fatal("Could not load SDL, crashing bye bye!");
+		}
 	}
 
 
@@ -185,7 +187,8 @@ private:
 
 	void initGfx(Properties p)
 	{
-		loadSDL(&sdl.symbol);
+		version (DynamicSDL)
+			loadSDL(&sdl.symbol);
 
 		SDL_Init(SDL_INIT_VIDEO);
 

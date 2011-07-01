@@ -2,18 +2,17 @@
 // See copyright at the bottom of this file.
 module lib.sdl.sdl;
 
-import lib.loader;
-
-public:
-import lib.sdl.types;
-import lib.sdl.rwops;
-import lib.sdl.audio;
-import lib.sdl.video;
-import lib.sdl.event;
-import lib.sdl.keyboard;
-import lib.sdl.keysym;
-import lib.sdl.timer;
-import lib.sdl.mouse;
+public {
+	import lib.sdl.types;
+	import lib.sdl.rwops;
+	import lib.sdl.audio;
+	import lib.sdl.video;
+	import lib.sdl.event;
+	import lib.sdl.keyboard;
+	import lib.sdl.keysym;
+	import lib.sdl.timer;
+	import lib.sdl.mouse;
+}
 
 const SDL_INIT_TIMER       = 0x00000001;
 const SDL_INIT_AUDIO       = 0x00000010;
@@ -23,6 +22,10 @@ const SDL_INIT_JOYSTICK    = 0x00000200;
 const SDL_INIT_NOPARACHUTE = 0x00100000;
 const SDL_INIT_EVENTTHREAD = 0x01000000;
 const SDL_INIT_EVERYTHING  = 0x0000FFFF;
+
+version (DynamicSDL)
+{
+import lib.loader;
 
 void loadSDL(Loader l)
 {
@@ -47,6 +50,16 @@ int (*SDL_InitSubSystem)(Uint32 flags);
 void (*SDL_QuitSubSystem)(Uint32 flags);
 Uint32 (*SDL_WasInit)(Uint32 flags);
 void (*SDL_Quit)();
+}
+else
+{
+extern (C):
+int SDL_Init(Uint32 flags);
+int SDL_InitSubSystem(Uint32 flags);
+void SDL_QuitSubSystem(Uint32 flags);
+Uint32 SDL_WasInit(Uint32 flags);
+void SDL_Quit();
+}
 
 
 char[] licenseText = `

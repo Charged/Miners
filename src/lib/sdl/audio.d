@@ -2,7 +2,6 @@
 // See copyright in src/lib/sdl/sdl.d (LGPLv2+).
 module lib.sdl.audio;
 
-import lib.loader;
 import lib.sdl.types;
 import lib.sdl.rwops;
 
@@ -40,6 +39,10 @@ else
 	const AUDIO_S16SYS = AUDIO_S16MSB;
 }
 
+version(DynamicSDL)
+{
+import lib.loader;
+
 void loadSDL_audio(Loader l)
 {
 	loadFunc!(SDL_LoadWAV_RW)(l);
@@ -47,6 +50,12 @@ void loadSDL_audio(Loader l)
 }
 
 extern(C):
-
 SDL_AudioSpec* (*SDL_LoadWAV_RW)(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
 void (*SDL_FreeWAV)(Uint8 *audio_buf);
+}
+else
+{
+extern(C):
+SDL_AudioSpec* SDL_LoadWAV_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
+void SDL_FreeWAV(Uint8 *audio_buf);
+}

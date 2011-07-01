@@ -42,12 +42,19 @@ CFLAGS ?= -g -Wall
 DFLAGS ?= $(DEBUG_DFLAGS)
 LDFLAGS ?= $(DEBUG_DFLAGS)
 
-DDEFINES = $(ODE_DDEFINES)
+DDEFINES = $(ODE_DDEFINES) $(SDL_DDEFINES)
+LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
 CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 MCOMP_FLAGS = $(CARCH) -I/Library/Frameworks/SDL.framework/Headers -c -o $@ $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
-LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(ODE_LDFLAGS) $(LDFLAGS)
+LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS_)
+
+ifneq ($(strip $(USE_SDL)),)
+	SDL_LDFLAGS = -L-lSDL
+else
+	SDL_DDEFINES = -version=DynamicSDL
+endif
 
 ifneq ($(strip $(USE_ODE)),)
 	ODE_LDFLAGS = -L-L. -L-lode -L-lstdc++
@@ -65,20 +72,20 @@ ifeq ($(UNAME),Darwin)
 	MSRC = $(shell find src -name "*.m")
 	EXTRA_OBJ = $(patsubst src/%.m, $(OBJ_DIR)/%.$(OBJ_TYPE), $(MSRC))
 	CARCH= -arch i386 -arch x86_64
-	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa $(LDFLAGS)
+	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa $(LDFLAGS_)
 else
 ifeq ($(UNAME),WindowsCross)
 	PLATFORM=windows
 	TARGET = Charge.exe
 
 	# Work around winsocket issue
-	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-lgphobos -L-lws2_32 $(LDFLAGS)
+	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-lgphobos -L-lws2_32 $(LDFLAGS_)
 else
 	PLATFORM=windows
-	TARGET = Charge.exe
+:	TARGET = Charge.exe
 
 	# Change the link flags
-	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-lws2_32 $(LDFLAGS)
+	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-lws2_32 $(LDFLAGS_)
 endif
 endif
 endif

@@ -2,7 +2,6 @@
 // See copyright in src/lib/sdl/sdl.d (LGPLv2+).
 module lib.sdl.event;
 
-import lib.loader;
 import lib.sdl.types;
 import lib.sdl.keyboard;
 
@@ -199,6 +198,10 @@ const SDL_IGNORE  = 0;
 const SDL_DISABLE = 0;
 const SDL_ENABLE  = 1;
 
+version (DynamicSDL)
+{
+import lib.loader;
+
 package void loadSDL_Event(Loader l)
 {
 	loadFunc!(SDL_PumpEvents)(l);
@@ -212,7 +215,6 @@ package void loadSDL_Event(Loader l)
 }
 
 extern (C):
-
 void (*SDL_PumpEvents)();
 int (*SDL_PeepEvents)(SDL_Event *events, int numevents, SDL_eventaction action, Uint32 mask);
 int (*SDL_PollEvent)(SDL_Event *event);
@@ -222,3 +224,17 @@ typedef int function(SDL_Event *event) SDL_EventFilter;
 void (*SDL_SetEventFilter)(SDL_EventFilter filter);
 SDL_EventFilter (*SDL_GetEventFilter)();
 Uint8 (*SDL_EventState)(Uint8 type, int state);
+}
+else
+{
+extern (C):
+void SDL_PumpEvents();
+int SDL_PeepEvents(SDL_Event *events, int numevents, SDL_eventaction action, Uint32 mask);
+int SDL_PollEvent(SDL_Event *event);
+int SDL_WaitEvent(SDL_Event *event);
+int SDL_PushEvent(SDL_Event *event);
+typedef int function(SDL_Event *event) SDL_EventFilter;
+void SDL_SetEventFilter(SDL_EventFilter filter);
+SDL_EventFilter SDL_GetEventFilter();
+Uint8 SDL_EventState(Uint8 type, int state);
+}
