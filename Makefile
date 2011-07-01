@@ -108,7 +108,7 @@ $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.d Makefile
 	@mkdir -p $(dir $@)
 	@$(DMD) $(DCOMP_FLAGS) src/$*.d
 
-$(TARGET): $(OBJ)
+$(TARGET): $(OBJ) Makefile
 	@echo "  LD     $@"
 	@$(DMD) $(LINK_FLAGS)
 
