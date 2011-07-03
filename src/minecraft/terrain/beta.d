@@ -9,6 +9,7 @@ import lib.sdl.sdl;
 
 import charge.charge;
 
+import minecraft.types;
 import minecraft.gfx.vbo;
 import minecraft.gfx.renderer;
 import minecraft.actors.helper;
@@ -72,7 +73,7 @@ public:
 		view_radii = radii;
 	}
 
-	void setBuildType(BuildTypes type)
+	void setBuildType(TerrainBuildTypes type)
 	{
 		if (type == currentBuildType)
 			return;

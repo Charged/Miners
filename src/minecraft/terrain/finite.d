@@ -4,6 +4,7 @@ module minecraft.terrain.finite;
 
 import charge.charge;
 
+import minecraft.types;
 import minecraft.gfx.vbo;
 import minecraft.gfx.imports;
 import minecraft.actors.helper;
@@ -262,7 +263,7 @@ public:
 
 	}
 
-	void setBuildType(BuildTypes type)
+	void setBuildType(TerrainBuildTypes type)
 	{
 		if (currentBuildType == type)
 			return;

@@ -6,6 +6,7 @@ import std.math;
 
 import charge.charge;
 
+import minecraft.types;
 import minecraft.gfx.vbo;
 import minecraft.gfx.renderer;
 import minecraft.actors.helper;
@@ -16,14 +17,9 @@ private:
 	mixin SysLogging;
 
 protected:
-	enum BuildTypes {
-		RigidMesh,
-		CompactMesh,
-	}
-
 	ResourceStore rs;
 	int view_radii;
-	BuildTypes currentBuildType;
+	TerrainBuildTypes currentBuildType;
 
 public:
 	ChunkVBOGroupRigidMesh cvgrm;
@@ -39,7 +35,7 @@ public:
 		view_radii = 250 / 16 + 1;
 
 		// Setup the groups
-		doBuildTypeChange(BuildTypes.RigidMesh);
+		doBuildTypeChange(TerrainBuildTypes.RigidMesh);
 	}
 
 	~this() {
@@ -49,11 +45,11 @@ public:
 
 	abstract void setCenter(int xNew, int zNew);
 	abstract void setViewRadii(int radii);
-	abstract void setBuildType(BuildTypes type);
+	abstract void setBuildType(TerrainBuildTypes type);
 	abstract bool buildOne();
 
 protected:
-	void doBuildTypeChange(BuildTypes type)
+	void doBuildTypeChange(TerrainBuildTypes type)
 	{
 		this.currentBuildType = type;
 		delete cvgrm;
@@ -62,12 +58,12 @@ protected:
 		cvgrm = null; cvgcm = null;
 
 		switch(type) {
-		case BuildTypes.RigidMesh:
+		case TerrainBuildTypes.RigidMesh:
 			cvgrm = new ChunkVBOGroupRigidMesh(w.gfx);
 			cvgrm.getMaterial()["tex"] = rs.terrainTexture;
 			cvgrm.getMaterial()["fake"] = true;
 			break;
-		case BuildTypes.CompactMesh:
+		case TerrainBuildTypes.CompactMesh:
 			cvgcm = new ChunkVBOGroupCompactMesh(w.gfx);
 			cvgcm.getMaterial()["tex"] =
 				buildIndexed ? rs.terrainTextureArray : rs.terrainTexture;

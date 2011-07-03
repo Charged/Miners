@@ -4,8 +4,8 @@ module minecraft.gfx.manager;
 
 import charge.charge;
 
+import minecraft.types;
 import minecraft.gfx.renderer;
-import minecraft.terrain.common;
 
 /**
  * Class for managing the different renderers.
@@ -22,8 +22,8 @@ public:
 	MinecraftDeferredRenderer mdr; // Special deferred renderer
 	MinecraftForwardRenderer mfr; // Special forward renderer
 	GfxRenderer rs[5]; // Null terminated list of renderer
-	Terrain.BuildTypes rsbt[5]; // A list of build types for the renderers
-	Terrain.BuildTypes bt; // Current build type
+	TerrainBuildTypes rsbt[5]; // A list of build types for the renderers
+	TerrainBuildTypes bt; // Current build type
 	int num_renderers;
 	int current_renderer;
 
@@ -92,19 +92,19 @@ protected:
 	{
 		GfxRenderer.init();
 		ifc = new GfxFixedRenderer();
-		rsbt[num_renderers] = Terrain.BuildTypes.RigidMesh;
+		rsbt[num_renderers] = TerrainBuildTypes.RigidMesh;
 		rs[num_renderers++] = ifc;
 
 		if (canDoForward) {
 			ifr = new GfxForwardRenderer();
-			rsbt[num_renderers] = Terrain.BuildTypes.RigidMesh;
+			rsbt[num_renderers] = TerrainBuildTypes.RigidMesh;
 			rs[num_renderers++] = ifr;
 		}
 
 		if (canDoForward) {
 			try {
 				mfr = new MinecraftForwardRenderer();
-				rsbt[num_renderers] = Terrain.BuildTypes.CompactMesh;
+				rsbt[num_renderers] = TerrainBuildTypes.CompactMesh;
 				rs[num_renderers++] = mfr;
 			} catch (Exception e) {
 				l.warn("No fancy renderer \"%s\"", e);
@@ -116,7 +116,7 @@ protected:
 				MinecraftDeferredRenderer.init();
 
 				mdr = new MinecraftDeferredRenderer();
-				rsbt[num_renderers] = Terrain.BuildTypes.CompactMesh;
+				rsbt[num_renderers] = TerrainBuildTypes.CompactMesh;
 				rs[num_renderers++] = mdr;
 			} catch (Exception e) {
 				l.warn("No fancy renderer \"%s\"", e);
