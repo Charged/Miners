@@ -52,11 +52,6 @@ public:
 				delete r;
 	}
 
-	void buildAll()
-	{
-		while(buildOne()) {}
-	}
-
 	void setViewRadii(int radii)
 	{
 		if (radii < view_radii) {

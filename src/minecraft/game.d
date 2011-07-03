@@ -582,11 +582,17 @@ protected:
 
 		// No other place to put it.
 		if (build_all) {
-			l.fatal("Building all, please wait...");
+			l.info("Building all, please wait...");
+			writefln("Building all, please wait...");
+
 			auto t1 = SDL_GetTicks();
-			w.bt.buildAll();
+
+			while(w.t.buildOne()) { }
+
 			auto t2 = SDL_GetTicks();
-			l.fatal("Build time: %s seconds", (t2 - t1) / 1000.0);
+
+			l.info("Build time: %s seconds", (t2 - t1) / 1000.0);
+			writefln("Build time: %s seconds", (t2 - t1) / 1000.0);
 		}
 
 		return r;
