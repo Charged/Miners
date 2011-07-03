@@ -25,7 +25,6 @@ public:
 		} catch (Exception e) {
 			l.warn("Is not cabable of running minecraft forward renderer!");
 			l.warn(e.toString());
-			l.warn(std.string.toString(glGetString(GL_RENDERER)));
 			return false;
 		}
 
@@ -179,7 +178,6 @@ public:
 		} catch (Exception e) {
 			l.warn("Is not cabable of running the deferred minecraft renderer!");
 			l.warn(e.toString());
-			l.warn(std.string.toString(glGetString(GL_RENDERER)));
 			return false;
 		}
 

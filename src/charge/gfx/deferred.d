@@ -69,7 +69,6 @@ public:
 		} catch (Exception e) {
 			l.info("Is not cabable of running deferred renderer!");
 			l.bug(e.toString());
-			l.bug(std.string.toString(glGetString(GL_RENDERER)));
 			return false;
 		}
 

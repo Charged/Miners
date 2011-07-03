@@ -230,6 +230,14 @@ private:
 		DefaultTarget.initDefaultTarget(width, height);
 
 		gfxLoaded = true;
+
+		auto str[];
+		str = std.string.toString(glGetString(GL_VENDOR));
+		l.info(str);
+		str = std.string.toString(glGetString(GL_VERSION));
+		l.info(str);
+		str = std.string.toString(glGetString(GL_RENDERER));
+		l.info(str);
 	}
 
 	void closeGfx()
