@@ -151,8 +151,7 @@ public:
 			Core().screenShot();
 			break;
 		case SDLK_b:
-			// TODO
-			//w.rm.aa = !w.rm.aa;
+			opts.aa.toggle;
 			break;
 		case SDLK_r:
 			w.switchRenderer();

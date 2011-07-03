@@ -90,6 +90,11 @@ public:
 
 	}
 
+	final void setAa(bool aa)
+	{
+		this.aa = aa;
+	}
+
 protected:
 	void setupRenderers()
 	{
