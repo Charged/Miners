@@ -98,7 +98,7 @@ protected:
 				return n;
 			}
 		} else {
-			return s.receive(buf, flags);
+			return cast(int)s.receive(buf, flags);
 		}
 	}
 }
