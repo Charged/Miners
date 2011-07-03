@@ -469,7 +469,7 @@ protected:
 
 		runner.render(rt);
 
-		if (false) {
+		if (opts.showDebug()) {
 			d.target = rt;
 			d.start();
 
