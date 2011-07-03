@@ -37,6 +37,15 @@ On Mac you will need to download and install the SDL framework into
 this will not be needed for running.
 
 
+Graphics Drivers
+----------------
+
+Make sure you have the latest graphics drivers installed, known bad are:
+
+ * NVIDIA 195.36.31 on debian
+ * Mesa 7.9 and below
+
+
 D Compiler
 ----------
 
