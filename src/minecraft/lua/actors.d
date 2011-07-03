@@ -9,8 +9,7 @@ import charge.game.lua;
 
 import minecraft.world;
 import minecraft.options;
-import minecraft.terrain.beta;
-import minecraft.terrain.chunk;
+import minecraft.actors.sunlight;
 
 
 const defaultFogColor = Color4f(89.0/255, 178.0/255, 220.0/255);
@@ -18,11 +17,13 @@ const defaultFogStart = 150;
 const defaultFogStop = 250;
 const defaultViewDistance = defaultFogStop;
 
+
 /*
  *
  * Simple actors
  *
  */
+
 
 class Camera : public GameActor
 {
@@ -46,42 +47,6 @@ public:
 	void getPosition(out Point3d pos) { c.getPosition(pos); }
 	void setRotation(ref Quatd rot) { c.setRotation(rot); }
 	void getRotation(out Quatd rot) { c.getRotation(rot); }
-}
-
-class SunLight : public GameActor
-{
-private:
-	GfxSimpleLight gfx;
-	GfxFog fog;
-
-public:
-	this(World w)
-	{
-		super(w);
-		gfx = new GfxSimpleLight();
-		w.gfx.add(gfx);
-
-		fog = new GfxFog();
-		w.gfx.fog = fog;
-
-		fog.start = defaultFogStart;
-		fog.stop = defaultViewDistance;
-		fog.color = defaultFogColor;
-	}
-
-	~this()
-	{
-		w.gfx.remove(gfx);
-		w.gfx.fog = null;
-
-		delete gfx;
-		delete fog;
-	}
-
-	void setPosition(ref Point3d pos) { gfx.setPosition(pos); }
-	void getPosition(out Point3d pos) { gfx.getPosition(pos); }
-	void setRotation(ref Quatd rot) { gfx.setRotation(rot); }
-	void getRotation(out Quatd rot) { gfx.getRotation(rot); }
 }
 
 
@@ -238,7 +203,8 @@ struct SunLightWrapper
 			s.pushColor4f(sl.gfx.ambient);
 			break;
 		case "fog":
-			s.pushBool(sl.w.gfx.fog !is null);
+			// TODO
+			//s.pushBool(sl.gfx.fog !is null);
 			break;
 		case "fogStart":
 			s.pushNumber(sl.fog.start);
@@ -292,13 +258,14 @@ struct SunLightWrapper
 			sl.gfx.ambient = *s.checkColor4f(3);
 			break;
 		case "fog":
-			sl.w.gfx.fog = s.toBool(3) ? sl.fog : null;
+			// TODO
+			//sl.w.gfx.fog = s.toBool(3) ? sl.fog : null;
 			break;
 		case "fogStart":
-			sl.w.gfx.fog.start = s.toNumber(3);
+			sl.fog.start = s.toNumber(3);
 			break;
 		case "fogStop":
-			sl.w.gfx.fog.stop = s.toNumber(3);
+			sl.fog.stop = s.toNumber(3);
 			break;
 		case "fogColor":
 			sl.fog.color = *s.checkColor4f(3);

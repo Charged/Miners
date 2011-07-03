@@ -11,8 +11,7 @@ import minecraft.world;
 import minecraft.runner;
 import minecraft.options;
 import minecraft.lua.actors;
-import minecraft.terrain.beta;
-import minecraft.terrain.chunk;
+import minecraft.actors.sunlight;
 
 class ScriptRunner : public GameRunnerBase
 {
@@ -75,6 +74,11 @@ public:
 		sl = new SunLight(w);
 		c = new Camera(w);
 		cam = c.c;
+
+		// Default state
+		sl.fog.color = defaultFogColor;
+		sl.fog.stop = defaultFogStop;
+		sl.fog.start = defaultFogStart;
 
 		mouse = CtlInput().mouse;
 		keyboard = CtlInput().keyboard;
