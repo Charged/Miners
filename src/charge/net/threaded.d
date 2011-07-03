@@ -92,7 +92,7 @@ protected:
 		version(Unix) {
 			int n;
 			while(true) {
-				n = s.receive(buf, flags);
+				n = cast(int)s.receive(buf, flags);
 				if (n < 0 && getErrno() == EINTR)
 					continue;
 				return n;
