@@ -195,7 +195,9 @@ protected:
 		opts.rendererBuildType = rm.bt;
 		opts.rendererBuildIndexed = rm.textureArray;
 		opts.changeRenderer = &changeRenderer;
+		opts.aa = true;
 		opts.aa ~= &rm.setAa;
+		rm.setAa(opts.aa());
 
 		// Create and set the textures
 		createTextures(pic, rm.textureArray, t, ta);
