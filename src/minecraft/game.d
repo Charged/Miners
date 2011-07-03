@@ -341,8 +341,11 @@ protected:
 
 		foreach(l; locations) {
 			auto pic = Picture("mc/terrain", l);
-			if (pic !is null)
-				return pic;
+			if (pic is null)
+				continue;
+
+			this.l.info("Found terrain.png please ignore above warnings");
+			return pic;
 		}
 
 		return null;
