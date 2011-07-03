@@ -37,7 +37,6 @@ public:
 	void switchRenderer()
 	{
 		opts.changeRenderer();
-		t.setBuildType(opts.rendererBuildType);
 	}
 
 protected:
@@ -57,10 +56,7 @@ public:
 		this.dir = info ? info.dir : null;
 		super(opts);
 
-		bt = new BetaTerrain(this, dir, opts);
-		t = bt;
-		t.buildIndexed = opts.rendererBuildIndexed;
-		t.setBuildType(opts.rendererBuildType);
+		t = bt = new BetaTerrain(this, dir, opts);
 
 		// Find the actuall spawn height
 		auto x = cast(int)spawn.x;

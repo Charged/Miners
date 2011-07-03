@@ -36,6 +36,8 @@ public:
 		// Setup the groups
 		buildIndexed = opts.rendererBuildIndexed;
 		doBuildTypeChange(opts.rendererBuildType);
+
+		opts.renderer ~= &setBuildType;
 	}
 
 	~this() {
@@ -45,7 +47,7 @@ public:
 
 	abstract void setCenter(int xNew, int zNew);
 	abstract void setViewRadii(int radii);
-	abstract void setBuildType(TerrainBuildTypes type);
+	abstract void setBuildType(TerrainBuildTypes type, char[] name);
 	abstract bool buildOne();
 
 protected:

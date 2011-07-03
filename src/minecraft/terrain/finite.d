@@ -263,7 +263,7 @@ public:
 
 	}
 
-	void setBuildType(TerrainBuildTypes type)
+	void setBuildType(TerrainBuildTypes type, char[] name)
 	{
 		if (currentBuildType == type)
 			return;

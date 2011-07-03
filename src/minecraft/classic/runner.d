@@ -67,10 +67,7 @@ public:
 	{
 		delete ft;
 
-		ft = new FiniteTerrain(this, opts, x, y, z);
-		t = ft;
-		t.buildIndexed = opts.rendererBuildIndexed;
-		t.setBuildType(opts.rendererBuildType);
+		t = ft = new FiniteTerrain(this, opts, x, y, z);
 	}
 
 	/**

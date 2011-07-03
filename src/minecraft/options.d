@@ -95,6 +95,7 @@ public:
 		terrainTextureArray = null;
 
 		terrain.destruct();
+		renderer.destruct();
 		shadow.signal.destruct();
 		showDebug.signal.destruct();
 		viewDistance.signal.destruct();

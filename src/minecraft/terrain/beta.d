@@ -73,7 +73,7 @@ public:
 		view_radii = radii;
 	}
 
-	void setBuildType(TerrainBuildTypes type)
+	void setBuildType(TerrainBuildTypes type, char[] name)
 	{
 		if (type == currentBuildType)
 			return;
