@@ -84,14 +84,6 @@ Now you just need to build Charge, to do so type:
 
   $ make
 
-Thats it, but before running Charge for the first run this command:
-
-::
-
-  $ make res
-
-This will download the necessary resources files from the web. After that
-
 
 Running
 -------
