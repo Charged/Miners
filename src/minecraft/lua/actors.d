@@ -359,7 +359,7 @@ struct WorldWrapper
 	{
 		auto s = LuaState(l);
 		char[] key;
-		auto w = s.checkClass!(World)(1, false);
+		auto w = s.checkClass!(BetaWorld)(1, false);
 		s.checkString(2);
 
 		key = s.toString(2);
@@ -384,7 +384,7 @@ struct WorldWrapper
 	{
 		auto s = LuaState(l);
 		char[] key;
-		auto w = s.checkClass!(World)(1, false);
+		auto w = s.checkClass!(BetaWorld)(1, false);
 		s.checkString(2);
 
 		key = s.toString(2);
@@ -404,7 +404,7 @@ struct WorldWrapper
 	extern (C) static int switchRenderer(lua_State *l)
 	{
 		auto s = LuaState(l);
-		auto w = s.checkClass!(World)(1, false);
+		auto w = s.checkClass!(BetaWorld)(1, false);
 
 		try {
 			w.opts.changeRenderer();
@@ -430,7 +430,7 @@ struct WorldWrapper
 
 	static void register(LuaState s)
 	{
-		s.registerClass!(World);
+		s.registerClass!(BetaWorld);
 		s.pushCFunction(&ObjectWrapper.toString);
 		s.setFieldz(-2, "__tostring");
 		s.pushCFunction(&index);
