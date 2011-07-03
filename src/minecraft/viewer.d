@@ -153,7 +153,7 @@ public:
 			opts.aa.toggle;
 			break;
 		case SDLK_r:
-			w.switchRenderer();
+			opts.changeRenderer();
 			break;
 		case SDLK_v:
 			opts.shadow.toggle;

@@ -407,7 +407,7 @@ struct WorldWrapper
 		auto w = s.checkClass!(World)(1, false);
 
 		try {
-			w.switchRenderer();
+			w.opts.changeRenderer();
 		} catch (Exception e) {
 			s.error(e);
 		}

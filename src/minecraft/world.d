@@ -33,14 +33,6 @@ public:
 	{
 		delete t;
 	}
-
-	void switchRenderer()
-	{
-		opts.changeRenderer();
-	}
-
-protected:
-
 }
 
 class BetaWorld : public World
