@@ -23,7 +23,9 @@ public:
 	MinecraftForwardRenderer mfr; // Special forward renderer
 	GfxRenderer rs[5]; // Null terminated list of renderer
 	TerrainBuildTypes rsbt[5]; // A list of build types for the renderers
+	char rss[5][]; // List of renderer names
 	TerrainBuildTypes bt; // Current build type
+	char[] s; // Current name of renderer
 	int num_renderers;
 	int current_renderer;
 
@@ -65,6 +67,7 @@ public:
 			current_renderer = 0;
 
 		r = rs[current_renderer];
+		s = rss[current_renderer];
 		bt = rsbt[current_renderer];
 	}
 
@@ -93,11 +96,13 @@ protected:
 		GfxRenderer.init();
 		ifc = new GfxFixedRenderer();
 		rsbt[num_renderers] = TerrainBuildTypes.RigidMesh;
+		rss[num_renderers]  = "Fixed";
 		rs[num_renderers++] = ifc;
 
 		if (canDoForward) {
 			ifr = new GfxForwardRenderer();
 			rsbt[num_renderers] = TerrainBuildTypes.RigidMesh;
+			rss[num_renderers]  = "Forward";
 			rs[num_renderers++] = ifr;
 		}
 
@@ -105,6 +110,7 @@ protected:
 			try {
 				mfr = new MinecraftForwardRenderer();
 				rsbt[num_renderers] = TerrainBuildTypes.CompactMesh;
+				rss[num_renderers]  = "Adv. Forward";
 				rs[num_renderers++] = mfr;
 			} catch (Exception e) {
 				l.warn("No fancy renderer \"%s\"", e);
@@ -117,6 +123,7 @@ protected:
 
 				mdr = new MinecraftDeferredRenderer();
 				rsbt[num_renderers] = TerrainBuildTypes.CompactMesh;
+				rss[num_renderers]  = "Adv. Deferred";
 				rs[num_renderers++] = mdr;
 			} catch (Exception e) {
 				l.warn("No fancy renderer \"%s\"", e);
@@ -126,6 +133,7 @@ protected:
 		// Pick the most advanced renderer
 		current_renderer = num_renderers - 1;
 		r = rs[current_renderer];
+		s = rss[current_renderer];
 		bt = rsbt[current_renderer];
 	}
 }
