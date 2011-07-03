@@ -16,13 +16,13 @@ import charge.charge;
 import charge.sys.file;
 import charge.platform.homefolder;
 
-import minecraft.runner;
-import minecraft.lua.runner;
-import minecraft.world;
-import minecraft.viewer;
 import minecraft.menu;
+import minecraft.world;
+import minecraft.runner;
+import minecraft.viewer;
+import minecraft.options;
+import minecraft.lua.runner;
 import minecraft.gfx.manager;
-import minecraft.actors.helper;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 import minecraft.classic.runner;
@@ -59,7 +59,7 @@ private:
 	charge.game.app.TimeKeeper luaTime;
 	charge.game.app.TimeKeeper buildTime;
 
-	ResourceStore rs;
+	Options opts;
 	RenderManager rm;
 	GfxDefaultTarget defaultTarget;
 
@@ -143,7 +143,7 @@ public:
 
 		manageRunners();
 
-		delete rs;
+		delete opts;
 		delete rm;
 		delete d;
 
@@ -186,15 +186,19 @@ protected:
 		// Do the manipulation of the texture to fit us
 		manipulateTexture(pic);
 
-		// Another comment that I made after the one below.
-		rs = new ResourceStore();
-
 		// I just wanted a comment here to make the code look prettier.
 		rm = new RenderManager();
 
+		// Another comment that I made after the one above.
+		opts = new Options();
+		opts.rendererString = rm.s;
+		opts.rendererBuildType = rm.bt;
+		opts.rendererBuildIndexed = rm.textureArray;
+		opts.changeRenderer = &changeRenderer;
+
 		// Create and set the textures
 		createTextures(pic, rm.textureArray, t, ta);
-		rs.setTextures(t, ta);
+		opts.setTextures(t, ta);
 
 		// Not needed anymore.
 		pic.dereference();
@@ -205,9 +209,9 @@ protected:
 		// Should we use classic
 		if (classic) {
 			if (!classicNetwork)
-				r = new ClassicRunner(this, rm, rs);
+				r = new ClassicRunner(this, opts);
 			else
-				r = new ClassicRunner(this, rm, rs,
+				r = new ClassicRunner(this, opts,
 						      hostname, port,
 						      username, password);
 
@@ -372,11 +376,13 @@ protected:
 		return true;
 	}
 
+
 	/*
 	 *
 	 * Callback functions
 	 *
 	 */
+
 
 	void resize(uint w, uint h)
 	{
@@ -517,6 +523,17 @@ protected:
 	{
 	}
 
+	void render(GfxWorld w, GfxCamera cam, GfxRenderTarget rt)
+	{
+		rm.render(w, cam, rt);
+	}
+
+	void changeRenderer()
+	{
+		rm.switchRenderer();
+		opts.setRenderer(rm.bt, rm.s);
+	}
+
 
 	/*
 	 *
@@ -549,14 +566,14 @@ protected:
 		if (info is null)
 			return null;
 
-		w = new BetaWorld(info, rm, rs);
+		w = new BetaWorld(info, opts);
 
 		auto scriptName = "res/script.lua";
 		try {
-			r = new ScriptRunner(this, w, rm, scriptName);
+			r = new ScriptRunner(this, opts, w, scriptName);
 		} catch (Exception e) {
 			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
-			r = new ViewerRunner(this, w, rm);
+			r = new ViewerRunner(this, opts, w);
 		}
 
 		// No other place to put it.

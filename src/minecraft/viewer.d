@@ -9,7 +9,7 @@ import charge.charge;
 
 import minecraft.world;
 import minecraft.runner;
-import minecraft.gfx.manager;
+import minecraft.options;
 import minecraft.terrain.chunk;
 import minecraft.actors.otherplayer;
 
@@ -39,9 +39,9 @@ private:
 	mixin SysLogging;
 
 public:
-	this(Router r, World w, RenderManager rm)
+	this(Router r, Options opts, World w)
 	{
-		super(r, w, rm);
+		super(r, opts, w);
 
 		w.t.setViewRadii(250/16 + 1);
 
@@ -151,7 +151,8 @@ public:
 			Core().screenShot();
 			break;
 		case SDLK_b:
-			w.rm.aa = !w.rm.aa;
+			// TODO
+			//w.rm.aa = !w.rm.aa;
 			break;
 		case SDLK_r:
 			w.switchRenderer();

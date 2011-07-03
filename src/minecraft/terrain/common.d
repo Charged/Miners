@@ -7,9 +7,8 @@ import std.math;
 import charge.charge;
 
 import minecraft.types;
+import minecraft.options;
 import minecraft.gfx.vbo;
-import minecraft.gfx.renderer;
-import minecraft.actors.helper;
 
 class Terrain : public GameActor
 {
@@ -17,7 +16,7 @@ private:
 	mixin SysLogging;
 
 protected:
-	ResourceStore rs;
+	Options opts;
 	int view_radii;
 	TerrainBuildTypes currentBuildType;
 
@@ -27,15 +26,16 @@ public:
 	bool buildIndexed; // The renderer supports array textures.
 
 public:
-	this(GameWorld w, ResourceStore rs)
+	this(GameWorld w, Options opts)
 	{
 		super(w);
-		this.rs = rs;
+		this.opts = opts;
 
 		view_radii = 250 / 16 + 1;
 
 		// Setup the groups
-		doBuildTypeChange(TerrainBuildTypes.RigidMesh);
+		buildIndexed = opts.rendererBuildIndexed;
+		doBuildTypeChange(opts.rendererBuildType);
 	}
 
 	~this() {
@@ -60,13 +60,13 @@ protected:
 		switch(type) {
 		case TerrainBuildTypes.RigidMesh:
 			cvgrm = new ChunkVBOGroupRigidMesh(w.gfx);
-			cvgrm.getMaterial()["tex"] = rs.terrainTexture;
+			cvgrm.getMaterial()["tex"] = opts.terrainTexture;
 			cvgrm.getMaterial()["fake"] = true;
 			break;
 		case TerrainBuildTypes.CompactMesh:
 			cvgcm = new ChunkVBOGroupCompactMesh(w.gfx);
 			cvgcm.getMaterial()["tex"] =
-				buildIndexed ? rs.terrainTextureArray : rs.terrainTexture;
+				buildIndexed ? opts.terrainTextureArray : opts.terrainTexture;
 			cvgcm.getMaterial()["fake"] = true;
 			// No need to setup material handled by the renderer
 			break;

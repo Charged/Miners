@@ -368,7 +368,9 @@ struct WorldWrapper
 			s.pushPoint3d(w.spawn);
 			break;
 		case "aa":
-			s.pushBool(w.rm.aa);
+			s.pushBool(true);
+			// TODO
+			//s.pushBool(w.rm.aa);
 			break;
 		default:
 			s.getMetaTable(1);
@@ -390,7 +392,8 @@ struct WorldWrapper
 		key = s.toString(2);
 		switch(key)	{
 		case "aa":
-			w.rm.aa = s.toBool(3);
+			// TODO
+			//w.rm.aa = s.toBool(3);
 			break;
 		default:
 			s.error("No memeber of that that name");

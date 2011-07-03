@@ -7,7 +7,7 @@ import std.math;
 import charge.charge;
 
 import minecraft.world;
-import minecraft.gfx.manager;
+import minecraft.options;
 
 
 /**
@@ -55,6 +55,7 @@ class Runner : public GameRunner
 interface Router : public GameRouter
 {
 	Runner loadLevel(char[] dir);
+	void render(GfxWorld w, GfxCamera c, GfxRenderTarget t);
 }
 
 /**
@@ -65,7 +66,7 @@ class GameRunnerBase : public Runner
 public:
 	Router r;
 	World w;
-	RenderManager rm;
+	Options opts;
 
 	GfxCamera cam;
 	int x; /**< Current chunk of camera */
@@ -80,11 +81,11 @@ private:
 	mixin SysLogging;
 
 public:
-	this(Router r, World w, RenderManager rm)
+	this(Router r, Options opts, World w)
 	{
 		this.r = r;
+		this.opts = opts;
 		this.w = w;
-		this.rm = rm;
 		keyboard = CtlInput().keyboard;
 		mouse = CtlInput().mouse;
 		grabbed = true;
@@ -100,7 +101,7 @@ public:
 
 	void render(GfxRenderTarget rt)
 	{
-		rm.render(w.gfx, cam, rt);
+		r.render(w.gfx, cam, rt);
 	}
 
 	void logic()

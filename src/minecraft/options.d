@@ -1,24 +1,84 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module minecraft.actors.helper;
+module minecraft.options;
 
+import charge.util.signal;
 import charge.charge;
 
+import minecraft.types;
+
+
 /**
- * Hold common resources that are shared between multiple objects.
+ * Holds settings and common resources that are shared between
+ * multiple runners, worlds & actors.
  */
-class ResourceStore
+class Options
 {
 public:
+	/*
+	 *
+	 * Options
+	 *
+	 */
+
+
+	Option!(bool) showDebug; /**< Should debug info be shown. */
+	Option!(bool) shadow; /**< Should advanced shadowing be used */
+	Option!(bool) aa; /**< Anti-Aliasing control */
+	Option!(double) viewDistance; /**< The view distance */
+
+
+	/*
+	 *
+	 * Shared gfx resources.
+	 *
+	 */
+
+
 	GfxSimpleSkeleton.VBO playerSkeleton;
 	alias PlayerModelData.bones playerBones;
 
 	GfxTexture terrainTexture;
 	GfxTextureArray terrainTextureArray;
+	Signal!(GfxTexture, GfxTextureArray) terrain;
 
+
+	/*
+	 *
+	 * Renderer settings.
+	 *
+	 */
+
+
+	bool rendererBuildIndexed; /**< support array textures */
+	char[] rendererString; /**< readable string for current renderer */
+	TerrainBuildTypes rendererBuildType;
+	Signal!(TerrainBuildTypes, char[]) renderer;
+
+
+	/*
+	 *
+	 * Triggers.
+	 *
+	 */
+
+
+	/**
+	 * Change the terrain texture to this file.
+	 */
+	bool delegate(char[] file) changeTexture;
+
+
+	/**
+	 * Trigger a change of the renderer, return a human readable string.
+	 */
+	void delegate() changeRenderer;
+
+
+public:
 	this()
 	{
-		playerSkeleton = typeof(playerSkeleton)(PlayerModelData.verts);
+		playerSkeleton = GfxSimpleSkeleton.VBO(PlayerModelData.verts);
 	}
 
 	~this()
@@ -33,6 +93,11 @@ public:
 		playerSkeleton = null;
 		terrainTexture = null;
 		terrainTextureArray = null;
+
+		terrain.destruct();
+		shadow.signal.destruct();
+		showDebug.signal.destruct();
+		viewDistance.signal.destruct();
 	}
 
 	void setTextures(GfxTexture t, GfxTextureArray ta)
@@ -49,8 +114,62 @@ public:
 			terrainTexture.reference();
 		if (terrainTextureArray !is null)
 			terrainTextureArray.reference();
+
+		terrain(t, ta);
+	}
+
+	void setRenderer(TerrainBuildTypes bt, char[] s)
+	{
+		rendererString = s;
+		rendererBuildType = bt;
+		renderer(bt, s);
 	}
 }
+
+
+/**
+ * Single option.
+ */
+private struct Option(T)
+{
+	Signal!(T) signal;
+	T value;
+
+	T opCall()
+	{
+		return value;
+	}
+
+	bool opIn(T value)
+	{
+		return this.value is value;
+	}
+
+	void opAssign(T t)
+	{
+		value = t;
+		signal(t);
+	}
+
+	void opCatAssign(signal.Slot slot)
+	{
+		signal.opCatAssign(slot);
+	}
+
+	void opSubAssign(signal.Slot slot)
+	{
+		signal.opSubAssign(slot);
+	}
+
+	static if (is(T : bool)) {
+		void toggle()
+		{
+			value = !value;
+			signal(value);
+		}
+	}
+}
+
 
 class PlayerModelData
 {

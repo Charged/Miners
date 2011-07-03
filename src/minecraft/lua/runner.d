@@ -9,8 +9,8 @@ import charge.game.lua;
 
 import minecraft.world;
 import minecraft.runner;
+import minecraft.options;
 import minecraft.lua.actors;
-import minecraft.gfx.manager;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 
@@ -27,9 +27,9 @@ private:
 	mixin SysLogging;
 
 public:
-	this(Router r, World w, RenderManager rm, char[] filename)
+	this(Router r, Options opts, World w, char[] filename)
 	{
-		super(r, w, rm);
+		super(r, opts, w);
 
 		if (!exists(filename)) {
 			l.warn("No such file (%s) (this is not a error)", filename);

@@ -5,9 +5,9 @@ module minecraft.terrain.finite;
 import charge.charge;
 
 import minecraft.types;
+import minecraft.options;
 import minecraft.gfx.vbo;
 import minecraft.gfx.imports;
-import minecraft.actors.helper;
 import minecraft.terrain.common;
 import minecraft.terrain.builder;
 import minecraft.terrain.workspace;
@@ -58,7 +58,7 @@ protected:
 	int zSaved;
 
 public:
-	this(GameWorld w, ResourceStore rs, int x, int y, int z)
+	this(GameWorld w, Options opts, int x, int y, int z)
 	{
 		l.info("Created (%sx%sx%s)", x, y, z);
 
@@ -98,7 +98,7 @@ public:
 		blocks = store.ptr;
 		data = store.ptr + sizeBlocks;
 
-		super(w, rs);
+		super(w, opts);
 	}
 
 	~this()

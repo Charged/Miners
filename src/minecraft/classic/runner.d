@@ -7,8 +7,7 @@ import charge.charge;
 import minecraft.world;
 import minecraft.runner;
 import minecraft.viewer;
-import minecraft.gfx.manager;
-import minecraft.actors.helper;
+import minecraft.options;
 import minecraft.terrain.common;
 import minecraft.terrain.finite;
 import minecraft.classic.connection;
@@ -24,11 +23,11 @@ private:
 	FiniteTerrain ft;
 
 public:
-	this(RenderManager rm, ResourceStore rs)
+	this(Options opts)
 	{
 		this.spawn = Point3d(64, 67, 64);
 
-		super(rm, rs);
+		super(opts);
 
 		// Create initial terrain
 		newLevel(128, 128, 128);
@@ -37,11 +36,11 @@ public:
 		generateLevel(ft);
 	}
 
-	this(RenderManager rm, ResourceStore rs, char[] filename)
+	this(Options opts, char[] filename)
 	{
 		this.spawn = Point3d(64, 67, 64);
 
-		super(rm, rs);
+		super(opts);
 
 		uint x, y, z;
 		auto b = loadClassicTerrain(filename, x, y, z);
@@ -68,10 +67,10 @@ public:
 	{
 		delete ft;
 
-		ft = new FiniteTerrain(this, rs, x, y, z);
+		ft = new FiniteTerrain(this, opts, x, y, z);
 		t = ft;
-		t.buildIndexed = rm.textureArray;
-		t.setBuildType(rm.bt);
+		t.buildIndexed = opts.rendererBuildIndexed;
+		t.setBuildType(opts.rendererBuildType);
 	}
 
 	/**
@@ -146,32 +145,32 @@ protected:
 	ClassicWorld w;
 
 public:
-	this(Router r, RenderManager rm, ResourceStore rs)
+	this(Router r, Options opts)
 	{
-		w = new ClassicWorld(rm, rs);
+		w = new ClassicWorld(opts);
 
-		super(r, w, rm);
+		super(r, opts, w);
 	}
 
-	this(Router r, RenderManager rm, ResourceStore rs,
+	this(Router r, Options opts,
 	     char[] filename)
 	{
-		w = new ClassicWorld(rm, rs, filename);
+		w = new ClassicWorld(opts, filename);
 
-		super(r, w, rm);
+		super(r, opts, w);
 	}
 
-	this(Router r, RenderManager rm, ResourceStore rs,
+	this(Router r, Options opts,
 	     char[] hostname, ushort port,
 	     char[] username, char[] password)
 	{
-		w = new ClassicWorld(rm, rs);
+		w = new ClassicWorld(opts);
 
 		l.info("Connecting to mc://%s:%s/%s", hostname, port, username);
 
 		c = new ClientConnection(this, hostname, port,
 					 username, password);
-		super(r, w, rm);
+		super(r, opts, w);
 	}
 
 	~this()
