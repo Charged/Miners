@@ -231,7 +231,7 @@ private:
 
 		gfxLoaded = true;
 
-		auto str[];
+		char[] str;
 		str = std.string.toString(glGetString(GL_VENDOR));
 		l.info(str);
 		str = std.string.toString(glGetString(GL_VERSION));
