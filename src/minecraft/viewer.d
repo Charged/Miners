@@ -11,6 +11,7 @@ import minecraft.world;
 import minecraft.runner;
 import minecraft.options;
 import minecraft.terrain.chunk;
+import minecraft.actors.sunlight;
 import minecraft.actors.otherplayer;
 
 /**
@@ -20,7 +21,7 @@ class ViewerRunner : public GameRunnerBase
 {
 public:
 	/* Light related */
-	GfxSimpleLight sl;
+	SunLight sl;
 	double light_heading;
 	double light_pitch;
 	bool light_moveing;
@@ -61,29 +62,27 @@ public:
 
 		centerMap();
 
-		sl = new GfxSimpleLight();
+		sl = new SunLight(w);
+
 		// Night
-		//sl.diffuse = Color4f(0.0/255, 3.0/255, 30.0/255);
-		//sl.ambient = Color4f(0.0/255, 3.0/255, 30.0/255);
+		//sl.gfx.diffuse = Color4f(0.0/255, 3.0/255, 30.0/255);
+		//sl.gfx.ambient = Color4f(0.0/255, 3.0/255, 30.0/255);
 
 		// Day
-		sl.diffuse = Color4f(200.0/255, 200.0/255, 200.0/255);
-		sl.ambient = Color4f(65.0/255, 65.0/255, 65.0/255);
-		sl.shadow = true;
+		sl.gfx.diffuse = Color4f(200.0/255, 200.0/255, 200.0/255);
+		sl.gfx.ambient = Color4f(65.0/255, 65.0/255, 65.0/255);
 
 		// Test
-		//sl.diffuse = Color4f(1.0, 1.0, 1.0);
-		//sl.ambient = Color4f(0.0, 0.0, 0.0);
+		//sl.gfx.diffuse = Color4f(1.0, 1.0, 1.0);
+		//sl.gfx.ambient = Color4f(0.0, 0.0, 0.0);
 
 		light_heading = PI/3;
 		light_pitch = -PI/6;
 		sl.rotation = Quatd(light_heading, light_pitch, 0);
-		w.gfx.add(sl);
 
-		w.gfx.fog = new GfxFog();
-		w.gfx.fog.start = 150;
-		w.gfx.fog.stop = 250;
-		w.gfx.fog.color = Color4f(89.0/255, 178.0/255, 220.0/255);
+		sl.fog.start = 150;
+		sl.fog.stop = 250;
+		sl.fog.color = Color4f(89.0/255, 178.0/255, 220.0/255);
 	}
 
 	~this()
@@ -157,7 +156,7 @@ public:
 			w.switchRenderer();
 			break;
 		case SDLK_v:
-			sl.shadow = !sl.shadow;
+			opts.shadow.toggle;
 			break;
 		default:
 		}

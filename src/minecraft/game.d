@@ -198,6 +198,7 @@ protected:
 		opts.aa = true;
 		opts.aa ~= &rm.setAa;
 		rm.setAa(opts.aa());
+		opts.shadow = true;
 
 		// Create and set the textures
 		createTextures(pic, rm.textureArray, t, ta);

@@ -49,7 +49,6 @@ public:
 
 	final void shadow(bool shadow)
 	{
-		std.stdio.writefln("shadow %s", shadow);
 		gfx.shadow = shadow;
 	}
 
