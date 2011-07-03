@@ -8,6 +8,7 @@ import charge.charge;
 import charge.game.lua;
 
 import minecraft.world;
+import minecraft.options;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 
@@ -236,9 +237,6 @@ struct SunLightWrapper
 		case "ambient":
 			s.pushColor4f(sl.gfx.ambient);
 			break;
-		case "shadow":
-			s.pushBool(sl.gfx.shadow);
-			break;
 		case "fog":
 			s.pushBool(sl.w.gfx.fog !is null);
 			break;
@@ -292,9 +290,6 @@ struct SunLightWrapper
 			break;
 		case "ambient":
 			sl.gfx.ambient = *s.checkColor4f(3);
-			break;
-		case "shadow":
-			sl.gfx.shadow = s.toBool(3);
 			break;
 		case "fog":
 			sl.w.gfx.fog = s.toBool(3) ? sl.fog : null;
@@ -367,8 +362,59 @@ struct WorldWrapper
 		case "spawn":
 			s.pushPoint3d(w.spawn);
 			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	static void register(LuaState s)
+	{
+		s.registerClass!(BetaWorld);
+		s.pushCFunction(&ObjectWrapper.toString);
+		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&index);
+		s.setFieldz(-2, "__index");
+		s.pop();
+
+		s.pushString("World");
+		s.pushCFunction(&newWorld);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+	}
+}
+
+struct OptionsWrapper
+{
+	const static char *namez = "d_class_minecraft_options_Options";
+	const static char[] name = "d_class_minecraft_options_Options";
+
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto opts = s.checkClass!(Options)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
 		case "aa":
-			s.pushBool(w.opts.aa());
+			s.pushBool(opts.aa());
+			break;
+		case "shadow":
+			s.pushBool(opts.shadow());
+			break;
+		case "renderer":
+			s.pushString(opts.rendererString);
+			break;
+		case "showDebug":
+			s.pushBool(opts.showDebug());
+			break;
+		case "viewDistance":
+			s.pushNumber(opts.viewDistance());
 			break;
 		default:
 			s.getMetaTable(1);
@@ -384,13 +430,22 @@ struct WorldWrapper
 	{
 		auto s = LuaState(l);
 		char[] key;
-		auto w = s.checkClass!(BetaWorld)(1, false);
+		auto opts = s.checkClass!(Options)(1, false);
 		s.checkString(2);
 
 		key = s.toString(2);
 		switch(key)	{
 		case "aa":
-			w.opts.aa = s.toBool(3);
+			opts.aa = s.toBool(3);
+			break;
+		case "shadow":
+			opts.shadow = s.toBool(3);
+			break;
+		case "showDebug":
+			opts.showDebug = s.toBool(3);
+			break;
+		case "viewDistance":
+			opts.viewDistance = s.toNumber(3);
 			break;
 		default:
 			s.error("No memeber of that that name");
@@ -404,10 +459,10 @@ struct WorldWrapper
 	extern (C) static int switchRenderer(lua_State *l)
 	{
 		auto s = LuaState(l);
-		auto w = s.checkClass!(BetaWorld)(1, false);
+		auto opts = s.checkClass!(Options)(1, false);
 
 		try {
-			w.opts.changeRenderer();
+			opts.changeRenderer();
 		} catch (Exception e) {
 			s.error(e);
 		}
@@ -430,7 +485,7 @@ struct WorldWrapper
 
 	static void register(LuaState s)
 	{
-		s.registerClass!(BetaWorld);
+		s.registerClass!(Options);
 		s.pushCFunction(&ObjectWrapper.toString);
 		s.setFieldz(-2, "__tostring");
 		s.pushCFunction(&index);
@@ -442,9 +497,5 @@ struct WorldWrapper
 		s.pushCFunction(&screenshot);
 		s.setFieldz(-2, "screenshot");
 		s.pop();
-
-		s.pushString("World");
-		s.pushCFunction(&newWorld);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 }

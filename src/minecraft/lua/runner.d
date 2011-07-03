@@ -52,6 +52,7 @@ public:
 
 		WorldWrapper.register(s);
 		CameraWrapper.register(s);
+		OptionsWrapper.register(s);
 		SunLightWrapper.register(s);
 
 		setNil("World");
@@ -88,6 +89,10 @@ public:
 
 		s.pushStringz("world");
 		s.pushClass(w);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("options");
+		s.pushClass(opts);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 
 		s.pushStringz("camera");
