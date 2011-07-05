@@ -46,7 +46,7 @@ DDEFINES = $(ODE_DDEFINES) $(SDL_DDEFINES)
 LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
 CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
-MCOMP_FLAGS = $(CARCH) -I/Library/Frameworks/SDL.framework/Headers -c -o $@ $(CFLAGS)
+MCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
 LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS_)
 
