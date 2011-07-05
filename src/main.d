@@ -71,7 +71,7 @@ int chargeMain(char[][] args)
 
 version(darwin)
 {
-	extern(C) int _SDL_run_main(int argc, char** argv);
+	extern(C) int _charge_run_main(int argc, char** argv);
 
 	version(DigitalMars)
 	{
@@ -83,10 +83,10 @@ version(darwin)
 			scope(exit) saved_args = null;
 
 			char *ptr = args[0].ptr;
-			return _SDL_run_main(1, &ptr);
+			return _charge_run_main(1, &ptr);
 		}
 
-		extern(C) int SDL_main(int argc, char** argv)
+		extern(C) int charge_main(int argc, char** argv)
 		{
 			return chargeMain(saved_args);
 		}
@@ -97,7 +97,7 @@ version(darwin)
 		 * This only works on GDC, DMD has diffrent _d_run_main prototype.
 		 */
 		extern (C) int _d_run_main(int argc, char **argv, void * p);
-		extern(C) int SDL_main(int argc, char** argv)
+		extern(C) int charge_main(int argc, char** argv)
 		{
 			return _d_run_main(argc, argv, &chargeMain);
 		}
