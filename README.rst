@@ -20,6 +20,9 @@ is not needed to install the development version of the libraries (other then
 libphobos if you are building Charge of course, but this should come with the
 D compiler).
 
+Linux
+*****
+
 For Ubuntu you can use this command:
 
 ::
@@ -32,9 +35,18 @@ For Fedora you can do this with:
 
  $ sudo yum install SDL openal-soft
 
-On Mac you will need to download and install the SDL framework into
-/Library/Frameworks, both for compiling and running. Hopefully in the future
-this will not be needed for running.
+Mac
+***
+
+On Mac you will need to download and install the SDL framework somewhere
+where it will be picked up when you run the application. If you have downloaded
+the release app you can just copy the Charge binary into the app folder and it
+will use the shipped SDL.framework from within that app. Alternatively you can
+use homebrew:
+
+::
+
+  $ brew install sdl
 
 
 Graphics Drivers
