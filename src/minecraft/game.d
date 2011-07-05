@@ -173,9 +173,6 @@ protected:
 		GfxTextureArray ta;
 		Runner r;
 
-		// Borrow terrain.png from minecraft.jar if it can be found.
-		setupMinecraftTexture();
-
 		// Most common problem people have is missing terrain.png
 		Picture pic = getMinecraftTexture();
 		if (pic is null) {
@@ -307,22 +304,6 @@ protected:
 		return true;
 	}
 
-	void setupMinecraftTexture()
-	{
-		try {
-			terrainFile = extractMinecraftTexture();
-		} catch (Exception e) {
-			l.info("Could not extract terrain.png from minecraft.jar because:");
-			l.bug(e.classinfo.name, " ", e);
-		}
-
-		if (terrainFile is null)
-			return;
-
-		auto fm = FileManager();
-		fm.addBuiltin(terrainFilename, terrainFile);
-	}
-
 	/**
 	 * Load the Minecraft texture.
 	 */
@@ -332,7 +313,6 @@ protected:
 			"terrain.png",
 			"res/terrain.png",
 			chargeConfigFolder ~ "/terrain.png",
-			terrainFilename
 		];
 
 		// Skip the imported texture if it was not found
@@ -348,7 +328,21 @@ protected:
 			return pic;
 		}
 
-		return null;
+		// If we can't find a minecraft terrain.png,
+		// load it from minecraft.jar
+		try {
+			terrainFile = extractMinecraftTexture();
+			assert(terrainFile !is null);
+		} catch (Exception e) {
+			l.info("Could not extract terrain.png from minecraft.jar because:");
+			l.bug(e.classinfo.name, " ", e);
+			return null;
+		}
+
+		auto fm = FileManager();
+		fm.addBuiltin(terrainFilename, terrainFile);
+
+		return Picture(terrainFilename);
 	}
 
 	void createTextures(Picture pic, bool array, out GfxTexture t, out GfxTextureArray ta)
