@@ -17,6 +17,13 @@ enum coreFlag
  */
 extern(C) Core chargeCore(coreFlag flags);
 
+/**
+ * Signal a quit a condition, this function mearly pushes
+ * a quit event on the event queue and then returns.
+ */
+extern(C) void chargeQuit();
+
+
 abstract class Core
 {
 public:

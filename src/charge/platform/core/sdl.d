@@ -23,6 +23,19 @@ extern(C) Core chargeCore(coreFlag flags)
 	return new CoreSDL(flags);
 }
 
+extern(C) void chargeQuit()
+{
+	// If SDL haven't been loaded yet.
+	version (SDLDynamic) {
+		if (SDL_PushEvent is null)
+			return;
+	}
+
+	SDL_Event event;
+	event.type = SDL_QUIT;
+	SDL_PushEvent(&event);
+}
+
 class CoreSDL : public CommonCore
 {
 private:
