@@ -83,10 +83,11 @@ setup DMD just follow the Mac instructions.
 Mac
 ***
 
-There are no packages of GDC for Mac so DMD should be used. DMD 1.062, 1.064 &
-1.068 and above is known to be working. To install it just excract the contents
-of dmd.1.<version>.zip <somewhere> and set the DMD enviromental variable to be
-"<somewhere>/osx/bin/dmd" or put the folder "<somewhere>/osx/bin" on the path.
+There are no packages of GDC for Mac so DMD should be used. Only DMD 1.069 and
+above works as Charge depends on bugfixes in that version to work. To install
+it just excract the contents of dmd.1.<version>.zip <somewhere> and set the
+DMD enviromental variable to be "<somewhere>/osx/bin/dmd" or put the folder
+"<somewhere>/osx/bin" on the path.
 
 Other
 *****
