@@ -50,22 +50,30 @@ struct WorkspaceData
 	const int ws_data_height = 128/2+2;
 	const int ws_data_depth = 16+2;
 
+	const int ws_x_stride = ws_depth * ws_height;
+	const int ws_y_stride = 1;
+	const int ws_z_stride = ws_height;
+
 	ubyte blocks[ws_width][ws_depth][ws_height];
 	ubyte data[ws_data_width][ws_data_depth][ws_data_height];
 
 	ubyte opIndex(int x, int y, int z)
 	{
-		return blocks[x+1][z+1][y+1];
+		auto ptr = &blocks[0][0][0];
+		ptr += (++y) + ws_height * ((++x) * ws_depth + (++z));
+		return *ptr;
 	}
+
+	alias opIndex get;
 
 	ubyte opIndexAssign(ubyte value, int x, int y, int z)
 	{
 		return blocks[x+1][z+1][y+1] = value;
 	}
 
-	ubyte get(int x, int y, int z)
+	ubyte* getPointer(int x, int y, int z)
 	{
-		return (*this)[x, y, z];
+		return &blocks[x+1][z+1][y+1];
 	}
 
 	ubyte getDataUnsafe(int x, int y, int z)
@@ -96,35 +104,61 @@ struct WorkspaceData
 
 	int getSolidSet(int x, int y, int z)
 	{
-		auto xmc = !filled(x-1,   y,   z);
-		auto xpc = !filled(x+1,   y,   z);
-		auto ymc = !filled(  x, y-1,   z);
-		auto ypc = !filled(  x, y+1,   z);
-		auto zmc = !filled(  x,   y, z-1);
-		auto zpc = !filled(  x,   y, z+1);
-		return xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
+		auto ptr = getPointer(x, y, z);
+		auto xmc = tile[*(ptr - ws_x_stride)].filled;
+		auto xpc = tile[*(ptr + ws_x_stride)].filled;
+		auto ymc = tile[*(ptr - ws_y_stride)].filled;
+		auto ypc = tile[*(ptr + ws_y_stride)].filled;
+		auto zmc = tile[*(ptr - ws_z_stride)].filled;
+		auto zpc = tile[*(ptr + ws_z_stride)].filled;
+		auto ret = xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
+		return 0x3f & ~ret;
 	}
 
 	int getSolidOrTypeSet(ubyte type, int x, int y, int z)
 	{
-		auto xmc = !filledOrType(type, x-1,   y,   z);
-		auto xpc = !filledOrType(type, x+1,   y,   z);
-		auto ymc = !filledOrType(type,   x, y-1,   z);
-		auto ypc = !filledOrType(type,   x, y+1,   z);
-		auto zmc = !filledOrType(type,   x,   y, z-1);
-		auto zpc = !filledOrType(type,   x,   y, z+1);
-		return xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
+		ubyte t;
+		bool b;
+		auto ptr = getPointer(x, y, z);
+
+		t = *(ptr - ws_x_stride);
+		auto xmc = tile[t].filled || t == type;
+		t = *(ptr + ws_x_stride);
+		auto xpc = tile[t].filled || t == type;
+		t = *(ptr - ws_y_stride);
+		auto ymc = tile[t].filled || t == type;
+		t = *(ptr + ws_y_stride);
+		auto ypc = tile[t].filled || t == type;
+		t = *(ptr - ws_z_stride);
+		auto zmc = tile[t].filled || t == type;
+		t = *(ptr + ws_z_stride);
+		auto zpc = tile[t].filled || t == type;
+
+		auto ret =  xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
+		return 0x3f & ~ret;
 	}
 
 	int getSolidOrTypesSet(ubyte t1, ubyte t2, int x, int y, int z)
 	{
-		auto xmc = !filledOrTypes(t1, t2, x-1,   y,   z);
-		auto xpc = !filledOrTypes(t1, t2, x+1,   y,   z);
-		auto ymc = !filledOrTypes(t1, t2,   x, y-1,   z);
-		auto ypc = !filledOrTypes(t1, t2,   x, y+1,   z);
-		auto zmc = !filledOrTypes(t1, t2,   x,   y, z-1);
-		auto zpc = !filledOrTypes(t1, t2,   x,   y, z+1);
-		return xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
+		ubyte t;
+		bool b;
+		auto ptr = getPointer(x, y, z);
+
+		t = *(ptr - ws_x_stride);
+		auto xmc = tile[t].filled || t == t1 || t == t2;
+		t = *(ptr + ws_x_stride);
+		auto xpc = tile[t].filled || t == t1 || t == t2;
+		t = *(ptr - ws_y_stride);
+		auto ymc = tile[t].filled || t == t1 || t == t2;
+		t = *(ptr + ws_y_stride);
+		auto ypc = tile[t].filled || t == t1 || t == t2;
+		t = *(ptr - ws_z_stride);
+		auto zmc = tile[t].filled || t == t1 || t == t2;
+		t = *(ptr + ws_z_stride);
+		auto zpc = tile[t].filled || t == t1 || t == t2;
+
+		auto ret =  xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
+		return 0x3f & ~ret;
 	}
 
 	void copyFromChunk(Chunk chunk)
