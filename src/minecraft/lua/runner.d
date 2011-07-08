@@ -53,6 +53,7 @@ public:
 		CameraWrapper.register(s);
 		OptionsWrapper.register(s);
 		SunLightWrapper.register(s);
+		BetaTerrainWrapper.register(s);
 
 		setNil("World");
 		setNil("Game");
@@ -80,32 +81,43 @@ public:
 		sl.fog.stop = defaultFogStop;
 		sl.fog.start = defaultFogStart;
 
+
+		/* Ctl */
+
 		mouse = CtlInput().mouse;
 		keyboard = CtlInput().keyboard;
+
+		s.pushStringz("mouse");
+		s.pushClass(mouse);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 
 		s.pushStringz("keyboard");
 		s.pushClass(keyboard);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 
-		s.pushStringz("mouse");
-		s.pushClass(mouse);
+
+		/* Mc */
+
+		s.pushStringz("light");
+		s.pushClass(sl);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 
 		s.pushStringz("world");
 		s.pushClass(w);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 
-		s.pushStringz("options");
-		s.pushClass(opts);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
 		s.pushStringz("camera");
 		s.pushClass(c);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 
-		s.pushStringz("light");
-		s.pushClass(sl);
+		s.pushStringz("terrain");
+		s.pushClass(w.t);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("options");
+		s.pushClass(opts);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
 
 		ret = s.call();
 		if (ret == 2) {
