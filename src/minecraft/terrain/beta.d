@@ -101,6 +101,21 @@ public:
 		return r.getChunk(x, z);
 	}
 
+	final ubyte opIndex(int x, int y, int z)
+	{
+		if (y < 0)
+			y = 0;
+		else if (y >= 128)
+			return 0;
+
+		int xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		int zPos = z < 0 ? (z - 15) / 16 : z / 16;
+		x = cast(uint)x % 16;
+		z = cast(uint)z % 16;
+
+		return get(xPos, zPos, x, y, z);
+	}
+
 	ubyte get(int xPos, int zPos, int x, int y, int z)
 	{
 		xPos += x < 0 ? (x - 15) / 16 : x / 16;
