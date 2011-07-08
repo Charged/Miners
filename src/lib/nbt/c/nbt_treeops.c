@@ -15,7 +15,7 @@
 #include <string.h>
 
 /* strdup isn't standard. GNU extension. */
-static inline char* __strdup(const char* s)
+static inline char* __nbt_strdup(const char* s)
 {
     char* r = malloc(strlen(s) + 1);
     if(r == NULL) return NULL;
@@ -106,7 +106,7 @@ clone_error:
 /* same as strdup, but handles NULL gracefully */
 static inline char* safe_strdup(const char* s)
 {
-    return s ? __strdup(s) : NULL;
+    return s ? __nbt_strdup(s) : NULL;
 }
 
 nbt_node* nbt_clone(nbt_node* tree)
@@ -124,7 +124,7 @@ nbt_node* nbt_clone(nbt_node* tree)
 
     if(tree->type == TAG_STRING)
     {
-        ret->payload.tag_string = __strdup(tree->payload.tag_string);
+        ret->payload.tag_string = __nbt_strdup(tree->payload.tag_string);
         if(ret->payload.tag_string == NULL) goto clone_error;
     }
 
@@ -237,7 +237,7 @@ nbt_node* nbt_filter(const nbt_node* tree, nbt_predicate_t filter, void* aux)
 
     if(tree->type == TAG_STRING)
     {
-        ret->payload.tag_string = __strdup(tree->payload.tag_string);
+        ret->payload.tag_string = __nbt_strdup(tree->payload.tag_string);
         if(ret->payload.tag_string == NULL) goto filter_error;
     }
 
