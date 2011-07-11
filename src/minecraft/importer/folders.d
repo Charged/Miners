@@ -43,9 +43,11 @@ char[] getMinecraftSaveFolder(char[] dir = null)
  */
 char[] getAlphaChunkName(char[] dir, int x, int z)
 {
+	uint px = cast(uint)x % 64;
+	uint pz = cast(uint)z % 64;
+
 	auto ret = format("%s/%s/%s/c.%s.%s.dat", dir,
-			  encode(cast(uint)x % 64),
-			  encode(cast(uint)z % 64),
+			  encode(px), encode(pz),
 			  encode(x), encode(z));
 	return ret;
 }
@@ -55,7 +57,9 @@ char[] getAlphaChunkName(char[] dir, int x, int z)
  */
 char[] getBetaRegionName(char[] dir, int x, int z)
 {
+	int px = cast(int)floor(x/32.0);
+	int pz = cast(int)floor(z/32.0);
+
 	return format("%s/region/r.%s.%s.mcr", dir,
-		      encode(cast(uint)floor(x/32.0)),
-		      encode(cast(uint)floor(z/32.0)));
+		      encode(px), encode(pz));
 }
