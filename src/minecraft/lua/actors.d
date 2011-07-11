@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module minecraft.lua.actors;
 
-import std.file;
+import std.math;
 
 import charge.charge;
 import charge.game.lua;
@@ -324,9 +324,9 @@ struct BetaTerrainWrapper
 	{
 		auto s = LuaState(l);
 		auto bt = s.checkClass!(BetaTerrain)(1, false);
-		auto x = cast(int)s.toNumber(2);
-		auto y = cast(int)s.toNumber(3);
-		auto z = cast(int)s.toNumber(4);
+		auto x = cast(int)floor(s.toNumber(2));
+		auto y = cast(int)floor(s.toNumber(3));
+		auto z = cast(int)floor(s.toNumber(4));
 
 		auto b = bt[x, y, z];
 
