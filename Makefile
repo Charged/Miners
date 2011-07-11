@@ -45,8 +45,8 @@ LDFLAGS ?= $(DEBUG_DFLAGS)
 DDEFINES = $(ODE_DDEFINES) $(SDL_DDEFINES)
 LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
-CCOMP_FLAGS = $(CARCH) -c -o$@ $(CFLAGS)
-MCOMP_FLAGS = $(CARCH) -c -o$@ $(CFLAGS)
+CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
+MCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
 LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS_)
 
@@ -84,6 +84,8 @@ else
 	PLATFORM=windows
 :	TARGET = Charge.exe
 
+	# Handle compiling with dmc
+	CCOMP_FLAGS = $(CARCH) -c -o$@ $(CFLAGS)
 	# Change the link flags
 	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-lws2_32 $(LDFLAGS_)
 endif
