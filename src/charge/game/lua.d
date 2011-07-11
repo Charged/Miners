@@ -363,6 +363,16 @@ struct Vector3dWrapper
 		return 1;
 	}
 
+	extern (C) static int floor(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto v = check(s, 1);
+
+		v.floor();
+
+		return 1;
+	}
+
 	extern (C) static int lengthSqrd(lua_State *l)
 	{
 		auto s = LuaState(l);
@@ -401,6 +411,8 @@ struct Vector3dWrapper
 		s.setFieldz(-2, "scale");
 		s.pushCFunction(&normalize);
 		s.setFieldz(-2, "normalize");
+		s.pushCFunction(&floor);
+		s.setFieldz(-2, "floor");
 		s.pop();
 
 		s.pushString("Vector");
@@ -511,6 +523,16 @@ struct Point3dWrapper
 		return 1;
 	}
 
+	extern (C) static int floor(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto v = check(s, 1);
+
+		v.floor();
+
+		return 1;
+	}
+
 	extern (C) static int newPoint3d(lua_State *l)
 	{
 		auto s = LuaState(l);
@@ -536,6 +558,8 @@ struct Point3dWrapper
 		s.setFieldz(-2, "__add");
 		s.pushCFunction(&toString);
 		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&floor);
+		s.setFieldz(-2, "floor");
 		s.pop();
 
 		s.pushString("Point");
