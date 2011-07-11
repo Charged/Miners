@@ -100,6 +100,13 @@ struct Vector3d
 		z *= v;
 	}
 
+	void floor()
+	{
+		x = cast(double)std.math.floor(x);
+		y = cast(double)std.math.floor(y);
+		z = cast(double)std.math.floor(z);
+	}
+
 	void normalize()
 	{
 		double l = length();

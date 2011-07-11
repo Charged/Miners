@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.point3d;
 
+import std.math;
+
 import charge.math.vector3d;
 
 struct Point3d
@@ -70,6 +72,13 @@ public:
 		y -= v.y;
 		z -= v.z;
 		return *this;
+	}
+
+	void floor()
+	{
+		x = cast(double)std.math.floor(x);
+		y = cast(double)std.math.floor(y);
+		z = cast(double)std.math.floor(z);
 	}
 
 	Vector3d vec()
