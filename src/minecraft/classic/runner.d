@@ -55,9 +55,12 @@ public:
 
 	~this()
 	{
+		// Incase super class decieded to deleted t
+		if (t is null)
+			ft = null;
+
 		delete ft;
-		ft = null;
-		t = null;
+		t = ft = null;
 	}
 
 	/**
@@ -66,6 +69,7 @@ public:
 	void newLevel(uint x, uint y, uint z)
 	{
 		delete ft;
+		t = ft = null;
 
 		t = ft = new FiniteTerrain(this, opts, x, y, z);
 	}
@@ -183,6 +187,7 @@ public:
 		c.close();
 		c.wait();
 		delete c;
+		c = null;
 	}
 
 	void logic()

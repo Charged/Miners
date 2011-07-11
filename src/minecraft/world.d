@@ -32,6 +32,7 @@ public:
 	~this()
 	{
 		delete t;
+		t = null;
 	}
 }
 
