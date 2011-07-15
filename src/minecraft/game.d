@@ -17,12 +17,12 @@ import charge.sys.file;
 import charge.platform.homefolder;
 
 import minecraft.menu;
-import minecraft.world;
 import minecraft.runner;
 import minecraft.viewer;
 import minecraft.options;
 import minecraft.lua.runner;
 import minecraft.gfx.manager;
+import minecraft.beta.world;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
 import minecraft.classic.runner;

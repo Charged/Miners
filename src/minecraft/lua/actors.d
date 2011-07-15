@@ -9,6 +9,7 @@ import charge.game.lua;
 
 import minecraft.world;
 import minecraft.options;
+import minecraft.beta.world;
 import minecraft.actors.sunlight;
 import minecraft.terrain.beta;
 
