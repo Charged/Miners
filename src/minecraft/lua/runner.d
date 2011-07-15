@@ -26,109 +26,30 @@ private:
 	mixin SysLogging;
 
 public:
-	this(Router r, Options opts, World w, char[] filename)
+	this(Router r, Options opts, World w)
 	{
 		super(r, opts, w);
 
+		// Create common actors
+		sl = new SunLight(w);
+		c = new Camera(w);
+		cam = c.c;
+
+		initialized = true;
+	}
+
+	this(Router r, Options opts, World w, char[] filename)
+	{
 		if (!exists(filename)) {
 			l.warn("No such file (%s) (this is not a error)", filename);
 			throw new Exception("Error initalizing lua script");
 		}
 
-		// Create a lua state
-		s = new LuaState();
-		// Push standard libraries
-		s.openLibs();
+		this(r, opts, w);
 
-		// Registers classes
-		Color4fWrapper.register(s);
-		Vector3dWrapper.register(s);
-		Point3dWrapper.register(s);
-		QuatdWrapper.register(s);
+		initLuaState();
 
-		MouseWrapper.register(s);
-		KeyboardWrapper.register(s);
-
-		WorldWrapper.register(s);
-		CameraWrapper.register(s);
-		OptionsWrapper.register(s);
-		SunLightWrapper.register(s);
-		BetaTerrainWrapper.register(s);
-
-		setNil("World");
-		setNil("Game");
-		setNil("Camera");
-		setNil("SunLight");
-
-		auto ret = s.loadFile(filename);
-		if (ret == 3) {
-			l.warn("loadFile failed \n",
-			       s.toString(-3), "\n",
-			       s.toString(-2), "\n",
-			       s.toString(-1), "\n");
-
-			delete s;
-
-			throw new Exception("Error initalizing lua script");
-		}
-
-		sl = new SunLight(w);
-		c = new Camera(w);
-		cam = c.c;
-
-
-		/* Ctl */
-
-		mouse = CtlInput().mouse;
-		keyboard = CtlInput().keyboard;
-
-		s.pushStringz("mouse");
-		s.pushClass(mouse);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
-		s.pushStringz("keyboard");
-		s.pushClass(keyboard);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
-
-		/* Mc */
-
-		s.pushStringz("light");
-		s.pushClass(sl);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
-		s.pushStringz("world");
-		s.pushClass(w);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
-		s.pushStringz("camera");
-		s.pushClass(c);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
-		s.pushStringz("terrain");
-		s.pushClass(w.t);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
-		s.pushStringz("options");
-		s.pushClass(opts);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
-
-		ret = s.call();
-		if (ret == 2) {
-			l.warn("call failed\n", s.toString(-1));
-
-			delete s;
-			delete c;
-			delete sl;
-			throw new Exception("Error initalizing lua script");
-		}
-
-		initialized = true;
-
-		// Make sure the script has the right screen size.
-		auto rt = GfxDefaultTarget();
-		resize(rt.width, rt.height);
+		loadfile(filename);
 	}
 
 	~this()
@@ -142,6 +63,14 @@ public:
 			delete w;
 		}
 	}
+
+
+	/*
+	 *
+	 * Callbacks
+	 *
+	 */
+
 
 	void resize(uint w, uint h)
 	{
@@ -173,12 +102,118 @@ public:
 	}
 
 protected:
-	void setNil(char* str)
+	/*
+	 *
+	 * Lua functions.
+	 *
+	 */
+
+
+	/**
+	 * Create the state lua state and set it up to receive files.
+	 *
+	 * Open Lua libraries.
+	 * Register all Charge structs and classes.
+	 * And push world, light, camera and terrain.
+	 */
+	void initLuaState()
 	{
-		s.pushStringz(str);
-		s.pushNil();
+		// Create a lua state
+		s = new LuaState();
+		// Push standard libraries
+		s.openLibs();
+
+		// Registers classes
+		Color4fWrapper.register(s);
+		Vector3dWrapper.register(s);
+		Point3dWrapper.register(s);
+		QuatdWrapper.register(s);
+
+		MouseWrapper.register(s);
+		KeyboardWrapper.register(s);
+
+		WorldWrapper.register(s);
+		CameraWrapper.register(s);
+		OptionsWrapper.register(s);
+		SunLightWrapper.register(s);
+		BetaTerrainWrapper.register(s);
+
+		setNil("World");
+		setNil("Game");
+		setNil("Camera");
+		setNil("SunLight");
+
+
+		// Ctl
+
+		s.pushStringz("mouse");
+		s.pushClass(mouse);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("keyboard");
+		s.pushClass(keyboard);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+
+		// Mc
+
+		s.pushStringz("light");
+		s.pushClass(sl);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("world");
+		s.pushClass(w);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("camera");
+		s.pushClass(c);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("terrain");
+		s.pushClass(w.t);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		s.pushStringz("options");
+		s.pushClass(opts);
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
+
+	void loadfile(char[] filename)
+	{
+		auto ret = s.loadFile(filename);
+		if (ret == 3) {
+			l.warn("loadFile failed \n",
+			       s.toString(-3), "\n",
+			       s.toString(-2), "\n",
+			       s.toString(-1), "\n");
+
+			delete s;
+
+			throw new Exception("Error initalizing lua script");
+		}
+
+		ret = s.call();
+		if (ret == 2) {
+			l.warn("call failed\n", s.toString(-1));
+
+			delete s;
+			delete c;
+			delete sl;
+			throw new Exception("Error initalizing lua script");
+		}
+
+		// Make sure the script has the right screen size.
+		auto rt = GfxDefaultTarget();
+		resize(rt.width, rt.height);
+	}
+
+
+	/*
+	 *
+	 * Callbacks
+	 *
+	 */
+
 
 	void keyUp(CtlKeyboard kb, int sym)
 	{
@@ -229,5 +264,20 @@ protected:
 		if (s.call(2) == 2) {
 			l.warn(s.toString(-1));
 		}
+	}
+
+
+	/*
+	 *
+	 * Helper functions
+	 *
+	 */
+
+
+	final void setNil(char* str)
+	{
+		s.pushStringz(str);
+		s.pushNil();
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 }
