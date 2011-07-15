@@ -76,11 +76,6 @@ public:
 		c = new Camera(w);
 		cam = c.c;
 
-		// Default state
-		sl.fog.color = defaultFogColor;
-		sl.fog.stop = defaultFogStop;
-		sl.fog.start = defaultFogStart;
-
 
 		/* Ctl */
 

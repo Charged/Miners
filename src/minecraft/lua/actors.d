@@ -14,12 +14,6 @@ import minecraft.actors.sunlight;
 import minecraft.terrain.beta;
 
 
-const defaultFogColor = Color4f(89.0/255, 178.0/255, 220.0/255);
-const defaultFogStart = 150;
-const defaultFogStop = 250;
-const defaultViewDistance = defaultFogStop;
-
-
 /*
  *
  * Simple actors
@@ -37,7 +31,7 @@ public:
 	{
 		super(w);
 		c = new GfxProjCamera();
-		c.far = defaultViewDistance;
+		c.far = SunLight.defaultFogStop;
 	}
 
 	~this()

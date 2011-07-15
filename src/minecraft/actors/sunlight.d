@@ -18,7 +18,7 @@ public:
 
 	const defaultFogStart = 150;
 	const defaultFogStop = 250;
-	const defaultViewDistance = defaultFogStop;
+	const defaultFogColor = Color4f(89.0/255, 178.0/255, 220.0/255);
 
 public:
 	this(World w)
@@ -31,8 +31,8 @@ public:
 		w.gfx.fog = fog;
 
 		fog.start = defaultFogStart;
-		fog.stop = defaultViewDistance;
-		fog.color = Color4f.White;
+		fog.stop = defaultFogStop;
+		fog.color = defaultFogColor;
 
 		w.opts.shadow ~= &shadow;
 		shadow = w.opts.shadow();
