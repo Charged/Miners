@@ -14,7 +14,7 @@ interface Ticker
 
 abstract class Actor : public Movable
 {
-protected:
+public:
 	World w;
 
 public:
