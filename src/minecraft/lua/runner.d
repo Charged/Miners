@@ -10,9 +10,9 @@ import charge.game.lua;
 import minecraft.world;
 import minecraft.runner;
 import minecraft.options;
-import minecraft.lua.actors;
 import minecraft.actors.camera;
 import minecraft.actors.sunlight;
+import minecraft.lua.wrappers.actors;
 
 class ScriptRunner : public GameRunnerBase
 {
