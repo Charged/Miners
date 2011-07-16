@@ -7,6 +7,8 @@ import std.file;
 import charge.charge;
 import charge.game.lua;
 
+import charge.sys.file;
+
 import minecraft.world;
 import minecraft.runner;
 import minecraft.options;
@@ -14,6 +16,9 @@ import minecraft.actors.camera;
 import minecraft.actors.sunlight;
 import minecraft.lua.wrappers.beta;
 import minecraft.lua.wrappers.actors;
+
+import lib.lua.lua;
+import lib.lua.lauxlib;
 
 class ScriptRunner : public GameRunnerBase
 {
@@ -143,6 +148,11 @@ protected:
 		setNil("Camera");
 		setNil("SunLight");
 
+		// Replace dofile with our own.
+		s.pushString("dofile");
+		s.pushCFunction(&doFile);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
 
 		// Ctl
 
@@ -207,6 +217,34 @@ protected:
 		resize(rt.width, rt.height);
 
 		initialized = true;
+	}
+
+	/**
+	 * This function replaces the lua doFile function.
+	 */
+	extern (C) static int doFile(lua_State *l)
+	{
+		auto s = LuaState(l);
+		s.checkString(1);
+		char[] filename = s.toString(1);
+
+		auto file = FileManager(filename);
+		if (file is null)
+			s.error("could not find file " ~ filename);
+
+		char[] buf = cast(char[])file.peekMem();
+
+		// Make lua think this is a file.
+		auto str = "@" ~ filename;
+
+		// Do the actual loading into lua
+		luaL_loadbuffer(l, buf.ptr, buf.length, str.ptr);
+
+		delete file;
+
+		// We don't use pcall here.
+		lua_call(l, 0, 0);
+		return 0;
 	}
 
 
