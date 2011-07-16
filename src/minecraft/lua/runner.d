@@ -11,6 +11,7 @@ import minecraft.world;
 import minecraft.runner;
 import minecraft.options;
 import minecraft.lua.actors;
+import minecraft.actors.camera;
 import minecraft.actors.sunlight;
 
 class ScriptRunner : public GameRunnerBase

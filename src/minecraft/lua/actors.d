@@ -10,47 +10,9 @@ import charge.game.lua;
 import minecraft.world;
 import minecraft.options;
 import minecraft.beta.world;
+import minecraft.actors.camera;
 import minecraft.actors.sunlight;
 import minecraft.terrain.beta;
-
-
-/*
- *
- * Simple actors
- *
- */
-
-
-class Camera : public GameActor
-{
-public:
-	GfxProjCamera c;
-
-public:
-	this(World w)
-	{
-		super(w);
-		c = new GfxProjCamera();
-		c.far = SunLight.defaultFogStop;
-	}
-
-	~this()
-	{
-
-	}
-
-	void setPosition(ref Point3d pos) { c.setPosition(pos); }
-	void getPosition(out Point3d pos) { c.getPosition(pos); }
-	void setRotation(ref Quatd rot) { c.setRotation(rot); }
-	void getRotation(out Quatd rot) { c.getRotation(rot); }
-}
-
-
-/*
- *
- * Wrappers
- *
- */
 
 
 struct CameraWrapper
