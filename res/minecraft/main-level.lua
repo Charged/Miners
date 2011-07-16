@@ -102,8 +102,8 @@ function logic()
 	if move.left then vec = vec + Vector(-1, 0, 0) end
 
 	vec = camera.rotation * vec
-	if move.up then vec = vec + Vector(0, 1, 0) end
-	
+
+	if move.jump then vec = vec + Vector(0, 1, 0) end
 
 	local pos = camera.position
 

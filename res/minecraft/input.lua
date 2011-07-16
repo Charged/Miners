@@ -79,7 +79,7 @@ function keyUp(sym)
 	if sym == keyBackward then move.backward = false end
 	if sym == keyRight then move.right = false end
 	if sym == keyLeft then move.left = false end
-	if sym == keyJump then move.up = false end
+	if sym == keyJump then move.jump = false end
 	if sym == keySpeed then move.speed = false end
 
 
@@ -104,7 +104,7 @@ function keyDown(sym)
 	if sym == keyBackward then move.backward = true end
 	if sym == keyRight then move.right = true end
 	if sym == keyLeft then move.left = true end
-	if sym == keyJump then move.up = true end
+	if sym == keyJump then move.jump = true end
 	if sym == keySpeed then move.speed = true end
 
 	if sym == keyTest then test() end
