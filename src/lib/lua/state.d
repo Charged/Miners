@@ -309,6 +309,23 @@ public:
 		return luaL_dofile(l, std.string.toStringz(name));
 	}
 
+	/**
+	 * Load a string but pretend it is a file.
+	 */
+	int loadStringAsFile(char[] string, char[] filename)
+	{
+		// Make lua think this is a file.
+		auto str = "@" ~ filename;
+
+		// Do the actual loading into lua
+		return loadString(string, str);
+	}
+
+	int loadString(char[] str, char[] name)
+	{
+		return luaL_loadbuffer(l, str.ptr, str.length, name.ptr);
+	}
+
 	int loadFile(char[] name)
 	{
 		return luaL_loadfile(l, std.string.toStringz(name));
