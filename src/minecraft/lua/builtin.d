@@ -9,4 +9,5 @@ void initLuaBuiltins()
 	auto fm = FileManager();
 
 	fm.addBuiltin("script/main-level.lua", import("main-level.lua"));
+	fm.addBuiltin("script/physics.lua", import("physics.lua"));
 }
