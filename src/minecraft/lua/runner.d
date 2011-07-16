@@ -226,21 +226,19 @@ protected:
 	{
 		auto s = LuaState(l);
 		s.checkString(1);
-		char[] filename = s.toString(1);
 
+		auto filename = s.toString(1);
 		auto file = FileManager(filename);
 		if (file is null)
 			s.error("could not find file " ~ filename);
 
 		char[] buf = cast(char[])file.peekMem();
 
-		// Make lua think this is a file.
-		auto str = "@" ~ filename;
-
-		// Do the actual loading into lua
-		luaL_loadbuffer(l, buf.ptr, buf.length, str.ptr);
-
+		int ret = s.loadStringAsFile(buf, filename);
 		delete file;
+
+		if (ret)
+			lua_error(l);
 
 		// We don't use pcall here.
 		lua_call(l, 0, 0);
