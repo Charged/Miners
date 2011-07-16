@@ -12,6 +12,7 @@ import minecraft.runner;
 import minecraft.options;
 import minecraft.actors.camera;
 import minecraft.actors.sunlight;
+import minecraft.lua.wrappers.beta;
 import minecraft.lua.wrappers.actors;
 
 class ScriptRunner : public GameRunnerBase
@@ -131,10 +132,10 @@ protected:
 		MouseWrapper.register(s);
 		KeyboardWrapper.register(s);
 
-		WorldWrapper.register(s);
 		CameraWrapper.register(s);
 		OptionsWrapper.register(s);
 		SunLightWrapper.register(s);
+		BetaWorldWrapper.register(s);
 		BetaTerrainWrapper.register(s);
 
 		setNil("World");
