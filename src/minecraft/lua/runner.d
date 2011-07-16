@@ -34,8 +34,6 @@ public:
 		sl = new SunLight(w);
 		c = new Camera(w);
 		cam = c.c;
-
-		initialized = true;
 	}
 
 	this(Router r, Options opts, World w, char[] filename)
@@ -205,6 +203,8 @@ protected:
 		// Make sure the script has the right screen size.
 		auto rt = GfxDefaultTarget();
 		resize(rt.width, rt.height);
+
+		initialized = true;
 	}
 
 
