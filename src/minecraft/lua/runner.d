@@ -45,7 +45,8 @@ public:
 
 	this(Router r, Options opts, World w, char[] filename)
 	{
-		if (!exists(filename)) {
+		auto file = FileManager(filename);
+		if (file is null) {
 			l.warn("No such file (%s) (this is not a error)", filename);
 			throw new Exception("Error initalizing lua script");
 		}
@@ -54,7 +55,7 @@ public:
 
 		initLuaState();
 
-		loadfile(filename);
+		loadfile(file, filename);
 	}
 
 	~this()
@@ -188,9 +189,19 @@ protected:
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 
-	void loadfile(char[] filename)
+	/**
+	 * Load a file and do the last initialization.
+	 *
+	 * Part of the runner init process.
+	 */
+	void loadfile(File file, char[] filename)
 	{
-		auto ret = s.loadFile(filename);
+		assert(file !is null);
+
+		char[] buf = cast(char[])file.peekMem();
+		int ret;
+
+		ret = s.loadStringAsFile(buf, filename);
 		if (ret == 3) {
 			l.warn("loadFile failed \n",
 			       s.toString(-3), "\n",
@@ -198,9 +209,13 @@ protected:
 			       s.toString(-1), "\n");
 
 			delete s;
+			delete c;
+			delete sl;
 
 			throw new Exception("Error initalizing lua script");
 		}
+
+		delete file;
 
 		ret = s.call();
 		if (ret == 2) {
@@ -209,6 +224,7 @@ protected:
 			delete s;
 			delete c;
 			delete sl;
+
 			throw new Exception("Error initalizing lua script");
 		}
 
