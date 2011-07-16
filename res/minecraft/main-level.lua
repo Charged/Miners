@@ -9,6 +9,7 @@
 -- When a level is started this file is loaded and exectuted.
 --
 
+dofile("script/defaults.lua")
 dofile("script/physics.lua")
 
 
@@ -48,15 +49,6 @@ end
 -- Setup some initial state
 --
 
--- Minecraft far ~250
-local viewDistance = 240
-
-local cameraFar = viewDistance
-local cameraNear = 0.1
-
-local fogStop = viewDistance
-local fogStart = viewDistance - viewDistance / 4
-
 local cameraHeading = 0 --math.pi / -2
 local cameraPitch = 0 --math.pi / -5
 local cameraDragging = false
@@ -66,16 +58,33 @@ local cameraLeft = false
 local cameraRight = false
 local cameraUp = false
 
-camera.far = cameraFar
-camera.near = cameraNear
+----
+-- Sets light and camera defaults from a default table.
+--
+function setDefaults(def)
+	if not def then
+		def = defaults
+	end
+
+	camera.far = def.cameraFar
+	camera.near = def.cameraNear
+	camera.position = def.cameraPosition
+	camera.rotation = Quat(def.cameraHeading, def.cameraPitch, 0)
+
+	light.position = def.lightPosition
+	light.rotation = def.lightRotation
+	light.diffuse = def.lightDayDiffuse
+	light.ambient = def.lightDayAmbient
+	light.fogStart = def.fogStart
+	light.fogStop = def.fogStop
+	light.fogColor = def.fogDayColor
+end
+
+setDefaults(defaults)
+
+-- Set the camera position
 camera.position = world.spawn + Vector(0.5, 1.5, 0.5)
 camera.rotation = Quat(cameraHeading, cameraPitch, 0)
-
-light.diffuse = Color(165/255, 165/255, 165/255)
-light.ambient = Color(100/255, 100/255, 100/255)
-light.rotation = Quat(math.pi / 3, math.pi / -6, 0)
-light.fogStart = fogStart
-light.fogStop = fogStop
 
 mouse.grab = false
 mouse.show = not mouse.grab
@@ -130,21 +139,21 @@ end
 --
 -- Key mappings.
 --
-local keyForward = string.byte('w')
-local keyBackward = string.byte('s')
-local keyRight = string.byte('d')
-local keyLeft = string.byte('a')
-local keySpeed = 304 --SDLK_LSHIFT
-local keyJump = 32 --SDLK_SPACE
+local keyForward = defaults.keyForward
+local keyBackward = defaults.keyBackward
+local keyRight = defaults.keyRight
+local keyLeft = defaults.keyLeft
+local keySpeed = defaults.keySpeed
+local keyJump = defaults.keyJump
 
-local keyTest = string.byte('t')
+local keyTest = defaults.keyTest
 
-local keyScreenshot = string.byte('o')
-local keyAA = string.byte('b')
-local keyShadows = string.byte('v')
-local keyRenderer = string.byte('r')
-local keyShowDebug = 284 --SDLK_F3
-local keyGrab = string.byte('g')
+local keyScreenshot = defaults.keyScreenshot
+local keyAA = defaults.keyAA
+local keyShadows = defaults.keyShadows
+local keyRenderer = defaults.keyRenderer
+local keyShowDebug = defaults.keyShowDebug
+local keyGrab = defaults.keyGrab
 
 
 ----
