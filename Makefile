@@ -47,7 +47,7 @@ LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
 CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 MCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
-DCOMP_FLAGS = -c -w -Isrc -Jres/builtins $(DDEFINES) -of$@ $(DFLAGS)
+DCOMP_FLAGS = -c -w -Isrc -Jres/builtins -Jres/minecraft $(DDEFINES) -of$@ $(DFLAGS)
 LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS_)
 
 ifneq ($(strip $(USE_SDL)),)
@@ -141,4 +141,10 @@ touch: dotouch all
 dotouch:
 	@find src/robbers -name "*.d" | xargs touch
 
+
 .PHONY: all clean run debug server xml touch dotouch
+
+
+# Special dependancy for minecraft lua inbuilt scripts.
+MCLUAFILES = $(shell find res/minecraft -name "*.lua")
+$(OBJ_DIR)/minecraft/lua/builtin.$(OBJ_TYPE): $(MCLUAFILES)

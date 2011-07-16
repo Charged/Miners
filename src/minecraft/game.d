@@ -21,6 +21,7 @@ import minecraft.runner;
 import minecraft.viewer;
 import minecraft.options;
 import minecraft.lua.runner;
+import minecraft.lua.builtin;
 import minecraft.gfx.manager;
 import minecraft.beta.world;
 import minecraft.terrain.beta;
@@ -172,6 +173,8 @@ protected:
 		GfxTexture t;
 		GfxTextureArray ta;
 		Runner r;
+
+		initLuaBuiltins();
 
 		// Most common problem people have is missing terrain.png
 		Picture pic = getMinecraftTexture();
@@ -569,7 +572,7 @@ protected:
 
 		w = new BetaWorld(info, opts);
 
-		auto scriptName = "res/script.lua";
+		auto scriptName = "script/main-level.lua";
 		try {
 			r = new ScriptRunner(this, opts, w, scriptName);
 		} catch (Exception e) {
