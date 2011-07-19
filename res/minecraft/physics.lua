@@ -11,6 +11,8 @@
 -- Some defines
 --
 local playerSize = 0.32
+local playerHeight = 1.5
+local gravity = 0.98 / 200
 
 local floor = _G.math.floor
 
@@ -18,11 +20,11 @@ local floor = _G.math.floor
 ----
 -- Get the block to where the player moved.
 --
-local getMovedBodyPosition = function(pos, vel, minVal, maxVal)
-	if vel < 0 then
-		return floor(pos + vel + minVal)
+local getMovedBodyPosition = function(pos, v, minVal, maxVal)
+	if v < 0 then
+		return floor(pos + v + minVal)
 	else
-		return floor(pos + vel + maxVal)
+		return floor(pos + v + maxVal)
 	end
 end
 
@@ -58,83 +60,93 @@ end
 ----
 -- Applie physics to a player and move it
 --
-function doPlayerPhysics(pos, vec)
+function doPlayerPhysics(player, vec)
 
 	if not vec then
 		vec = Vector()
 	end
+
+	local pos = player.pos
+	local ground = player.ground
 
 	local x = pos.x
 	local y = pos.y
 	local z = pos.z
 
 	local size = playerSize
+	local height = playerHeight
+
 	local minX = x - size
-	local minY = y - size
+	local minY = y
 	local minZ = z - size
 	local maxX = x + size
-	local maxY = y + size
+	local maxY = y + height
 	local maxZ = z + size
 
-	--if collidesInRange(minX, minY, minZ, maxX, maxY, maxZ) then
-	--	--collidesInRange(minX, minY, minZ, maxX, maxY, maxZ, true)
-	--end
+	local old
+	local v
 
-	local vel
-
-	vel = vec.x
-	if vel ~= 0 then
-		local cx = getMovedBodyPosition(pos.x, vel, -size, size)
+	v = vec.x
+	old = x
+	if v ~= 0 then
+		local cx = getMovedBodyPosition(pos.x, v, -size, size)
 		if collidesInRange(cx, minY, minZ, cx, maxY, maxZ) then
-			if vel < 0 then
-				x = cx + 1 + size + 0.01
+			if v < 0 then
+				x = cx + 1 + size + 0.00001
 			else
-				x = cx - size - 0.01
+				x = cx - size - 0.00001
 			end
 		else
-			x = x + vel 
+			x = x + v
 		end
 
 		-- Update for next axis
 		minX = x - size
 		maxX = x + size
+		vec.x = x - old
 	end
 
-	vel = vec.z
-	if vel ~= 0 then
-		local cz = getMovedBodyPosition(z, vel, -size, size)
+	v = vec.z
+	old = z
+	if v ~= 0 then
+		local cz = getMovedBodyPosition(z, v, -size, size)
 		if collidesInRange(minX, minY, cz, maxX, maxY, cz) then
-			if vel < 0 then
-				z = cz + 1 + size + 0.01
+			if v < 0 then
+				z = cz + 1 + size + 0.00001
 			else
-				z = cz - size - 0.01
+				z = cz - size - 0.00001
 			end
 		else
-			z = z + vel 
+			z = z + v
 		end
 
 		-- Update for next axis
 		minZ = z - size
 		maxZ = z + size
+		vec.z = z - old
 	end
 
-	vel = vec.y
-	if vel ~= 0 then
-		local cy = getMovedBodyPosition(y, vel, -size, size)
+	v = vec.y - gravity
+	old = y
+	if v ~= 0 then
+		local cy = getMovedBodyPosition(y, v, 0, height)
 		if collidesInRange(minX, cy, minZ, maxX, cy, maxZ) then
-			if vel < 0 then
-				y = cy + 1 + size + 0.01
+			if v < 0 then
+				y = cy + 1 + 0.00001
 			else
-				y = cy - size - 0.01
+				y = cy - height - 0.00001
 			end
+			ground = true
 		else
-			y = y + vel 
+			ground = false
+			y = y + v
 		end
 
 		-- Not needed
 		--minY = y - size
 		--maxY = y + size
+		vec.y = y - old
 	end
 
-	return Point(x, y, z)
+	return Point(x, y, z), vec, ground
 end
