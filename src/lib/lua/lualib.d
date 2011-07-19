@@ -8,10 +8,27 @@ import lib.lua.lua;
 
 void luaL_openlibs(lua_State *L)
 {
-	luaopen_base(L);
-	luaopen_table(L);
-	luaopen_string(L);
-	luaopen_math(L);
+	struct Reg {
+		char[] name;
+		extern(C) int function(lua_State *L) func;
+	}
+
+	const Reg lualibs[] = [
+		{"", &luaopen_base},
+		{LUA_LOADLIBNAME, &luaopen_package},
+		{LUA_TABLIBNAME, &luaopen_table},
+//		{LUA_IOLIBNAME, &luaopen_io},
+//		{LUA_OSLIBNAME, &luaopen_os},
+		{LUA_STRLIBNAME, &luaopen_string},
+		{LUA_MATHLIBNAME, &luaopen_math},
+//		{LUA_DBLIBNAME, &luaopen_debug},
+	];
+
+	foreach (lib; lualibs) {
+		lua_pushcfunction(L, lib.func);
+		lua_pushlstring(L, lib.name.ptr, lib.name.length);
+		lua_call(L, 1, 0);
+	}
 }
 
 extern (C):
@@ -43,10 +60,8 @@ const LUA_DBLIBNAME = "debug";
 int luaopen_debug(lua_State *L);
 +/
 
-/+
 const LUA_LOADLIBNAME = "package";
 int luaopen_package(lua_State *L);
-+/
 
 /+
 /* open all previous libraries */
