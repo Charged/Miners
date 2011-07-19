@@ -139,7 +139,7 @@ public:
 			if (!vao)
 				return;
 
-			glBindVertexArray(vao);
+			glBindVertexArrayCHARGE(vao);
 
 			glEnableVertexAttribArray(0); // pos
 			glEnableVertexAttribArray(1); // uv
@@ -151,7 +151,8 @@ public:
 			glVertexAttribPointer(0, 3, GL_FLOAT, false, size, positionOffset); // pos
 			glVertexAttribPointer(1, 2, GL_FLOAT, false, size, uvOffset);       // uv
 			glVertexAttribPointer(2, 4, GL_FLOAT, false, size, normalOffset);   // normal + bone
-			glBindVertexArray(0);
+
+			glBindVertexArrayCHARGE(0);
 		}
 
 		final void draw()

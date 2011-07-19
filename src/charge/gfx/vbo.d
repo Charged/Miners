@@ -36,12 +36,13 @@ private:
 public:
 	~this()
 	{
+		// Delete the VAO first
+		if (vao)
+			glDeleteVertexArraysCHARGE(1, &vao);
+
 		glDeleteBuffersARB(1, &vboVerts);
 		if (vboIndices)
 			glDeleteBuffersARB(1, &vboIndices);
-
-		if (vao)
-			glDeleteVertexArrays(1, &vao);
 
 		used_mem -= indicesSize;
 		used_mem -= verteciesSize;
@@ -78,8 +79,8 @@ protected:
 		used_mem += indicesSize;
 		used_mem += verteciesSize;
 
-		if (GL_ARB_vertex_array_object)
-			glGenVertexArrays(1, &vao);
+		if (GL_CHARGE_vertex_array_object)
+			glGenVertexArraysCHARGE(1, &vao);
 	}
 
 }
@@ -158,7 +159,7 @@ protected:
 			return;
 
 		// Setup the vertex array object.
-		glBindVertexArray(vao);
+		glBindVertexArrayCHARGE(vao);
 
 		glEnableVertexAttribArray(0); // pos
 		glEnableVertexAttribArray(1); // uv
@@ -175,7 +176,7 @@ protected:
 			glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, vboIndices);
 
 		// Restore default
-		glBindVertexArray(0);
+		glBindVertexArrayCHARGE(0);
 	}
 
 public:
@@ -272,7 +273,7 @@ public:
 		const vertexSize = Vertex.sizeof;
 
 		foreach (vbo; vbos) {
-			glBindVertexArray(vbo.vao);
+			glBindVertexArrayCHARGE(vbo.vao);
 
 			if (vbo.indexed) {
 				glDrawElements(vbo.primType, vbo.numIndices, GL_UNSIGNED_INT, null);
@@ -281,7 +282,7 @@ public:
 			}
 		}
 
-		glBindVertexArray(0);
+		glBindVertexArrayCHARGE(0);
 	}
 
 private:

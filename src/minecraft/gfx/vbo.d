@@ -70,7 +70,7 @@ protected:
 		assert(vao);
 
 		// Setup the vertex array object.
-		glBindVertexArray(vao);
+		glBindVertexArrayCHARGE(vao);
 
 		glEnableVertexAttribArray(0); // pos
 		glEnableVertexAttribArray(1); // uv
@@ -83,7 +83,7 @@ protected:
 		glVertexAttribPointer(1, 2, GL_SHORT, false, size, uvOffset);           // uv
 		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, false, size, dataOffset); // data
 
-		glBindVertexArray(0);
+		glBindVertexArrayCHARGE(0);
 	}
 
 }
@@ -238,11 +238,11 @@ public:
 		auto vbos = cast(ChunkVBOCompactMesh[])resultVBO[0 .. result_num];
 
 		foreach(vbo; vbos) {
-			glBindVertexArray(vbo.vao);
+			glBindVertexArrayCHARGE(vbo.vao);
 			glDrawArrays(GL_QUADS, 0, vbo.numVerts);
 		}
 
-		glBindVertexArray(0);
+		glBindVertexArrayCHARGE(0);
 
 		glPopMatrix();
 	}
