@@ -9,6 +9,13 @@
 
 
 ----
+-- XXX This should be imported from one of the exported classes.
+--
+
+_G.ticksPerSeconds = 100
+
+
+----
 --
 -- These are the global vars set by Charged-Miners
 --
