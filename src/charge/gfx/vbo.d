@@ -21,6 +21,8 @@ public:
 	GLuint numVerts;
 	GLuint numIndices;
 
+	GLuint vao;
+
 	size_t verteciesSize;
 	size_t indicesSize;
 
@@ -37,6 +39,9 @@ public:
 		glDeleteBuffersARB(1, &vboVerts);
 		if (vboIndices)
 			glDeleteBuffersARB(1, &vboIndices);
+
+		if (vao)
+			glDeleteVertexArrays(1, &vao);
 
 		used_mem -= indicesSize;
 		used_mem -= verteciesSize;
@@ -72,6 +77,9 @@ protected:
 
 		used_mem += indicesSize;
 		used_mem += verteciesSize;
+
+		if (GL_ARB_vertex_array_object)
+			glGenVertexArrays(1, &vao);
 	}
 
 }
@@ -145,6 +153,29 @@ protected:
 		super(p, filename, dynamic,
 		      verts, verteciesSize, numVerts,
 		      tris, indicesSize, numIndices);
+
+		if (!vao)
+			return;
+
+		// Setup the vertex array object.
+		glBindVertexArray(vao);
+
+		glEnableVertexAttribArray(0); // pos
+		glEnableVertexAttribArray(1); // uv
+		glEnableVertexAttribArray(2); // normal
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vboVerts);
+
+		const size = Vertex.sizeof;
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, size, vertOffset);   // pos
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, size, texOffset);    // uv
+		glVertexAttribPointer(2, 3, GL_FLOAT, false, size, normalOffset); // normal
+
+		if (indexed)
+			glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, vboIndices);
+
+		// Restore default
+		glBindVertexArray(0);
 	}
 
 public:
@@ -240,32 +271,17 @@ public:
 	{
 		const vertexSize = Vertex.sizeof;
 
-		glEnableVertexAttribArray(0); // pos
-		glEnableVertexAttribArray(1); // uv
-		glEnableVertexAttribArray(2); // normal
-
 		foreach (vbo; vbos) {
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo.vboVerts);
-
-			/* Shame that we need to set up this binding on each draw */
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, vertexSize, vbo.vertOffset);   // pos
-			glVertexAttribPointer(1, 2, GL_FLOAT, false, vertexSize, vbo.texOffset);    // uv
-			glVertexAttribPointer(2, 3, GL_FLOAT, false, vertexSize, vbo.normalOffset); // normal
+			glBindVertexArray(vbo.vao);
 
 			if (vbo.indexed) {
-				glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, vbo.vboIndices);
 				glDrawElements(vbo.primType, vbo.numIndices, GL_UNSIGNED_INT, null);
 			} else {
 				glDrawArrays(vbo.primType, 0, vbo.numVerts);
 			}
 		}
 
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
-		glDisableVertexAttribArray(0); // pos
-		glDisableVertexAttribArray(1); // uv
-		glDisableVertexAttribArray(2); // normal
+		glBindVertexArray(0);
 	}
 
 private:

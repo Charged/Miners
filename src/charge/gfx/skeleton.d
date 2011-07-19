@@ -117,6 +117,11 @@ public:
 
 	static class VBO : public charge.gfx.vbo.VBO
 	{
+	protected:
+		const void* positionOffset = null;
+		const void* uvOffset = cast(void*)(float.sizeof * 3);
+		const void* normalOffset = cast(void*)(float.sizeof * (3 + 2));
+
 	public:
 		static VBO opCall(Vertex verts[])
 		{
@@ -130,17 +135,11 @@ public:
 			      verts.length * Vertex.sizeof,
 			      cast(uint)verts.length,
 			      null, 0, 0);
-		}
 
-		~this()
-		{
-		}
+			if (!vao)
+				return;
 
-		void draw()
-		{
-			const void* positionOffset = null;
-			const void* uvOffset = cast(void*)(float.sizeof * 3);
-			const void* normalOffset = cast(void*)(float.sizeof * (3 + 2));
+			glBindVertexArray(vao);
 
 			glEnableVertexAttribArray(0); // pos
 			glEnableVertexAttribArray(1); // uv
@@ -148,15 +147,20 @@ public:
 
 			glBindBufferARB(GL_ARRAY_BUFFER_ARB, vboVerts);
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.sizeof, positionOffset); // pos
-			glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.sizeof, uvOffset);       // uv
-			glVertexAttribPointer(2, 4, GL_FLOAT, false, Vertex.sizeof, normalOffset);   // normal + bone
+			const size = Vertex.sizeof;
+			glVertexAttribPointer(0, 3, GL_FLOAT, false, size, positionOffset); // pos
+			glVertexAttribPointer(1, 2, GL_FLOAT, false, size, uvOffset);       // uv
+			glVertexAttribPointer(2, 4, GL_FLOAT, false, size, normalOffset);   // normal + bone
+			glBindVertexArray(0);
+		}
+
+		final void draw()
+		{
+			glBindVertexArray(vao);
 
 			glDrawArrays(GL_QUADS, 0, numVerts);
 
-			glDisableVertexAttribArray(0); // pos
-			glDisableVertexAttribArray(1); // uv
-			glDisableVertexAttribArray(2); // normal + bone
+			glBindVertexArray(0);
 		}
 	}
 }

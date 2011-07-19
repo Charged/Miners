@@ -32,6 +32,11 @@ protected:
  */
 class ChunkVBOCompactMesh : public GfxVBO
 {
+protected:
+	const void* vertOffset = null;
+	const void* uvOffset = cast(void*)(3 * float.sizeof);
+	const void* dataOffset = cast(void*)(4 * float.sizeof);
+
 public:
 	static struct Vertex
 	{
@@ -61,6 +66,24 @@ protected:
 		      verts.length * Vertex.sizeof,
 		      cast(uint)verts.length,
 		      null, 0, 0);
+
+		assert(vao);
+
+		// Setup the vertex array object.
+		glBindVertexArray(vao);
+
+		glEnableVertexAttribArray(0); // pos
+		glEnableVertexAttribArray(1); // uv
+		glEnableVertexAttribArray(2); // data
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vboVerts);
+
+		const size = ChunkVBOCompactMesh.Vertex.sizeof;
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, size, vertOffset);         // pos
+		glVertexAttribPointer(1, 2, GL_SHORT, false, size, uvOffset);           // uv
+		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, false, size, dataOffset); // data
+
+		glBindVertexArray(0);
 	}
 
 }
@@ -214,25 +237,12 @@ public:
 
 		auto vbos = cast(ChunkVBOCompactMesh[])resultVBO[0 .. result_num];
 
-		glEnableVertexAttribArray(0); // pos
-		glEnableVertexAttribArray(1); // uv
-		glEnableVertexAttribArray(2); // data
-
-		foreach (vbo; vbos) {
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo.vboVerts);
-
-			/* Shame that we need to set up this binding on each draw */
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, vertexSize, vertOffset);  // pos
-			glVertexAttribPointer(1, 2, GL_SHORT, false, vertexSize, uvOffset); // uv
-			glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, false, vertexSize, dataOffset); // data
+		foreach(vbo; vbos) {
+			glBindVertexArray(vbo.vao);
 			glDrawArrays(GL_QUADS, 0, vbo.numVerts);
 		}
 
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
-		glDisableVertexAttribArray(0); // pos
-		glDisableVertexAttribArray(1); // uv
-		glDisableVertexAttribArray(2); // data
+		glBindVertexArray(0);
 
 		glPopMatrix();
 	}
