@@ -126,8 +126,18 @@ protected:
 	{
 		// Create a lua state
 		s = new LuaState();
+
 		// Push standard libraries
 		s.openLibs();
+
+		// Repalace the loaders with our own.
+		s.replacePackageLoaders(&loadPackage);
+
+		// Remove the C lib loader as well.
+		s.getGlobal("package");
+		s.pushString("loadlib");
+		s.pushNil();
+		s.setTable(-3);
 
 		// Registers classes
 		Color4fWrapper.register(s);
@@ -260,6 +270,33 @@ protected:
 		lua_call(l, 0, 0);
 		return 0;
 	}
+
+	/**
+	 * Used as a loader for require.
+	 */
+	extern (C) static int loadPackage(lua_State *l)
+	{
+		auto s = LuaState(l);
+		s.checkString(1);
+
+		auto pkg = s.toString(1);
+		auto filename = "script/" ~ pkg ~ ".lua";
+
+		auto file = FileManager(filename);
+		if (file is null) {
+			// Special format for require
+			s.pushString("\n\tno file '" ~ filename ~ "'");
+			return 1;
+		}
+
+		char[] buf = cast(char[])file.peekMem();
+
+		int ret = s.loadStringAsFile(buf, filename);
+		delete file;
+
+		return 1;
+	}
+
 
 
 	/*
