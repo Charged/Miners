@@ -9,6 +9,8 @@
 -- When a level is started this file is loaded and exectuted.
 --
 
+
+dofile("script/exported.lua")
 dofile("script/defaults.lua")
 dofile("script/input.lua")
 dofile("script/physics.lua")

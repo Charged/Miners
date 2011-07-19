@@ -10,6 +10,7 @@ void initLuaBuiltins()
 
 	fm.addBuiltin("script/main-level.lua", import("main-level.lua"));
 	fm.addBuiltin("script/defaults.lua", import("defaults.lua"));
+	fm.addBuiltin("script/exported.lua", import("exported.lua"));
 	fm.addBuiltin("script/physics.lua", import("physics.lua"));
 	fm.addBuiltin("script/input.lua", import("input.lua"));
 }
