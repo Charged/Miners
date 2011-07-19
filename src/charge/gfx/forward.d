@@ -45,7 +45,12 @@ public:
 			if (!GL_VERSION_2_0)
 				throw new Exception("GL_VERSION < 2.0");
 
-			/* TODO: Check for VBO, VAO */
+			if (!GL_ARB_vertex_buffer_object)
+				throw new Exception("ARB VBO extension not available");
+
+			if (!GL_CHARGE_vertex_array_object)
+				throw new Exception("ARB/APPLE VAO extension not available");
+
 		} catch (Exception e) {
 			l.info("Is not cabable of running forward renderer!");
 			l.bug(e.toString());

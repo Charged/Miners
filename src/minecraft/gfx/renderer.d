@@ -22,6 +22,13 @@ public:
 		try {
 			if (!GL_VERSION_2_0)
 				throw new Exception("GL_VERSION < 2.0");
+
+			if (!GL_ARB_vertex_buffer_object)
+				throw new Exception("ARB VBO extension not available");
+
+			if (!GL_CHARGE_vertex_array_object)
+				throw new Exception("ARB/APPLE VAO extension not available");
+
 		} catch (Exception e) {
 			l.warn("Is not cabable of running minecraft forward renderer!");
 			l.warn(e.toString());
@@ -163,6 +170,12 @@ public:
 		try {
 			if (!GL_VERSION_2_0)
 				throw new Exception("GL_VERSION < 2.0");
+
+			if (!GL_ARB_vertex_buffer_object)
+				throw new Exception("ARB VBO extension not available");
+
+			if (!GL_CHARGE_vertex_array_object)
+				throw new Exception("ARB/APPLE VAO extension not available");
 
 			// XXX Should test for GL_EXT_gpu_shader4 as well
 			if (!GL_EXT_geometry_shader4)
