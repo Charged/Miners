@@ -23,6 +23,7 @@ import lib.gl.ext.nvdepthbufferfloat;
 import lib.gl.ext.arbvertexbufferobject;
 import lib.gl.ext.arbvertexarrayobject;
 import lib.gl.ext.applevertexarrayobject;
+import lib.gl.ext.chargevertexarrayobject;
 import lib.gl.ext.extgeometryshader4;
 import lib.gl.ext.exttexturearray;
 import lib.gl.glu;
@@ -56,6 +57,8 @@ void loadGL(Loader l)
 	loadGL_APPLE_vertex_array_object(l);
 	loadGL_EXT_geometry_shader4(l);
 	loadGL_EXT_texture_array(l);
+
+	loadGL_CHARGE_vertex_array_object();
 }
 
 private:
