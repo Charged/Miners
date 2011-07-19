@@ -8,6 +8,9 @@ import lib.gl.types;
 bool GL_ARB_vertex_array_object;
 
 void loadGL_ARB_vertex_array_object(Loader l) {
+	if (!GL_ARB_vertex_array_object)
+		return;
+
 	loadFunc!(glBindVertexArray)(l);
 	loadFunc!(glDeleteVertexArrays)(l);
 	loadFunc!(glGenVertexArrays)(l);
