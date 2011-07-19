@@ -1,23 +1,26 @@
 -- Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
+local _G = _G
+module(...)
 
 
 ----
 -- This script holds functions related to the player.
 --
 
+local require = _G.require
 
-local player = {
-	pos = Point(),
-	vel = Vector(),
-	headHeight = Vector(0, 1.25, 0),
-	ground = false,
-}
+require "input"
+require "physics"
 
-_G.player = player
+local math = _G.math;
+local move = _G.input.move
+local doPlayerPhysics = _G.physics.doPlayerPhysics
 
-local move = _G.move
+local Point = _G.Point
+local Vector = _G.Vector
+local Quat = _G.Quat
 local camera = _G.camera
 
 local ticksPerSeconds = _G.ticksPerSeconds
@@ -26,6 +29,19 @@ local playerMaxAirSpeed = 1
 local playerAirAcceleration = 0.04 / ticksPerSeconds
 local playerGroundAcceleration = 4.2 / ticksPerSeconds
 local playerJumpAcceleration = 0.13
+
+
+----
+-- The player object.
+--
+
+local player = {
+	pos = Point(),
+	vel = Vector(),
+	headHeight = Vector(0, 1.25, 0),
+	ground = false,
+}
+_G.player = player
 
 
 ----

@@ -1,17 +1,28 @@
 -- Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
+local _G = _G
+module(...)
 
 
 ----
 -- This lua scripts holds shared defaults and settings.
 --
 
+local Point = _G.Point
+local Vector = _G.Vector
+local Quat = _G.Quat
+local Color = _G.Color
+
+local math = _G.math
+local string = _G.string
+
+
 ----
 -- Defaults which more then one derive from
 --
-local viewDistance = 240 -- Minecraft far ~250
 
+local viewDistance = 240 -- Minecraft far ~250
 
 local defaults = {
 

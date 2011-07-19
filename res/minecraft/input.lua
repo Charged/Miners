@@ -1,11 +1,18 @@
 -- Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
+local _G = _G
+module(...)
 
 
 ----
 -- This file contains input functions.
 --
+
+local math = _G.math;
+local mouse = _G.mouse
+local options = _G.options
+local keyboard = _G.keyboard
 
 
 ----
@@ -22,8 +29,6 @@ move = {
 	up = false,
 	speed = false,
 }
-
-local move = _G.move
 
 
 ----
@@ -48,9 +53,9 @@ local keyGrab
 
 
 ----
--- Set the keybindings from a table
+-- Set the keybindings from a table, exported.
 --
-function setKeyBindings(def)
+function _G.setKeyBindings(def)
 	keyForward = def.keyForward
 	keyBackward = def.keyBackward
 	keyRight = def.keyRight
@@ -68,13 +73,12 @@ function setKeyBindings(def)
 	keyGrab = def.keyGrab
 end
 
-
 ----
 -- Called when a key on the keyboard is released.
 --
 -- sym: which key was released, a raw keycode not what was inputted.
 --
-function keyUp(sym)
+function _G.keyUp(sym)
 	if sym == keyForward then move.forward = false end
 	if sym == keyBackward then move.backward = false end
 	if sym == keyRight then move.right = false end
@@ -99,7 +103,7 @@ end
 --
 -- sym: which key was released, a raw keycode not what was inputted.
 --
-function keyDown(sym)
+function _G.keyDown(sym)
 	if sym == keyForward then move.forward = true end
 	if sym == keyBackward then move.backward = true end
 	if sym == keyRight then move.right = true end
@@ -115,7 +119,7 @@ end
 --
 -- button: which button was released starting with 1.
 --
-function mouseUp(button)
+function _G.mouseUp(button)
 	if button == 1 then
 		cameraDragging = false
 	end
@@ -126,7 +130,7 @@ end
 --
 -- button: which button was pressed starting with 1.
 --
-function mouseDown(button)
+function _G.mouseDown(button)
 	if button == 1 then
 		cameraDragging = true
 	end
@@ -138,7 +142,7 @@ end
 -- xrel: Relative mouse motion in x axis.
 -- yrel: Relative mouse motion in x axis.
 --
-function mouseMove(xrel, yrel)
+function _G.mouseMove(xrel, yrel)
 	-- If we are not holding down the mouse button don't do anything
 	if not cameraDragging and not mouse.grab then return end
 
@@ -147,7 +151,12 @@ function mouseMove(xrel, yrel)
 		yrel = -yrel
 	end
 
-	move.heading = move.heading - xrel / 500.0
-	move.pitch = move.pitch - yrel / 500.0
+	local heading = move.heading - xrel / 500.0
+	local pitch = move.pitch - yrel / 500.0
 
+	pitch = math.max(math.pi/-2, pitch)
+	pitch = math.min(math.pi/2, pitch)
+
+	move.heading = heading
+	move.pitch = pitch
 end

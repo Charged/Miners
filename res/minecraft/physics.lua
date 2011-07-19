@@ -1,11 +1,22 @@
 -- Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
+local _G = _G
+module(...)
 
 
 ----
 -- This is script holds physics related functions.
 --
+
+local Point = _G.Point
+local Vector = _G.Vector
+local Quat = _G.Quat
+local Color = _G.Color
+
+local floor = _G.math.floor
+local terrain = _G.terrain
+
 
 ----
 -- Some defines
@@ -13,8 +24,6 @@
 local playerSize = 0.32
 local playerHeight = 1.5
 local gravity = 0.98 / 200
-
-local floor = _G.math.floor
 
 
 ----
