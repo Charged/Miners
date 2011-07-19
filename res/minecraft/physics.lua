@@ -9,6 +9,8 @@ module(...)
 -- This is script holds physics related functions.
 --
 
+_G.require "blocks"
+
 local Point = _G.Point
 local Vector = _G.Vector
 local Quat = _G.Quat
@@ -16,6 +18,7 @@ local Color = _G.Color
 
 local floor = _G.math.floor
 local terrain = _G.terrain
+local getSolid = _G.blocks.getSolid
 
 
 ----
@@ -56,7 +59,7 @@ local collidesInRange = function(minX, minY, minZ, maxX, maxY, maxZ)
 		for y = minY, maxY do
 			for z = minZ, maxZ do
 				local b = terrain:block(x, y, z)
-				if b ~= 0 then
+				if getSolid(b) then
 					return true
 				end
 			end
