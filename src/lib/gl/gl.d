@@ -22,6 +22,7 @@ import lib.gl.ext.extframebufferobject;
 import lib.gl.ext.nvdepthbufferfloat;
 import lib.gl.ext.arbvertexbufferobject;
 import lib.gl.ext.arbvertexarrayobject;
+import lib.gl.ext.applevertexarrayobject;
 import lib.gl.ext.extgeometryshader4;
 import lib.gl.ext.exttexturearray;
 import lib.gl.glu;
@@ -52,6 +53,7 @@ void loadGL(Loader l)
 	loadGL_NV_depth_buffer_float(l);
 	loadGL_ARB_vertex_buffer_object(l);
 	loadGL_ARB_vertex_array_object(l);
+	loadGL_APPLE_vertex_array_object(l);
 	loadGL_EXT_geometry_shader4(l);
 	loadGL_EXT_texture_array(l);
 }
@@ -93,6 +95,7 @@ void findExtentions()
 	testFunc!(GL_NV_depth_buffer_float)(e);
 	testFunc!(GL_ARB_vertex_buffer_object)(e);
 	testFunc!(GL_ARB_vertex_array_object)(e);
+	testFunc!(GL_APPLE_vertex_array_object)(e);
 	testFunc!(GL_EXT_geometry_shader4)(e);
 	testFunc!(GL_EXT_texture_array)(e);
 }
