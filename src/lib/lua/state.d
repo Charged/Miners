@@ -65,6 +65,25 @@ public:
 		return state;
 	}
 
+	/**
+	 * Replace the loaders from package with the function given.
+	 *
+	 * Doesn't replace the preload one.
+	 */
+	void replacePackageLoaders(lua_CFunction f)
+	{
+		getGlobalz("package");
+		pushStringz("loaders");
+		lua_rawget(l, -2);
+		pushCFunction(f);
+		lua_rawseti(l, -2, 2);
+		lua_pushnil(l);
+		lua_rawseti(l, -2, 3);
+		lua_pushnil(l);
+		lua_rawseti(l, -2, 4);
+
+	}
+
 
 	/*
 	 * Struct support.
