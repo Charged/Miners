@@ -105,7 +105,9 @@ function player:logic()
 	vel:normalize()
 	vel:scale(l)
 
-	self.pos, self.vel, self.ground = doPlayerPhysics(self, vel)
+	self.vel = vel
+
+	self.pos, self.vel, self.ground = doPlayerPhysics(self)
 
 	camera.position = player.pos + player.headHeight
 	camera.rotation = Quat(move.heading, move.pitch, 0)

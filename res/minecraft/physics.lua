@@ -69,13 +69,10 @@ end
 ----
 -- Applie physics to a player and move it
 --
-function doPlayerPhysics(player, vec)
-
-	if not vec then
-		vec = Vector()
-	end
+function doPlayerPhysics(player)
 
 	local pos = player.pos
+	local vel = player.vel
 	local ground = player.ground
 
 	local x = pos.x
@@ -95,7 +92,8 @@ function doPlayerPhysics(player, vec)
 	local old
 	local v
 
-	v = vec.x
+
+	v = vel.x
 	old = x
 	if v ~= 0 then
 		local cx = getMovedBodyPosition(pos.x, v, -size, size)
@@ -112,10 +110,10 @@ function doPlayerPhysics(player, vec)
 		-- Update for next axis
 		minX = x - size
 		maxX = x + size
-		vec.x = x - old
+		vel.x = x - old
 	end
 
-	v = vec.z
+	v = vel.z
 	old = z
 	if v ~= 0 then
 		local cz = getMovedBodyPosition(z, v, -size, size)
@@ -132,10 +130,10 @@ function doPlayerPhysics(player, vec)
 		-- Update for next axis
 		minZ = z - size
 		maxZ = z + size
-		vec.z = z - old
+		vel.z = z - old
 	end
 
-	v = vec.y - gravity
+	v = vel.y - gravity
 	old = y
 	if v ~= 0 then
 		local cy = getMovedBodyPosition(y, v, 0, height)
@@ -154,8 +152,8 @@ function doPlayerPhysics(player, vec)
 		-- Not needed
 		--minY = y - size
 		--maxY = y + size
-		vec.y = y - old
+		vel.y = y - old
 	end
 
-	return Point(x, y, z), vec, ground
+	return Point(x, y, z), vel, ground
 end
