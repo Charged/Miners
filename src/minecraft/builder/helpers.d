@@ -17,16 +17,16 @@ import minecraft.builder.types;
  * Calculates global floating point coordinates from local shifted coordinates.
  *
  * Reads x, y, z for coordinates.
- * Reads xOff, yOff, zOff for offsets.
+ * Reads from p the fields: xOff, yOff, zOff for offsets.
  * And devides the result with VERTEX_SIZE_DIVISOR.
  *
  * Result is stored in the variables xF, yF, zF.
  */
 template PositionCalculator()
 {
-	float xF = cast(float)(x+xOff) / VERTEX_SIZE_DIVISOR;
-	float yF = cast(float)(y+yOff) / VERTEX_SIZE_DIVISOR;
-	float zF = cast(float)(z+zOff) / VERTEX_SIZE_DIVISOR;
+	float xF = cast(float)(x+p.xOff) / VERTEX_SIZE_DIVISOR;
+	float yF = cast(float)(y+p.yOff) / VERTEX_SIZE_DIVISOR;
+	float zF = cast(float)(z+p.zOff) / VERTEX_SIZE_DIVISOR;
 }
 
 

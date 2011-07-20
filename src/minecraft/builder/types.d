@@ -162,3 +162,21 @@ uvCoord uvCoords[uvManip.SIZE][4][2] = [
 		[uvCoord.RIGHT, uvCoord.BOTTOM],
 	],
 ];
+
+
+/*
+ *
+ * MeshPacker.
+ *
+ */
+
+
+/**
+ * Base struct for all packers.
+ */
+struct Packer
+{
+	void function(Packer *p, int x, int y, int z,
+		      ubyte texture, ubyte light, sideNormal normal,
+		      ushort u, ushort v) pack;
+}
