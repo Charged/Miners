@@ -321,10 +321,6 @@ protected:
 			chargeConfigFolder ~ "/terrain.png",
 		];
 
-		// Skip the imported texture if it was not found
-		if (terrainFile is null)
-			locations.length = locations.length - 1;
-
 		foreach(l; locations) {
 			auto pic = Picture("mc/terrain", l);
 			if (pic is null)
@@ -339,6 +335,8 @@ protected:
 		try {
 			terrainFile = extractMinecraftTexture();
 			assert(terrainFile !is null);
+			l.info("Using borrowed terrain.png from minecraft.jar");
+			l.info("Please ignore above warnings");
 		} catch (Exception e) {
 			l.info("Could not extract terrain.png from minecraft.jar because:");
 			l.bug(e.classinfo.name, " ", e);
