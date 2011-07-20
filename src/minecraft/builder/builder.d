@@ -164,7 +164,7 @@ template QuadEmitter(alias T)
 				  ubyte texture, sideNormal normal,
 				  int u_offset, int v_offset, uvManip manip)
 	{
-		ushort uv[][] = MappedUVYManipulator(x1, x2, z1, z2, u_offset, v_offset, manip);
+		ushort uv[][] = genMappedManipUVsY(x1, x2, z1, z2, u_offset, v_offset, manip);
 
 		pack(x1, y, z1, texture, aoTL, normal, uv[0][0], uv[0][1]);
 		pack(x1, y, z2, texture, aoBL, normal, uv[1][0], uv[1][1]);
@@ -208,7 +208,7 @@ template QuadEmitter(alias T)
 				  ubyte texture, sideNormal normal,
 				  int u_offset, int v_offset, uvManip manip)
 	{
-		ushort uv[][] = MappedUVYManipulator(x1, x2, z1, z2, u_offset, v_offset, manip);
+		ushort uv[][] = genMappedManipUVsY(x1, x2, z1, z2, u_offset, v_offset, manip);
 
 		pack(x1, y, z1, texture, aoTL, normal, uv[0][0], uv[0][1]);
 		pack(x2, y, z1, texture, aoTR, normal, uv[3][0], uv[3][1]);
@@ -240,7 +240,7 @@ template QuadEmitter(alias T)
 				   ubyte texture, sideNormal normal,
 				   int u_offset, int v_offset, uvManip manip)
 	{
-		ushort uv[][] = MappedUVXZManipulator(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
+		ushort uv[][] = genMappedManipUVsXZ(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
 
 		pack(x2, y1, z1, texture, aoBR, normal, uv[2][0], uv[2][1]);
 		pack(x2, y2, z1, texture, aoTR, normal, uv[3][0], uv[3][1]);
@@ -272,7 +272,7 @@ template QuadEmitter(alias T)
 				   ubyte texture, sideNormal normal,
 				   int u_offset, int v_offset, uvManip manip)
 	{
-		ushort uv[][] = MappedUVXZManipulator(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
+		ushort uv[][] = genMappedManipUVsXZ(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
 
 		pack(x1, y1, z2, texture, aoBR, normal, uv[2][0], uv[2][1]);
 		pack(x1, y2, z2, texture, aoTR, normal, uv[3][0], uv[3][1]);

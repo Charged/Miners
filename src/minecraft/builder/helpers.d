@@ -114,8 +114,8 @@ template UVManipulator(int A)
  * With the top-left corner as origin, L and R are the distance
  * to the origin on the u-axis, and T and B on the v-axis.
  */
-ushort[][] MappedUVManipulator(int L, int R, int T, int B,
-			       int u_offset, int v_offset, int manip)
+ushort[][] genMappedManipUVs(int L, int R, int T, int B,
+			     int u_offset, int v_offset, int manip)
 {
 	L += u_offset;
 	R += u_offset;
@@ -174,8 +174,8 @@ ushort[][] MappedUVManipulator(int L, int R, int T, int B,
  * Calculate texture coords for a quad on the xz-plane, showing parts
  * of the texture without stretching it.
  */
-ushort[][] MappedUVYManipulator(int x1, int x2, int z1, int z2,
-		   	         int u_offset, int v_offset, int manip)
+ushort[][] genMappedManipUVsY(int x1, int x2, int z1, int z2,
+			      int u_offset, int v_offset, int manip)
 {
 	// Result of modulo operation in D has the same sign as the divident, we don't
 	// want this behaviour for negative inputs, so we move these into a safe range.
@@ -187,15 +187,15 @@ ushort[][] MappedUVYManipulator(int x1, int x2, int z1, int z2,
 	ushort R = L + (x2-x1);
 	ushort B = T + (z2-z1);
 
-	return MappedUVManipulator(L, R, T, B, u_offset, v_offset, manip);
+	return genMappedManipUVs(L, R, T, B, u_offset, v_offset, manip);
 }
 
 /**
  * Calculate texture coords for a quad on the xz-plane, showing parts
  * of the texture without stretching it.
  */
-ushort[][] MappedUVXZManipulator(int x1, int x2, int y1, int y2, int z1, int z2,
-		   	         int u_offset, int v_offset, sideNormal normal, int manip)
+ushort[][] genMappedManipUVsXZ(int x1, int x2, int y1, int y2, int z1, int z2,
+			       int u_offset, int v_offset, sideNormal normal, int manip)
 {
 	// Result of modulo operation in D has the same sign as the divident, we don't
 	// want this behaviour for negative inputs, so we move these into a safe range.
@@ -222,7 +222,7 @@ ushort[][] MappedUVXZManipulator(int x1, int x2, int y1, int y2, int z1, int z2,
 	B = cast(ushort)(UV_SIZE_DIVISOR - y1 % UV_SIZE_DIVISOR);
 	T = B - (y2 - y1);
 
-	return MappedUVManipulator(L, R, T, B, u_offset, v_offset, manip);
+	return genMappedManipUVs(L, R, T, B, u_offset, v_offset, manip);
 }
 
 
