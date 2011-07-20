@@ -174,6 +174,10 @@ protected:
 		GfxTextureArray ta;
 		Runner r;
 
+		// First init options
+		opts = new Options();
+
+		// Setup the inbuilt script files
 		initLuaBuiltins();
 
 		// Most common problem people have is missing terrain.png
@@ -190,7 +194,6 @@ protected:
 		rm = new RenderManager();
 
 		// Another comment that I made after the one above.
-		opts = new Options();
 		opts.rendererString = rm.s;
 		opts.rendererBuildType = rm.bt;
 		opts.rendererBuildIndexed = rm.textureArray;
