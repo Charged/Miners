@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module minecraft.importer.converter;
 
-import minecraft.terrain.data;
+import minecraft.builder.data;
 
 struct ClassicToBeta {
 	ubyte block;

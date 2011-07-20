@@ -1,13 +1,13 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module minecraft.terrain.builder;
+module minecraft.builder.builder;
 
 import charge.charge;
 
 import minecraft.gfx.vbo;
 
-import minecraft.terrain.data;
-import minecraft.terrain.workspace;
+import minecraft.builder.data;
+import minecraft.builder.workspace;
 
 /*
  * Define how many sub devisions there are in a texture tile.

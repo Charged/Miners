@@ -7,7 +7,7 @@ import std.math;
 import charge.charge;
 
 import minecraft.options;
-import minecraft.terrain.data;
+import minecraft.builder.data;
 import minecraft.terrain.beta;
 import minecraft.terrain.common;
 import minecraft.importer.info;

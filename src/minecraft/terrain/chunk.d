@@ -11,9 +11,9 @@ import minecraft.gfx.vbo;
 import minecraft.gfx.imports;
 import minecraft.gfx.renderer;
 import minecraft.terrain.beta;
-import minecraft.terrain.data;
-import minecraft.terrain.builder;
-import minecraft.terrain.workspace;
+import minecraft.builder.data;
+import minecraft.builder.builder;
+import minecraft.builder.workspace;
 
 class Chunk
 {

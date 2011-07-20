@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module minecraft.terrain.data;
+module minecraft.builder.data;
 
 /*
  * Data for converting a minecraft block array into a mesh.

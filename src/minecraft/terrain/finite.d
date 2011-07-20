@@ -9,8 +9,8 @@ import minecraft.options;
 import minecraft.gfx.vbo;
 import minecraft.gfx.imports;
 import minecraft.terrain.common;
-import minecraft.terrain.builder;
-import minecraft.terrain.workspace;
+import minecraft.builder.builder;
+import minecraft.builder.workspace;
 
 /**
  * Finite terrain that doesn't doesn't handle growing as good

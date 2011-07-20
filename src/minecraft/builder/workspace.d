@@ -1,11 +1,11 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module minecraft.terrain.workspace;
+module minecraft.builder.workspace;
 
 static import std.c.stdlib;
 static import std.c.string;
 
-import minecraft.terrain.data;
+import minecraft.builder.data;
 import minecraft.terrain.chunk;
 
 /**
