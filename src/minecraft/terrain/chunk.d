@@ -211,7 +211,7 @@ public:
 		scope(exit)
 			data.free();
 
-		data.copyFromChunk(this);
+		copyToWorkspace(data);
 
 		if (bt.cvgrm !is null) {
 			cvrm = buildRigidMesh(data);
@@ -319,6 +319,31 @@ public:
 	final ubyte* getDataUnsafePointerY(int x, int z)
 	{
 		return &data[x * depth * height/2 + z * height/2];
+	}
+
+
+	/*
+	 * Mesh building related.
+	 */
+
+
+	void copyToWorkspace(WorkspaceData *d)
+	{
+		for (int x; x < d.ws_width; x++) {
+			for (int z; z < d.ws_depth; z++) {
+				ubyte *ptr = getPointerY(x-1, z-1);
+				d.blocks[x][z][0] = ptr[0];
+				d.blocks[x][z][1 .. d.ws_height+1-2] =
+					ptr[0 .. d.ws_height-2];
+				d.blocks[x][z][length-1] = 0;
+
+				ptr = getDataPointerY(x-1, z-1);
+				d.data[x][z][0] = cast(ubyte)(ptr[0] << 4);
+				d.data[x][z][1 .. d.ws_data_height+1-2] =
+					ptr[0 .. d.ws_data_height-2];
+				d.data[x][z][length-1] = 0;
+			}
+		}
 	}
 
 	ChunkVBORigidMesh buildRigidMesh(WorkspaceData *data)

@@ -6,7 +6,7 @@ static import std.c.stdlib;
 static import std.c.string;
 
 import minecraft.builder.data;
-import minecraft.terrain.chunk;
+
 
 /**
  * Since the mesh depends on data outside of the chunk array accessing it
@@ -159,22 +159,5 @@ struct WorkspaceData
 
 		auto ret =  xmc << 0 | xpc << 1 | ymc << 2 | ypc << 3 | zmc << 4 | zpc << 5;
 		return 0x3f & ~ret;
-	}
-
-	void copyFromChunk(Chunk chunk)
-	{
-		for (int x; x < ws_width; x++) {
-			for (int z; z < ws_depth; z++) {
-				ubyte *ptr = chunk.getPointerY(x-1, z-1);
-				blocks[x][z][0] = ptr[0];
-				blocks[x][z][1 .. ws_height+1-2] = ptr[0 .. ws_height-2];
-				blocks[x][z][length-1] = 0;
-
-				ptr = chunk.getDataPointerY(x-1, z-1);
-				data[x][z][0] = cast(ubyte)(ptr[0] << 4);
-				data[x][z][1 .. ws_data_height+1-2] = ptr[0 .. ws_data_height-2];
-				data[x][z][length-1] = 0;
-			}
-		}
 	}
 }
