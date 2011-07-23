@@ -151,7 +151,7 @@ public:
 
 	void setRotation(ref Quatd rotation)
 	{
-		l.warn("Setting rotation on is camera is bad!");
+		l.warn("Setting rotation on iso camera is bad!");
 	}
 
 }
