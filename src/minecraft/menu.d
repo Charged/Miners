@@ -75,6 +75,8 @@ public:
 
 	void resize(uint w, uint h)
 	{
+		if (levelRunner !is null)
+			return levelRunner.resize(w, h);
 	}
 
 	void logic()
