@@ -43,19 +43,22 @@ struct CameraWrapper
 		key = s.toString(2);
 		switch(key) {
 		case "position":
-			c.c.getPosition(*Point3dWrapper.push(s));
+			c.getPosition(*Point3dWrapper.push(s));
 			break;
 		case "rotation":
-			c.c.getRotation(*QuatdWrapper.push(s));
+			c.getRotation(*QuatdWrapper.push(s));
 			break;
 		case "far":
-			s.pushNumber(c.c.far);
+			s.pushNumber(c.far);
 			break;
 		case "near":
-			s.pushNumber(c.c.near);
+			s.pushNumber(c.near);
 			break;
-		case "ratio":
-			s.pushNumber(c.c.ratio);
+		case "iso":
+			s.pushBool(c.iso);
+			break;
+		case "proj":
+			s.pushBool(c.proj);
 			break;
 		default:
 			s.getMetaTable(1);
@@ -77,24 +80,42 @@ struct CameraWrapper
 		key = s.toString(2);
 		switch(key)	{
 		case "position":
-			c.c.setPosition(*s.checkPoint3d(3));
+			c.setPosition(*s.checkPoint3d(3));
 			break;
 		case "rotation":
-			c.c.setRotation(*s.checkQuatd(3));
+			c.setRotation(*s.checkQuatd(3));
 			break;
 		case "far":
-			c.c.far = s.toNumber(3);
-			(cast(World)c.w).t.setViewRadii(cast(int)(c.c.far / 16 + 1));
+			c.far = s.toNumber(3);
 			break;
 		case "near":
-			c.c.near = s.toNumber(3);
+			c.near = s.toNumber(3);
 			break;
-		case "ratio":
-			c.c.ratio = s.toNumber(3);
+		case "iso":
+			c.iso = s.toBool(3);
+			break;
+		case "proj":
+			c.proj = s.toBool(3);
 			break;
 		default:
 			s.error("No memeber of that that name");
 			break;
+		}
+
+		return 0;
+	}
+
+	extern (C) static int resize(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto c = s.checkClass!(Camera)(1, false);
+		auto w = cast(uint)s.checkNumber(2);
+		auto h = cast(uint)s.checkNumber(3);
+
+		try {
+			c.resize(w, h);
+		} catch (Exception e) {
+			s.error(e);
 		}
 
 		return 0;
@@ -109,6 +130,8 @@ struct CameraWrapper
 		s.setFieldz(-2, "__index");
 		s.pushCFunction(&newIndex);
 		s.setFieldz(-2, "__newindex");
+		s.pushCFunction(&resize);
+		s.setFieldz(-2, "resize");
 		s.pop();
 
 		s.pushString("Camera");

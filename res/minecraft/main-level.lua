@@ -95,5 +95,5 @@ end
 -- This function is called when the window is resized.
 --
 function resize(width, height)
-	camera.ratio = width / height
+	camera:resize(width, height)
 end

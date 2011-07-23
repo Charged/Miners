@@ -40,7 +40,7 @@ public:
 		// Create common actors
 		sl = new SunLight(w);
 		c = new Camera(w);
-		cam = c.c;
+		cam = c.current;
 	}
 
 	this(Router r, Options opts, World w, char[] filename)
@@ -98,13 +98,16 @@ public:
 		super.logic();
 	}
 
-	void render()
+	void render(GfxRenderTarget rt)
 	{
+		cam = c.current;
+		super.render(rt);
+/*
 		s.getGlobalz("render");
 		if (s.call() == 2) {
 			l.warn(s.toString(-1));
 		}
-
+*/
 	}
 
 protected:
