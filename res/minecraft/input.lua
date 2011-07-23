@@ -11,6 +11,7 @@ module(...)
 
 local math = _G.math;
 local mouse = _G.mouse
+local camera = _G.camera
 local options = _G.options
 local keyboard = _G.keyboard
 
@@ -71,6 +72,7 @@ function _G.setKeyBindings(def)
 	keyRenderer = def.keyRenderer
 	keyShowDebug = def.keyShowDebug
 	keyGrab = def.keyGrab
+	keyIso = def.keyIso
 end
 
 ----
@@ -92,6 +94,7 @@ function _G.keyUp(sym)
 	if sym == keyShadows then options.shadow = not options.shadow end
 	if sym == keyShowDebug then options.showDebug = not options.showDebug end
 	if sym == keyRenderer then options:switchRenderer() end
+	if sym == keyIso then camera.iso = not camera.iso end
 	if sym == keyGrab and keyboard.ctrl then
 		mouse.grab = not mouse.grab
 		mouse.show = not mouse.grab
