@@ -72,6 +72,8 @@ protected:
 		initBuiltins();
 		initSettings();
 
+		resizeSupported = p.getBool("forceResizeEnable", defaultForceResizeEnable);
+
 		// Load libraries
 		if (flags & phyFlags)
 			loadPhy();
@@ -145,6 +147,7 @@ protected:
 			p.add("h", defaultHeight);
 			p.add("fullscreen", defaultFullscreen);
 			p.add("title", defaultTitle);
+			p.add("forceResizeEnable", defaultForceResizeEnable);
 		}
 	}
 

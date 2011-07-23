@@ -31,6 +31,7 @@ public:
 	const int defaultHeight = 600;
 	const bool defaultFullscreen = false;
 	const char[] defaultTitle = "Charged Miners";
+	const bool defaultForceResizeEnable = false;
 
 	coreFlag flags;
 	bool resizeSupported;
