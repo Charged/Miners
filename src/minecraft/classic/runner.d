@@ -90,30 +90,32 @@ public:
 
 	void indentification(ubyte ver, char[] name, char[] motd, ubyte type)
 	{
-		l.info("Connected:");
-		l.info("\t%s", name);
-		l.info("\t%s", motd);
+		name = removeColorTags(name);
+		motd = removeColorTags(motd);
+
+		l.info("Connected:\n\t%s\n\t%s", name, motd);
 	}
 
 	void levelInitialize()
 	{
-		//writefln("levelInitialize");
+		l.info("levelInitialize: Starting to load level");
 	}
 
 	void levelLoadUpdate(ubyte percent)
 	{
-		//writefln("lebelLoadUpdate %s", percent);
+		//writefln("levelLoadUpdate: %s%%", percent);
 	}
 
 	void levelFinalize(uint xSize, uint ySize, uint zSize, ubyte[] data)
 	{
-		l.info("levelFinalize (%sx%sx%s) %s", xSize, ySize, zSize, data.length);
+		l.info("levelFinalize (%sx%sx%s) %s bytes", xSize, ySize, zSize, data.length);
 
 		w.newLevelFromClassic(xSize, ySize, zSize, data);
 	}
 
 	void setBlock(short x, short y, short z, ubyte type)
 	{
+		//writefln("setBlock (%s, %s, %s) #%s", x, y, z, type);
 	}
 
 	void playerSpawn(byte id, char[] name,
@@ -160,9 +162,9 @@ public:
 	void message(byte playerId, char[] msg)
 	{
 		if (playerId)
-			l.info("#%s: %s", playerId, removeColorTags(msg));
+			l.info("msg: #%s: %s", playerId, removeColorTags(msg));
 		else
-			l.info("%s", removeColorTags(msg));
+			l.info("msg: %s", removeColorTags(msg));
 	}
 
 	void disconnect(char[] reason)
