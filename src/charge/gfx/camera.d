@@ -146,7 +146,7 @@ public:
 			assert(0);
 		}
 
-		this.rot = Quatd(0.785398163, rot, 0);
+		this.rot = Quatd(PI/4, rot, 0);
 	}
 
 	void setRotation(ref Quatd rotation)
