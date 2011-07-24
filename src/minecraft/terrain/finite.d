@@ -139,12 +139,22 @@ public:
 
 	final ubyte opIndexAssign(ubyte data, int x, int y, int z)
 	{
+		if (x < 0 || y < 0 || z < 0)
+			return 0;
+		if (x >= xSize || y >= ySize || z >= zSize)
+			return 0;
+
 		blocks[(xSize * z + x) * ySize + y] = data;
 		return data;
 	}
 
 	final ubyte opIndex(int x, int y, int z)
 	{
+		if (x < 0 || y < 0 || z < 0)
+			return 0;
+		if (x >= xSize || y >= ySize || z >= zSize)
+			return 0;
+
 		return blocks[(xSize * z + x) * ySize + y];
 	}
 
