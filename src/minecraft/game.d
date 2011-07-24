@@ -91,8 +91,6 @@ public:
 
 	this(char[][] args)
 	{
-		super(args);
-
 		mcUrl = RegExp(mcUrlStr);
 
 		// Some defaults
@@ -106,6 +104,9 @@ public:
 
 		if (!running)
 			return;
+
+		/* This will initalize Core and other important things */
+		super(coreFlag.AUTO);
 
 		defaultTarget = GfxDefaultTarget();
 

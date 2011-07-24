@@ -49,8 +49,6 @@ int main(char[][] args)
 	if (!filterArgs(args))
 		return 0;
 
-	auto c = Core(coreFlag.AUTO);
-
 //	auto g = new test.lua.Game(args);
 //	auto g = new test.bill.Game(args);
 //	auto g = new test.game.Game(args);
@@ -61,10 +59,6 @@ int main(char[][] args)
 	g.loop();
 
 	delete g;
-
-	// XXX: this should be just delete
-	c.close();
-	//delete c;
 
 	return 0;
 }

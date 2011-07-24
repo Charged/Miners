@@ -40,8 +40,8 @@ public:
 
 	this(char[][] args)
 	{
-		super(args);
-		running = true;
+		/* This will initalize Core and other important things */
+		super();
 
 		GfxRenderer.init();
 		

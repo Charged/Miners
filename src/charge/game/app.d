@@ -2,9 +2,12 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.app;
 
-import std.stdio;
-import charge.charge;
 import lib.sdl.sdl;
+
+import charge.core;
+import charge.ctl.input;
+import charge.sys.resource;
+
 
 struct TimeKeeper
 {
@@ -32,20 +35,27 @@ struct TimeKeeper
 abstract class App
 {
 protected:
+	Input i;
+	Core c;
 	bool running;
 
 public:
-
-	this(char[][] args)
+	this(coreFlag flags)
 	{
 		running = true;
 
-		CtlInput().quit ~= &stop;
+		c = Core(flags);
+		c.init();
+
+		i = Input();
+		i.quit ~= &stop;
 	}
 
 	~this()
 	{
-		CtlInput().quit -= &stop;
+		i.quit ~= &stop;
+
+		c.close();
 	}
 
 	abstract void loop();
@@ -68,15 +78,16 @@ protected:
 	TimeKeeper idleTime;
 	
 public:
-	this(char[][] args)
+	this(charge.core.coreFlag flags = charge.core.coreFlag.AUTO)
 	{
-		super(args);
-		CtlInput().resize ~= &resize;
+		super(flags);
+
+		i.resize ~= &resize;
 	}
 
 	~this()
 	{
-		CtlInput().resize -= &resize;
+		i.resize -= &resize;
 	}
 
 	abstract void network();
@@ -106,7 +117,7 @@ public:
 
 	void input()
 	{
-		CtlInput().tick();
+		i.tick();
 	}
 
 	void loop()

@@ -252,7 +252,9 @@ private:
 public:
 	this(char[][] args)
 	{
-		super(args);
+		/* This will initalize Core and other important things */
+		super();
+
 		int ret;
 		s = new LuaState();
 		Point3d p = Point3d();

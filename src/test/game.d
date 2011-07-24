@@ -207,7 +207,8 @@ public:
 
 	this(char[][] args)
 	{
-		super(args);
+		/* This will initalize Core and other important things */
+		super();
 
 		running = true;
 
