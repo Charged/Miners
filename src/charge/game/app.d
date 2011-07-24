@@ -153,16 +153,3 @@ private:
 	void do_input() { inputTime.start(); input(); inputTime.stop(); }
 	void do_idle(long time) { idleTime.start(); idle(time); idleTime.stop(); }
 }
-
-class AppTest : public SimpleApp
-{
-public:
-	this(char[][] args) {
-		super(args);
-	}
-
-	void network() {}
-	void render() {}
-	void logic() {}
-	void close() {}
-} 

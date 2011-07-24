@@ -242,7 +242,7 @@ struct GameSunLightWrapper
 	}
 }
 
-class Game : public charge.game.app.AppTest
+class Game : public GameSimpleApp
 {
 private:
 	uint ticks;
