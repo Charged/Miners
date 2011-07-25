@@ -10,7 +10,10 @@ import std.string;
 
 struct Quatd
 {
+public:
+	double w, x, y, z;
 
+public:
 	static Quatd opCall(double w, double x, double y, double z)
 	{
 		Quatd q;
@@ -140,14 +143,9 @@ struct Quatd
 
 	char[] toString()
 	{
-		return "(" ~ std.string.toString(w) ~ ", " ~ std.string.toString(x) ~ ", " ~ std.string.toString(y) ~ ", " ~ std.string.toString(z) ~ ")";
+		return "(" ~ std.string.toString(w) ~ ", " ~
+			     std.string.toString(x) ~ ", " ~
+			     std.string.toString(y) ~ ", " ~
+			     std.string.toString(z) ~ ")";
 	}
-
-	double w, x, y, z;
-}
-
-void test()
-{
-	Vector3d v = { 0.0, 1.0, 0.0 };
-	auto q = Quatd(1.0, v);
 }
