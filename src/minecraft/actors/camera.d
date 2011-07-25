@@ -102,13 +102,22 @@ public:
 
 	void setPosition(ref Point3d pos)
 	{
-		pcam.setPosition(pos);
+		pcam.position = pos;
 
-		// Center the iso camera at a certain height
-		auto diff = pos.y - isoCenterHeight;
-		auto vec = Quatd(PI/4, atan(-.5), 0).rotateHeading;
-		vec.scale(diff/isoHeightDiff);
-		icam.setPosition(pos + vec);
+		auto ipos = pos;
+		auto rot = Quatd(PI/4, GfxIsoCamera.angleTwoToOne, 0);
+
+		// Tweek the position
+		Matrix3x3d mat = rot;
+		Matrix3x3d matInv = rot;
+		matInv.inverse();
+
+		ipos = matInv * ipos;
+		ipos.x -= (ipos.x % (isoWidthLength/(ppb)));
+		ipos.y -= (ipos.y % (isoHeightLength/(ppb/2)));
+		ipos = mat * ipos;
+
+		icam.position = ipos;
 	}
 
 	final void pixelsPerBlock(uint ppb)
