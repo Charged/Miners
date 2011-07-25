@@ -121,6 +121,8 @@ public:
 	alias AngleType.TwoToOne TwoToOne;
 	alias AngleType.Thirty Isometric;
 
+	const angleTwoToOne = -0.463647609000806116214256231461214402028537054286120263810;
+
 	this(double width, double height, double near, double far, AngleType type = Thirty)
 	{
 		super(width, height, near, far);
@@ -140,7 +142,7 @@ public:
 			rot = asin(-0.5);
 			break;
 		case TwoToOne:
-			rot = atan(-0.5);
+			rot = angleTwoToOne;
 			break;
 		default:
 			assert(0);
