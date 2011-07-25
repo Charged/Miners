@@ -16,6 +16,8 @@ import minecraft.actors.camera;
 import minecraft.actors.sunlight;
 import minecraft.lua.wrappers.beta;
 import minecraft.lua.wrappers.actors;
+import minecraft.lua.wrappers.finite;
+import minecraft.lua.wrappers.classic;
 
 import lib.lua.lua;
 import lib.lua.lauxlib;
@@ -156,9 +158,10 @@ protected:
 		SunLightWrapper.register(s);
 		BetaWorldWrapper.register(s);
 		BetaTerrainWrapper.register(s);
+		ClassicWorldWrapper.register(s);
+		FiniteTerrainWrapper.register(s);
 
-		setNil("World");
-		setNil("Game");
+		// Remove constructors
 		setNil("Camera");
 		setNil("SunLight");
 
