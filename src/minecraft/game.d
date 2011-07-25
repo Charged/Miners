@@ -17,6 +17,7 @@ import charge.sys.file;
 import charge.platform.homefolder;
 
 import minecraft.menu;
+import minecraft.world;
 import minecraft.runner;
 import minecraft.viewer;
 import minecraft.options;
@@ -26,6 +27,7 @@ import minecraft.gfx.manager;
 import minecraft.beta.world;
 import minecraft.terrain.beta;
 import minecraft.terrain.chunk;
+import minecraft.classic.world;
 import minecraft.classic.runner;
 import minecraft.importer.info;
 import minecraft.importer.network;
@@ -222,20 +224,19 @@ protected:
 				r = new ClassicRunner(this, opts,
 						      hostname, port,
 						      username, password);
+		}
 
-			mr =  new MenuRunner(this);
+		if (r is null && level !is null) {
+			r = loadLevel(level);
+		}
+
+		mr = new MenuRunner(this);
+
+		// Run the level selector if no other level where given
+		if (r is null)
+			nextRunner = mr;
+		else
 			mr.manageThis(r);
-			return;
-		}
-
-		// Run the level selector if we where not given a level.
-		if (level is null) {
-			nextRunner = new MenuRunner(this);
-		} else {
-			if (!checkLevel(level))
-				throw new GameException("Invalid level given", null);
-			nextRunner = loadLevel(level);
-		}
 	}
 
 	void parseArgs(char[][] args)
@@ -564,15 +565,22 @@ protected:
 		deleteRunner ~= r;
 	}
 
-	Runner loadLevel(char[] dir)
+	Runner loadLevel(char[] level)
 	{
 		Runner r;
-		BetaWorld w;
-		auto info = checkMinecraftLevel(dir);
-		if (info is null)
-			return null;
+		World w;
 
-		w = new BetaWorld(info, opts);
+		if (isdir(level)) {
+			auto info = checkMinecraftLevel(level);
+
+			// XXX Better warning
+			if (!info || !info.beta)
+				throw new GameException("Invalid Level Given", null);
+
+			w = new BetaWorld(info, opts);
+		} else {
+			w = new ClassicWorld(opts, level);
+		}
 
 		auto scriptName = "script/main-level.lua";
 		try {
