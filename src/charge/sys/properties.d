@@ -38,11 +38,10 @@ public:
 
 	char[] get(char[] key, char[] def)
 	{
-		try {
-			return map[key].dup;
-		} catch (Exception e) {
+		auto v = safeGet(key);
+		if (v is null)
 			return def;
-		}
+		return v.dup;
 	}
 
 	char* getStringz(char[] key, char[] def)
@@ -53,7 +52,7 @@ public:
 	int getUint(char[] key, uint def)
 	{
 		try {
-			return toUint(map[key]);
+			return toUint(safeGet(key));
 		} catch (Exception e) {
 			return def;
 		}
@@ -62,7 +61,7 @@ public:
 	double getDouble(char[] key, double def)
 	{
 		try {
-			return toDouble(map[key]);
+			return toDouble(safeGet(key));
 		} catch (Exception e) {
 			return def;
 		}
@@ -71,7 +70,7 @@ public:
 	int getInt(char[] key, int def)
 	{
 		try {
-			return toInt(map[key]);
+			return toInt(safeGet(key));
 		} catch (Exception e) {
 			return def;
 		}
@@ -80,13 +79,14 @@ public:
 	bool getBool(char[] key, bool def)
 	{
 		try {
-			auto v = map[key];
+			auto v = safeGet(key);
 
-			if (v == "true")
+			if (v is null)
+				return def;
+			else if (v == "true")
 				return true;
 			else if (v == "false")
 				return false;
-
 		} catch (Exception e) {
 			return def;
 		}
@@ -162,4 +162,15 @@ public:
 		return p;
 	}
 
+private:
+	/**
+	 * Fixes problems with -O3.
+	 */
+	char[] safeGet(char[] key)
+	{
+		auto v = key in map;
+		if (v is null)
+			return null;
+		return *v;
+	}
 }
