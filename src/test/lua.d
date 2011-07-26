@@ -291,11 +291,13 @@ public:
 			writefln("loadFile failed \"", s.toString(-3), "\"");
 			writefln("loadFile failed \"", s.toString(-2), "\"");
 			writefln("loadFile failed \"", s.toString(-1), "\"");
+			throw new Exception("error");
 		}
 
 		ret = s.call();
 		if (ret == 2) {
 			writefln("call failed \"", s.toString(-1), "\"");
+			throw new Exception("error");
 		}
 
 	}
@@ -316,4 +318,6 @@ public:
 		}
 	}
 
+	void close() {}
+	void network() {}
 }
