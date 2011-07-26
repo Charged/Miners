@@ -1,0 +1,46 @@
+// Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
+// See copyright notice in src/charge/charge.d (GPLv2 only).
+module miners.lua.wrappers.classic;
+
+import charge.game.lua;
+
+import miners.classic.world;
+
+
+struct ClassicWorldWrapper
+{
+	const static char *namez = "d_class_minecraft_world_World";
+	const static char[] name = "d_class_minecraft_world_World";
+
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto w = s.checkClass!(ClassicWorld)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
+		case "spawn":
+			s.pushPoint3d(w.spawn);
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	static void register(LuaState s)
+	{
+		s.registerClass!(ClassicWorld);
+		s.pushCFunction(&ObjectWrapper.toString);
+		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&index);
+		s.setFieldz(-2, "__index");
+		s.pop();
+	}
+}

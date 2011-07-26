@@ -9,7 +9,7 @@ static import test.game;
 static import test.terrain;
 
 static import robbers.game;
-static import minecraft.game;
+static import miners.game;
 
 import license;
 
@@ -54,7 +54,7 @@ int main(char[][] args)
 //	auto g = new test.game.Game(args);
 //	auto g = new test.terrain.Game(args);
 //	auto g = new robbers.game.Game(args);
-	auto g = new minecraft.game.Game(args);
+	auto g = new miners.game.Game(args);
 
 	g.loop();
 

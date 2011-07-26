@@ -47,7 +47,7 @@ LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
 CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
 MCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
-DCOMP_FLAGS = -c -w -Isrc -Jres/builtins -Jres/minecraft $(DDEFINES) -of$@ $(DFLAGS)
+DCOMP_FLAGS = -c -w -Isrc -Jres/builtins -Jres/miners $(DDEFINES) -of$@ $(DFLAGS)
 LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS_)
 
 ifneq ($(strip $(USE_SDL)),)
@@ -146,5 +146,5 @@ dotouch:
 
 
 # Special dependancy for minecraft lua inbuilt scripts.
-MCLUAFILES = $(shell find res/minecraft -name "*.lua")
-$(OBJ_DIR)/minecraft/lua/builtin.$(OBJ_TYPE): $(MCLUAFILES)
+MCLUAFILES = $(shell find res/miners -name "*.lua")
+$(OBJ_DIR)/miners/lua/builtin.$(OBJ_TYPE): $(MCLUAFILES)
