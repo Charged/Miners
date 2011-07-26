@@ -133,10 +133,6 @@ struct CameraWrapper
 		s.pushCFunction(&resize);
 		s.setFieldz(-2, "resize");
 		s.pop();
-
-		s.pushString("Camera");
-		s.pushCFunction(&newCamera);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 }
 
@@ -267,10 +263,6 @@ struct SunLightWrapper
 		s.pushCFunction(&newIndex);
 		s.setFieldz(-2, "__newindex");
 		s.pop();
-
-		s.pushString("SunLight");
-		s.pushCFunction(&newSunLight);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 }
 

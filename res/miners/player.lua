@@ -2,14 +2,13 @@
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
 local _G = _G
+local require = _G.require
 module(...)
 
 
 ----
 -- This script holds functions related to the player.
 --
-
-local require = _G.require
 
 require "input"
 require "physics"
@@ -18,9 +17,10 @@ local math = _G.math;
 local move = _G.input.move
 local doPlayerPhysics = _G.physics.doPlayerPhysics
 
-local Point = _G.Point
-local Vector = _G.Vector
-local Quat = _G.Quat
+local Point = _G.charge.Point
+local Vector = _G.charge.Vector
+local Quat = _G.charge.Quat
+
 local camera = _G.camera
 
 local ticksPerSeconds = _G.ticksPerSeconds

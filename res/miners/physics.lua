@@ -2,6 +2,7 @@
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
 local _G = _G
+local require = _G.require
 module(...)
 
 
@@ -9,12 +10,13 @@ module(...)
 -- This is script holds physics related functions.
 --
 
-_G.require "blocks"
+require "charge"
+require "blocks"
 
-local Point = _G.Point
-local Vector = _G.Vector
-local Quat = _G.Quat
-local Color = _G.Color
+local Point = _G.charge.Point
+local Vector = _G.charge.Vector
+local Quat = _G.charge.Quat
+local Color = _G.charge.Color
 
 local floor = _G.math.floor
 local terrain = _G.terrain

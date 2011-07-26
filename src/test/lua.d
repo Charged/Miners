@@ -262,13 +262,11 @@ public:
 		m = new Movable();
 
 		s.openLibs();
+		s.openCharge();
 
-		Vector3dWrapper.register(s);
-		Point3dWrapper.register(s);
-		QuatdWrapper.register(s);
+		GameCubeWrapper.register(s);
 		GameWorldWrapper.register(s);
 		GameCameraWrapper.register(s);
-		GameCubeWrapper.register(s);
 		GameSunLightWrapper.register(s);
 
 /*

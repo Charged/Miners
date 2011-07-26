@@ -5,7 +5,9 @@ module charge.game.lua;
 import std.stdio;
 import std.string;
 
+import lib.lua.lua;
 import lib.lua.state;
+import lib.lua.lauxlib;
 
 import charge.math.color;
 import charge.math.point3d;
@@ -73,6 +75,39 @@ class LuaState : public State
 	mixin (StructWrapper("Point3d"));
 	mixin (StructWrapper("Quatd"));
 	mixin (StructWrapper("Color4f"));
+
+	void openCharge()
+	{
+		pushCFunction(&openlib);
+		pushStringz("charge");
+		call(1);
+	}
+
+private:
+	const luaL_Reg chargelib[] = [
+		{ "Quat", &QuatdWrapper.newQuatd },
+		{ "Color", &Color4fWrapper.newColor4f },
+		{ "Point", &Point3dWrapper.newPoint3d },
+		{ "Vector", &Vector3dWrapper.newVector3d },
+		{ null, null },
+	];
+
+	extern (C) static int openlib(lua_State *l)
+	{
+		auto s = LuaState(l);
+
+		luaL_register(l, "charge", chargelib.ptr);
+
+		QuatdWrapper.register(s);
+		Color4fWrapper.register(s);
+		Point3dWrapper.register(s);
+		Vector3dWrapper.register(s);
+
+		MouseWrapper.register(s);
+		KeyboardWrapper.register(s);
+
+		return 1;
+	}
 }
 
 
@@ -231,10 +266,6 @@ struct QuatdWrapper
 		s.pushCFunction(&toString);
 		s.setFieldz(-2, "__tostring");
 		s.pop();
-
-		s.pushString("Quat");
-		s.pushCFunction(&newQuatd);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 
 	static Quatd* push(State s)
@@ -414,10 +445,6 @@ struct Vector3dWrapper
 		s.pushCFunction(&floor);
 		s.setFieldz(-2, "floor");
 		s.pop();
-
-		s.pushString("Vector");
-		s.pushCFunction(&newVector3d);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 
 	static Vector3d* push(State s)
@@ -561,10 +588,6 @@ struct Point3dWrapper
 		s.pushCFunction(&floor);
 		s.setFieldz(-2, "floor");
 		s.pop();
-
-		s.pushString("Point");
-		s.pushCFunction(&newPoint3d);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 
 	static Point3d* push(State s)
@@ -694,10 +717,6 @@ struct Color4fWrapper
 		s.pushCFunction(&toString);
 		s.setFieldz(-2, "__tostring");
 		s.pop();
-
-		s.pushString("Color");
-		s.pushCFunction(&newColor4f);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
 	}
 
 	static Color4f* push(State s)

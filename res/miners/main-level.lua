@@ -2,6 +2,7 @@
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
 local _G = _G
+local require = _G.require
 -- Not a module
 
 
@@ -11,10 +12,14 @@ local _G = _G
 -- When a level is started this file is loaded and exectuted.
 --
 
+require "charge"   -- Basic types from Charge
 require "exported" -- Setup exported/imported globals
 require "defaults" -- Default values
 require "input"    -- Needed to handle callbacks
 require "player"   -- The player
+
+local Quat = _G.charge.Quat
+local Vector = _G.charge.Vector
 
 local light = _G.light
 local world = _G.world

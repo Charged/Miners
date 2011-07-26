@@ -144,15 +144,16 @@ protected:
 		s.pushNil();
 		s.setTable(-3);
 
+		// Replace dofile with our own.
+		s.pushString("dofile");
+		s.pushCFunction(&doFile);
+		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+
+		// Load charge
+		s.openCharge();
+		s.pop();
+
 		// Registers classes
-		Color4fWrapper.register(s);
-		Vector3dWrapper.register(s);
-		Point3dWrapper.register(s);
-		QuatdWrapper.register(s);
-
-		MouseWrapper.register(s);
-		KeyboardWrapper.register(s);
-
 		CameraWrapper.register(s);
 		OptionsWrapper.register(s);
 		SunLightWrapper.register(s);
@@ -160,16 +161,6 @@ protected:
 		BetaTerrainWrapper.register(s);
 		ClassicWorldWrapper.register(s);
 		FiniteTerrainWrapper.register(s);
-
-		// Remove constructors
-		setNil("Camera");
-		setNil("SunLight");
-
-		// Replace dofile with our own.
-		s.pushString("dofile");
-		s.pushCFunction(&doFile);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
-
 
 		// Ctl
 

@@ -2,6 +2,7 @@
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
 local _G = _G
+local require = _G.require
 module(...)
 
 

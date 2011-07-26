@@ -2,6 +2,7 @@
 -- See copyright notice in src/charge/charge.d (GPLv2 only).
 
 local _G = _G
+local require = _G.require
 module(...)
 
 
@@ -9,10 +10,12 @@ module(...)
 -- This lua scripts holds shared defaults and settings.
 --
 
-local Point = _G.Point
-local Vector = _G.Vector
-local Quat = _G.Quat
-local Color = _G.Color
+require "charge"
+
+local Point = _G.charge.Point
+local Vector = _G.charge.Vector
+local Quat = _G.charge.Quat
+local Color = _G.charge.Color
 
 local math = _G.math
 local string = _G.string
