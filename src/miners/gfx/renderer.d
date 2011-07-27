@@ -228,15 +228,11 @@ protected:
 		glUseProgram(0);
 	}
 
-	void renderDirectionLightShadow(GfxSimpleLight dl,
+	void renderDirectionLightShadow(Point3d pos,
 					GfxProjCamera cam,
-					GfxWorld w,
-					double near, double far,
-	                                ref Matrix4x4d out_mat)
+					GfxWorld w)
 	{
-		setMatrices(dl, cam, near, far);
-
-		auto cull = new GfxCull(dl.position);
+		auto cull = new GfxCull(pos);
 		auto rq = new GfxRenderQueue();
 
 		foreach(a; w.actors)

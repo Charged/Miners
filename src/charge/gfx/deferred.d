@@ -43,7 +43,7 @@ private:
 	static Shader matShader[matShdr.NUM];
 
 	static Shader directionlight_shader;
-	static Shader directionlightshadow_shader;
+	static Shader directionlight_split_shader;
 	static Shader pointlight_shader;
 	static Shader spotlight_shader;
 	static Shader fog_shader;
@@ -62,10 +62,10 @@ public:
 				throw new Exception("GL_EXT_texture_array not supported");
 
 			auto t = new DeferredTarget(64, 48);
-			auto dep = new DepthTargetArray(1024, 1024, 2);
+			auto dep1 = new DepthTargetArray(1024, 1024, 2);
 
 			delete t;
-			delete dep;
+			delete dep1;
 		} catch (Exception e) {
 			l.info("Is not cabable of running deferred renderer!");
 			l.bug(e.toString());
@@ -118,7 +118,7 @@ public:
 		                                GL_POINTS, GL_TRIANGLE_STRIP, 4);
 
 		directionlight_shader = ShaderMaker(deferred_base_vert, directionlight_shader_frag);
-		directionlightshadow_shader = ShaderMaker(deferred_base_vert, directionlightshadow_shader_frag);
+		directionlight_split_shader = ShaderMaker(deferred_base_vert, directionlight_split_shader_frag);
 		spotlight_shader = ShaderMaker(deferred_base_vert, spotlight_shader_frag);
 		fog_shader = ShaderMaker(deferred_base_vert, fog_shader_frag);
 
@@ -132,11 +132,11 @@ public:
 		directionlight_shader.sampler("normalTex", 1);
 		directionlight_shader.sampler("depthTex", 2);
 
-		glUseProgram(directionlightshadow_shader.id);
-		directionlightshadow_shader.sampler("colorTex", 0);
-		directionlightshadow_shader.sampler("normalTex", 1);
-		directionlightshadow_shader.sampler("depthTex", 2);
-		directionlightshadow_shader.sampler("shadowTex", 3);
+		glUseProgram(directionlight_split_shader.id);
+		directionlight_split_shader.sampler("colorTex", 0);
+		directionlight_split_shader.sampler("normalTex", 1);
+		directionlight_split_shader.sampler("depthTex", 2);
+		directionlight_split_shader.sampler("shadowTex", 3);
 
 		glUseProgram(spotlight_shader.id);
 		spotlight_shader.sampler("colorTex", 0);
@@ -261,9 +261,9 @@ protected:
 		glUseProgram(directionlight_shader.id);
 		directionlight_shader.matrix4("projectionMatrixInverse", false, projITS);
 		directionlight_shader.float2("screen", 1, vec.ptr);
-		glUseProgram(directionlightshadow_shader.id);
-		directionlightshadow_shader.matrix4("projectionMatrixInverse", false, projITS);
-		directionlightshadow_shader.float2("screen", 1, vec.ptr);
+		glUseProgram(directionlight_split_shader.id);
+		directionlight_split_shader.matrix4("projectionMatrixInverse", false, projITS);
+		directionlight_split_shader.float2("screen", 1, vec.ptr);
 		glUseProgram(pointlight_shader.id);
 		pointlight_shader.matrix4("projectionMatrixInverse", false, projITS);
 		pointlight_shader.float1("near_clip", c.near);
@@ -325,7 +325,7 @@ protected:
 			auto sl = cast(SpotLight)l;
 
 			if (dl !is null) {
-				drawDirectionLightSha(dl, c, w, view, proj);
+				drawDirectionLight(dl, c, w, view, proj);
 			} else if (sl !is null) {
 				drawSpotLight(sl, view, proj);
 			} else {
@@ -418,6 +418,11 @@ protected:
 		          up.x, up.y, up.z);
 	}
 
+	/**
+	 * Takes the currently set modelview and projection matrix in the GL
+	 * state along with a scene view matrix as argument and calculates
+	 * a matrix view goes from global scene to depth projection matrix.
+	 */
 	void getDirShadowMatrix(ref Matrix4x4d global_to_view, ref Matrix4x4d out_mat)
 	{
 		Matrix4x4d mat = global_to_view;
@@ -438,13 +443,13 @@ protected:
 		glGetDoublev(GL_PROJECTION_MATRIX, out_mat.array.ptr);
 	}
 
-	void renderDirectionLightShadow(SimpleLight dl, ProjCamera cam, World w,
-					double near, double far,
-	                                ref Matrix4x4d out_mat)
+	/**
+	 * Render all shadow casting actors as shadow casters into
+	 * the currently set render target.
+	 */
+	void renderDirectionLightShadow(Point3d pos, ProjCamera cam, World w)
 	{
-		setMatrices(dl, cam, near, far);
-
-		auto cull = new Cull(dl.position);
+		auto cull = new Cull(pos);
 		auto rq = new RenderQueue();
 
 		foreach(a; w.actors)
@@ -461,6 +466,9 @@ protected:
 		}
 	}
 
+	/**
+	 * Render a Renderable as a shadow caster.
+	 */
 	void drawToShadow(Renderable r, SimpleMaterial sm)
 	{
 		Shader s;
@@ -478,17 +486,14 @@ protected:
 		r.drawAttrib(s);
 	}
 
-	void drawDirectionLightSha(SimpleLight dl, Camera c, World w,
-	                           ref Matrix4x4d view, ref Matrix4x4d proj)
+	void drawDirectionLightSplit(SimpleLight dl, ProjCamera c, World w,
+	                             ref Matrix4x4d view, ref Matrix4x4d proj)
 	{
-		ProjCamera cam = cast(ProjCamera)c;
+		ProjCamera cam = c;
 		const int num_splits = 4;
 		float nears[num_splits];
 		float fars[num_splits];
 		Matrix4x4d mat[num_splits];
-
-		if (cam is null || !dl.shadow)
-			return drawDirectionLight(dl, view, proj);
 
 		gluPushMatricesAttrib(GL_VIEWPORT_BIT);
 
@@ -512,7 +517,9 @@ protected:
 			depthTarget.setTarget(i);
 			glViewport(0, 0, depthTarget.width, depthTarget.height);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			renderDirectionLightShadow(dl, cam, w, nears[i], fars[i], mat[i]);
+			setMatrices(dl, cam, nears[i], fars[i]);
+			// XXX better position.
+			renderDirectionLightShadow(dl.position, cam, w);
 			getDirShadowMatrix(view, mat[i]);
 		}
 
@@ -541,12 +548,12 @@ protected:
 		                GL_COMPARE_R_TO_TEXTURE);
 		gluGetError("bind");
 
-		glUseProgram(directionlightshadow_shader.id);
+		glUseProgram(directionlight_split_shader.id);
 		auto direction = view * dl.rotation.rotateHeading;
-		directionlightshadow_shader.float3("lightDirection", direction);
-		directionlightshadow_shader.float4("lightDiffuse", dl.diffuse);
-		directionlightshadow_shader.float4("lightAmbient", dl.ambient);
-		directionlightshadow_shader.float4("slices", 1, fars.ptr);
+		directionlight_split_shader.float3("lightDirection", direction);
+		directionlight_split_shader.float4("lightDiffuse", dl.diffuse);
+		directionlight_split_shader.float4("lightAmbient", dl.ambient);
+		directionlight_split_shader.float4("slices", 1, fars.ptr);
 		for (int i; i < num_splits; i++) {
 			glActiveTexture(GL_TEXTURE0 + cast(GLenum)(i));
 			glMatrixMode(GL_TEXTURE);
@@ -574,7 +581,7 @@ protected:
 		gluGetError("leave");
 	}
 
-	void drawDirectionLight(SimpleLight dl, ref Matrix4x4d view, ref Matrix4x4d proj)
+	void drawDirectionLightNone(SimpleLight dl, ref Matrix4x4d view, ref Matrix4x4d proj)
 	{
 		auto direction = view * dl.rotation.rotateHeading;
 
@@ -590,6 +597,19 @@ protected:
 		glVertex3f( 1.0f,  1.0f,  0.0f);
 		glVertex3f(-1.0f,  1.0f,  0.0f);
 		glEnd();
+	}
+
+	void drawDirectionLight(SimpleLight dl, Camera c, World w,
+	                        ref Matrix4x4d view, ref Matrix4x4d proj)
+	{
+		if (!dl.shadow)
+			return drawDirectionLightNone(dl, view, proj);
+
+		ProjCamera pcam = cast(ProjCamera)c;
+ 		if (pcam !is null)
+			return drawDirectionLightSplit(dl, pcam, w, view, proj);
+
+		return drawDirectionLightNone(dl, view, proj);
 	}
 
 
@@ -1108,7 +1128,7 @@ void main()
 }
 ";
 
-	const char[] directionlightshadow_shader_frag = "
+	const char[] directionlight_split_shader_frag = "
 #version 120
 #extension GL_EXT_texture_array : enable
 #extension GL_EXT_gpu_shader4 : enable
