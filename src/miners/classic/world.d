@@ -80,7 +80,7 @@ public:
 	 */
 	void newLevelFromClassic(uint xSize, uint ySize, uint zSize, ubyte[] data)
 	{
-		ubyte from, block, meta;
+		auto ySrcStride = zSize * xSize;
 
 		newLevel(xSize, ySize, zSize);
 
@@ -91,15 +91,20 @@ public:
 		// Flip & convert the world
 		for (int z; z < zSize; z++) {
 			for (int x; x < xSize; x++) {
+				auto src = &data[(zSize*0 + z) * xSize + x];
+
 				for (int y; y < ySize; y++) {
-					from = data[(zSize*y + z) * xSize + x];
-					convertClassicToBeta(from, block, meta);
+					ubyte block, meta;
+					convertClassicToBeta(*src, block, meta);
+
 					*p = block;
 					*pm |= meta << (4 * (y % 2));
-					//ft.setMeta(x, y, z, meta);
-					p++;
+
+					p += 1;
 					pm += y % 2;
+					src += ySrcStride;
 				}
+
 				// If height is uneaven we need to increment this.
 				pm += ySize % 2;
 			}
