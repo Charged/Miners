@@ -7,8 +7,8 @@ import std.stream;
 import std.mmfile;
 import std.zlib;
 
-import charge.net.util;
 import charge.util.zip;
+
 
 void saveClassicTerrain(char[] file, uint x, uint y, uint z, ubyte *blocks)
 {
