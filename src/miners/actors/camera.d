@@ -105,7 +105,7 @@ public:
 		pcam.position = pos;
 
 		auto ipos = pos;
-		auto rot = Quatd(PI/4, GfxIsoCamera.angleTwoToOne, 0);
+		auto rot = icam.rotation;
 
 		// Tweek the position
 		Matrix3x3d mat = rot;
