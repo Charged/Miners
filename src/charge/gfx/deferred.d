@@ -336,11 +336,88 @@ protected:
 
 
 	/*
+	 * Common shadow caster code
+	 */
+
+
+	/**
+	 * Render all shadow casting actors as shadow casters into
+	 * the currently set render target.
+	 */
+	void renderShadowLoop(Point3d pos, Camera cam, World w)
+	{
+		auto cull = new Cull(pos);
+		auto rq = new RenderQueue();
+
+		foreach(a; w.actors)
+		{
+			a.cullAndPush(cull, rq);
+		}
+
+		for (auto r = rq.pop; r !is null; r = rq.pop) {
+			auto sm = cast(SimpleMaterial)r.getMaterial();
+			if (sm is null)
+				continue;
+
+			renderShadow(r, sm);
+		}
+	}
+
+	/**
+	 * Render a Renderable as a shadow caster.
+	 */
+	void renderShadow(Renderable r, SimpleMaterial sm)
+	{
+		Shader s;
+		int off = sm.skel * matShdr.OFF;
+
+		if (sm.fake) {
+			s =  matShader[matShdr.FAKE + off];
+			glUseProgram(s.id);
+			glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
+		} else {
+			s =  matShader[matShdr.COLOR + off];
+			glUseProgram(s.id);
+		}
+
+		r.drawAttrib(s);
+	}
+
+	/**
+	 * Takes the currently set modelview and projection matrix in the GL
+	 * state along with a scene view matrix as argument and calculates
+	 * a matrix view that goes from global scene to current projection
+	 * matrix. The matrix can be used with shadow mapping.
+	 */
+	void getSceneViewToProjMatrix(ref Matrix4x4d global_to_scene_view,
+	                              ref Matrix4x4d out_mat)
+	{
+		Matrix4x4d mat = global_to_scene_view;
+		mat.inverse(); // render view to global
+		mat.transpose();
+
+		glMatrixMode(GL_MODELVIEW); // global to depth view
+		glMultMatrixd(mat.array.ptr); // render view to depth view
+		glGetDoublev(GL_MODELVIEW_MATRIX, mat.array.ptr);
+
+		glMatrixMode(GL_PROJECTION); // depth view to depth proj
+		glMultMatrixd(mat.array.ptr); // render view to depth proj
+
+		// XXX get these to work
+		//glTranslated(-2.0, -2.0, -2.0); // scaled and offseted to [0..1]
+		//glScaled(0.5, 0.5, 0.5);
+
+		glGetDoublev(GL_PROJECTION_MATRIX, out_mat.array.ptr);
+	}
+
+
+	/*
 	 * Directional lights
 	 */
 
-	static void getSphere(double fov, double ratio, double near, double far,
-	                      out Point3d center, out double radius)
+
+	static void getDirSplitSphere(double fov, double ratio, double near, double far,
+	                              out Point3d center, out double radius)
 	{
 		double near_height = tan(fov / 2.0) * near;
 		double near_width = near_height * ratio;
@@ -364,8 +441,8 @@ protected:
 		radius = size;
 	}
 
-	static void getSplitDistance(int splits, double near, double far,
-	                             float near_array[], float far_array[])
+	static void getDirSplitDistance(int splits, double near, double far,
+	                                float near_array[], float far_array[])
 	{
 		double lambda = 0.75;
 		double ratio = far / near;
@@ -382,11 +459,12 @@ protected:
 		far_array[splits-1] = far;
 	}
 
-	void setMatrices(SimpleLight dl, ProjCamera c, double far, double near)
+	void setDirSplitMatrices(SimpleLight dl, ProjCamera c,
+                                 double far, double near)
 	{
 		Point3d center;
 		double radius;
-		getSphere(c.fov, c.ratio, near, far, center, radius);
+		getDirSplitSphere(c.fov, c.ratio, near, far, center, radius);
 		auto rot = dl.rotation;
 		auto pos = (c.rotation * cast(Vector3d)center) + c.position;
 		auto point = pos + rot.rotateHeading();
@@ -418,76 +496,8 @@ protected:
 		          up.x, up.y, up.z);
 	}
 
-	/**
-	 * Takes the currently set modelview and projection matrix in the GL
-	 * state along with a scene view matrix as argument and calculates
-	 * a matrix view goes from global scene to depth projection matrix.
-	 */
-	void getDirShadowMatrix(ref Matrix4x4d global_to_view, ref Matrix4x4d out_mat)
-	{
-		Matrix4x4d mat = global_to_view;
-		mat.inverse(); // render view to global
-		mat.transpose();
-
-		glMatrixMode(GL_MODELVIEW); // global to depth view
-		glMultMatrixd(mat.array.ptr); // render view to depth view
-		glGetDoublev(GL_MODELVIEW_MATRIX, mat.array.ptr);
-
-		glMatrixMode(GL_PROJECTION); // depth view to depth proj
-		glMultMatrixd(mat.array.ptr); // render view to depth proj
-
-		// XXX get these to work
-		//glTranslated(-2.0, -2.0, -2.0); // scaled and offseted to [0..1]
-		//glScaled(0.5, 0.5, 0.5);
-
-		glGetDoublev(GL_PROJECTION_MATRIX, out_mat.array.ptr);
-	}
-
-	/**
-	 * Render all shadow casting actors as shadow casters into
-	 * the currently set render target.
-	 */
-	void renderDirectionLightShadow(Point3d pos, ProjCamera cam, World w)
-	{
-		auto cull = new Cull(pos);
-		auto rq = new RenderQueue();
-
-		foreach(a; w.actors)
-		{
-			a.cullAndPush(cull, rq);
-		}
-
-		for (auto r = rq.pop; r !is null; r = rq.pop) {
-			auto sm = cast(SimpleMaterial)r.getMaterial();
-			if (sm is null)
-				continue;
-
-			drawToShadow(r, sm);
-		}
-	}
-
-	/**
-	 * Render a Renderable as a shadow caster.
-	 */
-	void drawToShadow(Renderable r, SimpleMaterial sm)
-	{
-		Shader s;
-		int off = sm.skel * matShdr.OFF;
-
-		if (sm.fake) {
-			s =  matShader[matShdr.FAKE + off];
-			glUseProgram(s.id);
-			glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
-		} else {
-			s =  matShader[matShdr.COLOR + off];
-			glUseProgram(s.id);
-		}
-
-		r.drawAttrib(s);
-	}
-
-	void drawDirectionLightSplit(SimpleLight dl, ProjCamera c, World w,
-	                             ref Matrix4x4d view, ref Matrix4x4d proj)
+	void drawDirSplitShadow(SimpleLight dl, ProjCamera c, World w,
+	                        ref Matrix4x4d view, ref Matrix4x4d proj)
 	{
 		ProjCamera cam = c;
 		const int num_splits = 4;
@@ -497,7 +507,7 @@ protected:
 
 		gluPushMatricesAttrib(GL_VIEWPORT_BIT);
 
-		getSplitDistance(4, cam.near, cam.far, nears, fars);
+		getDirSplitDistance(4, cam.near, cam.far, nears, fars);
 
 		glUseProgram(0);
 		glDisable(GL_BLEND);
@@ -517,10 +527,10 @@ protected:
 			depthTarget.setTarget(i);
 			glViewport(0, 0, depthTarget.width, depthTarget.height);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			setMatrices(dl, cam, nears[i], fars[i]);
+			setDirSplitMatrices(dl, cam, nears[i], fars[i]);
 			// XXX better position.
-			renderDirectionLightShadow(dl.position, cam, w);
-			getDirShadowMatrix(view, mat[i]);
+			renderShadowLoop(dl.position, cam, w);
+			getSceneViewToProjMatrix(view, mat[i]);
 		}
 
 		glBindTexture(GL_TEXTURE_2D, deferredTarget.color);
@@ -581,7 +591,7 @@ protected:
 		gluGetError("leave");
 	}
 
-	void drawDirectionLightNone(SimpleLight dl, ref Matrix4x4d view, ref Matrix4x4d proj)
+	void drawDirNoShadow(SimpleLight dl, ref Matrix4x4d view, ref Matrix4x4d proj)
 	{
 		auto direction = view * dl.rotation.rotateHeading;
 
@@ -603,13 +613,13 @@ protected:
 	                        ref Matrix4x4d view, ref Matrix4x4d proj)
 	{
 		if (!dl.shadow)
-			return drawDirectionLightNone(dl, view, proj);
+			return drawDirNoShadow(dl, view, proj);
 
 		ProjCamera pcam = cast(ProjCamera)c;
  		if (pcam !is null)
-			return drawDirectionLightSplit(dl, pcam, w, view, proj);
+			return drawDirSplitShadow(dl, pcam, w, view, proj);
 
-		return drawDirectionLightNone(dl, view, proj);
+		return drawDirNoShadow(dl, view, proj);
 	}
 
 
@@ -646,35 +656,7 @@ protected:
 	 */
 
 
-	void drawSpotLight(SpotLight sl, ref Matrix4x4d view, ref Matrix4x4d proj)
-	{
-		auto position = view * sl.position;
-		auto rotation = view * sl.rotation.rotateHeading;
-		Matrix4x4d texture;
-		spotLightMatrix(sl, view, texture);
-
-
-		glUseProgram(spotlight_shader.id);
-		spotlight_shader.matrix4("textureMatrix", false, texture);
-		spotlight_shader.float4("lightDiffuse", sl.diffuse);
-		spotlight_shader.float3("lightPosition", view * sl.position);
-		spotlight_shader.float3("lightDirection", view * sl.rotation.rotateHeading);
-		spotlight_shader.float1("lightLength", sl.length);
-
-		gluTexUnitEnableBind(GL_TEXTURE_2D, 3, spotlight_texture);
-
-		glBegin(GL_QUADS);
-		glColor3f(  1.0f,  1.0f,  1.0f);
-		glVertex3f(-1.0f, -1.0f,  0.0f);
-		glVertex3f( 1.0f, -1.0f,  0.0f);
-		glVertex3f( 1.0f,  1.0f,  0.0f);
-		glVertex3f(-1.0f,  1.0f,  0.0f);
-		glEnd();
-
-		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 3);
-	}
-
-	void spotLightMatrix(SpotLight l, ref Matrix4x4d view, ref Matrix4x4d texture)
+	void getSpotLightMatrix(SpotLight l, ref Matrix4x4d view, ref Matrix4x4d texture)
 	{
 		float shadowNear = 1.0;
 		float shadowFar = l.length;
@@ -724,6 +706,34 @@ protected:
 		glMatrixMode(GL_MODELVIEW);
 	}
 
+	void drawSpotLight(SpotLight sl, ref Matrix4x4d view, ref Matrix4x4d proj)
+	{
+		auto position = view * sl.position;
+		auto rotation = view * sl.rotation.rotateHeading;
+		Matrix4x4d texture;
+		getSpotLightMatrix(sl, view, texture);
+
+
+		glUseProgram(spotlight_shader.id);
+		spotlight_shader.matrix4("textureMatrix", false, texture);
+		spotlight_shader.float4("lightDiffuse", sl.diffuse);
+		spotlight_shader.float3("lightPosition", view * sl.position);
+		spotlight_shader.float3("lightDirection", view * sl.rotation.rotateHeading);
+		spotlight_shader.float1("lightLength", sl.length);
+
+		gluTexUnitEnableBind(GL_TEXTURE_2D, 3, spotlight_texture);
+
+		glBegin(GL_QUADS);
+		glColor3f(  1.0f,  1.0f,  1.0f);
+		glVertex3f(-1.0f, -1.0f,  0.0f);
+		glVertex3f( 1.0f, -1.0f,  0.0f);
+		glVertex3f( 1.0f,  1.0f,  0.0f);
+		glVertex3f(-1.0f,  1.0f,  0.0f);
+		glEnd();
+
+		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 3);
+	}
+
 
 	/*
 	 * Deferred target rendering
@@ -745,7 +755,7 @@ protected:
 			if (sm is null)
 				continue;
 
-			drawToDeferred(r, sm);
+			render(r, sm);
 		}
 
 		glActiveTexture(GL_TEXTURE0);
@@ -754,7 +764,7 @@ protected:
 		glDisable(GL_CULL_FACE);
 	}
 
-	void drawToDeferred(Renderable r, SimpleMaterial sm)
+	void render(Renderable r, SimpleMaterial sm)
 	{
 		Texture t;
 		Shader s;

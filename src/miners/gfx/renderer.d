@@ -218,7 +218,7 @@ public:
 	}
 
 protected:
-	void drawGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m)
+	void renderGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m)
 	{
 		glUseProgram(material_shader.id);
 		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, m.texSafe.id);
@@ -228,9 +228,7 @@ protected:
 		glUseProgram(0);
 	}
 
-	void renderDirectionLightShadow(Point3d pos,
-					GfxProjCamera cam,
-					GfxWorld w)
+	void renderShadowLoop(Point3d pos, GfxCamera cam, GfxWorld w)
 	{
 		auto cull = new GfxCull(pos);
 		auto rq = new GfxRenderQueue();
@@ -245,11 +243,11 @@ protected:
 
 			auto cvgmc = cast(ChunkVBOGroupCompactMesh)r;
 			if (cvgmc !is null) {
-				drawGroup(cvgmc, m);
+				renderGroup(cvgmc, m);
 				continue;
 			}
 
-			drawToShadow(r, m);
+			renderShadow(r, m);
 		}
 	}
 
@@ -269,11 +267,11 @@ protected:
 
 			auto cvgmc = cast(ChunkVBOGroupCompactMesh)r;
 			if (cvgmc !is null) {
-				drawGroup(cvgmc, m);
+				renderGroup(cvgmc, m);
 				continue;
 			}
 
-			drawToDeferred(r, m);
+			render(r, m);
 		}
 
 		glActiveTexture(GL_TEXTURE0);
