@@ -8,6 +8,7 @@ static import std.string;
 
 import charge.math.color;
 import charge.math.movable;
+import charge.math.matrix3x3d;
 import charge.math.matrix4x4d;
 import charge.sys.logger;
 import charge.gfx.gl;
@@ -43,6 +44,7 @@ private:
 	static Shader matShader[matShdr.NUM];
 
 	static Shader directionlight_shader;
+	static Shader directionlight_iso_shader;
 	static Shader directionlight_split_shader;
 	static Shader pointlight_shader;
 	static Shader spotlight_shader;
@@ -117,8 +119,9 @@ public:
 		                                pointlight_shader_frag,
 		                                GL_POINTS, GL_TRIANGLE_STRIP, 4);
 
-		directionlight_shader = ShaderMaker(deferred_base_vert, directionlight_shader_frag);
 		directionlight_split_shader = ShaderMaker(deferred_base_vert, directionlight_split_shader_frag);
+		directionlight_iso_shader = ShaderMaker(deferred_base_vert, directionlight_iso_shader_frag);
+		directionlight_shader = ShaderMaker(deferred_base_vert, directionlight_shader_frag);
 		spotlight_shader = ShaderMaker(deferred_base_vert, spotlight_shader_frag);
 		fog_shader = ShaderMaker(deferred_base_vert, fog_shader_frag);
 
@@ -131,6 +134,12 @@ public:
 		directionlight_shader.sampler("colorTex", 0);
 		directionlight_shader.sampler("normalTex", 1);
 		directionlight_shader.sampler("depthTex", 2);
+
+		glUseProgram(directionlight_iso_shader.id);
+		directionlight_iso_shader.sampler("colorTex", 0);
+		directionlight_iso_shader.sampler("normalTex", 1);
+		directionlight_iso_shader.sampler("depthTex", 2);
+		directionlight_iso_shader.sampler("shadowTex", 3);
 
 		glUseProgram(directionlight_split_shader.id);
 		directionlight_split_shader.sampler("colorTex", 0);
@@ -258,12 +267,16 @@ protected:
 		float vec[2];
 		vec[0] = 1.0f / renderTarget.width;
 		vec[1] = 1.0f / renderTarget.height;
-		glUseProgram(directionlight_shader.id);
-		directionlight_shader.matrix4("projectionMatrixInverse", false, projITS);
-		directionlight_shader.float2("screen", 1, vec.ptr);
+
 		glUseProgram(directionlight_split_shader.id);
 		directionlight_split_shader.matrix4("projectionMatrixInverse", false, projITS);
 		directionlight_split_shader.float2("screen", 1, vec.ptr);
+		glUseProgram(directionlight_iso_shader.id);
+		directionlight_iso_shader.matrix4("projectionMatrixInverse", false, projITS);
+		directionlight_iso_shader.float2("screen", 1, vec.ptr);
+		glUseProgram(directionlight_shader.id);
+		directionlight_shader.matrix4("projectionMatrixInverse", false, projITS);
+		directionlight_shader.float2("screen", 1, vec.ptr);
 		glUseProgram(pointlight_shader.id);
 		pointlight_shader.matrix4("projectionMatrixInverse", false, projITS);
 		pointlight_shader.float1("near_clip", c.near);
@@ -591,6 +604,188 @@ protected:
 		gluGetError("leave");
 	}
 
+
+	void setDirIsoMatricies(SimpleLight dl, IsoCamera c,
+	                        ref Matrix4x4d view, ref Matrix4x4d proj)
+	{
+		Quatd rot = dl.rotation;
+		Matrix4x4d mat;
+		Matrix3x3d rotMat = rot;
+		Matrix3x3d rotMatInv = rot;
+		rotMatInv.inverse();
+
+		glMatrixMode(GL_PROJECTION);
+		mat = proj; // scene view to scene proj
+		mat.transpose();
+		glLoadMatrixd(mat.array.ptr); // scene view to global
+
+		mat = view; // global to scene view
+		mat.transpose();
+		glMultMatrixd(mat.array.ptr); // scene proj to global
+
+		glGetDoublev(GL_PROJECTION_MATRIX, mat.array.ptr);
+		mat.transpose();
+		mat.inverse();
+
+		Point3d p[8];
+		// Get the global coords of the scene ModelViewProj matrix.
+		p[0] = mat / Point3d(-1, -1, -1);
+		p[1] = mat / Point3d(-1, -1,  1);
+		p[2] = mat / Point3d(-1,  1, -1);
+		p[3] = mat / Point3d(-1,  1,  1);
+		p[4] = mat / Point3d( 1, -1, -1);
+		p[5] = mat / Point3d( 1, -1,  1);
+		p[6] = mat / Point3d( 1,  1, -1);
+		p[7] = mat / Point3d( 1,  1,  1);
+
+		// Rotate points into light space
+		for (int i; i < 8; i++)
+			p[i] = rotMat * p[i];
+
+		// Find the min & max coords in light space.
+		Point3d min, max;
+		min = p[0];
+		max = p[0];
+		for (int i = 1; i < 8; i++) {
+			if (min.x > p[i].x)
+				min.x = p[i].x;
+			if (min.y > p[i].y)
+				min.y = p[i].y;
+			if (min.z > p[i].z)
+				min.z = p[i].z;
+			if (max.x < p[i].x)
+				max.x = p[i].x;
+			if (max.y < p[i].y)
+				max.y = p[i].y;
+			if (max.z < p[i].z)
+				max.z = p[i].z;
+		}
+
+		double width = max.x - min.x;
+		double height = max.y - min.y;
+		double depth = max.z - min.z;
+		Point3d pos = Point3d(min.x + width / 2, min.y + height / 2, max.z);
+		pos = rotMatInv * pos;
+
+		// Start setting the actual matricies
+		Point3d point = pos + rot.rotateHeading();
+		Point3d up = rot.rotateUp();
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-width / 2, width / 2, -height / 2, height / 2, -depth, 0);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		gluLookAt(pos.x, pos.y, pos.z,
+		          point.x, point.y, point.z,
+		          up.x, up.y, up.z);
+
+		// Fixes the jittering
+		// XXX Could be done in a faster way
+		glGetDoublev(GL_MODELVIEW_MATRIX, mat.array.ptr);
+		mat.transpose();
+		auto tweekP = mat * Point3d(0.0, 0.0, 0.0);
+		double tx = tweekP.x % (width / depthTarget.width);
+		double ty = tweekP.y % (height / depthTarget.height);
+
+		glLoadIdentity();
+		glTranslated(-tx, -ty, 0);
+		gluLookAt(pos.x, pos.y, pos.z,
+		          point.x, point.y, point.z,
+		          up.x, up.y, up.z);
+	}
+
+	void drawDirIsoShadow(SimpleLight dl, IsoCamera c, World w,
+	                      ref Matrix4x4d view, ref Matrix4x4d proj)
+	{
+		IsoCamera cam = c;
+		Matrix4x4d mat;
+
+		gluPushMatricesAttrib(GL_VIEWPORT_BIT);
+
+		glUseProgram(0);
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+
+		glDisable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+
+		gluTexUnitDisable(GL_TEXTURE_2D, 2);
+		gluTexUnitDisable(GL_TEXTURE_2D, 1);
+		gluTexUnitDisable(GL_TEXTURE_2D, 0);
+
+		glPolygonOffset(1.3f, 4096.0f);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+
+		{
+			depthTarget.setTarget(0);
+			glViewport(0, 0, depthTarget.width, depthTarget.height);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			setDirIsoMatricies(dl, cam, view, proj);
+			renderShadowLoop(dl.position, cam, w);
+			getSceneViewToProjMatrix(view, mat);
+		}
+
+		glBindTexture(GL_TEXTURE_2D, deferredTarget.color);
+		glDisable(GL_POLYGON_OFFSET_FILL);
+
+		gluTexUnitEnable(GL_TEXTURE_2D, 0);
+		gluTexUnitEnable(GL_TEXTURE_2D, 1);
+		gluTexUnitEnable(GL_TEXTURE_2D, 2);
+
+		glCullFace(GL_BACK);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		gluPopMatricesAttrib();
+
+		renderTarget.setTarget();
+
+		glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, depthTarget.depthArray);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT,
+		                GL_TEXTURE_COMPARE_MODE,
+		                GL_COMPARE_R_TO_TEXTURE);
+		gluGetError("bind");
+
+		// Setup shader state
+		glUseProgram(directionlight_iso_shader.id);
+		auto direction = view * dl.rotation.rotateHeading;
+		directionlight_iso_shader.float3("lightDirection", direction);
+		directionlight_iso_shader.float4("lightDiffuse", dl.diffuse);
+		directionlight_iso_shader.float4("lightAmbient", dl.ambient);
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glMatrixMode(GL_TEXTURE);
+			glLoadMatrixd(mat.array.ptr);
+		}
+		gluGetError("set value");
+
+		glBegin(GL_QUADS);
+		glColor3f(  1.0f,  1.0f,  1.0f);
+		glVertex3f(-1.0f, -1.0f,  0.0f);
+		glVertex3f( 1.0f, -1.0f,  0.0f);
+		glVertex3f( 1.0f,  1.0f,  0.0f);
+		glVertex3f(-1.0f,  1.0f,  0.0f);
+		glEnd();
+
+		// Reset texture matrix state
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glMatrixMode(GL_TEXTURE);
+			glLoadIdentity();
+		}
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
+		gluGetError("leave");
+	}
+
 	void drawDirNoShadow(SimpleLight dl, ref Matrix4x4d view, ref Matrix4x4d proj)
 	{
 		auto direction = view * dl.rotation.rotateHeading;
@@ -618,6 +813,10 @@ protected:
 		ProjCamera pcam = cast(ProjCamera)c;
  		if (pcam !is null)
 			return drawDirSplitShadow(dl, pcam, w, view, proj);
+
+		IsoCamera icam = cast(IsoCamera)c;
+		if (icam !is null)
+			return drawDirIsoShadow(dl, icam, w, view, proj);
 
 		return drawDirNoShadow(dl, view, proj);
 	}
@@ -1193,6 +1392,66 @@ float shadowCoff(vec4 position)
 		return getCoffGuass(depthCoords);
 	else
 		return getCoffSimple(depthCoords);
+}
+
+void main()
+{
+	vec2 coord = gl_FragCoord.xy * screen;
+	vec4 color = texture2D(colorTex, coord);
+	vec4 normal = texture2D(normalTex, coord);
+	float depth = texture2D(depthTex, coord).r;
+
+	vec4 position = projectionMatrixInverse * vec4(coord, depth, 1.0);
+	position.xyz /= position.w;
+	// normal is a vec4 only normalize xyz
+	normal.xyz = normalize((normal.xyz - 0.5) * 2.0);
+
+	float nDotL = max(dot(normal.xyz, -lightDirection), 0.0);
+	float coff = shadowCoff(position);
+
+	gl_FragData[0] = color * lightDiffuse * nDotL * coff + color * lightAmbient;
+}
+";
+
+	const char[] directionlight_iso_shader_frag = "
+#version 120
+#extension GL_EXT_texture_array : enable
+#extension GL_EXT_gpu_shader4 : enable
+
+uniform vec2 screen;
+uniform sampler2D colorTex;
+uniform sampler2D normalTex;
+uniform sampler2D depthTex;
+uniform sampler2DArrayShadow shadowTex;
+uniform mat4 projectionMatrixInverse;
+uniform vec3 lightDirection;
+uniform vec4 lightDiffuse;
+uniform vec4 lightAmbient;
+
+float getCoffGuass(vec4 depthCoords)
+{
+	float ret = shadow2DArray(shadowTex, depthCoords).x * 0.25;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( -1, -1)).x * 0.0625;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( -1, 0)).x * 0.125;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( -1, 1)).x * 0.0625;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( 0, -1)).x * 0.125;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( 0, 1)).x * 0.125;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( 1, -1)).x * 0.0625;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( 1, 0)).x * 0.125;
+	ret += shadow2DArrayOffset(shadowTex, depthCoords, ivec2( 1, 1)).x * 0.0625;
+	return ret;
+}
+
+float shadowCoff(vec4 position)
+{
+	int index = 0;
+
+	// XXX The scale at the end should go away
+	vec4 depthCoords = (gl_TextureMatrix[index] * vec4(position.xyz, 1.0)) * .5 + .5;
+	depthCoords.w = depthCoords.z;
+	depthCoords.z = index;
+
+	return getCoffGuass(depthCoords);
 }
 
 void main()
