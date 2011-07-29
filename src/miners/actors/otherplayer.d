@@ -15,6 +15,8 @@ class OtherPlayer : public Mob
 {
 public:
 	GfxSimpleSkeleton skel;
+	double heading;
+	double pitch;
 
 public:
 	this(World w, int id, Point3d pos, double heading, double pitch)
@@ -41,12 +43,25 @@ public:
 
 	void update(Point3d pos, double heading, double pitch)
 	{
-		skel.position = pos;
 		auto rot = Quatd(heading, pitch, 0);
+		this.pos = pos;
+		this.rot = rot;
+		this.pitch = pitch;
+		this.heading = heading;
 
-		GameActor.setPosition(pos);
-		GameActor.setRotation(rot);
+		skel.position = pos;
+		skel.rotation = Quatd(heading, 0, 0);
 
 		skel.bones.ptr[0].rot = Quatd(0, pitch, 0);
+	}
+
+	void setPosition(ref Point3d pos)
+	{
+		update(pos, heading, pitch);
+	}
+
+	void setRotation(ref Quatd rot)
+	{
+		// NOOP
 	}
 }
