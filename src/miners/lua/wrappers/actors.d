@@ -11,6 +11,7 @@ import miners.options;
 import miners.lua.state;
 import miners.actors.camera;
 import miners.actors.sunlight;
+import miners.actors.otherplayer;
 
 
 struct CameraWrapper
@@ -262,6 +263,118 @@ struct SunLightWrapper
 		s.setFieldz(-2, "__index");
 		s.pushCFunction(&newIndex);
 		s.setFieldz(-2, "__newindex");
+		s.pop();
+	}
+}
+
+struct OtherPlayerWrapper
+{
+	const static char *namez = "d_class_minecraft_actors_otherplayer_OtherPlayer";
+	const static char[] name = "d_class_minecraft_actors_otherplayer_OtherPlayer";
+
+	extern (C) static int newOtherPlayer(lua_State *l)
+	{
+		auto s = LuaState(l);
+		auto w = s.checkClass!(World)(1, false);
+		OtherPlayer op;
+
+		try
+			op = new OtherPlayer(w, 0, Point3d(), 0, 0);
+		catch (Exception e)
+			s.error(e);
+
+		// Lua state "owns" this object, and can delete it.
+		auto p = s.pushClass(op, true);
+		return 1;
+	}
+
+	extern (C) static int index(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto op = s.checkClass!(OtherPlayer)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key) {
+		case "position":
+			op.getPosition(*s.pushPoint3d());
+			break;
+		case "rotation":
+			op.getRotation(*s.pushQuatd());
+			break;
+		default:
+			s.getMetaTable(1);
+			s.pushValue(2);
+			s.getTable(-2);
+			break;
+		}
+
+		return 1;
+	}
+
+	extern (C) static int newIndex(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto op = s.checkClass!(OtherPlayer)(1, false);
+		s.checkString(2);
+
+		key = s.toString(2);
+		switch(key)	{
+		case "position":
+			auto p = s.checkPoint3d(3);
+			try {
+				op.setPosition(*p);
+				return 1;
+			} catch (Exception e) {
+				return s.error(e);
+			}
+		case "rotation":
+			auto q = s.checkQuatd(3);
+			try {
+				op.setRotation(*q);
+				return 1;
+			} catch (Exception e) {
+				return s.error(e);
+			}
+		default:
+			s.error("No memeber of that that name");
+			break;
+		}
+
+		return 0;
+	}
+
+	extern (C) static int update(lua_State *l)
+	{
+		auto s = LuaState(l);
+		char[] key;
+		auto op = s.checkClass!(OtherPlayer)(1, false);
+		auto pos = s.checkPoint3d(2);
+		auto heading = s.checkNumber(3);
+		auto pitch = s.checkNumber(4);
+
+		try {
+			op.update(*pos, heading, pitch);
+		} catch (Exception e) {
+			return s.error(e);
+		}
+
+		return 0;
+	}
+
+	static void register(LuaState s)
+	{
+		s.registerClass!(OtherPlayer);
+		s.pushCFunction(&ObjectWrapper.toString);
+		s.setFieldz(-2, "__tostring");
+		s.pushCFunction(&index);
+		s.setFieldz(-2, "__index");
+		s.pushCFunction(&newIndex);
+		s.setFieldz(-2, "__newindex");
+		s.pushCFunction(&update);
+		s.setFieldz(-2, "update");
 		s.pop();
 	}
 }

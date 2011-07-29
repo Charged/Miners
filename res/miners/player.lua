@@ -11,6 +11,7 @@ module(...)
 --
 
 require "input"
+require "miners"
 require "physics"
 
 local math = _G.math;
@@ -21,7 +22,9 @@ local Point = _G.charge.Point
 local Vector = _G.charge.Vector
 local Quat = _G.charge.Quat
 
+local OtherPlayer = _G.miners.OtherPlayer
 local camera = _G.camera
+local world = _G.world
 
 local ticksPerSeconds = _G.ticksPerSeconds
 local playerMaxGroundSpeed = 0.1
@@ -38,6 +41,7 @@ local playerJumpAcceleration = 0.13
 local player = {
 	pos = Point(),
 	vel = Vector(),
+	op = OtherPlayer(world),
 	headHeight = Vector(0, 1.25, 0),
 	ground = false,
 }
@@ -111,4 +115,5 @@ function player:logic()
 
 	camera.position = player.pos + player.headHeight
 	camera.rotation = Quat(move.heading, move.pitch, 0)
+	self.op:update(player.pos, move.heading, move.pitch);
 end

@@ -35,6 +35,7 @@ class LuaState : public charge.game.lua.LuaState
 
 private:
 	const luaL_Reg minerslib[] = [
+		{ "OtherPlayer", &OtherPlayerWrapper.newOtherPlayer },
 		{ null, null },
 	];
 
@@ -48,6 +49,7 @@ private:
 		CameraWrapper.register(s);
 		OptionsWrapper.register(s);
 		SunLightWrapper.register(s);
+		OtherPlayerWrapper.register(s);
 
 		// Register world and terrain
 		BetaWorldWrapper.register(s);
