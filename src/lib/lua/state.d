@@ -180,27 +180,62 @@ public:
 	 */
 	static struct Instance
 	{
+	public:
 		Object obj;
 
-		void ctor(Object obj)
+		alias void delegate() GC;
+		GC gc;
+
+	public:
+		/**
+		 * Main Constructor, need to always call this
+		 * as lua doesn't memset memory.
+		 */
+		void ctor(Object obj, GC gc)
 		{
 			if (obj !is null)
 				obj.notifyRegister(&notify);
+
 			this.obj = obj;
+			this.gc = gc;
+		}
+
+		void ctor(Object obj)
+		{
+			ctor(obj, null);
+		}
+
+		void ctor(Object obj, bool autoDelete)
+		{
+			ctor(obj, autoDelete ? &this.deleteObj : null);
 		}
 
 		void dtor()
 		{
 			if (obj !is null)
 				obj.notifyUnRegister(&notify);
+
+			if (gc !is null)
+				gc();
 		}
 
+		/**
+		 * Notify callback for when objects are deleted.
+		 */
 		void notify(Object obj)
 		{
 			assert(this.obj is obj);
 			this.obj = null;
 		}
 
+		/**
+		 * Helper function to delete the object on gc.
+		 */
+		void deleteObj()
+		{
+			delete obj;
+			obj = null;
+		}
 	};
 
 	void registerClass(T)()
@@ -226,18 +261,39 @@ public:
 		}
 	}
 
-	Instance* pushClass(Object obj)
+	final Instance* pushInstance(Object obj)
 	{
-		Instance *ptr = cast(Instance*)lua_newuserdata(l, (Object*).sizeof);
+		Instance *ptr = cast(Instance*)lua_newuserdata(l, Instance.sizeof);
 
-		if (luaL_newmetatable(l, getClassNamez(obj.classinfo))) {
-			throw new Exception("Class " ~ obj.classinfo.name ~ " not registered");
-		}
-
-		ptr.ctor(obj);
+		int ret = luaL_newmetatable(l, getClassNamez(obj.classinfo));
+		assert(!ret);
 
 		lua_setmetatable(l, -2);
 
+		return ptr;
+	}
+
+	Instance* pushClass(Object obj)
+	{
+		auto ptr = pushInstance(obj);
+		ptr.ctor(obj);
+		assert(ptr.obj is obj);
+		return ptr;
+	}
+
+	Instance* pushClass(Object obj, bool autoDelete)
+	{
+		auto ptr = pushInstance(obj);
+		ptr.ctor(obj, autoDelete);
+		assert(ptr.obj is obj);
+		return ptr;
+	}
+
+	Instance* pushClass(Object obj, Instance.GC gc)
+	{
+		auto ptr = pushInstance(obj);
+		ptr.ctor(obj, gc);
+		assert(ptr.obj is obj);
 		return ptr;
 	}
 
@@ -457,5 +513,4 @@ protected:
 		}
 		return luaL_typerror(l, 1, namez);
 	}
-
 }
