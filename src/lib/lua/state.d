@@ -226,7 +226,7 @@ public:
 		}
 	}
 
-	void pushClass(Object obj)
+	Instance* pushClass(Object obj)
 	{
 		Instance *ptr = cast(Instance*)lua_newuserdata(l, (Object*).sizeof);
 
@@ -237,18 +237,19 @@ public:
 		ptr.ctor(obj);
 
 		lua_setmetatable(l, -2);
+
+		return ptr;
 	}
 
-	T checkClass(T)(int index, bool nullz)
+	Instance* checkInstance(T)(int index)
 	{
-		return checkClassName!(T)(index, nullz, getClassName(T.classinfo));
+		return checkInstanceName!(T)(index, nullz, getClassName(T.classinfo));
 	}
 
-	T checkClassName(T)(int index, bool nullz, char[] name)
+	Instance* checkInstanceName(T)(int index, char[] name)
 	{
 		Instance *p;
 		char[] cnz = T.classinfo.name;
-		T obj;
 
 		if (!lua_isuserdata(l, index))
 			luaL_typerror(l, index, cnz.ptr);
@@ -259,13 +260,24 @@ public:
 			lua_rawget(l, -2);
 			if (!lua_isnil(l, -1)) {
 				lua_pop(l, 2);
-				if (p.obj is null && !nullz)
-					luaL_error(l, "Instance is null");
-				return cast(T)p.obj;
+				return p;
 			}
 		}
 		luaL_typerror(l, index, cnz.ptr);
 		return null;
+	}
+
+	T checkClass(T)(int index, bool nullz)
+	{
+		return checkClassName!(T)(index, nullz, getClassName(T.classinfo));
+	}
+
+	T checkClassName(T)(int index, bool nullz, char[] name)
+	{
+		auto p = checkInstanceName!(T)(index, name);
+		if (p.obj is null && !nullz)
+			luaL_error(l, "Instance is null");
+		return cast(T)p.obj;
 	}
 
 	static char[] getClassName(ClassInfo ci)
