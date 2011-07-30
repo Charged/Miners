@@ -42,7 +42,7 @@ local player = {
 	pos = Point(),
 	vel = Vector(),
 	op = OtherPlayer(world),
-	headHeight = Vector(0, 1.25, 0),
+	headHeight = Vector(0, 1.505, 0),
 	ground = false,
 }
 _G.player = player
