@@ -5,7 +5,6 @@ module miners.lua.runner;
 import std.file;
 
 import charge.charge;
-import charge.game.lua;
 
 import charge.sys.file;
 
@@ -14,6 +13,7 @@ import miners.runner;
 import miners.options;
 import miners.actors.camera;
 import miners.actors.sunlight;
+import miners.lua.state;
 import miners.lua.wrappers.beta;
 import miners.lua.wrappers.actors;
 import miners.lua.wrappers.finite;
@@ -153,14 +153,9 @@ protected:
 		s.openCharge();
 		s.pop();
 
-		// Registers classes
-		CameraWrapper.register(s);
-		OptionsWrapper.register(s);
-		SunLightWrapper.register(s);
-		BetaWorldWrapper.register(s);
-		BetaTerrainWrapper.register(s);
-		ClassicWorldWrapper.register(s);
-		FiniteTerrainWrapper.register(s);
+		// Load miners
+		s.openMiners();
+		s.pop();
 
 		// Ctl
 

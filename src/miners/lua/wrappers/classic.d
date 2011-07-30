@@ -2,8 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.lua.wrappers.classic;
 
-import charge.game.lua;
-
+import miners.lua.state;
 import miners.classic.world;
 
 

@@ -5,10 +5,10 @@ module miners.lua.wrappers.actors;
 import std.math;
 
 import charge.charge;
-import charge.game.lua;
 
 import miners.world;
 import miners.options;
+import miners.lua.state;
 import miners.actors.camera;
 import miners.actors.sunlight;
 
@@ -43,10 +43,10 @@ struct CameraWrapper
 		key = s.toString(2);
 		switch(key) {
 		case "position":
-			c.getPosition(*Point3dWrapper.push(s));
+			c.getPosition(*s.pushPoint3d());
 			break;
 		case "rotation":
-			c.getRotation(*QuatdWrapper.push(s));
+			c.getRotation(*s.pushQuatd());
 			break;
 		case "far":
 			s.pushNumber(c.far);
@@ -166,10 +166,10 @@ struct SunLightWrapper
 		key = s.toString(2);
 		switch(key) {
 		case "position":
-			sl.gfx.getPosition(*Point3dWrapper.push(s));
+			sl.gfx.getPosition(*s.pushPoint3d());
 			break;
 		case "rotation":
-			sl.gfx.getRotation(*QuatdWrapper.push(s));
+			sl.gfx.getRotation(*s.pushQuatd());
 			break;
 		case "diffuse":
 			s.pushColor4f(sl.gfx.diffuse);
@@ -210,7 +210,7 @@ struct SunLightWrapper
 		key = s.toString(2);
 		switch(key)	{
 		case "position":
-			auto p = Point3dWrapper.check(s, 3);
+			auto p = s.checkPoint3d(3);
 			try {
 				sl.gfx.setPosition(*p);
 				return 1;
@@ -218,7 +218,7 @@ struct SunLightWrapper
 				return s.error(e);
 			}
 		case "rotation":
-			auto q = QuatdWrapper.check(s, 3);
+			auto q = s.checkQuatd(3);
 			try {
 				sl.gfx.setRotation(*q);
 				return 1;

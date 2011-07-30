@@ -4,8 +4,7 @@ module miners.lua.wrappers.beta;
 
 import std.math;
 
-import charge.game.lua;
-
+import miners.lua.state;
 import miners.beta.world;
 import miners.terrain.beta;
 

@@ -4,8 +4,7 @@ module miners.lua.wrappers.finite;
 
 import std.math;
 
-import charge.game.lua;
-
+import miners.lua.state;
 import miners.terrain.finite;
 
 
