@@ -85,8 +85,8 @@ public:
 		newLevel(xSize, ySize, zSize);
 
 		// Get the pointer directly to the data
-		auto p = ft.getBlockPointer(0, 0, 0);
-		auto pm = ft.getMetaPointer(0, 0, 0);
+		auto p = ft.getTypePointerUnsafe(0, 0, 0);
+		auto pm = ft.getMetaPointerUnsafe(0, 0, 0);
 
 		// Flip & convert the world
 		for (int z; z < zSize; z++) {

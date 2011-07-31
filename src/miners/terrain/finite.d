@@ -115,26 +115,14 @@ public:
 	 */
 
 
-	final void setBlocksAndMeta(ubyte* blocks, ubyte *meta)
+	final ubyte opIndex(int x, int y, int z)
 	{
-		if (blocks)
-			this.blocks[0 .. sizeBlocks] = blocks[0 .. sizeBlocks];
-		if (meta)
-			this.data[0 .. sizeData] = meta[0 .. sizeData];
-	}
+		if (x < 0 || y < 0 || z < 0)
+			return 0;
+		if (x >= xSize || y >= ySize || z >= zSize)
+			return 0;
 
-	final void setMeta(int x, int y, int z, ubyte meta)
-	{
-		auto mPtr = getMetaPointer(x, y, z);
-		auto d = *mPtr;
-
-		if (meta == 1)
-			assert((this)[x, y, z] == 35);
-
-		if (y % 2 == 0)
-			*mPtr = (d & 0xf0) | (0x0f & meta);
-		else
-			*mPtr = (d & 0x0f) | (cast(ubyte)(meta << 4) & 0xf0);
+		return blocks[(xSize * z + x) * ySize + y];
 	}
 
 	final ubyte opIndexAssign(ubyte data, int x, int y, int z)
@@ -148,20 +136,10 @@ public:
 		return data;
 	}
 
-	final ubyte opIndex(int x, int y, int z)
-	{
-		if (x < 0 || y < 0 || z < 0)
-			return 0;
-		if (x >= xSize || y >= ySize || z >= zSize)
-			return 0;
-
-		return blocks[(xSize * z + x) * ySize + y];
-	}
-
 	/**
-	 * Get a pointer to the block at location.
+	 * Get a pointer to the block type at location.
 	 */
-	final ubyte *getBlockPointer(int x, int y, int z)
+	final ubyte *getTypePointerUnsafe(int x, int y, int z)
 	{
 		return &blocks[(xSize * z + x) * ySize + y];
 	}
@@ -172,7 +150,7 @@ public:
 	 * Will return the byte that the metadata is located in.
 	 * So yPos = (y / 2).
 	 */
-	final ubyte *getMetaPointer(int x, int y, int z)
+	final ubyte *getMetaPointerUnsafe(int x, int y, int z)
 	{
 		return &data[(xSize * z + x) * yMetaSize + (y / 2)];
 	}
@@ -235,9 +213,9 @@ public:
 			for (int z = startZ; z < zEnd; z++, zOff++) {
 				assert(xPos >= 0 && yPos >= 0 && zPos >= 0);
 
-				auto ptr = getBlockPointer(xOff, yOff, zOff);
+				auto ptr = getTypePointerUnsafe(xOff, yOff, zOff);
 				ws.blocks[x][z][y .. y + yEnd] = ptr[0 .. yEnd];
-				ptr = getMetaPointer(xOff, yOff, zOff);
+				ptr = getMetaPointerUnsafe(xOff, yOff, zOff);
 				ws.data[x][z][yMeta .. yMeta + yMetaEnd] = ptr[0 .. yMetaEnd];
 			}
 		}
