@@ -42,7 +42,7 @@ public:
 		bt.setCenter(xPos, zPos);
 		bt.loadChunk(xPos, zPos);
 
-		auto p = bt.getPointerY(x, z);
+		auto p = bt.getTypePointer(x, z);
 		for (int i = y; i < 128; i++) {
 			if (tile[p[i]].filled)
 				continue;

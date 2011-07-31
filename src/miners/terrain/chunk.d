@@ -257,68 +257,61 @@ public:
 	 */
 
 
-	final ubyte get(int x, int y, int z)
+	final ubyte getTypeUnsafe(int x, int y, int z)
 	{
-		if (y < 0)
-			y = 0;
-		else if (y >= height)
-			return 0;
-
-		if (x < 0 || z < 0)
-			return bt.get(xPos, zPos, x, y, z);
-		else if (x >= width || z >= depth)
-			return bt.get(xPos, zPos, x, y, z);
-		else
-			return getUnsafe(x, y, z);
+		return *(getTypePointerUnsafe(x, z) + y);
 	}
 
-	final ubyte getUnsafe(int x, int y, int z)
-	{
-		return blocks[x * depth * height + z * height + y];
-	}
-
-	final ubyte* getPointerY(int x, int z)
-	{
-		if (x < 0 || z < 0)
-			return bt.getPointerY(xPos, zPos, x, z);
-		else if (x >= width || z >= depth)
-			return bt.getPointerY(xPos, zPos, x, z);
-		else
-			return getUnsafePointerY(x, z);
-	}
-
-	final ubyte* getUnsafePointerY(int x, int z)
+	final ubyte* getTypePointerUnsafe(int x, int z)
 	{
 		return &blocks[x * depth * height + z * height];
 	}
 
+	/**
+	 * Returns a pointer to this or another chunks block type.
+	 * Coords are relative to this chunk.
+	 */
+	final ubyte* getTypePointer(int x, int z)
+	{
+		if (x < 0 || z < 0)
+			return bt.getTypePointer(xPos, zPos, x, z);
+		else if (x >= width || z >= depth)
+			return bt.getTypePointer(xPos, zPos, x, z);
+		else
+			return getTypePointerUnsafe(x, z);
+	}
+
 
 	/*
-	 * Accessors to data.
+	 * Accessors to meta data.
 	 */
 
 
-	final ubyte getDataUnsafe(int x, int y, int z)
+	final ubyte getMetaUnsafe(int x, int y, int z)
 	{
-		ubyte d = data[x * depth * height / 2 + z * height / 2  + y / 2];
+		ubyte d = *(getMetaPointerUnsafe(x, z) + y/2);
 		if (y % 2 == 0)
 			return d & 0xf;
 		return cast(ubyte)(d >> 4);
 	}
 
-	final ubyte* getDataPointerY(int x, int z)
-	{
-		if (x < 0 || z < 0)
-			return bt.getDataPointerY(xPos, zPos, x, z);
-		else if (x >= width || z >= depth)
-			return bt.getDataPointerY(xPos, zPos, x, z);
-		else
-			return getDataUnsafePointerY(x, z);
-	}
-
-	final ubyte* getDataUnsafePointerY(int x, int z)
+	final ubyte* getMetaPointerUnsafe(int x, int z)
 	{
 		return &data[x * depth * height/2 + z * height/2];
+	}
+
+	/**
+	 * Returns a pointer to this or another chunks meta data.
+	 * Coords are relative to this chunk.
+	 */
+	final ubyte* getMetaPointer(int x, int z)
+	{
+		if (x < 0 || z < 0)
+			return bt.getMetaPointer(xPos, zPos, x, z);
+		else if (x >= width || z >= depth)
+			return bt.getMetaPointer(xPos, zPos, x, z);
+		else
+			return getMetaPointerUnsafe(x, z);
 	}
 
 
@@ -331,13 +324,13 @@ public:
 	{
 		for (int x; x < d.ws_width; x++) {
 			for (int z; z < d.ws_depth; z++) {
-				ubyte *ptr = getPointerY(x-1, z-1);
+				ubyte *ptr = getTypePointer(x-1, z-1);
 				d.blocks[x][z][0] = ptr[0];
 				d.blocks[x][z][1 .. d.ws_height+1-2] =
 					ptr[0 .. d.ws_height-2];
 				d.blocks[x][z][length-1] = 0;
 
-				ptr = getDataPointerY(x-1, z-1);
+				ptr = getMetaPointer(x-1, z-1);
 				d.data[x][z][0] = cast(ubyte)(ptr[0] << 4);
 				d.data[x][z][1 .. d.ws_data_height+1-2] =
 					ptr[0 .. d.ws_data_height-2];

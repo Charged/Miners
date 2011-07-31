@@ -32,6 +32,7 @@ public:
 	Region[depth][width] region;
 	char[] dir;
 
+public:
 	this(GameWorld w, char[] dir, Options opts)
 	{
 		this.rxOff = 0;
@@ -49,54 +50,13 @@ public:
 				delete r;
 	}
 
-	void setViewRadii(int radii)
-	{
-		if (radii < view_radii) {
-			for (int x; x < width; x++) {
-				for (int z; z < depth; z++) {
-					auto r = region[x][z];
-					if (r is null)
-						continue;
 
-					r.unbuildRadi(xCenter, zCenter, radii);
-				}
-			}
-		}
-		view_radii = radii;
-	}
+	/*
+	 *
+	 * Data access functions. 
+	 *
+	 */
 
-	void setBuildType(TerrainBuildTypes type, char[] name)
-	{
-		if (type == currentBuildType)
-			return;
-
-		// Unbuild all the meshes.
-		for (int x; x < width; x++) {
-			for (int z; z < depth; z++) {
-				auto r = region[x][z];
-				if (r is null)
-					continue;
-				r.unbuildAll();
-			}
-		}
-
-		buildReset();
-
-		// Do the change
-		doBuildTypeChange(type);
-
-		// Build at least one chunk
-		buildOne();
-	}
-
-	final Chunk getChunk(int x, int z)
-	{
-		auto r = getRegion(x, z);
-		if (r is null)
-			return null;
-
-		return r.getChunk(x, z);
-	}
 
 	final ubyte opIndex(int x, int y, int z)
 	{
@@ -110,36 +70,42 @@ public:
 		x = cast(uint)x % 16;
 		z = cast(uint)z % 16;
 
-		return get(xPos, zPos, x, y, z);
+		return getTypeUnsafe(xPos, zPos, x, y, z);
 	}
 
-	ubyte get(int xPos, int zPos, int x, int y, int z)
+	/**
+	 * Returns block data, coords are relative to chunk specified
+	 * by xPos, zPos.
+	 */
+	final ubyte getType(int xPos, int zPos, int x, int y, int z)
 	{
 		xPos += x < 0 ? (x - 15) / 16 : x / 16;
 		zPos += z < 0 ? (z - 15) / 16 : z / 16;
 		x = cast(uint)x % 16;
 		z = cast(uint)z % 16;
 
-		auto c = getChunk(xPos, zPos);
-		if (c)
-			return c.get(x, y, z);
-		return 0;
+		return getTypeUnsafe(xPos, zPos, x, y, z);
 	}
 
-	ubyte* getDataPointerY(int xPos, int zPos, int x, int z)
+	/**
+	 * Returns block data, coords are relative to chunk specified
+	 * by xPos, zPos. Coords must be within the chunk boarders.
+	 */
+	final ubyte getTypeUnsafe(int xPos, int zPos, int x, int y, int z)
 	{
-		xPos += x < 0 ? (x - 15) / 16 : x / 16;
-		zPos += z < 0 ? (z - 15) / 16 : z / 16;
-		x = cast(uint)x % 16;
-		z = cast(uint)z % 16;
-
 		auto c = getChunk(xPos, zPos);
-		if (c)
-			return c.getDataPointerY(x, z);
-		return null;
+		if (c is null)
+			return 0;
+		return c.getTypeUnsafe(x, y, z);
 	}
 
-	ubyte* getPointerY(int x, int z)
+	/**
+	 * Get the pointer to the start of a row of block types.
+	 *
+	 * Coords in global coordinates, for beta terrain start is
+	 * always the block on height 0.
+	 */
+	ubyte* getTypePointer(int x, int z)
 	{
 		auto xPos = x < 0 ? (x - 15) / 16 : x / 16;
 		auto zPos = z < 0 ? (z - 15) / 16 : z / 16;
@@ -147,24 +113,97 @@ public:
 		x = x < 0 ? 15 - ((-x-1) % 16) : x % 16;
 		z = z < 0 ? 15 - ((-z-1) % 16) : z % 16;
 
-		return getPointerY(xPos, zPos, x, z);
+		return getTypePointerUnsafe(xPos, zPos, x, z);
 	}
 
-	ubyte* getPointerY(int xPos, int zPos, int x, int z)
+	/**
+	 * See getTypePointer, the second pair of arguments are
+	 * relative to the chunk specified by the first.
+	 */
+	ubyte* getTypePointer(int xPos, int zPos, int x, int z)
 	{
 		xPos += x < 0 ? (x - 15) / 16 : x / 16;
 		zPos += z < 0 ? (z - 15) / 16 : z / 16;
 		x = cast(uint)x % 16;
 		z = cast(uint)z % 16;
 
+		return getTypePointerUnsafe(xPos, zPos, x, z);
+	}
+
+	/**
+	 * See getTypePointer, the second pair of arguments are
+	 * relative to the chunk specified by the first. Access is unsafe.
+	 */
+	ubyte* getTypePointerUnsafe(int xPos, int zPos, int x, int z)
+	{
 		auto c = getChunk(xPos, zPos);
-		if (c)
-			return c.getPointerY(x, z);
-		return null;
+		if (c is null)
+			return null;
+		return c.getTypePointerUnsafe(x, z);
+	}
+
+	/**
+	 * See getTypePointer but returns meta data.
+	 */
+	ubyte* getMetaPointer(int x, int z)
+	{
+		auto xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		auto zPos = z < 0 ? (z - 15) / 16 : z / 16;
+
+		x = x < 0 ? 15 - ((-x-1) % 16) : x % 16;
+		z = z < 0 ? 15 - ((-z-1) % 16) : z % 16;
+
+		return getMetaPointerUnsafe(xPos, zPos, x, z);
+	}
+
+	/**
+	 * See getTypePointer with chunk local coords but returns meta data.
+	 */
+	ubyte* getMetaPointer(int xPos, int zPos, int x, int z)
+	{
+		xPos += x < 0 ? (x - 15) / 16 : x / 16;
+		zPos += z < 0 ? (z - 15) / 16 : z / 16;
+		x = cast(uint)x % 16;
+		z = cast(uint)z % 16;
+
+		return getMetaPointerUnsafe(xPos, zPos, x, z);
+	}
+
+	/**
+	 * See getTypePointerUnsafe with chunk local coords but returns meta data.
+	 */
+	ubyte* getMetaPointerUnsafe(int xPos, int zPos, int x, int z)
+	{
+		auto c = getChunk(xPos, zPos);
+		if (c is null)
+			return null;
+		return c.getMetaPointerUnsafe(x, z);
+	}
+
+
+	/*
+	 *
+	 * Direct Chunk access functions.
+	 *
+	 */
+
+
+	/**
+	 * Get a chunk, may return null if chunk is not loaded.
+	 * Coords in chunk space.
+	 */
+	final Chunk getChunk(int x, int z)
+	{
+		auto r = getRegion(x, z);
+		if (r is null)
+			return null;
+
+		return r.getChunk(x, z);
 	}
 
 	/**
 	 * Creates and if a level was specified loads data.
+	 * Coords in chunk space.
 	 */
 	Chunk loadChunk(int x, int z)
 	{
@@ -203,6 +242,18 @@ public:
 		return c;
 	}
 
+
+	/*
+	 *
+	 * Inhereted terrain methods.
+	 *
+	 */
+
+
+	/**
+	 * Set the current center from which chunks are built.
+	 * Coords in chunk space.
+	 */
 	void setCenter(int xNew, int zNew)
 	{
 		setCenterRegions(xNew, zNew);
@@ -225,16 +276,56 @@ public:
 	}
 
 	/**
-	 * Start over from the begining when building chunks.
+	 * Sets the radius in chunks of which chunks should
+	 * be built and rendered.
 	 */
-	void buildReset()
+	void setViewRadii(int radii)
 	{
-		// Reset the saved position for the buildOne function
-		save_build_i = 0;
-		save_build_j = 0;
-		save_build_k = 0;
+		if (radii < view_radii) {
+			for (int x; x < width; x++) {
+				for (int z; z < depth; z++) {
+					auto r = region[x][z];
+					if (r is null)
+						continue;
+
+					r.unbuildRadi(xCenter, zCenter, radii);
+				}
+			}
+		}
+		view_radii = radii;
 	}
 
+	/**
+	 * Which type of mesh should be built, needs to match up
+	 * with the capabilities of the current renderer.
+	 */
+	void setBuildType(TerrainBuildTypes type, char[] name)
+	{
+		if (type == currentBuildType)
+			return;
+
+		// Unbuild all the meshes.
+		for (int x; x < width; x++) {
+			for (int z; z < depth; z++) {
+				auto r = region[x][z];
+				if (r is null)
+					continue;
+				r.unbuildAll();
+			}
+		}
+
+		buildReset();
+
+		// Do the change
+		doBuildTypeChange(type);
+
+		// Build at least one chunk
+		buildOne();
+	}
+
+	/**
+	 * Build a single chunk, returns false if no one was built.
+	 */
 	bool buildOne()
 	{
 		bool dob(int x, int z) {
@@ -289,6 +380,17 @@ public:
 		save_build_j = j;
 		save_build_k = k;
 		return false;
+	}
+
+	/**
+	 * Start over from the begining when building chunks.
+	 */
+	void buildReset()
+	{
+		// Reset the saved position for the buildOne function
+		save_build_i = 0;
+		save_build_j = 0;
+		save_build_k = 0;
 	}
 
 protected:
@@ -363,7 +465,6 @@ public:
 	 */
 	int xOff;
 	int zOff;
-private:
 
 public:
 	this(BetaTerrain bt, int xPos, int zPos)
@@ -383,6 +484,67 @@ public:
 				delete c;
 	}
 
+
+	/*
+	 *
+	 * Direct Chunk access.
+	 *
+	 */
+
+
+	/**
+	 * Get the chunk at global chunk coords unsafely.
+ 	 */
+	final Chunk getChunk(int x, int z)
+	{
+		x -= xOff;
+		z -= zOff;
+
+		if (x < 0 || z < 0)
+			return null;
+		else if (x >= width || z >= depth)
+			return null;
+
+		return chunk[x][z];
+	}
+
+	/**
+	 * Get the chunk at global chunk coords, access is unsafe.
+ 	 */
+	final Chunk getChunkUnsafe(int x, int z)
+	{
+		x -= xOff;
+		z -= zOff;
+
+		return chunk[x][z];
+	}
+
+	/**
+	 * Makes sure that a chunk is created at global coords given.
+	 * Does not overwrite chunks already there. Access is unsafe.
+	 */
+	final Chunk createChunkUnsafe(int x, int z)
+	{
+		x -= xOff;
+		z -= zOff;
+
+		if (chunk[x][z] !is null)
+			return chunk[x][z];
+
+		return chunk[x][z] = new Chunk(bt, bt.w, x+xOff, z+zOff);
+	}
+
+
+	/*
+	 *
+	 * Chunk builder functions.
+	 *
+	 */
+
+
+	/**
+	 * Build chunk at global chunk coord, access is unsafe.
+	 */
 	final void buildUnsafe(int x, int z)
 	{
 		auto c = getChunkUnsafe(x, z);
@@ -399,6 +561,9 @@ public:
 		c.dirty = false;
 	}
 
+	/**
+	 * Unbuild a chunk at global chunk coord.
+	 */
 	final void unbuild(int x, int z)
 	{
 		if (numBuilt <= 0)
@@ -412,6 +577,9 @@ public:
 		numBuilt--;
 	}
 
+	/**
+	 * Unbuild all chunks.
+	 */
 	final void unbuildAll()
 	{
 		if (numBuilt <= 0)
@@ -429,6 +597,9 @@ public:
 		numBuilt = 0;
 	}
 
+	/**
+	 * Unbuild all chunks outside the radiis of the global coord given.
+	 */
 	final void unbuildRadi(int xCenter, int zCenter, int view_radi)
 	{
 		if (numBuilt <= 0)
@@ -451,42 +622,5 @@ public:
 				}
 			}
 		}
-	}
-
-	final Chunk createChunkUnsafe(int x, int z)
-	{
-		x -= xOff;
-		z -= zOff;
-
-		if (chunk[x][z] !is null)
-			return chunk[x][z];
-
-		return chunk[x][z] = new Chunk(bt, bt.w, x+xOff, z+zOff);
-	}
-
-	final Chunk getChunkUnsafe(int x, int z)
-	{
-		x -= xOff;
-		z -= zOff;
-
-		if (x < 0 || z < 0)
-			return null;
-		else if (x >= width || z >= depth)
-			return null;
-
-		return chunk[x][z];
-	}
-
-	final Chunk getChunk(int x, int z)
-	{
-		x -= xOff;
-		z -= zOff;
-
-		if (x < 0 || z < 0)
-			return null;
-		else if (x >= width || z >= depth)
-			return null;
-
-		return chunk[x][z];
 	}
 }
