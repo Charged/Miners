@@ -10,3 +10,15 @@ enum TerrainBuildTypes {
 	RigidMesh,
 	CompactMesh,
 }
+
+
+/**
+ * Struct to hold information about a block.
+ */
+struct Block
+{
+	ubyte type;        /**< [0 - 255] */
+	ubyte metadata;    /**< [0 - 16] Mening is dependant on type */
+	ubyte sunlight;    /**< [0 - 16] */
+	ubyte torchlight;  /**< [0 - 16] */
+}
