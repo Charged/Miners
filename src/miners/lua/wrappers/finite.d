@@ -40,7 +40,7 @@ struct FiniteTerrainWrapper
 		auto y = cast(int)floor(s.toNumber(3));
 		auto z = cast(int)floor(s.toNumber(4));
 
-		auto b = ft[x, y, z];
+		auto b = ft.getType(x, y, z);
 
 		s.pushNumber(b);
 		return 1;

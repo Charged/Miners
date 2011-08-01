@@ -118,18 +118,23 @@ public:
 	{
 		for (int x; x < ct.xSize; x++) {
 			for (int z; z < ct.zSize; z++) {
-				ct[x, 0, z] =  7;
-				for (int y = 1; y < ct.ySize; y++) {
-					if (y < 64)
-						ct[x, y, z] = 1;
+				for (int y; y < ct.ySize; y++) {
+					ubyte type;
+
+					if (y == 0)
+						type = 7;
+					else if (y < 64)
+						type = 1;
 					else if (y == 64)
-						ct[x, y, z] = 3;
+						type = 3;
 					else if (y == 65)
-						ct[x, y, z] = 3;
+						type = 3;
 					else if (y == 66)
-						ct[x, y, z] = 2;
+						type = 2;
 					else
-						ct[x, y, z] = 0;
+						type = 0;
+
+					ct.setType(type, x, y, z);
 				}
 			}
 		}

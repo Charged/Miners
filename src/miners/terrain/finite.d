@@ -110,12 +110,63 @@ public:
 
 	/*
 	 *
+	 * Block access.
+	 *
+	 */
+
+
+	final Block opIndex(int x, int y, int z)
+	{
+		Block b;
+		if (x < 0 || y < 0 || z < 0)
+			return b;
+		if (x >= xSize || y >= ySize || z >= zSize)
+			return b;
+
+		b.type = *getTypePointerUnsafe(x, y, z);
+		b.metadata = *getMetaPointerUnsafe(x, y, z);
+
+		if (y % 2 == 0)
+			b.metadata &= 0xf;
+		else
+			b.metadata >>= 4;
+
+		return b;
+	}
+
+	final Block opIndexAssign(Block b, int x, int y, int z)
+	{
+		if (x < 0 || y < 0 || z < 0)
+			return Block();
+		if (x >= xSize || y >= ySize || z >= zSize)
+			return Block();
+
+		*getTypePointerUnsafe(x, y, z) = b.type;
+
+		auto ptr = getMetaPointerUnsafe(x, y, z);
+		auto meta = *ptr;
+
+		if (y % 2 == 0)
+			*ptr = (meta & 0xf0) | (b.metadata & 0x0f);
+		else
+			*ptr = cast(ubyte)(b.metadata << 4) | (meta & 0x0f);
+
+		return b;
+	}
+
+
+
+	/*
+	 *
 	 * Block and metadata accessors.
 	 *
 	 */
 
 
-	final ubyte opIndex(int x, int y, int z)
+	/**
+	 * Get the type of the block at coords.
+	 */
+	final ubyte getType(int x, int y, int z)
 	{
 		if (x < 0 || y < 0 || z < 0)
 			return 0;
@@ -125,15 +176,19 @@ public:
 		return blocks[(xSize * z + x) * ySize + y];
 	}
 
-	final ubyte opIndexAssign(ubyte data, int x, int y, int z)
+	/**
+	 * Set the block type at the given location.
+	 */
+	final ubyte setType(ubyte type, int x, int y, int z)
 	{
 		if (x < 0 || y < 0 || z < 0)
 			return 0;
 		if (x >= xSize || y >= ySize || z >= zSize)
 			return 0;
 
-		blocks[(xSize * z + x) * ySize + y] = data;
-		return data;
+		*getTypePointerUnsafe(x, y, z) = type;
+
+		return type;
 	}
 
 	/**
