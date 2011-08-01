@@ -60,7 +60,7 @@ local collidesInRange = function(minX, minY, minZ, maxX, maxY, maxZ)
 	for x = minX, maxX do
 		for y = minY, maxY do
 			for z = minZ, maxZ do
-				local b = terrain:block(x, y, z)
+				local b = terrain:getType(x, y, z)
 				if getSolid(b) then
 					return true
 				end

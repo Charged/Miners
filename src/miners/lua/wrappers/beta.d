@@ -33,7 +33,7 @@ struct BetaTerrainWrapper
 		return 1;
 	}
 
-	extern (C) static int block(lua_State *l)
+	extern (C) static int getType(lua_State *l)
 	{
 		auto s = LuaState(l);
 		auto bt = s.checkClass!(BetaTerrain)(1, false);
@@ -54,8 +54,8 @@ struct BetaTerrainWrapper
 		s.setFieldz(-2, "__tostring");
 		s.pushCFunction(&index);
 		s.setFieldz(-2, "__index");
-		s.pushCFunction(&block);
-		s.setFieldz(-2, "block");
+		s.pushCFunction(&getType);
+		s.setFieldz(-2, "getType");
 		s.pop();
 	}
 }

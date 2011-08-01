@@ -32,7 +32,7 @@ struct FiniteTerrainWrapper
 		return 1;
 	}
 
-	extern (C) static int block(lua_State *l)
+	extern (C) static int getType(lua_State *l)
 	{
 		auto s = LuaState(l);
 		auto ft = s.checkClass!(FiniteTerrain)(1, false);
@@ -40,9 +40,9 @@ struct FiniteTerrainWrapper
 		auto y = cast(int)floor(s.toNumber(3));
 		auto z = cast(int)floor(s.toNumber(4));
 
-		auto b = ft.getType(x, y, z);
+		auto t = ft.getType(x, y, z);
 
-		s.pushNumber(b);
+		s.pushNumber(t);
 		return 1;
 	}
 
@@ -53,8 +53,8 @@ struct FiniteTerrainWrapper
 		s.setFieldz(-2, "__tostring");
 		s.pushCFunction(&index);
 		s.setFieldz(-2, "__index");
-		s.pushCFunction(&block);
-		s.setFieldz(-2, "block");
+		s.pushCFunction(&getType);
+		s.setFieldz(-2, "getType");
 		s.pop();
 	}
 }
