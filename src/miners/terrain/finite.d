@@ -124,12 +124,12 @@ public:
 			return b;
 
 		b.type = *getTypePointerUnsafe(x, y, z);
-		b.metadata = *getMetaPointerUnsafe(x, y, z);
+		b.meta = *getMetaPointerUnsafe(x, y, z);
 
 		if (y % 2 == 0)
-			b.metadata &= 0xf;
+			b.meta &= 0xf;
 		else
-			b.metadata >>= 4;
+			b.meta >>= 4;
 
 		return b;
 	}
@@ -147,9 +147,9 @@ public:
 		auto meta = *ptr;
 
 		if (y % 2 == 0)
-			*ptr = (meta & 0xf0) | (b.metadata & 0x0f);
+			*ptr = (meta & 0xf0) | (b.meta & 0x0f);
 		else
-			*ptr = cast(ubyte)(b.metadata << 4) | (meta & 0x0f);
+			*ptr = cast(ubyte)(b.meta << 4) | (meta & 0x0f);
 
 		return b;
 	}

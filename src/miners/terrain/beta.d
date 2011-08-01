@@ -76,12 +76,12 @@ public:
 			return b;
 
 		b.type = c.getTypePointerUnsafe(x, z)[y];
-		b.metadata = c.getTypePointerUnsafe(x, z)[y/2];
+		b.meta = c.getTypePointerUnsafe(x, z)[y/2];
 
 		if (y % 2 == 0)
-			b.metadata &= 0xf;
+			b.meta &= 0xf;
 		else
-			b.metadata >>= 4;
+			b.meta >>= 4;
 
 		return b;
 	}
@@ -108,9 +108,9 @@ public:
 		ubyte meta = *ptr;
 
 		if (y % 2 == 0)
-			*ptr = (meta & 0xf0) | (b.metadata & 0x0f);
+			*ptr = (meta & 0xf0) | (b.meta & 0x0f);
 		else
-			*ptr = cast(ubyte)(b.metadata << 4) | (meta & 0x0f);
+			*ptr = cast(ubyte)(b.meta << 4) | (meta & 0x0f);
 
 		return b;
 	}
