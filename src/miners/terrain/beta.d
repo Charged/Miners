@@ -53,15 +53,83 @@ public:
 
 	/*
 	 *
-	 * Data access functions. 
+	 * Block access functions.
 	 *
 	 */
 
 
-	final ubyte opIndex(int x, int y, int z)
+	final Block opIndex(int x, int y, int z)
+	{
+		Block b;
+		if (y < 0)
+			return b;
+		if (y >= 128)
+			return b;
+
+		int xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		int zPos = z < 0 ? (z - 15) / 16 : z / 16;
+		x = cast(uint)x % 16;
+		z = cast(uint)z % 16;
+
+		auto c = getChunk(xPos, zPos);
+		if (c is null)
+			return b;
+
+		b.type = c.getTypePointerUnsafe(x, z)[y];
+		b.metadata = c.getTypePointerUnsafe(x, z)[y/2];
+
+		if (y % 2 == 0)
+			b.metadata &= 0xf;
+		else
+			b.metadata >>= 4;
+
+		return b;
+	}
+
+	final Block opIndexAssign(Block b, int x, int y, int z)
 	{
 		if (y < 0)
-			y = 0;
+			return Block();
+		if (y >= 128)
+			return Block();
+
+		int xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		int zPos = z < 0 ? (z - 15) / 16 : z / 16;
+		x = cast(uint)x % 16;
+		z = cast(uint)z % 16;
+
+		auto c = getChunk(xPos, zPos);
+		if (c is null)
+			return b;
+
+		c.getTypePointerUnsafe(x, z)[y] = b.type;
+
+		auto ptr = &c.getMetaPointerUnsafe(x, z)[y/2];
+		ubyte meta = *ptr;
+
+		if (y % 2 == 0)
+			*ptr = (meta & 0xf0) | (b.metadata & 0x0f);
+		else
+			*ptr = cast(ubyte)(b.metadata << 4) | (meta & 0x0f);
+
+		return b;
+	}
+
+
+	/*
+	 *
+	 * Type & Meta access functions.
+	 *
+	 */
+
+
+	/**
+	 * Return the type for block at location.
+	 */
+	final ubyte getType(int x, int y, int z)
+	{
+		if (y < 0)
+			return 0;
 		else if (y >= 128)
 			return 0;
 
@@ -71,6 +139,27 @@ public:
 		z = cast(uint)z % 16;
 
 		return getTypeUnsafe(xPos, zPos, x, y, z);
+	}
+
+	/**
+	 * Set the type for block at location.
+	 */
+	final ubyte setType(ubyte type, int x, int y, int z)
+	{
+		if (y < 0)
+			return 0;
+		else if (y >= 128)
+			return 0;
+
+		int xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		int zPos = z < 0 ? (z - 15) / 16 : z / 16;
+		x = cast(uint)x % 16;
+		z = cast(uint)z % 16;
+
+		auto ptr = getTypePointerUnsafe(xPos, zPos, x, z);
+		if (ptr is null)
+			return 0;
+		return ptr[y] = type;
 	}
 
 	/**

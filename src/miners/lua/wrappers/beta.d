@@ -41,7 +41,7 @@ struct BetaTerrainWrapper
 		auto y = cast(int)floor(s.toNumber(3));
 		auto z = cast(int)floor(s.toNumber(4));
 
-		auto b = bt[x, y, z];
+		auto b = bt.getType(x, y, z);
 
 		s.pushNumber(b);
 		return 1;
