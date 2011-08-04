@@ -37,6 +37,7 @@ public:
 	uint xNumChunks;
 	uint yNumChunks;
 	uint zNumChunks;
+	uint totalNumChunks;
 
 	uint xStride;
 	uint yStride;
@@ -52,6 +53,7 @@ protected:
 	cMemoryArray!(ubyte) store;
 
 	GfxVBO vbos[];
+	bool dirty[];
 
 	int xSaved;
 	int ySaved;
@@ -84,7 +86,9 @@ public:
 		if (zNumChunks * 16 < zSize)
 			zNumChunks++;
 
-		vbos.length = xNumChunks * yNumChunks * zNumChunks;
+		totalNumChunks = xNumChunks * yNumChunks * zNumChunks;
+		vbos.length = totalNumChunks;
+		dirty.length = totalNumChunks;
 
 		xStride = ySize;
 		yStride = 1;
@@ -281,6 +285,60 @@ public:
 
 	/*
 	 *
+	 * Dirty tracking functions.
+	 *
+	 */
+
+
+	/**
+	 * Mark the given volume as dirty and rebuilt the chunks there.
+	 */
+	void markVolumeDirty(int x, int y, int z, uint sx, uint sy, uint sz)
+	{
+		// We must mark all chunks that neighbor the changed area.
+		 x -= 1;  y -= 1;  z -= 1;
+		sx += 2; sy += 2; sz += 2;
+
+		int xStart = x < 0 ? (x - 15) / 16 : x / 16;
+		int yStart = y < 0 ? (y - 127) / 128 : y / 128;
+		int zStart = z < 0 ? (z - 15) / 16 : z / 16;
+
+		x += sx;
+		y += sy;
+		z += sz;
+		int xStop = x < 0 ? (x - 15) / 16 : x / 16;
+		int yStop = y < 0 ? (y - 127) / 128 : y / 128;
+		int zStop = z < 0 ? (z - 15) / 16 : z / 16;
+
+		xStop++; yStop++; zStop++;
+
+		if (xStart < 0)
+			xStart = 0;
+		if (yStart < 0)
+			yStart = 0;
+		if (zStart < 0)
+			zStart = 0;
+
+		if (xStop > xNumChunks)
+			xStop = xNumChunks;
+		if (yStop > yNumChunks)
+			yStop = yNumChunks;
+		if (zStop > zNumChunks)
+			zStop = zNumChunks;
+
+		for (x = xStart; x < xStop; x++) {
+			for (z = zStart; z < zStop; z++) {
+				int i = calcVboIndex(x, yStart, z);
+				for (y = yStart; y < yStop; y++, i++) {
+					dirty[i] = true;
+				}
+			}
+		}
+	}
+
+
+	/*
+	 *
 	 * Inhereted terrain methods.
 	 *
 	 */
@@ -376,11 +434,13 @@ protected:
 
 	bool build(int x, int y, int z)
 	{
+		if (!shouldBuild(x, y, z))
+			return false;
+
 		auto ws = extractWorkspace(x, y, z);
 		GfxVBO v;
 
-		if (getVBO(x, y, z) !is null)
-			return false;
+		unbuild(x, y, z);
 
 		if (cvgrm !is null) {
 			v = buildRigidMeshFromChunk(ws, x, y, z);
@@ -419,13 +479,27 @@ protected:
 			cvgcm.remove(v);
 	}
 
+	final uint calcVboIndex(int x, int y, int z)
+	{
+		return (xNumChunks * z + x) * yNumChunks + y;
+	}
+
+	final bool shouldBuild(int x, int y, int z)
+	{
+		int i = calcVboIndex(x, y, z);
+		return dirty[i] || vbos[i] is null;
+	}
+
 	final void setVBO(GfxVBO vbo, int x, int y, int z)
 	{
-		vbos[(xNumChunks * z + x) * yNumChunks + y] = vbo;
+		int i = calcVboIndex(x, y, z);
+		vbos[i] = vbo;
+		dirty[i] = false;
 	}
 
 	final GfxVBO getVBO(int x, int y, int z)
 	{
-		return vbos[(xNumChunks * z + x) * yNumChunks + y];
+		int i = calcVboIndex(x, y, z);
+		return vbos[i];
 	}
 }
