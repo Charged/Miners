@@ -272,6 +272,41 @@ public:
 
 	/*
 	 *
+	 * Dirty managment
+	 *
+	 */
+
+
+	/**
+	 * Marks the given volume as dirty.
+	 */
+	final void markVolumeDirty(int x, int y, int z, uint sx, uint sy, uint sz)
+	{
+		// We must mark all chunks that neighbor the changed area.
+		 x -= 1;  y -= 1;  z -= 1;
+		sx += 2; sy += 2; sz += 2;
+
+		int xStart = x < 0 ? (x - 15) / 16 : x / 16;
+		int zStart = z < 0 ? (z - 15) / 16 : z / 16;
+
+		x += sx;
+		z += sz;
+		int xStop = x < 0 ? (x - 15) / 16 : x / 16;
+		int zStop = z < 0 ? (z - 15) / 16 : z / 16;
+
+		for (x = xStart; x <= xStop; x++) {
+			for (z = zStart; z <= zStop; z++) {
+				auto c = getChunk(x, z);
+				if (c is null)
+					continue;
+				c.markDirty(y, sy);
+			}
+		}
+	}
+
+
+	/*
+	 *
 	 * Direct Chunk access functions.
 	 *
 	 */

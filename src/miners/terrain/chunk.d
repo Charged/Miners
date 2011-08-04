@@ -174,6 +174,14 @@ public:
 	}
 
 	/**
+	 * Mark the given block as dirty, chunk local coords.
+	 */
+	final void markDirty(int y, int sy)
+	{
+		dirty = true;
+	}
+
+	/**
 	 * Mark this chunk and all neighbours as dirty.
 	 */
 	void markNeighborsDirty()
