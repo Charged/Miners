@@ -12,6 +12,7 @@ static import charge.game.lua;
 
 alias lib.lua.state.ObjectWrapper ObjectWrapper;
 
+import miners.lua.functions;
 import miners.lua.wrappers.beta;
 import miners.lua.wrappers.actors;
 import miners.lua.wrappers.finite;
@@ -36,6 +37,7 @@ class LuaState : public charge.game.lua.LuaState
 private:
 	const luaL_Reg minerslib[] = [
 		{ "OtherPlayer", &OtherPlayerWrapper.newOtherPlayer },
+		{ "getRayPoints", &getRayPoints },
 		{ null, null },
 	];
 
