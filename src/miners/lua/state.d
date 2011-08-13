@@ -18,7 +18,7 @@ import miners.lua.functions;
 import miners.lua.wrappers.beta;
 import miners.lua.wrappers.types;
 import miners.lua.wrappers.actors;
-import miners.lua.wrappers.finite;
+import miners.lua.wrappers.terrain;
 import miners.lua.wrappers.classic;
 
 

@@ -14,10 +14,6 @@ import miners.options;
 import miners.actors.camera;
 import miners.actors.sunlight;
 import miners.lua.state;
-import miners.lua.wrappers.beta;
-import miners.lua.wrappers.actors;
-import miners.lua.wrappers.finite;
-import miners.lua.wrappers.classic;
 
 import lib.lua.lua;
 import lib.lua.lauxlib;

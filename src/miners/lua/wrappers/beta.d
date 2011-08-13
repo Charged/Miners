@@ -6,59 +6,7 @@ import std.math;
 
 import miners.lua.state;
 import miners.beta.world;
-import miners.terrain.beta;
 
-
-struct BetaTerrainWrapper
-{
-	const static char *namez = "d_class_minecraft_terrain_beta_BetaTerrain";
-	const static char[] name = "d_class_minecraft_terrain_beta_BetaTerrain";
-
-	extern (C) static int index(lua_State *l)
-	{
-		auto s = LuaState(l);
-		char[] key;
-		auto w = s.checkClass!(BetaTerrain)(1, false);
-		s.checkString(2);
-
-		key = s.toString(2);
-		switch(key) {
-		default:
-			s.getMetaTable(1);
-			s.pushValue(2);
-			s.getTable(-2);
-			break;
-		}
-
-		return 1;
-	}
-
-	extern (C) static int getType(lua_State *l)
-	{
-		auto s = LuaState(l);
-		auto bt = s.checkClass!(BetaTerrain)(1, false);
-		auto x = cast(int)floor(s.toNumber(2));
-		auto y = cast(int)floor(s.toNumber(3));
-		auto z = cast(int)floor(s.toNumber(4));
-
-		auto b = bt.getType(x, y, z);
-
-		s.pushNumber(b);
-		return 1;
-	}
-
-	static void register(LuaState s)
-	{
-		s.registerClass!(BetaTerrain);
-		s.pushCFunction(&ObjectWrapper.toString);
-		s.setFieldz(-2, "__tostring");
-		s.pushCFunction(&index);
-		s.setFieldz(-2, "__index");
-		s.pushCFunction(&getType);
-		s.setFieldz(-2, "getType");
-		s.pop();
-	}
-}
 
 struct BetaWorldWrapper
 {
