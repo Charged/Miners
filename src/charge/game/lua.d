@@ -315,7 +315,7 @@ struct Vector3dWrapper
 		s.checkString(2);
 
 		key = s.toString(2);
-		switch(key)	{
+		switch(key) {
 		case "x":
 			s.pushNumber(ud.x);
 			break;
