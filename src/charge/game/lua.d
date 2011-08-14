@@ -216,6 +216,26 @@ struct QuatdWrapper
 		case "w":
 			s.pushNumber(ud.w);
 			break;
+		case "forward":
+		case "heading":
+			s.pushVector3d(ud.rotateHeading);
+			break;
+		case "backward":
+		case "backwards":
+			s.pushVector3d(-ud.rotateHeading);
+			break;
+		case "up":
+			s.pushVector3d(ud.rotateUp);
+			break;
+		case "down":
+			s.pushVector3d(-ud.rotateUp);
+			break;
+		case "left":
+			s.pushVector3d(ud.rotateLeft);
+			break;
+		case "right":
+			s.pushVector3d(-ud.rotateLeft);
+			break;
 		default:
 			s.getMetaTable(1);
 			s.pushValue(2);
