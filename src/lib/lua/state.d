@@ -477,7 +477,7 @@ public:
 	lua_CFunction toCFunction(int index = -1) { return lua_tocfunction(l, index); }
 	void* toUserData(int index = -1) { return lua_touserdata(l, index); }
 
-	char* checkString(int index = -1) { return luaL_checkstring(l, index); }
+	char[] checkString(int index = -1) { size_t e; auto p = luaL_checklstring(l, index, &e); return p[0 .. e]; }
 	double checkNumber(int index = -1) { return luaL_checknumber(l, index); }
 	void* checkUserData(int index, char[] name) { return checkUserDataz(index, std.string.toStringz(name)); }
 	void* checkUserDataz(int index, char* namez) { return luaL_checkudata(l, index, namez); }
