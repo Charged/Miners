@@ -58,7 +58,7 @@ private static char[] StructWrapperRest(char[] type)
 alias lib.lua.lua.lua_State lua_State;
 alias lib.lua.state.ObjectWrapper ObjectWrapper;
 
-private static char[] StructWrapper(char[] type)
+static char[] StructWrapper(char[] type)
 {
 	return StructWrapperPush(type) ~ StructWrapperRest(type);
 }
