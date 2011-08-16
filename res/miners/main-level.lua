@@ -13,6 +13,7 @@ local require = _G.require
 --
 
 require "charge"   -- Basic types from Charge
+require "miners"   -- Minecraft types and classes
 require "exported" -- Setup exported/imported globals
 require "defaults" -- Default values
 require "input"    -- Needed to handle callbacks
@@ -20,6 +21,7 @@ require "player"   -- The player
 
 local Quat = _G.charge.Quat
 local Vector = _G.charge.Vector
+local Block = _G.miners.Block
 
 local light = _G.light
 local world = _G.world

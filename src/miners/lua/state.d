@@ -11,9 +11,12 @@ static import lib.lua.state;
 static import charge.game.lua;
 
 alias lib.lua.state.ObjectWrapper ObjectWrapper;
+alias charge.game.lua.StructWrapper StructWrapper;
 
+import miners.types;
 import miners.lua.functions;
 import miners.lua.wrappers.beta;
+import miners.lua.wrappers.types;
 import miners.lua.wrappers.actors;
 import miners.lua.wrappers.finite;
 import miners.lua.wrappers.classic;
@@ -34,8 +37,11 @@ class LuaState : public charge.game.lua.LuaState
 		call(1);
 	}
 
+	mixin (StructWrapper("Block"));
+
 private:
 	const luaL_Reg minerslib[] = [
+		{ "Block", &BlockWrapper.newBlock },
 		{ "OtherPlayer", &OtherPlayerWrapper.newOtherPlayer },
 		{ "getRayPoints", &getRayPoints },
 		{ null, null },
@@ -46,6 +52,9 @@ private:
 		auto s = LuaState(l);
 
 		luaL_register(l, "miners", minerslib.ptr);
+
+		// Register structs
+		BlockWrapper.register(s);
 
 		// Register actors
 		CameraWrapper.register(s);
