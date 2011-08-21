@@ -56,6 +56,8 @@ function player:logic()
 
 	local ground = self.ground
 	local vec = Vector()
+	self.heading = move.heading
+	self.pitch = move.pitch
 
 	if move.forward then vec = vec + Vector(0, 0, -1) end
 	if move.backward then vec = vec + Vector(0, 0, 1) end
