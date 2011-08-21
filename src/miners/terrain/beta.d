@@ -394,7 +394,7 @@ public:
 			}
 		}
 
-		buildReset();
+		resetBuild();
 
 		charge.sys.resource.Pool().collect();
 	}
@@ -438,7 +438,7 @@ public:
 			}
 		}
 
-		buildReset();
+		resetBuild();
 
 		// Do the change
 		doBuildTypeChange(type);
@@ -509,7 +509,7 @@ public:
 	/**
 	 * Start over from the begining when building chunks.
 	 */
-	void buildReset()
+	void resetBuild()
 	{
 		// Reset the saved position for the buildOne function
 		save_build_i = 0;

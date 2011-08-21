@@ -373,13 +373,13 @@ public:
 
 		doBuildTypeChange(type);
 
-		buildReset();
+		resetBuild();
 	}
 
 	/**
 	 * Start over from the begining when building "chunk" meshes.
 	 */
-	void buildReset()
+	void resetBuild()
 	{
 		xSaved = ySaved = zSaved = 0;
 	}
