@@ -10,7 +10,6 @@ import charge.charge;
 import miners.world;
 import miners.runner;
 import miners.options;
-import miners.terrain.chunk;
 import miners.actors.sunlight;
 import miners.actors.otherplayer;
 
