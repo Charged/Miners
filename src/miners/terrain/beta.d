@@ -14,11 +14,8 @@ import miners.terrain.chunk;
 import miners.terrain.common;
 import miners.importer.blocks;
 
-class BetaTerrain : public Terrain
+final class BetaTerrain : public Terrain
 {
-private:
-	//mixin SysLogging;
-
 public:
 	const int width = 16;
 	const int depth = 16;

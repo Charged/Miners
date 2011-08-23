@@ -18,7 +18,7 @@ import miners.builder.workspace;
  *
  * Has a minimum size of 16x128x16.
  */
-class FiniteTerrain : public Terrain
+final class FiniteTerrain : public Terrain
 {
 private:
 	mixin SysLogging;

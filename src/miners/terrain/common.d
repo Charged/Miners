@@ -50,6 +50,15 @@ public:
 	abstract void setBuildType(TerrainBuildTypes type, char[] name);
 	abstract bool buildOne();
 
+	abstract void resetBuild();
+	abstract void markVolumeDirty(int x, int y, int z, uint w, uint h, uint d);
+
+	abstract Block opIndex(int x, int y, int z);
+	abstract Block opIndexAssign(Block b, int x, int y, int z);
+
+	abstract ubyte getType(int x, int y, int z);
+	abstract ubyte setType(ubyte type, int x, int y, int z);
+
 protected:
 	void doBuildTypeChange(TerrainBuildTypes type)
 	{
