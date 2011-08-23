@@ -20,6 +20,7 @@ require "input"    -- Needed to handle callbacks
 require "player"   -- The player
 
 local Quat = _G.charge.Quat
+local Point = _G.charge.Point
 local Vector = _G.charge.Vector
 local Block = _G.miners.Block
 
@@ -94,6 +95,19 @@ function logic()
 	light.rotation = Quat(0.0001, 0, 0) * light.rotation
 
 	player:logic()
+
+	local gold = Block(41, 0)
+	local pos = player.pos + player.headHeight
+	local dir = Quat(player.heading, player.pitch, 0).forward
+
+	for num,point in ipairs({miners.getRayPoints(pos, dir, 3) }) do
+		local b = terrain:getType(point)
+		if b ~= 0 and b ~= 41 then
+			terrain:set(gold, point)
+			terrain:markDirty(point)
+			terrain:resetBuild()
+		end
+	end
 end
 
 
