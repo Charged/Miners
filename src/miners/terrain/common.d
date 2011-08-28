@@ -12,18 +12,18 @@ import miners.gfx.vbo;
 
 class Terrain : public GameActor
 {
-private:
-	mixin SysLogging;
+public:
+	ChunkVBOGroupRigidMesh cvgrm;
+	ChunkVBOGroupCompactMesh cvgcm;
+	bool buildIndexed; // The renderer supports array textures.
 
 protected:
 	Options opts;
 	int view_radii;
 	TerrainBuildTypes currentBuildType;
 
-public:
-	ChunkVBOGroupRigidMesh cvgrm;
-	ChunkVBOGroupCompactMesh cvgcm;
-	bool buildIndexed; // The renderer supports array textures.
+private:
+	mixin SysLogging;
 
 public:
 	this(GameWorld w, Options opts)
