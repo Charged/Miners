@@ -8,11 +8,8 @@ import charge.charge;
 
 import miners.types;
 import miners.options;
-import miners.gfx.vbo;
-import miners.gfx.renderer;
 import miners.terrain.chunk;
 import miners.terrain.common;
-import miners.importer.blocks;
 
 final class BetaTerrain : public Terrain
 {
@@ -27,15 +24,20 @@ public:
 	int rxOff;
 	int rzOff;
 	Region[depth][width] region;
-	char[] dir;
+
+	alias void delegate(Chunk c) NewChunkDg;
+	NewChunkDg newChunkDg;
 
 public:
-	this(GameWorld w, char[] dir, Options opts)
+	this(GameWorld w, Options opts, NewChunkDg dg)
 	{
 		this.rxOff = 0;
 		this.rzOff = 0;
-		this.dir = dir;
 		super(w, opts);
+
+		assert(dg !is null);
+
+		newChunkDg = dg;
 
 		// Make sure all state is setup correctly
 		setCenter(0, 0);
@@ -341,24 +343,10 @@ public:
 			region[rx][rz] = r = new Region(this, rx+rxOff, rz+rzOff);
 
 		auto c = r.createChunkUnsafe(x, z);
-
-		// Don't load chunk data if no level was specified.
-		if (dir is null)
-			return c;
-
 		if (c.loaded)
 			return c;
 
-		ubyte *blocks;
-		ubyte *data;
-		if (getBetaBlocksForChunk(dir, x, z, blocks, data)) {
-			c.giveBlocksAndData(blocks, data);
-			c.valid = true;
-		}
-		c.loaded = true;
-
-		// Make the neighbors be built again.
-		c.markNeighborsDirty();
+		newChunkDg(c);
 
 		return c;
 	}
