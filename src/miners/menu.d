@@ -24,7 +24,7 @@ protected:
 
 	GfxTextureTarget menuTexture;
 
-	LevelButton currentButton;
+	Button currentButton;
 	HeaderContainer hc;
 	InputHandler ih;
 
@@ -261,15 +261,19 @@ private:
 
 	void selectMenuSelect(Button b)
 	{
-		auto lb = cast(LevelButton)b;
-		if (currentButton is lb)
+		if (currentButton is b)
 			return;
 
 		if (levelRunner !is null)
 			router.deleteMe(levelRunner);
 
-		levelRunner = router.loadLevel(lb.info.dir);
-		currentButton = lb;
+		auto lb = cast(LevelButton)b;
+		if (lb is null) {
+			levelRunner = router.loadLevel(null);
+		} else {
+			levelRunner = router.loadLevel(lb.info.dir);
+		}
+		currentButton = b;
 	}
 
 	const char[] headerTextChars = `Charged Miners`;
@@ -311,6 +315,11 @@ public:
 		auto levels = scanForLevels();
 		char[] str;
 
+		{
+			auto lb = new Button(this, 0, 0, "Random", 32);
+			lb.pressed ~= dg;
+		}
+
 		foreach(l; levels) {
 			if (!l.beta)
 				continue;
@@ -320,10 +329,10 @@ public:
 		}
 
 		int pos;
-		foreach(c; getChildren()) {
+		foreach(int i, c; getChildren()) {
 			c.x = 0;
 			c.y = pos;
-			pos += c.h;
+			pos += i == 0 ? c.h + 10 : c.h;
 			w = cast(int)fmax(w, c.x + c.w);
 			h = cast(int)fmax(h, c.y + c.h);
 		}

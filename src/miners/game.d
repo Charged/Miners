@@ -25,6 +25,7 @@ import miners.lua.runner;
 import miners.lua.builtin;
 import miners.gfx.manager;
 import miners.beta.world;
+import miners.isle.world;
 import miners.terrain.beta;
 import miners.terrain.chunk;
 import miners.classic.world;
@@ -570,7 +571,9 @@ protected:
 		Runner r;
 		World w;
 
-		if (isdir(level)) {
+		if (level is null) {
+			w = new IsleWorld(opts);
+		} else if (isdir(level)) {
 			auto info = checkMinecraftLevel(level);
 
 			// XXX Better warning
