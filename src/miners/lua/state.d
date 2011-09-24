@@ -15,6 +15,7 @@ alias charge.game.lua.StructWrapper StructWrapper;
 
 import miners.types;
 import miners.lua.functions;
+import miners.lua.wrappers.isle;
 import miners.lua.wrappers.beta;
 import miners.lua.wrappers.types;
 import miners.lua.wrappers.actors;
@@ -63,6 +64,7 @@ private:
 		OtherPlayerWrapper.register(s);
 
 		// Register world and terrain
+		IsleWorldWrapper.register(s);
 		BetaWorldWrapper.register(s);
 		BetaTerrainWrapper.register(s);
 		ClassicWorldWrapper.register(s);
