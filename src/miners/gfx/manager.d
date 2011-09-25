@@ -41,8 +41,12 @@ private:
 public:
 	this()
 	{
+		auto sanity = GfxFixedRenderer.check();
 		canDoForward = MinecraftForwardRenderer.check();
 		canDoDeferred = MinecraftDeferredRenderer.check();
+
+		if (!sanity && !canDoForward && !canDoDeferred)
+			throw new Exception("Can not run any renderer!");
 
 		defaultTarget = GfxDefaultTarget();
 		setupRenderers();

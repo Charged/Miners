@@ -40,9 +40,9 @@ protected:
 public:
 	static void init()
 	{
-		deferred = DeferredRenderer.init();
 		fixed = FixedRenderer.init();
 		forward = ForwardRenderer.init();
+		deferred = DeferredRenderer.init();
 
 		initilized = true;
 	}

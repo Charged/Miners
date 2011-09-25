@@ -14,11 +14,23 @@ private:
 
 	mixin SysLogging;
 
+	static bool checked;
+	static bool checkStatus;
+
 public:
 	static bool textureArraySupported;
 
 	static bool check()
 	{
+		if (checked)
+			return checkStatus;
+
+		// We have checked, if we fail that means we failed.
+		checked = true;
+
+		if (!GfxForwardRenderer.check())
+			return false;
+
 		try {
 			if (!GL_VERSION_2_0)
 				throw new Exception("GL_VERSION < 2.0");
@@ -49,13 +61,17 @@ public:
 		} catch (Exception e) {
 			l.warn("Not using texture arrrays (%s).", e.toString());
 		}
-		
 
+		l.info("Can run Miners forward renderer.");
+
+		checkStatus = true;
 		return true;
 	}
 
 	this()
 	{
+		assert(initialized);
+
 		if (textureArraySupported) {
 			material_shader_indexed = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
 								 Helper.materialFragForwardIndexed,
@@ -155,16 +171,21 @@ private:
 	static bool initialized;
 	static GfxShader material_shader;
 
-public:
-	this()
-	{
-		if (!initialized)
-			throw new Exception("Not initialized or failed to init MinecraftRenderer");
-		super();
-	}
+	static bool checked;
+	static bool checkStatus;
 
+public:
 	static bool check()
 	{
+		if (checked)
+			return checkStatus;
+
+		// We have checked, if we fail that means we failed.
+		checked = true;
+
+		if (!GfxDeferredRenderer.check())
+			return false;
+
 		int value;
 
 		try {
@@ -189,16 +210,25 @@ public:
 				throw new Exception("GL_EXT_texture_array doesn't support enough layers");
 
 		} catch (Exception e) {
-			l.warn("Is not cabable of running the deferred minecraft renderer!");
+			l.warn("Is not cabable of running the deferred miners renderer!");
 			l.warn(e.toString());
 			return false;
 		}
 
+		l.info("Can run deferred miners renderer.");
+
+		checkStatus = true;
 		return true;
 	}
 
 	static bool init()
 	{
+		if (initialized)
+			return true;
+
+		if (!GfxDeferredRenderer.init())
+			return false;
+
 		if (!check())
 			return false;
 
@@ -215,6 +245,11 @@ public:
 		initialized = true;
 
 		return true;
+	}
+
+	this()
+	{
+		assert(initialized);
 	}
 
 protected:

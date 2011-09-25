@@ -26,21 +26,26 @@ import charge.gfx.world;
  */
 class ForwardRenderer : public Renderer
 {
-private:
-	mixin Logging;
-
 protected:
 	static Shader materialShaderMeshTex;
 	static Shader materialShaderSkelTex;
 
-public:
-	this()
-	{
-		l.bug("Created new fixed renderer");
-	}
+private:
+	mixin Logging;
 
-	static bool init()
+	static bool checked;
+	static bool checkStatus;
+	static bool initialized;
+
+public:
+	static bool check()
 	{
+		if (checked)
+			return checkStatus;
+
+		// We have checked, if we fail that means we failed.
+		checked = true;
+
 		try {
 			if (!GL_VERSION_2_0)
 				throw new Exception("GL_VERSION < 2.0");
@@ -57,6 +62,20 @@ public:
 			return false;
 		}
 
+		l.info("Can run forward renderer.");
+
+		checkStatus = true;
+		return true;
+	}
+
+	static bool init()
+	{
+		if (initialized)
+			return true;
+
+		if (!check())
+			return false;
+
 		materialShaderMeshTex =
 			ShaderMaker(materialVertMesh,
 				    materialFragTex,
@@ -69,9 +88,13 @@ public:
 				    ["vs_position", "vs_uv", "vs_normal"],
 				    ["diffuseTex"]);
 
-		// In theory we need to check for VBO's and stuff,
-		// but ffs who don't have those now adays?
+		initialized = true;
 		return true;
+	}
+
+	this()
+	{
+		assert(initialized);
 	}
 
 protected:

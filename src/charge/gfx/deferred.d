@@ -51,9 +51,19 @@ private:
 	static Shader fog_shader;
 	Texture spotlight_texture;
 
+	static bool checked;
+	static bool checkStatus;
+	static bool initialized;
+
 public:
-	static bool init()
+	static bool check()
 	{
+		if (checked)
+			return checkStatus;
+
+		// We have checked, if we fail that means we failed.
+		checked = true;
+
 		try {
 			if (!GL_VERSION_2_0)
 				throw new Exception("GL_VERSION < 2.0");
@@ -74,6 +84,19 @@ public:
 			return false;
 		}
 
+		l.info("Can run deferred renderer!");
+
+		checkStatus = true;
+		return true;
+	}
+
+	static bool init()
+	{
+		if (initialized)
+			return true;
+
+		if (!check())
+			return false;
 
 		/*
 		 * Mesh shaders.
@@ -158,15 +181,13 @@ public:
 
 		glUseProgram(0);
 
-		l.info("Is capable of running deferred renderer!");
-
+		initialized = true;
 		return true;
 	}
 
 	this()
 	{
-		if (!initilized)
-			throw new Exception("Rendering system not initalized");
+		assert(initilized);
 
 		depthTarget = new DepthTargetArray(2048, 2048, 4);
 
@@ -177,8 +198,6 @@ public:
 		// deleted at once but instead left up to the GC, and calling
 		// dereference from the GC context is bad.
 		spotlight_texture = Texture("res/spotlight.png");
-
-		l.bug("Created new deferred renderer");
 	}
 
 	~this()

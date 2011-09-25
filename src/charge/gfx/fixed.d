@@ -29,17 +29,53 @@ class FixedRenderer : public Renderer
 private:
 	mixin Logging;
 
+	static bool checked;
+	static bool checkStatus;
+	static bool initialized;
+
 public:
-	this()
+	static bool check()
 	{
-		l.bug("Created new fixed renderer");
+		if (checked)
+			return checkStatus;
+
+		// We have checked, if we fail that means we failed.
+		checked = true;
+
+		try {
+			if (!GL_VERSION_1_2)
+				throw new Exception("GL_VERSION < 1.2");
+
+			if (!GL_ARB_vertex_buffer_object)
+				throw new Exception("ARB VBO extension not available");
+
+		} catch (Exception e) {
+			l.info("Is not cabable of running fixed renderer!");
+			l.bug(e.toString());
+			return false;
+		}
+
+		l.info("Can run fixed renderer.");
+
+		checkStatus = true;
+		return true;
 	}
 
 	static bool init()
 	{
-		// In theory we need to check for VBO's and stuff,
-		// but ffs who don't have those now adays?
+		if (initialized)
+			return true;
+
+		if (!check())
+			return false;
+
+		initialized = true;
 		return true;
+	}
+
+	this()
+	{
+		assert(initialized);
 	}
 
 protected:
