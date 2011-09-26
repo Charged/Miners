@@ -23,6 +23,7 @@ public
 	static import charge.math.matrix4x4d;
 
 	static import charge.net.util;
+	static import charge.net.http;
 	static import charge.net.packet;
 	static import charge.net.client;
 	static import charge.net.server;
@@ -102,6 +103,7 @@ alias charge.net.client.Client NetClient;
 alias charge.net.server.Server NetServer;
 alias charge.net.threaded.ThreadedPacketQueue NetThreadedPacketQueue;
 alias charge.net.threaded.ThreadedTcpConnection NetThreadedTcpConnection;
+alias charge.net.http.ThreadedHttpConnection NetThreadedHttpConnection;
 alias charge.net.connection.Connection NetConnection;
 alias charge.net.connection.ConnectionListener NetConnectionListener;
 
