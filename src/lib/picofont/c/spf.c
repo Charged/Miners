@@ -106,6 +106,16 @@ unsigned char* FNT_Render(const char* text, unsigned int *w, unsigned int *h)
 	return FNT_RenderMax(text, strlen(text), w, h);
 }
 
+void FNT_BuildSize(const char* text, unsigned int len, unsigned int *w, unsigned int *h)
+{
+	FNT_xy xy;
+
+	xy = FNT_Generate(text, len, 0, NULL, 0);
+
+	*w = xy.x;
+	*h = xy.y;
+}
+
 unsigned char* FNT_RenderMax(const char* text, unsigned int len, unsigned int *w, unsigned int *h)
 {
 	unsigned char* pixels;

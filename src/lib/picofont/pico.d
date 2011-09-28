@@ -6,6 +6,8 @@ extern (C):
 ubyte* FNT_Render(char* text, uint *w, uint *y);
 ubyte* FNT_RenderMax(char* text, uint len, uint *w, uint *y);
 
+void FNT_BuildSize(char* text, uint len, uint *w, uint *h);
+
 void FNT_GetFontSize(uint *w, uint *h);
 void* FNT_GetFont();
 

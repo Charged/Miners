@@ -19,6 +19,8 @@ extern "C" {
 unsigned char* FNT_Render(const char* text, unsigned int *w, unsigned int *h);
 unsigned char* FNT_RenderMax(const char* text, unsigned int len, unsigned int *w, unsigned int *h);
 
+void FNT_BuildSize(const char* text, unsigned int len, unsigned int *w, unsigned int *h);
+
 void FNT_GetFontSize(unsigned int *w, unsigned int *h);
 unsigned char* FNT_GetFont();
 
