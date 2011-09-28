@@ -89,14 +89,17 @@ char[] makeTextGuiButton(char[] text, uint minwidth = 0)
  */
 class BaseText : public Component
 {
-public:
+private:
+	char[] t;
 	DynamicTexture gfx;
 
 public:
-	this(Container c, int x, int y, uint w, uint h)
+	this(Container c, int x, int y, char[] text)
 	{
-		gfx = new DynamicTexture("charge/game/gui/basetext");
-		super(c, x, y, w, h);
+		super(c, x, y, 0, 0);
+		this.t = text;
+
+		repack();
 	}
 
 	~this()
@@ -107,17 +110,22 @@ public:
 
 	void repack()
 	{
+		Font.buildSize(t, w, h);
 	}
 
 	void paint(Draw d)
 	{
+		if (gfx is null)
+			makeGfx();
 		d.blit(gfx, 0, 0);
 	}
 
 protected:
-	void makeGfx(char[] text)
+	void makeGfx()
 	{
-		Font.render(gfx, text);
+		if (gfx is null)
+			gfx = new DynamicTexture("charge/game/gui/basetext");
+		Font.render(gfx, t);
 	}
 }
 
@@ -132,13 +140,8 @@ public:
 public:
 	this(Container c, int x, int y, char[] text)
 	{
+		super(c, x, y, text);
 		this.text = text;
-
-		super(c, x, y, 1, 1);
-
-		makeGfx(text);
-		w = gfx.width;
-		h = gfx.height;
 	}
 }
 
@@ -158,11 +161,8 @@ public:
 		this.text = text;
 		this.minwidth = minwidth;
 
-		super(c, x, y, 1, 1);
-
-		makeGfx(makeTextGuiButton(text, minwidth));
-		w = gfx.width;
-		h = gfx.height;
+		auto t = makeTextGuiButton(text, minwidth);
+		super(c, x, y, t);
 	}
 
 	~this()
@@ -214,9 +214,7 @@ public:
 		this.plane = new Container(null, 0, 0, 1, 1);
 		Container.add(this.plane);
 		this.headerText = headerText;
-		this.headerGfx = new DynamicTexture("charge/game/gui/headertext");
 		this.headerBG = headerBG;
-		Font.render(headerGfx, headerText);
 	}
 
 	~this()
@@ -245,17 +243,23 @@ public:
 		w = 0;
 		h = 0;
 
+		plane.repack();
+
 		foreach(c; plane.getChildren()) {
 			w = cast(int)fmax(w, c.x + c.w);
 			h = cast(int)fmax(h, c.y + c.h);
 		}
 
-		w = 8 + cast(int)fmax(4 + headerGfx.width * 2 + 4, w) + 8;
-		h = 8 + 4 + headerGfx.height * 2 + 4 + 8 + h + 8;
+		uint headerGfxHeight;
+		uint headerGfxWidth;
+		Font.buildSize(headerText, headerGfxWidth, headerGfxHeight);
+
+		w = 8 + cast(int)fmax(4 + headerGfxWidth * 2 + 4, w) + 8;
+		h = 8 + 4 + headerGfxHeight * 2 + 4 + 8 + h + 8;
 		center = w / 2;
 
 		plane.x = 8;
-		plane.y = 8 + 4 + headerGfx.height * 2 + 4 + 8;
+		plane.y = 8 + 4 + headerGfxHeight * 2 + 4 + 8;
 		plane.w = w - 16;
 		plane.h = h - plane.y - 8;
 	}
@@ -263,6 +267,11 @@ public:
 protected:
 	void paintComponents(Draw d)
 	{
+		if (headerGfx is null) {
+			headerGfx = new DynamicTexture("charge/game/gui/headertext");
+			Font.render(headerGfx, headerText);
+		}
+
 		// Title bar background
 		d.fill(headerBG, false,
 		       8, 8, w-16, headerGfx.height*2+8);
