@@ -68,4 +68,12 @@ public:
 
 		dt.update(id, w, h);
 	}
+
+	static void buildSize(char[] text, out uint width, out uint height)
+	{
+		if (text is null)
+			return;
+
+		FNT_BuildSize(text.ptr, cast(uint)text.length, &width, &height);
+	}
 }
