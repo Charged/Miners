@@ -41,6 +41,11 @@ public:
 	Container parent() { return p; }
 
 	/**
+	 * Repack this and any eventual children.
+	 */
+	abstract void repack();
+
+	/**
 	 * Paint this component using Draw.
 	 */
 	abstract void paint(Draw d);

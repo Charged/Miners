@@ -105,6 +105,10 @@ public:
 			gfx.dereference();
 	}
 
+	void repack()
+	{
+	}
+
 	void paint(Draw d)
 	{
 		d.blit(gfx, 0, 0);

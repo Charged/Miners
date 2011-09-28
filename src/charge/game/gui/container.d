@@ -43,6 +43,12 @@ public:
 			delete c;
 	}
 
+	void repack()
+	{
+		foreach(c; children)
+			c.repack();
+	}
+
 	Component[] getChildren()
 	{
 		return children.adup;
