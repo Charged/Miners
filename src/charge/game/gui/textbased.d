@@ -44,17 +44,6 @@ public import charge.game.gui.container;
  * const char textGuiVerticalLine = 186;
  */
 
-void gah();
-
-template Tjo(alias name) {
-	void name()
-	{
-		std.stdio.writefln();
-	}
-}
-
-mixin Tjo!(gah);
-
 const char textGuiTopLeft = 201;
 const char textGuiTopRight = 187;
 const char textGuiBottomLeft = 200;
