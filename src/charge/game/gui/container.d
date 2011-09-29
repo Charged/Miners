@@ -130,6 +130,26 @@ public:
 		paintForeground(d);
 	}
 
+	void breakApart()
+	{
+		while(children.length > 0) {
+			auto i = children.length-1;
+			auto c = children[i];
+
+			c.breakApart();
+			children.remove(i);
+			disownChild(c);
+		}
+
+		releaseResources();
+	}
+
+	void releaseResources()
+	{
+		foreach(c; children)
+			c.releaseResources();
+	}
+
 protected:
 	void paintBackground(Draw d)
 	{
@@ -203,5 +223,15 @@ public:
 		d.stop();
 
 		delete d;
+	}
+
+	void releaseResources()
+	{
+		super.releaseResources();
+
+		if (tt !is null) {
+			tt.dereference();
+			tt = null;
+		}
 	}
 }

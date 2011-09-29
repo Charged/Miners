@@ -51,6 +51,19 @@ public:
 	abstract void paint(Draw d);
 
 	/**
+	 * Disown any children and releases any resources.
+	 */
+	void breakApart()
+	{
+		releaseResources();
+	}
+
+	/**
+	 * Releases any resources this component or any of its children has.
+	 */
+	abstract void releaseResources();
+
+	/**
 	 * Get the compenet at coordinate x, y, return absolute position.
 	 */
 	Component at(int x, int y, inout int absX, inout int absY)

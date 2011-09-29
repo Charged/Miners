@@ -120,6 +120,14 @@ public:
 		d.blit(gfx, 0, 0);
 	}
 
+	void releaseResources()
+	{
+		if (gfx !is null) {
+			gfx.dereference();
+			gfx = null;
+		}
+	}
+
 protected:
 	void makeGfx()
 	{
@@ -262,6 +270,16 @@ public:
 		plane.y = 8 + 4 + headerGfxHeight * 2 + 4 + 8;
 		plane.w = w - 16;
 		plane.h = h - plane.y - 8;
+	}
+
+	void releaseResources()
+	{
+		super.releaseResources();
+
+		if (headerGfx !is null) {
+			headerGfx.dereference();
+			headerGfx = null;
+		}
 	}
 
 protected:
