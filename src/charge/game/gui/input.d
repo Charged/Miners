@@ -16,6 +16,11 @@ protected:
 	Mouse mouse;
 
 public:
+	this()
+	{
+		this(null);
+	}
+
 	this(Component root)
 	{
 		this.root = root;
@@ -26,6 +31,12 @@ public:
 	~this()
 	{
 		dropControl();
+	}
+
+	void setRoot(Component c)
+	{
+		focus(null);
+		root = c;
 	}
 
 	void focus(Component c)
@@ -113,6 +124,9 @@ private:
 
 	void mouseMove(Mouse mouse, int ixrel, int iyrel)
 	{
+		if (root is null)
+			return;
+
 		int tx, ty;
 		auto c = getComponent(mouse.x, mouse.y, tx, ty);
 
@@ -124,6 +138,9 @@ private:
 
 	void mouseDown(Mouse m, int button)
 	{
+		if (root is null)
+			return;
+
 		int tx, ty;
 		auto c = getComponent(mouse.x, mouse.y, tx, ty);
 
@@ -135,6 +152,9 @@ private:
 
 	void mouseUp(Mouse m, int button)
 	{
+		if (root is null)
+			return;
+
 		int tx, ty;
 		auto c = getComponent(mouse.x, mouse.y, tx, ty);
 
