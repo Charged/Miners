@@ -94,12 +94,9 @@ public:
 		return parent.isAncester(c);
 	}
 
-	void repaint()
+	final void repaint()
 	{
-		if (parent is null)
-			return;
-
-		parent.repaint(x, y, w, h);
+		repaint(x, y, w, h);
 	}
 
 	void repaint(int x, int y, uint w, uint h)

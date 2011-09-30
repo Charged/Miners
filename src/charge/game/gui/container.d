@@ -176,6 +176,7 @@ class TextureContainer : public Container
 {
 public:
 	TextureTarget tt;
+	void delegate() repaintDg;
 
 public:
 	this(Container c, int x, int y, uint w, uint h)
@@ -187,6 +188,14 @@ public:
 	{
 		if (tt !is null)
 			tt.dereference();
+	}
+
+	void repaint(int x, int y, uint w, uint h)
+	{
+		if (repaintDg is null)
+			return;
+
+		repaintDg();
 	}
 
 	/**
