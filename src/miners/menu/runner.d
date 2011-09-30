@@ -2,16 +2,16 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.runner;
 
-import std.math;
-import std.string;
-
 import charge.charge;
-import charge.game.gui.textbased;
 import charge.game.gui.input;
+import charge.game.gui.textbased;
 
 import miners.runner;
 import miners.viewer;
-import miners.importer.info;
+import miners.menu.main;
+import miners.menu.beta;
+import miners.menu.error;
+
 
 /**
  * Menu runner
@@ -249,185 +249,5 @@ private:
 		ih.setRoot(tc);
 		tc.paint();
 		menuTexture = tc.getTarget();
-	}
-}
-
-class MainMenu : public HeaderContainer
-{
-private:
-	Text te;
-	Button ra;
-	Button cl;
-	Button be;
-	Button cb;
-	Button qb;
-
-	const char[] header = `Charged Miners`;
-
-	const char[] text =
-`Welcome to charged miners, please select below.
-
-`;
-
-public:
-	this(MenuRunner mr)
-	{
-		int pos;
-
-		super(Color4f(0, 0, 0, 0.8), header, Color4f(0, 0, 1, 0.8));
-
-		te = new Text(this, 0, 0, text);
-		pos += te.h;
-		ra = new Button(this, 0, pos, "Random", 32);
-		pos += ra.h;
-		cl = new Button(this, 0, pos, "Classic", 32);
-		pos += cl.h;
-		be = new Button(this, 0, pos, "Beta", 32);
-		pos += be.h + 16;
-		cb = new Button(this, 0, pos, "Close", 8);
-		qb = new Button(this, 0, pos, "Quit", 8);
-
-		ra.pressed ~= &mr.selectMenuSelect;
-		cl.pressed ~= &mr.mainMenuClassic;
-		be.pressed ~= &mr.mainMenuSelectLevel;
-		cb.pressed ~= &mr.commonMenuClose;
-		qb.pressed ~= &mr.commonMenuQuit;
-
-		repack();
-
-		auto center = plane.w / 2;
-
-		// Center the children
-		foreach(c; getChildren) {
-			c.x = center - c.w/2;
-		}
-
-		// Place the buttons next to each other.
-		cb.x = center + 8;
-		qb.x = center - 8 - qb.w;
-	}
-}
-
-class ErrorMenu : public HeaderContainer
-{
-private:
-	Text te;
-	Button qb;
-
-	const char[] header = `Charged Miners`;
-
-public:
-	this(MenuRunner mr, char[] errorText, Exception e)
-	{
-		super(Color4f(0, 0, 0, 0.8), header, Color4f(0, 0, 1, 0.8));
-
-		te = new Text(this, 0, 0, errorText);
-
-		// And some extra info if we get a Exception.
-		if (e !is null) {
-			auto t = format(e.classinfo.name, " ", e);
-			te = new Text(this, 0, te.h + 8, t);
-		}
-
-		// Add a quit button at the bottom.
-		qb = new Button(this, 0, te.y + te.h + 8, "Quit", 8);
-		qb.pressed ~= &mr.commonMenuQuit;
-
-		repack();
-
-		auto center = plane.w / 2;
-
-		// Center the children
-		foreach(c; getChildren) {
-			c.x = center - c.w/2;
-		}
-	}
-}
-
-class LevelMenu : public HeaderContainer
-{
-private:
-	Text te;
-	LevelSelector ls;
-	Button ba;
-
-	const char[] header = `Select a level`;
-
-	const char[] text =
-`Welcome to charged miners, please select level below.
-
-`;
-
-public:
-	this(MenuRunner mr)
-	{
-		super(Color4f(0, 0, 0, 0.8), header, Color4f(0, 0, 1, 0.8));
-
-		te = new Text(this, 0, 0, text);
-		ls = new LevelSelector(this, 0, te.h, &mr.selectMenuSelect);
-		ba = new Button(this, 0, ls.y + ls.h + 16, "Back", 8);
-
-		ba.pressed ~= &mr.selectMenuBack;
-
-		repack();
-
-		auto center = plane.w / 2;
-
-		// Center the children
-		foreach(c; getChildren) {
-			c.x = center - c.w/2;
-		}
-	}
-}
-
-/**
- * A Button that displays the name of a level.
- *
- * Used with the select menu.
- */
-class LevelButton : public Button
-{
-public:
-	MinecraftLevelInfo info;
-
-public:
-	this(Container p, MinecraftLevelInfo info)
-	{
-		this.info = info;
-		super(p, 0, 0, info.name, 32);
-	}
-}
-
-/**
- * A Container for LevelButtons.
- *
- * Used with the select menu.
- */
-class LevelSelector : public Container
-{
-public:
-	this(Container p, int x, int y, void delegate(Button b) dg)
-	{
-		auto levels = scanForLevels();
-		char[] str;
-
-		foreach(l; levels) {
-			if (!l.beta)
-				continue;
-
-			auto lb = new LevelButton(this, l);
-			lb.pressed ~= dg;
-		}
-
-		int pos;
-		foreach(int i, c; getChildren()) {
-			c.x = 0;
-			c.y = pos;
-			pos += c.h;
-			w = cast(int)fmax(w, c.x + c.w);
-			h = cast(int)fmax(h, c.y + c.h);
-		}
-
-		super(p, x, y, w, h);
 	}
 }
