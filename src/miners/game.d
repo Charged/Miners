@@ -16,7 +16,6 @@ import charge.charge;
 import charge.sys.file;
 import charge.platform.homefolder;
 
-import miners.menu;
 import miners.world;
 import miners.runner;
 import miners.viewer;
@@ -26,6 +25,7 @@ import miners.lua.builtin;
 import miners.gfx.manager;
 import miners.beta.world;
 import miners.isle.world;
+import miners.menu.runner;
 import miners.terrain.beta;
 import miners.terrain.chunk;
 import miners.classic.world;
