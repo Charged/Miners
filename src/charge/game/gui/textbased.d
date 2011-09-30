@@ -92,6 +92,7 @@ class BaseText : public Component
 private:
 	char[] t;
 	DynamicTexture gfx;
+	bool dirty;
 
 public:
 	this(Container c, int x, int y, char[] text)
@@ -115,7 +116,7 @@ public:
 
 	void paint(Draw d)
 	{
-		if (gfx is null)
+		if (gfx is null || dirty)
 			makeGfx();
 		d.blit(gfx, 0, 0);
 	}
@@ -129,11 +130,20 @@ public:
 	}
 
 protected:
+	void setText(char[] text)
+	{
+		dirty = true;
+		this.t = text;
+		repack();
+		repaint();
+	}
+
 	void makeGfx()
 	{
 		if (gfx is null)
 			gfx = new DynamicTexture("charge/game/gui/basetext");
 		Font.render(gfx, t);
+		dirty = false;
 	}
 }
 
@@ -150,6 +160,12 @@ public:
 	{
 		super(c, x, y, text);
 		this.text = text;
+	}
+
+	void setText(char[] text)
+	{
+		this.text = text;
+		super.setText(text);
 	}
 }
 
@@ -176,6 +192,14 @@ public:
 	~this()
 	{
 		pressed.destruct();
+	}
+
+	void setText(char[] text, int minwidth = -1)
+	{
+		if (minwidth >= 0)
+			this.minwidth = cast(uint)minwidth;
+
+		super.setText(makeTextGuiButton(text, this.minwidth));
 	}
 
 	void mouseDown(Mouse m, int x, int y, uint button)
