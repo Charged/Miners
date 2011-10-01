@@ -6,11 +6,12 @@ import charge.charge;
 import charge.math.ints;
 import charge.game.gui.textbased;
 
+import miners.menu.base;
 import miners.menu.runner;
 import miners.importer.info;
 
 
-class LevelMenu : public HeaderContainer
+class LevelMenu : public MenuBase
 {
 private:
 	Text te;
@@ -27,7 +28,7 @@ private:
 public:
 	this(MenuRunner mr)
 	{
-		super(Color4f(0, 0, 0, 0.8), header, Color4f(0, 0, 1, 0.8));
+		super(mr, header);
 
 		te = new Text(this, 0, 0, text);
 		ls = new LevelSelector(this, 0, te.h, &mr.selectMenuSelect);

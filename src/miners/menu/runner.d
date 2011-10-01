@@ -8,6 +8,7 @@ import charge.game.gui.textbased;
 
 import miners.runner;
 import miners.viewer;
+import miners.menu.base;
 import miners.menu.main;
 import miners.menu.beta;
 import miners.menu.error;
@@ -25,7 +26,7 @@ protected:
 	GfxTextureTarget menuTexture;
 
 	Button currentButton;
-	TextureContainer tc;
+	MenuBase menu;
 	InputHandler ih;
 	bool repaint;
 
@@ -64,8 +65,8 @@ public:
 	{
 		keyboard.down.disconnect(&this.keyDown);
 
-		if (tc !is null)
-			tc.breakApart();
+		if (menu !is null)
+			menu.breakApart();
 		delete ih;
 		delete levelRunner;
 
@@ -101,14 +102,14 @@ public:
 			if (menuTexture !is null)
 				menuTexture.dereference();
 
-			tc.paint();
+			menu.paint();
 
-			menuTexture = tc.getTarget();
+			menuTexture = menu.getTarget();
 			repaint = false;
 		}
 
-		tc.x = (rt.width - menuTexture.width) / 2;
-		tc.y = (rt.height - menuTexture.height) / 2;
+		menu.x = (rt.width - menuTexture.width) / 2;
+		menu.y = (rt.height - menuTexture.height) / 2;
 
 		auto d = new GfxDraw();
 		d.target = rt;
@@ -117,7 +118,7 @@ public:
 		if (levelRunner is null)
 			d.fill(Color4f(0, 0, 0, 1), false, 0, 0, rt.width, rt.height);
 
-		d.blit(menuTexture, tc.x, tc.y);
+		d.blit(menuTexture, menu.x, menu.y);
 		d.stop();
 	}
 
@@ -250,17 +251,21 @@ private:
 			router.switchTo(this);
 	}
 
-	void changeWindow(TextureContainer c)
+	void changeWindow(MenuBase mb)
 	{
 		if (menuTexture !is null)
 			menuTexture.dereference();
-		if (tc !is null)
-			tc.breakApart();
-		this.tc = c;
-		ih.setRoot(tc);
-		tc.paint();
-		tc.repaintDg = &triggerRepaint;
-		menuTexture = tc.getTarget();
+		if (menu !is null)
+			menu.breakApart();
+		menu = mb;
+		ih.setRoot(menu);
+
+		if (menu is null)
+			return;
+
+		menu.paint();
+		menu.repaintDg = &triggerRepaint;
+		menuTexture = menu.getTarget();
 	}
 
 	void triggerRepaint()

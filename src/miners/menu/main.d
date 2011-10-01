@@ -5,10 +5,11 @@ module miners.menu.main;
 import charge.charge;
 import charge.game.gui.textbased;
 
+import miners.menu.base;
 import miners.menu.runner;
 
 
-class MainMenu : public HeaderContainer
+class MainMenu : public MenuBase
 {
 private:
 	Text te;
@@ -30,7 +31,7 @@ public:
 	{
 		int pos;
 
-		super(Color4f(0, 0, 0, 0.8), header, Color4f(0, 0, 1, 0.8));
+		super(mr, header);
 
 		te = new Text(this, 0, 0, text);
 		pos += te.h;
