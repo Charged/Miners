@@ -27,6 +27,7 @@ protected:
 	Button currentButton;
 	TextureContainer tc;
 	InputHandler ih;
+	bool repaint;
 
 	CtlKeyboard keyboard;
 	CtlMouse mouse;
@@ -95,6 +96,16 @@ public:
 
 		if (menuTexture is null)
 			return;
+
+		if (repaint) {
+			if (menuTexture !is null)
+				menuTexture.dereference();
+
+			tc.paint();
+
+			menuTexture = tc.getTarget();
+			repaint = false;
+		}
 
 		tc.x = (rt.width - menuTexture.width) / 2;
 		tc.y = (rt.height - menuTexture.height) / 2;
@@ -248,6 +259,12 @@ private:
 		this.tc = c;
 		ih.setRoot(tc);
 		tc.paint();
+		tc.repaintDg = &triggerRepaint;
 		menuTexture = tc.getTarget();
+	}
+
+	void triggerRepaint()
+	{
+		repaint = true;
 	}
 }
