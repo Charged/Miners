@@ -179,6 +179,11 @@ public:
 
 	void disconnect(char[] reason)
 	{
-		l.info("Disconnected: \"%s\"", removeColorTags(reason));
+		auto rs = removeColorTags(reason);
+
+		l.info("Disconnected: \"%s\"", rs);
+
+		r.displayError(["Disconencted", rs], false);
+		r.deleteMe(this);
 	}
 }
