@@ -40,6 +40,9 @@ protected:
 
 	bool errorMode;
 
+public:
+	void delegate() ticker;
+
 private:
 	mixin SysLogging;
 
@@ -87,6 +90,8 @@ public:
 	{
 		if (levelRunner !is null)
 			return levelRunner.logic();
+		if (ticker !is null)
+			ticker();
 	}
 
 	void render(GfxRenderTarget rt)
