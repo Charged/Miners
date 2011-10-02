@@ -52,6 +52,17 @@ public:
 		super(r, opts, w);
 	}
 
+	this(Router r, Options opts, ClientConnection c,
+	     uint xSize, uint ySize, uint zSize, ubyte[] data)
+	{
+		this.c = c;
+		this.w = new ClassicWorld(opts);
+		super(r, opts, w);
+
+		c.setListener(this);
+		w.newLevelFromClassic(xSize, ySize, zSize, data);
+	}
+
 	~this()
 	{
 	}

@@ -86,6 +86,11 @@ public:
 		freePacketsUnsafe();
 	}
 
+	void setListener(ClassicClientNetworkListener l)
+	{
+		this.l = l;
+	}
+
 	/**
 	 * Push all the packages to the listener.
 	 */
