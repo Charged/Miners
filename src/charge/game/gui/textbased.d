@@ -105,8 +105,7 @@ public:
 
 	~this()
 	{
-		if (gfx !is null)
-			gfx.dereference();
+		assert(gfx is null);
 	}
 
 	void repack()
