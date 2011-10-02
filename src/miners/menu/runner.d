@@ -254,14 +254,21 @@ package:
 
 	void mainMenuSelectLevel(Button b)
 	{
-		changeWindow(new LevelMenu(this));
+		try {
+			auto lm = new LevelMenu(this);
+			changeWindow(lm);
+		} catch (Exception e) {
+			displayError(e, false);
+		}
 	}
+
 
 	/*
 	 *
 	 * Select menu callbacks and text.
 	 *
 	 */
+
 
 	void selectMenuSelect(Button b)
 	{
