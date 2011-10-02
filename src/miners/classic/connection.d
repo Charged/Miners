@@ -8,10 +8,12 @@ import std.string;
 import charge.charge;
 import charge.util.zip;
 
+import miners.types;
 import miners.classic.proto;
 import miners.importer.network;
 
 alias charge.net.util.ntoh ntoh;
+
 
 /**
  * Receive server to client packages.
@@ -66,17 +68,15 @@ private:
 	ClassicClientNetworkListener l;
 
 public:
-	this(ClassicClientNetworkListener l,
-	     char[] hostname, ushort port,
-	     char[] username, char[] verificationKey = null)
+	this(ClassicClientNetworkListener l, ClassicServerInfo csi)
 	{
 		this.l = l;
 
-		this.hostname = hostname;
-		this.port = port;
+		this.hostname = csi.hostname;
+		this.port = csi.port;
 
-		this.username = username;
-		this.verificationKey = verificationKey;
+		this.username = csi.username;
+		this.verificationKey = csi.verificationKey;
 
 		super();
 	}

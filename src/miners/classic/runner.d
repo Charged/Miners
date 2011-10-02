@@ -4,6 +4,7 @@ module miners.classic.runner;
 
 import charge.charge;
 
+import miners.types;
 import miners.runner;
 import miners.viewer;
 import miners.options;
@@ -40,16 +41,14 @@ public:
 		super(r, opts, w);
 	}
 
-	this(Router r, Options opts,
-	     char[] hostname, ushort port,
-	     char[] username, char[] password)
+	this(Router r, Options opts, ClassicServerInfo csi)
 	{
 		w = new ClassicWorld(opts);
 
-		l.info("Connecting to mc://%s:%s/%s", hostname, port, username);
+		l.info("Connecting to mc://%s:%s/%s/<redacted>",
+		       csi.hostname, csi.port, csi.username);
 
-		c = new ClientConnection(this, hostname, port,
-					 username, password);
+		c = new ClientConnection(this, csi);
 		super(r, opts, w);
 	}
 

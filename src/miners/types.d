@@ -22,3 +22,18 @@ struct Block
 	ubyte sunlight;    /**< [0 - 16] */
 	ubyte torchlight;  /**< [0 - 16] */
 }
+
+
+/**
+ * Information needed to connect to a classic server.
+ */
+class ClassicServerInfo
+{
+	char[] webName; /**< Name as given by the webpage. */
+	char[] webId; /**< Id on the webpage */
+
+	char[] hostname; /**< Hostname to connect to */
+	ushort port; /**< Port number to connect to */
+	char[] username; /**< Username used in slat */
+	char[] verificationKey; /**< Retrived from webpage */
+}

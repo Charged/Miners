@@ -16,6 +16,7 @@ import charge.charge;
 import charge.sys.file;
 import charge.platform.homefolder;
 
+import miners.types;
 import miners.world;
 import miners.runner;
 import miners.viewer;
@@ -35,7 +36,6 @@ import miners.importer.network;
 import miners.importer.texture;
 
 
-
 /**
  * Main hub of the minecraft game.
  */
@@ -49,12 +49,7 @@ private:
 	bool classicNetwork;
 
 	/* Classic server information */
-	char[] hostname;
-	ushort port;
-
-	/* Classic user information */
-	char[] username;
-	char[] password;
+	ClassicServerInfo csi;
 
 	/** Regexp for extracting information out of a mc url */
 	RegExp mcUrl;
@@ -97,9 +92,10 @@ public:
 		mcUrl = RegExp(mcUrlStr);
 
 		// Some defaults
-		port = 25565;
-		username = "Username";
-		password = "-";
+		csi = new ClassicServerInfo();
+		csi.username = "Username";
+		csi.hostname = "localhost";
+		csi.port = 25565;
 
 		running = true;
 
@@ -235,9 +231,7 @@ protected:
 			if (!classicNetwork)
 				r = new ClassicRunner(this, opts);
 			else
-				r = new ClassicRunner(this, opts,
-						      hostname, port,
-						      username, password);
+				r = new ClassicRunner(this, opts, csi);
 		}
 
 		if (r is null && level !is null) {
@@ -303,23 +297,24 @@ protected:
 		if (r.length < 8)
 			return false;
 
-		hostname = r[1];
+		csi.hostname = r[1];
 
 		if (r[5].length > 0)
-			username = r[5];
+			csi.username = r[5];
 		if (r[7].length > 0)
-			password = r[7];
+			csi.verificationKey = r[7];
 
 		try {
 			if (r[3].length > 0)
-				port = cast(ushort)toUint(r[3]);
+				csi.port = cast(ushort)toUint(r[3]);
 		} catch (Exception e) {
 		}
 
 		classic = true;
 		classicNetwork = true;
 
-		l.info("Url mc://%s:%s/%s/<redacted>", hostname, port, username);
+		l.info("Url mc://%s:%s/%s/<redacted>",
+		       csi.hostname, csi.port, csi.username);
 
 		return true;
 	}
