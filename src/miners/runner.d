@@ -56,6 +56,9 @@ interface Router : public GameRouter
 {
 	Runner loadLevel(char[] dir);
 	void render(GfxWorld w, GfxCamera c, GfxRenderTarget t);
+
+	void displayError(Exception e, bool panic);
+	void displayError(char[][] texts, bool panic);
 }
 
 /**

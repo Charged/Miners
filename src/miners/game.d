@@ -556,6 +556,28 @@ protected:
 
 	/*
 	 *
+	 * Error display functions.
+	 *
+	 */
+
+
+	void displayError(Exception e, bool panic)
+	{
+		if (mr is null)
+			throw e;
+		mr.displayError(e, panic);
+	}
+
+	void displayError(char[][] texts, bool panic)
+	{
+		if (mr is null)
+			throw new Exception("Menu runner not running!");
+		mr.displayError(texts, panic);
+	}
+
+
+	/*
+	 *
 	 * Managing runners functions.
 	 *
 	 */
