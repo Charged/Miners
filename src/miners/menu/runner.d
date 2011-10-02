@@ -6,13 +6,15 @@ import charge.charge;
 import charge.game.gui.input;
 import charge.game.gui.textbased;
 
-import miners.options;
+import miners.types;
 import miners.runner;
 import miners.viewer;
+import miners.options;
 import miners.menu.base;
 import miners.menu.main;
 import miners.menu.beta;
 import miners.menu.error;
+import miners.menu.classic;
 
 
 /**
@@ -177,6 +179,11 @@ public:
 	 *
 	 */
 
+
+	void connect(ClassicServerInfo csi)
+	{
+		changeWindow(new ClassicConnectingMenu(this, csi));
+	}
 
 	void displayError(Exception e, bool panic)
 	{

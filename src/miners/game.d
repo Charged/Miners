@@ -231,7 +231,7 @@ protected:
 			if (!classicNetwork)
 				r = new ClassicRunner(this, opts);
 			else
-				r = new ClassicRunner(this, opts, csi);
+				mr.connect(csi);
 		}
 
 		if (r is null && level !is null) {
