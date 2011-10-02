@@ -44,7 +44,7 @@ private:
 	mixin SysLogging;
 
 public:
-	this(Router r, Options opts, GameException ge = null)
+	this(Router r, Options opts)
 	{
 		this.router = r;
 		this.opts = opts;
@@ -56,14 +56,8 @@ public:
 
 		keyboard.down ~= &this.keyDown;
 
-		if (ge is null) {
-			auto m = new MainMenu(this);
-			changeWindow(m);
-		} else {
-			auto m = new ErrorMenu(this, ge.toString(), ge.next);
-			changeWindow(m);
-			errorMode = true;
-		}
+		auto m = new MainMenu(this);
+		changeWindow(m);
 	}
 
 	~this()
@@ -171,6 +165,46 @@ public:
 			levelRunner = null;
 	}
 
+
+	/*
+	 *
+	 * Misc
+	 *
+	 */
+
+
+	void displayError(Exception e, bool panic)
+	{
+		// Always handle exception via the game exception.
+		auto ge = cast(GameException)e;
+		if (ge is null)
+			ge = new GameException(null, e);
+
+
+		char[][] texts;
+		auto next = ge.next;
+
+		if (next is null) {
+			texts = [ge.toString()];
+		} else {
+			texts = [
+				ge.toString(),
+				next.classinfo.name,
+				next.toString()
+			];
+		}
+
+		displayError(texts, panic);
+	}
+
+	void displayError(char[][] texts, bool panic)
+	{
+		auto m = new ErrorMenu(this, texts, panic);
+		changeWindow(m);
+		errorMode = panic;
+	}
+
+
 package:
 	/*
 	 *
@@ -193,6 +227,11 @@ package:
 			router.switchTo(levelRunner);
 			changeWindow(new MainMenu(this));
 		}
+	}
+
+	void commonMenuBack(Button b)
+	{
+		changeWindow(new MainMenu(this));
 	}
 
 
@@ -239,11 +278,6 @@ package:
 			levelRunner = router.loadLevel(lb.info.dir);
 		}
 		currentButton = b;
-	}
-
-	void selectMenuBack(Button b)
-	{
-		changeWindow(new MainMenu(this));
 	}
 
 private:

@@ -14,27 +14,32 @@ import miners.menu.runner;
 class ErrorMenu : public MenuBase
 {
 private:
-	Text te;
-	Button qb;
+	Text te[];
+	Button button;
 
 	const char[] header = `Charged Miners`;
 
 public:
-	this(MenuRunner mr, char[] errorText, Exception e)
+	this(MenuRunner mr, char[][] errorTexts, bool panic)
 	{
 		super(mr, header);
 
-		te = new Text(this, 0, 0, errorText);
+		int pos;
+		te.length = errorTexts.length;
 
-		// And some extra info if we get a Exception.
-		if (e !is null) {
-			auto t = format(e.classinfo.name, " ", e);
-			te = new Text(this, 0, te.h + 8, t);
+		foreach(uint i, t; errorTexts) {
+			te[i] = new Text(this, 0, pos, t);
+			pos += te[i].h + 8;
 		}
 
 		// Add a quit button at the bottom.
-		qb = new Button(this, 0, te.y + te.h + 8, "Quit", 8);
-		qb.pressed ~= &mr.commonMenuQuit;
+		if (panic) {
+			button = new Button(this, 0, pos, "Quit", 8);
+			button.pressed ~= &mr.commonMenuQuit;
+		} else {
+			button = new Button(this, 0, pos, "Ok", 8);
+			button.pressed ~= &mr.commonMenuBack;
+		}
 
 		repack();
 

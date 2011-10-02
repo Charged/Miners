@@ -116,13 +116,20 @@ public:
 		try {
 			doInit();
 		} catch (GameException ge) {
-			mr = new MenuRunner(this, opts, ge);
-			nextRunner = mr;
+			if (mr is null)
+				throw ge;
+
+			mr.displayError(ge, true);
 		} catch (Exception e) {
+			if (mr is null)
+				throw e;
+
 			auto ge = new GameException(null, e);
-			mr = new MenuRunner(this, opts, ge);
-			nextRunner = mr;
+			mr.displayError(ge, true);
 		}
+
+		if (nextRunner is null)
+			nextRunner = mr;
 
 		manageRunners();
 
@@ -184,6 +191,9 @@ protected:
 		// First init options
 		opts = new Options();
 
+		// The menu is used to display error messages
+		mr = new MenuRunner(this, opts);
+
 		// Setup the inbuilt script files
 		initLuaBuiltins();
 
@@ -233,8 +243,6 @@ protected:
 		if (r is null && level !is null) {
 			r = loadLevel(level);
 		}
-
-		mr = new MenuRunner(this, opts);
 
 		// Run the level selector if no other level where given
 		if (r is null)

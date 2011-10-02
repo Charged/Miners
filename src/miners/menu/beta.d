@@ -34,7 +34,7 @@ public:
 		ls = new LevelSelector(this, 0, te.h, &mr.selectMenuSelect);
 		ba = new Button(this, 0, ls.y + ls.h + 16, "Back", 8);
 
-		ba.pressed ~= &mr.selectMenuBack;
+		ba.pressed ~= &mr.commonMenuBack;
 
 		repack();
 
