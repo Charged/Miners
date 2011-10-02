@@ -85,7 +85,11 @@ MinecraftLevelInfo[] scanForLevels(char[] dir = null)
 		return true;
 	}
 
-	listdir(dir, &cb);
+	try {
+		listdir(dir, &cb);
+	} catch (Exception e) {
+		return null;
+	}
 
 	return levels.adup;
 }
