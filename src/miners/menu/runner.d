@@ -6,6 +6,7 @@ import charge.charge;
 import charge.game.gui.input;
 import charge.game.gui.textbased;
 
+import miners.options;
 import miners.runner;
 import miners.viewer;
 import miners.menu.base;
@@ -19,8 +20,11 @@ import miners.menu.error;
  */
 class MenuRunner : public Runner
 {
-protected:
+public:
 	Router router;
+	Options opts;
+
+protected:
 	Runner levelRunner;
 
 	GfxTextureTarget menuTexture;
@@ -40,9 +44,10 @@ private:
 	mixin SysLogging;
 
 public:
-	this(Router r, GameException ge = null)
+	this(Router r, Options opts, GameException ge = null)
 	{
 		this.router = r;
+		this.opts = opts;
 
 		ih = new InputHandler(null);
 

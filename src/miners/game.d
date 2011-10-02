@@ -116,9 +116,10 @@ public:
 		try {
 			doInit();
 		} catch (GameException ge) {
-			nextRunner = new MenuRunner(this, ge);
+			nextRunner = new MenuRunner(this, opts, ge);
 		} catch (Exception e) {
-			nextRunner = new MenuRunner(this, new GameException(null, e));
+			auto ge = new GameException(null, e);
+			nextRunner = new MenuRunner(this, opts, ge);
 		}
 
 		manageRunners();
@@ -231,7 +232,7 @@ protected:
 			r = loadLevel(level);
 		}
 
-		mr = new MenuRunner(this);
+		mr = new MenuRunner(this, opts);
 
 		// Run the level selector if no other level where given
 		if (r is null)
