@@ -33,6 +33,7 @@ protected:
 	ALCcontext* alContext;
 
 	bool odeLoaded; /**< did we load the ODE library */
+	bool openalLoaded; /**< did we load the OpenAL library */
 
 	/* name of libraries to load */
 	version(Windows)
@@ -89,6 +90,14 @@ protected:
 			initSfx(p);
 	}
 
+	void notLoaded(coreFlag mask, char[] name)
+	{
+		if (flags & mask)
+			l.fatal("Could not load %s, crashing bye bye!", name);
+		else
+			l.info("%s not found, this not an error.", name);
+	}
+
 
 	/*
 	 *
@@ -102,7 +111,7 @@ protected:
 		version(DynamicODE) {
 			ode = Library.loads(libODEname);
 			if (ode is null) {
-				l.info("ODE not found, this not an error.");
+				notLoaded(coreFlag.PHY, "ODE");
 			} else {
 				loadODE(&ode.symbol);
 				odeLoaded = true;
@@ -117,11 +126,17 @@ protected:
 		openal = Library.loads(libOpenALname);
 		alut = Library.loads(libALUTname);
 
-		if (!openal)
-			l.fatal("Could not load OpenAL, crashing bye bye!");
+		if (!openal) {
+			notLoaded(coreFlag.SFX, "OpenAL");
+		} else {
+			openalLoaded = true;
+			loadAL(&openal.symbol);
+		}
 
 		if (!alut)
 			l.info("ALUT not found, this is not an error.");
+		else
+			loadALUT(&alut.symbol);
 	}
 
 	void initBuiltins()
@@ -187,7 +202,9 @@ protected:
 
 	void initSfx(Properties p)
 	{
-		loadAL(&openal.symbol);
+		if (!openalLoaded)
+			return;
+
 		alDevice = alcOpenDevice(null);
 
 		if (alDevice) {
@@ -196,13 +213,13 @@ protected:
 
 			sfxLoaded = true;
 		}
-
-		if (alut !is null && sfxLoaded)
-			loadALUT(&alut.symbol);
 	}
 
 	void closeSfx()
 	{
+		if (!openalLoaded)
+			return;
+
 		if (alContext)
 			alcDestroyContext(alContext);
 		if (alDevice)
