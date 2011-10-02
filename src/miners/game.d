@@ -116,10 +116,12 @@ public:
 		try {
 			doInit();
 		} catch (GameException ge) {
-			nextRunner = new MenuRunner(this, opts, ge);
+			mr = new MenuRunner(this, opts, ge);
+			nextRunner = mr;
 		} catch (Exception e) {
 			auto ge = new GameException(null, e);
-			nextRunner = new MenuRunner(this, opts, ge);
+			mr = new MenuRunner(this, opts, ge);
+			nextRunner = mr;
 		}
 
 		manageRunners();
@@ -617,14 +619,22 @@ protected:
 		// Delete any pending runners.
 		if (deleteRunner.length) {
 			foreach(r; deleteRunner) {
+				// Disable the current runner.
+				if (r is runner) {
+					runner.dropControl();
+					runner = null;
+				}
+
 				if (r is nextRunner)
 					nextRunner = null;
-				if (r is runner)
-					runner = null;
 				if (r is sr)
 					sr = null;
 				if (r is mr)
 					mr = null;
+
+				// The menu might have a reference.
+				if (mr !is null)
+					mr.notifyDelete(r);
 
 				// To avoid nasty deadlocks with GC.
 				r.close();
@@ -635,6 +645,11 @@ protected:
 			deleteRunner = null;
 		}
 
+		// Default to the MenuRunner
+		if (runner is null && nextRunner is null) {
+			nextRunner = mr;
+		}
+
 		// Do the switch of runners.
 		if (nextRunner !is null) {
 			if (runner !is null)
@@ -642,7 +657,6 @@ protected:
 
 			runner = nextRunner;
 			sr = cast(ScriptRunner)runner;
-			mr = cast(MenuRunner)runner;
 
 			runner.assumeControl();
 

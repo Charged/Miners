@@ -162,6 +162,15 @@ public:
 			router.switchTo(this);
 	}
 
+	/**
+	 * A runner just deleted itself.
+	 */
+	void notifyDelete(Runner r)
+	{
+		if (levelRunner is r)
+			levelRunner = null;
+	}
+
 package:
 	/*
 	 *
