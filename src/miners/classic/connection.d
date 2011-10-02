@@ -16,9 +16,9 @@ alias charge.net.util.ntoh ntoh;
 
 
 /**
- * Receive server to client packages.
+ * Receiver of client packages.
  */
-interface ClassicClientNetworkListener
+interface ClientListener
 {
 	void indentification(ubyte ver, char[] name, char[] motd, ubyte type);
 
@@ -65,10 +65,10 @@ private:
 	ubyte[] inData;
 
 	/// Receiver of packages
-	ClassicClientNetworkListener l;
+	ClientListener l;
 
 public:
-	this(ClassicClientNetworkListener l, ClassicServerInfo csi)
+	this(ClientListener l, ClassicServerInfo csi)
 	{
 		this.l = l;
 
@@ -86,7 +86,7 @@ public:
 		freePacketsUnsafe();
 	}
 
-	void setListener(ClassicClientNetworkListener l)
+	void setListener(ClientListener l)
 	{
 		this.l = l;
 	}
@@ -195,6 +195,7 @@ protected:
 	void levelDataChunk(ServerLevelDataChunk *sldc)
 	{
 		inData ~= sldc.data;
+
 		l.levelLoadUpdate(sldc.percent);
 	}
 
@@ -232,7 +233,8 @@ protected:
 		short z = ntoh(ssb.z);
 		ubyte type = ssb.type;
 
-		l.setBlock(x, y, z, type);
+		if (l !is null)
+			l.setBlock(x, y, z, type);
 	}
 
 	/**
@@ -248,7 +250,8 @@ protected:
 		auto yaw = sps.yaw;
 		auto pitch = sps.pitch;
 
-		l.playerSpawn(id, name, x, y, z, yaw, pitch);
+		if (l !is null)
+			l.playerSpawn(id, name, x, y, z, yaw, pitch);
 	}
 
 	/**
@@ -263,7 +266,8 @@ protected:
 		auto yaw = spt.yaw;
 		auto pitch = spt.pitch;
 
-		l.playerMoveTo(id, x, y, z, yaw, pitch);
+		if (l !is null)
+			l.playerMoveTo(id, x, y, z, yaw, pitch);
 	}
 
 	/**
@@ -278,7 +282,8 @@ protected:
 		auto yaw = spupo.yaw;
 		auto pitch = spupo.pitch;
 
-		l.playerMove(id, x, y, z, yaw, pitch);
+		if (l !is null)
+			l.playerMove(id, x, y, z, yaw, pitch);
 	}
 
 	/**
@@ -291,7 +296,8 @@ protected:
 		double y = spup.y / 32.0;
 		double z = spup.z / 32.0;
 
-		l.playerMove(id, x, y, z);
+		if (l !is null)
+			l.playerMove(id, x, y, z);
 	}
 
 	/**
@@ -303,7 +309,8 @@ protected:
 		auto yaw = spuo.yaw;
 		auto pitch = spuo.pitch;
 
-		l.playerMove(id, yaw, pitch);
+		if (l !is null)
+			l.playerMove(id, yaw, pitch);
 	}
 
 	/**
@@ -313,7 +320,8 @@ protected:
 	{
 		auto id = spd.playerId;
 
-		l.playerDespawn(id);
+		if (l !is null)
+			l.playerDespawn(id);
 	}
 
 	/**
@@ -324,7 +332,8 @@ protected:
 		byte player = sm.playerId;
 		char[] msg = removeTrailingSpaces(sm.message);
 
-		l.message(player, msg);
+		if (l !is null)
+			l.message(player, msg);
 	}
 
 	/**
@@ -343,6 +352,7 @@ protected:
 	void playerType(ServerUpdateType *sut)
 	{
 		ubyte type = sut.type;
+
 		l.playerType(type);
 	}
 

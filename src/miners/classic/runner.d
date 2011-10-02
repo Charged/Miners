@@ -16,7 +16,7 @@ import miners.importer.network;
 /**
  * Classic runner
  */
-class ClassicRunner : public ViewerRunner, public ClassicClientNetworkListener
+class ClassicRunner : public ViewerRunner, public ClientListener
 {
 private:
 	mixin SysLogging;
