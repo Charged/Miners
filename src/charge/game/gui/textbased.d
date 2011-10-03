@@ -261,26 +261,19 @@ protected:
 class HeaderContainer : public ColorContainer
 {
 public:
-	char[] headerText;
 	Container plane;
-	DynamicTexture headerGfx;
+	DoubleText headerText;
 	Color4f headerBG;
-	uint center;
 
 public:
 	this(Color4f bg, char[] headerText, Color4f headerBG)
 	{
 		super(bg, 0, 0);
 		this.plane = new Container(null, 0, 0, 1, 1);
+		this.headerText = new DoubleText(null, 0, 0, headerText);
 		Container.add(this.plane);
-		this.headerText = headerText;
+		Container.add(this.headerText);
 		this.headerBG = headerBG;
-	}
-
-	~this()
-	{
-		if (headerGfx !is null)
-			headerGfx.dereference();
 	}
 
 	Component[] getChildren()
@@ -303,59 +296,33 @@ public:
 		w = 0;
 		h = 0;
 
-		plane.repack();
+		Container.repack();
 
 		foreach(c; plane.getChildren()) {
 			w = cast(int)fmax(w, c.x + c.w);
 			h = cast(int)fmax(h, c.y + c.h);
 		}
 
-		uint headerGfxHeight;
-		uint headerGfxWidth;
-		Font.buildSize(headerText, headerGfxWidth, headerGfxHeight);
+		w = 8 + cast(int)fmax(4 + headerText.w + 4, w) + 8;
+		h = 8 + 4 + headerText.h + 4 + 8 + h + 8;
+		uint center = w / 2;
 
-		w = 8 + cast(int)fmax(4 + headerGfxWidth * 2 + 4, w) + 8;
-		h = 8 + 4 + headerGfxHeight * 2 + 4 + 8 + h + 8;
-		center = w / 2;
+		headerText.x = center - headerText.w/2;
+		headerText.y = 8+4;
 
 		plane.x = 8;
-		plane.y = 8 + 4 + headerGfxHeight * 2 + 4 + 8;
+		plane.y = 8 + 4 + headerText.h + 4 + 8;
 		plane.w = w - 16;
 		plane.h = h - plane.y - 8;
 	}
 
-	void releaseResources()
-	{
-		super.releaseResources();
-
-		if (headerGfx !is null) {
-			headerGfx.dereference();
-			headerGfx = null;
-		}
-	}
-
 protected:
-	void paintComponents(Draw d)
+	void paintBackground(Draw d)
 	{
-		if (headerGfx is null) {
-			headerGfx = new DynamicTexture("charge/game/gui/headertext");
-			Font.render(headerGfx, headerText);
-		}
+		// First fill the background.
+		super.paintBackground(d);
 
-		// Title bar background
-		d.fill(headerBG, false,
-		       8, 8, w-16, headerGfx.height*2+8);
-
-		d.blit(headerGfx, Color4f.White, true,
-		       0, 0,                                       // srcX, srcY
-		       headerGfx.width, headerGfx.height,          // srcW, srcH
-		       center - headerGfx.width, 8 + 4,            // dstX, dstY
-		       headerGfx.width * 2, headerGfx.height * 2); // dstW, dstH
-
-		// Children
-		d.save();
-		//d.translate(8, 8+4+headerGfx.height*2+4+8);
-		super.paintComponents(d);
-		d.restore();
+		// Title bar background.
+		d.fill(headerBG, false, 8, 8, w-16, headerText.h + 8);
 	}
 }
