@@ -89,10 +89,10 @@ char[] makeTextGuiButton(char[] text, uint minwidth = 0)
  */
 class BaseText : public Component
 {
-private:
+protected:
 	char[] t;
-	DynamicTexture gfx;
 	bool dirty;
+	DynamicTexture gfx;
 
 public:
 	this(Container c, int x, int y, char[] text)
@@ -165,6 +165,35 @@ public:
 	{
 		this.text = text;
 		super.setText(text);
+	}
+}
+
+/**
+ * Double sized text.
+ */
+class DoubleText : public Text
+{
+public:
+	this(Container c, int x, int y, char[] text)
+	{
+		super(c, x, y, text);
+	}
+
+	void repack()
+	{
+		Font.buildSize(t, w, h);
+		w *= 2;
+		h *= 2;
+	}
+
+	void paint(Draw d)
+	{
+		if (gfx is null || dirty)
+			makeGfx();
+
+		d.blit(gfx, Color4f.White, true,
+		       0, 0, w/2, h/2,  // srcX, srcY, srcW, srcH
+		       0, 0,   w,   h); // dstX, dstY, dstW, dstH
 	}
 }
 
