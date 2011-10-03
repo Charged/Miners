@@ -173,6 +173,17 @@ public:
 		this.headerBG = headerBG;
 	}
 
+	void replacePlane(Container c)
+	{
+		assert(c !is null);
+
+		plane.breakApart();
+		super.remove(plane);
+
+		plane = c;
+		Container.add(plane);
+	}
+
 	Component[] getChildren()
 	{
 		return plane.getChildren();
