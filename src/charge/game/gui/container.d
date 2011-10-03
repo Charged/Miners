@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.gui.container;
 
+import charge.math.ints;
 import charge.util.vector;
 import charge.gfx.draw;
 import charge.gfx.texture;
@@ -45,8 +46,14 @@ public:
 
 	void repack()
 	{
-		foreach(c; children)
+		w = 0;
+		h = 0;
+
+		foreach(c; children) {
 			c.repack();
+			w = imax(c.x + c.w, w);
+			h = imax(c.y + c.h, h);
+		}
 	}
 
 	Component[] getChildren()

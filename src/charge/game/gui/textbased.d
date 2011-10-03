@@ -190,15 +190,9 @@ public:
 
 	void repack()
 	{
-		w = 0;
-		h = 0;
-
 		Container.repack();
-
-		foreach(c; plane.getChildren()) {
-			w = cast(int)fmax(w, c.x + c.w);
-			h = cast(int)fmax(h, c.y + c.h);
-		}
+		w = plane.w;
+		h = plane.h;
 
 		w = 8 + cast(int)fmax(4 + headerText.w + 4, w) + 8;
 		h = 8 + 4 + headerText.h + 4 + 8 + h + 8;
