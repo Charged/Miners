@@ -8,7 +8,6 @@ import charge.gfx.draw;
 import charge.gfx.texture;
 import charge.game.gui.component;
 
-alias int Event;
 
 bool collidesWith(Component c, int x, int y, uint w, uint h)
 {
