@@ -5,6 +5,7 @@ module miners.menu.error;
 import std.string;
 
 import charge.charge;
+import charge.game.gui.layout;
 import charge.game.gui.textbased;
 
 import miners.menu.base;
@@ -15,39 +16,23 @@ class ErrorMenu : public MenuBase
 {
 private:
 	Text te[];
-	Button button;
 
 	const char[] header = `Charged Miners`;
 
 public:
 	this(MenuRunner mr, char[][] errorTexts, bool panic)
 	{
-		super(mr, header);
+		auto b = panic ? Buttons.QUIT : Buttons.OK;
+		super(mr, header, b);
 
-		int pos;
+		auto vc = new VerticalContainer(null, 0, 0, 300, 0, 8);
+		replacePlane(vc);
+
 		te.length = errorTexts.length;
-
 		foreach(uint i, t; errorTexts) {
-			te[i] = new Text(this, 0, pos, t);
-			pos += te[i].h + 8;
-		}
-
-		// Add a quit button at the bottom.
-		if (panic) {
-			button = new Button(this, 0, pos, "Quit", 8);
-			button.pressed ~= &mr.commonMenuQuit;
-		} else {
-			button = new Button(this, 0, pos, "Ok", 8);
-			button.pressed ~= &mr.commonMenuBack;
+			te[i] = new Text(this, 0, 0, t);
 		}
 
 		repack();
-
-		auto center = plane.w / 2;
-
-		// Center the children
-		foreach(c; getChildren) {
-			c.x = center - c.w/2;
-		}
 	}
 }

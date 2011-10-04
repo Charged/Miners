@@ -30,25 +30,13 @@ private:
 public:
 	this(MenuRunner mr, ClassicServerInfo csi)
 	{
-		super(mr, header);
-		uint pos;
+		super(mr, header, Buttons.CANCEL);
 
-		pos += 24;
-		cc = new ClientConnector(this, 0, pos, csi);
-		pos += cc.x + cc.h + 24;
-		ca = new Button(this, 0, pos, "Cancel", 8);
-		ca.pressed ~= &mr.commonMenuBack;
+		cc = new ClientConnector(this, csi);
+		replacePlane(cc);
+		mr.ticker = &cc.logic;
 
 		repack();
-
-		auto center = plane.w / 2;
-
-		// Center the children
-		foreach(c; getChildren) {
-			c.x = center - c.w/2;
-		}
-
-		mr.ticker = &cc.logic;
 	}
 
 public:
@@ -70,11 +58,12 @@ private:
 	ClassicServerInfo csi;
 
 public:
-	this(ClassicConnectingMenu ccm, int x, int y, ClassicServerInfo csi)
+	this(ClassicConnectingMenu ccm, ClassicServerInfo csi)
 	{
+		// Parent needs to be null here.
+		super(null, 0, 0, childHeight, childWidth);
 		this.mr = ccm.mr;
 		this.csi = csi;
-		super(ccm, x, y, childHeight, childWidth);
 
 		text = new Text(this, 0, 0, "Connecting");
 		cc = new ClientConnection(this, csi);
