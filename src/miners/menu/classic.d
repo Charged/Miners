@@ -157,7 +157,6 @@ protected:
 	void message(byte id, char[] message) {}
 	void disconnect(char[] reason)
 	{
-		auto f = format("Disconnected: %s", reason);
-		mr.displayError([f], false);
+		mr.displayError(["Disconnected", reason], false);
 	}
 }
