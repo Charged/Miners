@@ -14,59 +14,59 @@ import miners.classic.runner;
 import miners.classic.connection;
 
 const char[] header = `Classic`;
-const uint childHeight = 424;
-const uint childWidth = 9*16;
+const uint childWidth = 424;
+const uint childHeight = 9*16;
+
+
+class CenteredText : public Container
+{
+public:
+	Text text;
+
+	this(Container p, int x, int y, uint minW, uint minH, char[] text)
+	{
+		super(p, x, x, minW, minH);
+
+		this.text = new Text(this, 0, 0, text);
+	}
+
+	void repack()
+	{
+		text.x = (w - text.w) / 2;
+		text.y = (h - text.h) / 2;
+	}
+}
+
+
+/*
+ *
+ * Connecting to a server.
+ *
+ */
 
 
 /**
  * Displays connection status for a Classic connection.
  */
-class ClassicConnectingMenu : public MenuBase
+class ClassicConnectingMenu : public MenuBase, public ClientListener
 {
 private:
-	ClientConnector cc;
+	ClientConnection cc;
 	Button ca;
+	Text text;
 
 public:
 	this(MenuRunner mr, ClassicServerInfo csi)
 	{
 		super(mr, header, Buttons.CANCEL);
-
-		cc = new ClientConnector(this, csi);
-		replacePlane(cc);
-		mr.ticker = &cc.logic;
-
-		repack();
-	}
-
-public:
-	void breakApart()
-	{
-		if (mr.ticker is &cc.logic)
-			mr.ticker = null;
-		super.breakApart();
-	}
-}
-
-class ClientConnector : public Container, public ClientListener
-{
-private:
-	MenuRunner mr;
-	ClientConnection cc;
-	Text text;
-
-	ClassicServerInfo csi;
-
-public:
-	this(ClassicConnectingMenu ccm, ClassicServerInfo csi)
-	{
-		// Parent needs to be null here.
-		super(null, 0, 0, childHeight, childWidth);
-		this.mr = ccm.mr;
-		this.csi = csi;
-
-		text = new Text(this, 0, 0, "Connecting");
 		cc = new ClientConnection(this, csi);
+		mr.ticker = &cc.doPackets;
+
+		auto ct = new CenteredText(null, 0, 0,
+					   childWidth, childHeight,
+					   "Connecting");
+		replacePlane(ct);
+		text = ct.text;
 
 		repack();
 	}
@@ -76,31 +76,28 @@ public:
 		assert(cc is null);
 	}
 
-	void logic()
-	{
-		if (cc !is null)
-			cc.doPackets();
-	}
-
-	void repack()
-	{
-		text.x = (w - text.w) / 2;
-		text.y = (h - text.h) / 2;
-	}
-
 	void breakApart()
 	{
+		super.breakApart();
+
 		if (cc !is null) {
+			disconnectTicker();
 			cc.shutdown();
 			cc.close();
 			cc.wait();
 			delete cc;
 			cc = null;
 		}
-		super.breakApart();
 	}
 
-protected:
+
+private:
+	void disconnectTicker()
+	{
+		if (mr.ticker is &cc.doPackets)
+			mr.ticker = null;
+	}
+
 
 	/*
 	 *
@@ -108,6 +105,8 @@ protected:
 	 *
 	 */
 
+
+protected:
 	void indentification(ubyte ver, char[] name, char[] motd, ubyte type)
 	{
 	}
@@ -135,6 +134,7 @@ protected:
 		auto cr = new ClassicRunner(mr.router, mr.opts,
 					    cc, x, y, z, data);
 		mr.manageThis(cr);
+		disconnectTicker();
 		cc = null;
 		mr.commonMenuClose(null);
 	}
