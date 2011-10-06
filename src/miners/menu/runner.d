@@ -182,6 +182,11 @@ public:
 	 */
 
 
+	void connect(char[] usr, char[] pwd, ClassicServerInfo csi)
+	{
+		changeWindow(new WebpageInfoMenu(this, usr, pwd, csi));
+	}
+
 	void connect(ClassicServerInfo csi)
 	{
 		changeWindow(new ClassicConnectingMenu(this, csi));

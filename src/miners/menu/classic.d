@@ -11,6 +11,7 @@ import miners.types;
 import miners.menu.base;
 import miners.menu.runner;
 import miners.classic.runner;
+import miners.classic.webpage;
 import miners.classic.connection;
 
 const char[] header = `Classic`;
@@ -101,7 +102,7 @@ private:
 
 	/*
 	 *
-	 *
+	 * Classic Connection Callbacks
 	 *
 	 */
 
@@ -158,5 +159,156 @@ protected:
 	void disconnect(char[] reason)
 	{
 		mr.displayError(["Disconnected", reason], false);
+	}
+}
+
+
+/*
+ *
+ * Webpage
+ *
+ */
+
+
+class WebpageInfoMenu : public MenuBase, public ClassicWebpageListener
+{
+private:
+	ClassicServerInfo csi;
+	WebpageConnection wc;
+	Text text;
+
+	this(MenuRunner mr, WebpageConnection wc,
+	     ClassicServerInfo csi,
+	     bool idle)
+	{
+		super(mr, header, Buttons.CANCEL);
+		this.csi = csi;
+		this.wc = wc;
+
+		if (idle)
+			wc.getServerInfo(csi);
+
+		mr.ticker = &wc.doEvents;
+
+		auto ct = new CenteredText(null, 0, 0,
+					   childWidth, childHeight,
+					   "Connecting");
+		replacePlane(ct);
+		text = ct.text;
+
+		repack();
+	}
+
+public:
+	/**
+	 * Retrive information about a server,
+	 * the connection has allready be authenticated.
+	 */
+	this(MenuRunner mr, WebpageConnection wc, ClassicServerInfo csi)
+	{
+		this(mr, wc, csi, true);
+	}
+
+	/**
+	 * Retrive information about a server, using a new connection
+	 * authenticating with the given credentials.
+	 */
+	this(MenuRunner mr, char[] username, char[] password, ClassicServerInfo csi)
+	{
+		auto wc = new WebpageConnection(this, username, password);
+		this(mr, wc, csi, false);
+	}
+
+	~this()
+	{
+		assert(wc is null);
+	}
+
+	void breakApart()
+	{
+		super.breakApart();
+
+		shutdownConnection();
+
+	}
+
+
+private:
+	void disconnectTicker()
+	{
+		if (mr.ticker is &wc.doEvents)
+			mr.ticker = null;
+	}
+
+	void shutdownConnection()
+	{
+		if (wc !is null) {
+			disconnectTicker();
+
+			try {
+				wc.shutdown();
+				wc.close();
+				wc.wait();
+			} catch (Exception e) {
+				cast(void)e;
+			}
+
+			delete wc;
+			wc = null;
+		}
+	}
+
+
+	/*
+	 *
+	 * Webpage connection callbacks
+	 *
+	 */
+
+
+protected:
+	void connected()
+	{
+		text.setText("Authenticating");
+		repack();
+	}
+
+	void authenticated()
+	{
+		text.setText("Retriving server info");
+		repack();
+
+		try {
+			wc.getServerInfo(csi);
+		} catch (Exception e) {
+			mr.displayError(e, false);
+		}
+	}
+
+	void serverList(ClassicServerInfo[] csis)
+	{
+		throw new Exception("Not interested in server list");
+	}
+
+	void serverInfo(ClassicServerInfo csi)
+	{
+		shutdownConnection();
+
+		mr.connect(csi);
+	}
+
+	void error(Exception e)
+	{
+		shutdownConnection();
+
+		mr.displayError(["Disconnected", e.toString()], false);
+	}
+
+	void disconnected()
+	{
+		// The server closed the connection peacefully.
+		shutdownConnection();
+
+		mr.displayError(["Disconnected"], false);
 	}
 }
