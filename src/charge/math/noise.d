@@ -7,6 +7,9 @@ import std.math : floor;
 
 /**
  * 3 dimensional perlin noise function.
+ *
+ * A good reference for both Perlin- and Simplex-noise is:
+ * http://webstaff.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
  */
 float pnoise(float x, float y, float z) 
 {
