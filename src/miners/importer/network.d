@@ -14,6 +14,16 @@ module miners.importer.network;
 const mcUrlStr = "mc://([^/:]+)" "(:([^/]+))?" "(/([^/]+))?" "(/([^/]+))?";
 
 /**
+ * String to parse a minecraft play string.
+ *
+ * username = r[1]
+ * password = r[3]
+ * id = r[5]
+ */
+const httpUrlStr = "http://([^/:]+)" "(:([^@]+))?" "@" "(www\\.)?"
+		   "minecraft.net/classic/play/" "(.+)";
+
+/**
  * Remove any trailing spaces from a string.
  *
  * Used to deal with strings from classic servers.

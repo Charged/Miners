@@ -34,6 +34,7 @@ import miners.classic.runner;
 import miners.importer.info;
 import miners.importer.network;
 import miners.importer.texture;
+import miners.importer.classicinfo;
 
 
 /**
@@ -47,12 +48,17 @@ private:
 	bool build_all;
 	bool classic;
 	bool classicNetwork;
+	bool classicHttp;
+	char[] username; /**< webpage username */
+	char[] password; /**< webpage password */
 
 	/* Classic server information */
 	ClassicServerInfo csi;
 
 	/** Regexp for extracting information out of a mc url */
 	RegExp mcUrl;
+	/** Regexp for extracting information out of a http url */
+	RegExp httpUrl;
 
 	/* time keepers */
 	charge.game.app.TimeKeeper luaTime;
@@ -90,6 +96,7 @@ public:
 	this(char[][] args)
 	{
 		mcUrl = RegExp(mcUrlStr);
+		httpUrl = RegExp(httpUrlStr);
 
 		// Some defaults
 		csi = new ClassicServerInfo();
@@ -230,8 +237,10 @@ protected:
 		if (classic) {
 			if (!classicNetwork)
 				r = new ClassicRunner(this, opts);
-			else
+			else if (!classicHttp)
 				mr.connect(csi);
+			else
+				mr.connect(username, password, csi);
 		}
 
 		if (r is null && level !is null) {
@@ -288,10 +297,42 @@ protected:
 	}
 
 	/**
+	 * Try both Urls.
+	 */
+	bool tryArgUrl(char[] arg)
+	{
+		return tryArgHttpUrl(arg) || tryArgMcUrl(arg) || tryArgHtml(arg);
+	}
+
+	/**
+	 * Is this argument a Minecraft http Url?
+	 * If so set all the game arguments and switch to classic.
+	 */
+	bool tryArgHttpUrl(char[] arg)
+	{
+		auto r = httpUrl.exec(arg);
+		if (r.length < 5)
+			return false;
+
+		username = r[1];
+		password = r[3];
+		csi.webId = r[5];
+
+		classic = true;
+		classicNetwork = true;
+		classicHttp = true;
+
+		l.info("Url http://%s:<redacted>@mc.net/classic/play/%s",
+		       username, csi.webId);
+
+		return true;
+	}
+
+	/**
 	 * Is this argument a Minecraft Url?
 	 * If so set all the game arguments and switch to classic.
 	 */
-	bool tryArgUrl(char[] arg)
+	bool tryArgMcUrl(char[] arg)
 	{
 		auto r = mcUrl.exec(arg);
 		if (r.length < 8)
@@ -314,6 +355,35 @@ protected:
 		classicNetwork = true;
 
 		l.info("Url mc://%s:%s/%s/<redacted>",
+		       csi.hostname, csi.port, csi.username);
+
+		return true;
+	}
+
+	/**
+	 * Is this argument a classic play html page? If so extract the
+	 * info, set all the game arguments and switch to classic.
+	 */
+	bool tryArgHtml(char[] arg)
+	{
+		if (arg.length <= 5)
+			return false;
+
+		if (arg[$ - 5 .. $] != ".html")
+			return false;
+
+		try {
+			auto txt = cast(char[])std.file.read(arg);
+
+			getClassicServerInfo(csi, txt);
+		} catch (Exception e) {
+			return true;
+		}
+
+		classic = true;
+		classicNetwork = true;
+
+		l.info("Html mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);
 
 		return true;
