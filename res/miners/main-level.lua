@@ -102,7 +102,7 @@ function logic()
 
 	for num,point in ipairs({miners.getRayPoints(pos, dir, 3) }) do
 		local b = terrain:getType(point)
-		if b ~= 0 and b ~= 41 then
+		if b ~= 0 and b ~= 41 and blocks.getSolid(b) then
 			terrain:set(gold, point)
 			terrain:markDirty(point)
 			terrain:resetBuild()
