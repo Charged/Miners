@@ -157,11 +157,11 @@ public:
 
 		final void draw()
 		{
-			glBindVertexArray(vao);
+			glBindVertexArrayCHARGE(vao);
 
 			glDrawArrays(GL_QUADS, 0, numVerts);
 
-			glBindVertexArray(0);
+			glBindVertexArrayCHARGE(0);
 		}
 	}
 }
