@@ -82,12 +82,12 @@ ifeq ($(UNAME),WindowsCross)
 	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-lgphobos -L-lws2_32 $(LDFLAGS_)
 else
 	PLATFORM=windows
-:	TARGET = Charge.exe
+	TARGET = Charge.exe
 
 	# Handle compiling with dmc
-	CCOMP_FLAGS = $(CARCH) -c -o$@ $(CFLAGS)
+	CCOMP_FLAGS = $(CARCH) -c -o"$@" $(CFLAGS)
 	# Change the link flags
-	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-lws2_32 $(LDFLAGS_)
+	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) $(LDFLAGS_)
 endif
 endif
 endif
@@ -105,17 +105,17 @@ all: $(TARGET)
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.m Makefile
 	@echo "  CC     src/$*.m"
 	@mkdir -p $(dir $@)
-	@$(CC) $(MCOMP_FLAGS) src/$*.m
+	@$(CC) src/$*.m $(MCOMP_FLAGS)
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c Makefile
 	@echo "  CC     src/$*.c"
 	@mkdir -p $(dir $@)
-	@$(CC) $(CCOMP_FLAGS) src/$*.c
+	@$(CC) src/$*.c $(CCOMP_FLAGS)
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.d Makefile
 	@echo "  DMD    src/$*.d"
 	@mkdir -p $(dir $@)
-	@$(DMD) $(DCOMP_FLAGS) src/$*.d
+	@$(DMD) src/$*.d $(DCOMP_FLAGS)
 
 $(TARGET): $(OBJ) Makefile
 	@echo "  LD     $@"
