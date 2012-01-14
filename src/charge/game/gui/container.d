@@ -37,12 +37,6 @@ public:
 		super(c, x, y, w, h);
 	}
 
-	~this()
-	{
-		foreach(c; children.adup)
-			delete c;
-	}
-
 	void repack()
 	{
 		w = 0;
