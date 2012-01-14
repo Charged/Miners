@@ -138,6 +138,7 @@ protected:
 				render(m, r);
 		}
 
+		glUseProgram(0);
 		glDisable(GL_CULL_FACE);
 	}
 
