@@ -429,7 +429,11 @@ protected:
 			luaTime.stop();
 			logicTime.start();
 		} else if (runner !is null) {
-			runner.logic();
+			try {
+				runner.logic();
+			} catch (Exception e) {
+				displayError(e, false);
+			}
 		}
 
 		ticks++;
