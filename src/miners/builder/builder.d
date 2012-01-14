@@ -2060,6 +2060,16 @@ ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
 	return null;
 }
 
+PackerCompact *cached;
+
+static this() {
+	cached = PackerCompact.cAlloc(128 * 1024);
+}
+
+static ~this() {
+	cached.cFree();
+}
+
 /**
  * Build a CompactMesh from a WorkspaceData.
  */
@@ -2067,9 +2077,7 @@ ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
 					      int xPos, int yPos, int zPos,
 					      int xOffArg, int yOffArg, int zOffArg)
 {
-	auto pc = PackerCompact.cAlloc(128 * 1024);
-	scope(exit)
-		pc.cFree();
+	auto pc = cached;
 
 	pc.ctor(xOffArg, yOffArg, zOffArg, false);
 
@@ -2087,9 +2095,7 @@ ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
 						     int xPos, int yPos, int zPos,
 						     int xOffArg, int yOffArg, int zOffArg)
 {
-	auto pc = PackerCompact.cAlloc(128 * 1024);
-	scope(exit)
-		pc.cFree();
+	auto pc = cached;
 
 	pc.ctor(xOffArg, yOffArg, zOffArg, true);
 

@@ -114,6 +114,7 @@ public:
 
 	void cFree()
 	{
-		std.c.stdlib.free(this);
+		auto ptr = cast(void*)this;
+		std.c.stdlib.free(ptr);
 	}
 }
