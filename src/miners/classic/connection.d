@@ -194,7 +194,12 @@ protected:
 	 */
 	void levelDataChunk(ServerLevelDataChunk *sldc)
 	{
-		inData ~= sldc.data;
+		short len = ntoh(sldc.length);
+
+		if (len > sldc.data.length)
+			throw new InvalidPacketException(sldc.packetId);
+
+		inData ~= sldc.data[0 .. len];
 
 		l.levelLoadUpdate(sldc.percent);
 	}
