@@ -45,9 +45,6 @@ public:
 
 		w.t.setViewRadii(250/16 + 1);
 
-		// Put a player model at spawn
-		new OtherPlayer(w, 0, w.spawn + Vector3d(.5, 0, .5), 0, 0);
-
 		GfxDefaultTarget rt = GfxDefaultTarget();
 
 		cam = icam = new GfxIsoCamera(rt.width/16f, rt.height/16f, -200, 200);
@@ -78,10 +75,6 @@ public:
 		light_heading = PI/3;
 		light_pitch = -PI/6;
 		sl.rotation = Quatd(light_heading, light_pitch, 0);
-
-		sl.fog.start = 150;
-		sl.fog.stop = 250;
-		sl.fog.color = Color4f(89.0/255, 178.0/255, 220.0/255);
 	}
 
 	~this()
