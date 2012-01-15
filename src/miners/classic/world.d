@@ -98,15 +98,29 @@ public:
 					convertClassicToBeta(*src, block, meta);
 
 					*p = block;
-					*pm |= meta << (4 * (y % 2));
+
+					// Should we shift the meta data to the higher coords.
+					int shift = (4 * (y % 2));
+
+					// Get the mask of bits we need to mask out,
+					// data is uninitialized.
+					ubyte mask = cast(ubyte)~(0xf << shift);
+
+					// Mask out old bits and mask in new.
+					*pm = (*pm & mask) | meta << shift;
 
 					p += 1;
 					pm += y % 2;
 					src += ySrcStride;
 				}
 
-				// If height is uneaven we need to increment this.
-				pm += ySize % 2;
+				// If height is uneaven we need to increment
+				// this. Also remove uninitialized bits in the
+				// high part of the bytes.
+				if (ySize % 2) {
+					(*pm) &= 0xf;
+					pm++;
+				}
 			}
 		}
 	}
