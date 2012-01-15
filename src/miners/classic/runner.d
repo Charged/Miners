@@ -113,7 +113,6 @@ public:
 
 	void levelLoadUpdate(ubyte percent)
 	{
-		//writefln("levelLoadUpdate: %s%%", percent);
 	}
 
 	void levelFinalize(uint xSize, uint ySize, uint zSize, ubyte[] data)
@@ -125,7 +124,6 @@ public:
 
 	void setBlock(short x, short y, short z, ubyte type)
 	{
-		//writefln("setBlock (%s, %s, %s) #%s", x, y, z, type);
 	}
 
 	void playerSpawn(byte id, char[] name,
@@ -133,40 +131,32 @@ public:
 			 ubyte yaw, ubyte pitch)
 	{
 		name = removeColorTags(name);
-
-		//writefln("playerSpawn #%s \"%s\" (%s, %s, %s)", id, name, x, y, z);
 	}
 
 	void playerMoveTo(byte id, double x, double y, double z,
 			  ubyte yaw, ubyte pitch)
 	{
-		//writefln("playerMoveTo #%s (%s, %s, %s) %s %s", id, x, y, z, yaw, pitch);
 	}
 
 	void playerMove(byte id, double x, double y, double z,
 			ubyte yaw, ubyte pitch)
 	{
-		//writefln("playerMove #%s (%s, %s, %s) %s %s", id, x, y, z, yaw, pitch);
 	}
 
 	void playerMove(byte id, double x, double y, double z)
 	{
-		//writefln("playerMove #%s (%s, %s, %s)", id, x, y, z);
 	}
 
 	void playerMove(byte id, ubyte yaw, ubyte pitch)
 	{
-		//writefln("playerMove #%s %s %s", id, yaw, pitch);
 	}
 
 	void playerDespawn(byte id)
 	{
-		//writefln("playerDespawn #%s", id);
 	}
 
 	void playerType(ubyte type)
 	{
-		//writefln("playerMove type %s", type);
 	}
 
 	void message(byte playerId, char[] msg)
