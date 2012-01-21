@@ -4,6 +4,7 @@ module miners.lua.functions;
 
 import std.math;
 
+import charge.math.ints;
 import charge.charge;
 
 import miners.world;
@@ -28,45 +29,27 @@ extern (C) static int getRayPoints(lua_State *l)
 {
 	const maxNumBlocks = 30; // Don't push to many hits
 	auto s = LuaState(l);
-	auto startPos = s.checkPoint3d(1);
-	auto pos = *startPos;
-	auto startVec = s.checkVector3d(2);
-	auto vec = *startVec;
+	auto pos = s.checkPoint3d(1);
+	auto vec = s.checkVector3d(2);
 	auto dist = s.checkNumber(3);
-	double step = 0.005; // Seems good.
-	int xCur, yCur, zCur;
 	int numBlocks;
 
 	// Remove the arguments
 	s.pop(3);
 
-	vec.normalize();
-	vec.scale(step);
 
-	xCur = int.min; // Yes this will skip this coord
-	yCur = int.min; // if we start in it. But come on!
-	zCur = int.min;
+	bool step(int x, int y, int z) {
 
-	for (double t = 0; t <= dist && numBlocks <= maxNumBlocks; t += step) {
-		int xCalc = cast(int)floor(pos.x);
-		int yCalc = cast(int)floor(pos.y);
-		int zCalc = cast(int)floor(pos.z);
+		if (++numBlocks > maxNumBlocks)
+			return false;
 
-		if (xCalc != xCur ||
-		    yCalc != yCur ||
-		    zCalc != zCur) {
-			xCur = xCalc;
-			yCur = yCalc;
-			zCur = zCalc;
+		auto p = s.pushPoint3d();
+		*p = Point3d(x, y, z);
 
-			numBlocks++;
-
-			auto p = s.pushPoint3d();
-			*p = pos;
-		}
-
-		pos += vec;
+		return true;
 	}
+
+	stepDirection(*pos, *vec, dist, &step);
 
 	return numBlocks;
 }
