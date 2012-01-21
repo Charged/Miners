@@ -4,9 +4,10 @@ module miners.classic.connection;
 
 import std.socket;
 import std.string;
+private static import etc.c.zlib;
+private import std.zlib : ZlibException;
 
 import charge.charge;
-import charge.util.zip;
 
 import miners.types;
 import miners.classic.proto;
@@ -209,18 +210,52 @@ protected:
 	 */
 	void levelFinalize(ServerLevelFinalize *slf)
 	{
-		// Uncompress the read data as gzip data
-		ubyte[] decomp = cast(ubyte[])cUncompress(inData, 0, 15+16);
-		scope (exit)
-			std.c.stdlib.free(decomp.ptr);
-
-		// No point in keeping the read data around
-		delete inData;
-
 		// Get the level size
 		short xSize = ntoh(slf.x);
 		short ySize = ntoh(slf.y);
 		short zSize = ntoh(slf.z);
+		size_t size = uint.sizeof + xSize * ySize * zSize;
+
+
+		// Need somewhere to store the uncompressed data
+		auto ptr = cast(ubyte*)std.c.stdlib.malloc(size);
+		if (!ptr)
+			throw new ZlibException(etc.c.zlib.Z_MEM_ERROR);
+		scope(exit)
+			std.c.stdlib.free(ptr);
+		ubyte[] decomp = ptr[0 .. size];
+
+		// Used as arguments for zlib
+		etc.c.zlib.z_stream zs;
+		zs.next_in = inData.ptr;
+		zs.avail_in = cast(uint)inData.length;
+		zs.next_out = decomp.ptr;
+		zs.avail_out = cast(uint)size;
+
+		// Initialize zlib with argument struct
+		int err = etc.c.zlib.inflateInit2(&zs, 15 + 16);
+		if (err)
+			throw new ZlibException(err);
+		scope(exit)
+			cast(void)etc.c.zlib.inflateEnd(&zs);
+
+		// Do the decompressing
+		err = etc.c.zlib.inflate(&zs, etc.c.zlib.Z_NO_FLUSH);
+		switch (err) {
+		case etc.c.zlib.Z_STREAM_END:
+			// All ok!
+			break;
+		case etc.c.zlib.Z_DATA_ERROR:
+			// Work around checksum errors
+			if (zs.avail_out == 0 && zs.avail_in == 4)
+				break;
+			// Otherwise error!
+		default:
+			throw new ZlibException(err);
+		}
+
+		// No point in keeping the read data around
+		delete inData;
 
 		// Skip the size in the begining
 		auto d = decomp[4 .. $];
