@@ -414,16 +414,7 @@ public:
 			return;
 
 		// Unbuild all the meshes.
-		for (int x; x < width; x++) {
-			for (int z; z < depth; z++) {
-				auto r = region[x][z];
-				if (r is null)
-					continue;
-				r.unbuildAll();
-			}
-		}
-
-		resetBuild();
+		unbuildAll();
 
 		// Do the change
 		doBuildTypeChange(type);
@@ -501,6 +492,24 @@ public:
 		save_build_j = 0;
 		save_build_k = 0;
 	}
+
+	/**
+	 * Unbuild all the meshes.
+	 */
+	void unbuildAll()
+	{
+		for (int x; x < width; x++) {
+			for (int z; z < depth; z++) {
+				auto r = region[x][z];
+				if (r is null)
+					continue;
+				r.unbuildAll();
+			}
+		}
+
+		resetBuild();
+	}
+
 
 protected:
 	void setCenterRegions(int xNew, int zNew)

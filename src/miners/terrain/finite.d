@@ -421,6 +421,8 @@ public:
 			for (int z; z < zNumChunks; z++)
 				for (int y; y < yNumChunks; y++)
 					unbuild(x, y, z);
+
+		resetBuild();
 	}
 
 

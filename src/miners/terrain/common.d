@@ -49,6 +49,7 @@ public:
 	abstract void setViewRadii(int radii);
 	abstract void setBuildType(TerrainBuildTypes type, char[] name);
 	abstract bool buildOne();
+	abstract void unbuildAll();
 
 	abstract void resetBuild();
 	abstract void markVolumeDirty(int x, int y, int z, uint w, uint h, uint d);
