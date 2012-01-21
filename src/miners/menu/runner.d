@@ -80,6 +80,8 @@ public:
 
 	void close()
 	{
+		if (levelRunner !is null)
+			levelRunner.close();
 	}
 
 	void resize(uint w, uint h)
