@@ -4,6 +4,7 @@ module miners.builder.builder;
 
 import charge.charge;
 
+import miners.defines;
 import miners.gfx.vbo;
 
 import miners.builder.data;
@@ -2025,9 +2026,9 @@ void doBuildMesh(WorkspaceData *data, Packer *p)
 {
 	mixin BlockDispatcher!();
 
-	for (int x; x < 16; x++) {
-		for (int y; y < 128; y++) {
-			for (int z; z < 16; z++) {
+	for (int x; x < BuildWidth; x++) {
+		for (int y; y < BuildHeight; y++) {
+			for (int z; z < BuildDepth; z++) {
 				b(x, y, z);
 			}
 		}
@@ -2117,9 +2118,9 @@ ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
 ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
 					  int xPos, int yPos, int zPos)
 {
-	int xOff = xPos * (WorkspaceData.ws_width - 2);
-	int yOff = yPos * (WorkspaceData.ws_height - 2);
-	int zOff = zPos * (WorkspaceData.ws_depth - 2);
+	int xOff = xPos * BuildWidth;
+	int yOff = yPos * BuildHeight;
+	int zOff = zPos * BuildDepth;
 
 	return buildRigidMeshFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
 }
@@ -2127,9 +2128,9 @@ ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
 ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
 					      int xPos, int yPos, int zPos)
 {
-	int xOff = xPos * (WorkspaceData.ws_width - 2);
-	int yOff = yPos * (WorkspaceData.ws_height - 2);
-	int zOff = zPos * (WorkspaceData.ws_depth - 2);
+	int xOff = xPos * BuildWidth;
+	int yOff = yPos * BuildHeight;
+	int zOff = zPos * BuildDepth;
 
 	return buildCompactMeshFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
 }
@@ -2137,9 +2138,9 @@ ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
 ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
 						     int xPos, int yPos, int zPos)
 {
-	int xOff = xPos * (WorkspaceData.ws_width - 2);
-	int yOff = yPos * (WorkspaceData.ws_height - 2);
-	int zOff = zPos * (WorkspaceData.ws_depth - 2);
+	int xOff = xPos * BuildWidth;
+	int yOff = yPos * BuildHeight;
+	int zOff = zPos * BuildDepth;
 
 	return buildCompactMeshIndexedFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
 }

@@ -4,6 +4,7 @@ module miners.gfx.vbo;
 
 import charge.math.box;
 import miners.gfx.imports;
+import miners.defines;
 
 
 /**
@@ -137,8 +138,8 @@ public:
 	void add(GfxVBO vbo, int x, int y, int z)
 	{
 		Entry e;
-		e.aabb.min = Point3d(x * 16, y * 128, z * 16);
-		e.aabb.max = Point3d((x+1) * 16, (y+1) * 128, (z+1) * 16);
+		e.aabb.min = Point3d(x * BuildWidth, y * BuildHeight, z * BuildDepth);
+		e.aabb.max = Point3d((x+1) * BuildWidth, (y+1) * BuildHeight, (z+1) * BuildDepth);
 		e.vbo = vbo;
 		array ~= e;
 	}

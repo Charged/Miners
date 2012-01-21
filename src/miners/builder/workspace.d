@@ -5,6 +5,7 @@ module miners.builder.workspace;
 static import std.c.stdlib;
 static import std.c.string;
 
+import miners.defines;
 import miners.builder.data;
 
 
@@ -42,13 +43,13 @@ struct WorkspaceData
 	 * We copy the data so we can use unsafe accessor functionswhen building
 	 * mesh geometry data.
 	 */
-	const int ws_width = 16+2;
-	const int ws_height = 128+2;
-	const int ws_depth = 16+2;
+	const int ws_width = BuildWidth+2;
+	const int ws_height = BuildHeight+2;
+	const int ws_depth = BuildDepth+2;
 
-	const int ws_data_width = 16+2;
-	const int ws_data_height = 128/2+2;
-	const int ws_data_depth = 16+2;
+	const int ws_data_width = BuildWidth+2;
+	const int ws_data_height = BuildHeight/2+2;
+	const int ws_data_depth = BuildDepth+2;
 
 	const int ws_x_stride = ws_depth * ws_height;
 	const int ws_y_stride = 1;

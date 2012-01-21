@@ -5,6 +5,7 @@ module miners.terrain.finite;
 import charge.charge;
 
 import miners.types;
+import miners.defines;
 import miners.options;
 import miners.gfx.vbo;
 import miners.gfx.imports;
@@ -73,17 +74,16 @@ public:
 
 		yMetaSize = ySize / 2 + (ySize % 2);
 
-		xNumChunks = xSize / 16;
-		yNumChunks = ySize / 128;
-		zNumChunks = zSize / 16;
+		xNumChunks = xSize / BuildWidth;
+		yNumChunks = ySize / BuildHeight;
+		zNumChunks = zSize / BuildDepth;
 
-		// Add a extra chunk if nSize % 16 != 0
-		// y axis is aligned to 128 instead due to vbo size.
-		if (xNumChunks * 16 < xSize)
+		// Add a extra chunk if nSize % Buildn != 0
+		if (xNumChunks * BuildWidth < xSize)
 			xNumChunks++;
-		if (yNumChunks * 128 < ySize)
+		if (yNumChunks * BuildHeight < ySize)
 			yNumChunks++;
-		if (zNumChunks * 16 < zSize)
+		if (zNumChunks * BuildDepth < zSize)
 			zNumChunks++;
 
 		totalNumChunks = xNumChunks * yNumChunks * zNumChunks;
@@ -230,10 +230,10 @@ public:
 		int yEnd = ws.ws_height;
 		int zEnd = ws.ws_depth;
 
-		int xOff = xPos * 16 - 1;
-		int yOff = yPos * 128 - 1;
-		int yOffMeta = yPos * 128;
-		int zOffStart = zPos * 16 - 1;
+		int xOff = xPos * BuildWidth - 1;
+		int yOff = yPos * BuildHeight - 1;
+		int yOffMeta = yPos * BuildHeight;
+		int zOffStart = zPos * BuildDepth - 1;
 
 		int startX, y, yMeta, startZ;
 
@@ -299,16 +299,16 @@ public:
 		 x -= 1;  y -= 1;  z -= 1;
 		sx += 2; sy += 2; sz += 2;
 
-		int xStart = x < 0 ? (x - 15) / 16 : x / 16;
-		int yStart = y < 0 ? (y - 127) / 128 : y / 128;
-		int zStart = z < 0 ? (z - 15) / 16 : z / 16;
+		int xStart = x < 0 ? (x - BuildWidth + 1) / BuildWidth : x / BuildWidth;
+		int yStart = y < 0 ? (y - BuildHeight + 1) / BuildHeight : y / BuildHeight;
+		int zStart = z < 0 ? (z - BuildDepth + 1) / BuildDepth : z / BuildDepth;
 
 		x += sx;
 		y += sy;
 		z += sz;
-		int xStop = x < 0 ? (x - 15) / 16 : x / 16;
-		int yStop = y < 0 ? (y - 127) / 128 : y / 128;
-		int zStop = z < 0 ? (z - 15) / 16 : z / 16;
+		int xStop = x < 0 ? (x - BuildWidth + 1) / BuildWidth : x / BuildWidth;
+		int yStop = y < 0 ? (y - BuildHeight + 1) / BuildHeight : y / BuildHeight;
+		int zStop = z < 0 ? (z - BuildDepth + 1) / BuildDepth : z / BuildDepth;
 
 		xStop++; yStop++; zStop++;
 

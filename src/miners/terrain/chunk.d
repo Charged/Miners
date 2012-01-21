@@ -7,6 +7,7 @@ import std.math;
 import charge.charge;
 import charge.math.ints;
 
+import miners.defines;
 import miners.gfx.vbo;
 import miners.gfx.imports;
 import miners.gfx.renderer;
@@ -29,6 +30,7 @@ public:
 	bool gfx; /**< The chunk has been built */
 	bool loaded; /**< The chunk has been loaded of disk (can still be empty) */
 
+	// This chunk size, seperate from BuildX sizes.
 	const int width = 16;
 	const int height = 128;
 	const int depth = 16;
@@ -62,6 +64,10 @@ public:
 		this.yPos = 0;
 		this.zPos = zPos;
 		this.dirty = true;
+
+		static assert(width == BuildWidth);
+		static assert(height == BuildHeight);
+		static assert(depth == BuildDepth);
 
 		// Setup pointers
 		this.empty = true;
