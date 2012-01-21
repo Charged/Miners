@@ -625,19 +625,30 @@ protected:
 			r = new ViewerRunner(this, opts, w);
 		}
 
-		// No other place to put it.
 		if (build_all) {
-			l.info("Building all, please wait...");
-			writefln("Building all, please wait...");
+			int times = 5;
+			ulong total;
 
-			auto t1 = SDL_GetTicks();
+			l.info("Building all %s times, please wait...", times);
+			writefln("Building all %s times, please wait...", times);
 
-			while(w.t.buildOne()) { }
+			for (int i; i < times; i++) {
+				w.t.unbuildAll();
+				charge.sys.resource.Pool().collect();
 
-			auto t2 = SDL_GetTicks();
+				auto t1 = SDL_GetTicks();
+				while(w.t.buildOne()) { }
+				auto t2 = SDL_GetTicks();
 
-			l.info("Build time: %s seconds", (t2 - t1) / 1000.0);
-			writefln("Build time: %s seconds", (t2 - t1) / 1000.0);
+				auto diff = t2 - t1;
+				total += i > 0 ? diff : 0;
+
+				l.info("Build time: %s seconds", diff / 1000.0);
+				writefln("Build time: %s seconds", diff / 1000.0);
+			}
+
+			l.info("Average time: %s seconds", total / (times - 1) / 1000.0);
+			writefln("Average time: %s seconds", total / (times - 1) / 1000.0);
 		}
 
 		return r;
