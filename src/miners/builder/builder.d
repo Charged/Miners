@@ -2084,8 +2084,9 @@ ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
 
 	doBuildMesh(data, &pc.base);
 
-	// C memory freed above with scope(exit)
 	auto verts = pc.getVerts();
+	if (verts.length == 0)
+		return null;
 	return ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
 }
 
@@ -2102,8 +2103,9 @@ ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
 
 	doBuildMesh(data, &pc.base);
 
-	// C memory freed above with scope(exit)
 	auto verts = pc.getVerts();
+	if (verts.length == 0)
+		return null;
 	return ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
 }
 

@@ -54,6 +54,7 @@ protected:
 	cMemoryArray!(ubyte) store;
 
 	GfxVBO vbos[];
+	bool gfx[];
 	bool dirty[];
 
 	int xSaved;
@@ -87,6 +88,7 @@ public:
 			zNumChunks++;
 
 		totalNumChunks = xNumChunks * yNumChunks * zNumChunks;
+		gfx.length = totalNumChunks;
 		vbos.length = totalNumChunks;
 		dirty.length = totalNumChunks;
 
@@ -439,15 +441,14 @@ protected:
 		if (!shouldBuild(x, y, z))
 			return false;
 
+		unbuild(x, y, z);
+
 		auto ws = extractWorkspace(x, y, z);
 		GfxVBO v;
-
-		unbuild(x, y, z);
 
 		if (cvgrm !is null) {
 			v = buildRigidMeshFromChunk(ws, x, y, z);
 
-			setVBO(v, x, y, z);
 			if (v !is null)
 				cvgrm.add(v, x, y, z);
 		}
@@ -458,22 +459,29 @@ protected:
 			else
 				v = buildCompactMeshFromChunk(ws, x, y, z);
 
-			setVBO(v, x, y, z);
 			if (v !is null)
 				cvgcm.add(v, x, y, z);
 		}
+
+		int i = calcVboIndex(x, y, z);
+		vbos[i] = v;
+		gfx[i] = true;
+		dirty[i] = false;
 
 		return true;
 	}
 
 	void unbuild(int x, int y, int z)
 	{
-		auto v = getVBO(x, y, z);
+		int i = calcVboIndex(x, y, z);
+		auto v = vbos[i];
+
+		vbos[i] = null;
+		gfx[i] = false;
+		dirty[i] = false;
 
 		if (v is null)
 			return;
-
-		setVBO(null, x, y, z);
 
 		if (cvgrm !is null)
 			cvgrm.remove(v);
@@ -489,19 +497,6 @@ protected:
 	final bool shouldBuild(int x, int y, int z)
 	{
 		int i = calcVboIndex(x, y, z);
-		return dirty[i] || vbos[i] is null;
-	}
-
-	final void setVBO(GfxVBO vbo, int x, int y, int z)
-	{
-		int i = calcVboIndex(x, y, z);
-		vbos[i] = vbo;
-		dirty[i] = false;
-	}
-
-	final GfxVBO getVBO(int x, int y, int z)
-	{
-		int i = calcVboIndex(x, y, z);
-		return vbos[i];
+		return dirty[i] || !gfx[i];
 	}
 }
