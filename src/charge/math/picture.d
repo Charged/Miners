@@ -55,6 +55,11 @@ public:
 		return new Picture(Pool(), name, i, true);
 	}
 
+	static Picture opCall(char[] name, uint width, uint height)
+	{
+		return new Picture(Pool(), name, width, height, true);
+	}
+
 protected:
 	this(Pool p, char[] name, uint w, uint h, bool dynamic)
 	{
