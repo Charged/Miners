@@ -43,8 +43,7 @@ protected:
 	BetaTerrain bt;
 
 	// VBO's.
-	ChunkVBORigidMesh cvrm;
-	ChunkVBOCompactMesh cvcm;
+	GfxVBO vbo;
 
 	// Blocks and Data.
 	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */
@@ -216,32 +215,35 @@ public:
 
 	void build()
 	{
+		GfxVBO v;
 		gfx = true;
 
 		if (empty)
 			return;
 
-		auto data = WorkspaceData.malloc();
+		auto ws = WorkspaceData.malloc();
 		scope(exit)
-			data.free();
+			ws.free();
 
-		copyToWorkspace(data);
+		copyToWorkspace(ws);
 
 		if (bt.cvgrm !is null) {
-			cvrm = buildRigidMesh(data);
-			if (cvrm !is null)
-				bt.cvgrm.add(cvrm, xPos, yPos, zPos);
+			v = buildRigidMeshFromChunk(ws, xPos, yPos, zPos);
+			if (v !is null)
+				bt.cvgrm.add(v, xPos, yPos, zPos);
 		}
 
 		if (bt.cvgcm !is null) {
 			if (bt.buildIndexed)
-				cvcm = buildCompactMeshIndexed(data);
+				v = buildCompactMeshIndexedFromChunk(ws, xPos, yPos, zPos);
 			else
-				cvcm = buildCompactMesh(data);
+				v = buildCompactMeshFromChunk(ws, xPos, yPos, zPos);
 
-			if (cvcm !is null)
-				bt.cvgcm.add(cvcm, xPos, yPos, zPos);
+			if (v !is null)
+				bt.cvgcm.add(v, xPos, yPos, zPos);
 		}
+
+		vbo = v;
 	}
 
 	void unbuild()
@@ -251,18 +253,15 @@ public:
 			delete l;
 		}
 		lights = null;
-		if (gfx) {
-
-			if (cvrm) {
-				bt.cvgrm.remove(cvrm);
-				cvrm = null;
-			}
-			if (cvcm !is null) {
-				bt.cvgcm.remove(cvcm);
-				cvcm = null;
-			}
-			gfx = false;
+		if (gfx && vbo !is null) {
+			if (bt.cvgrm !is null)
+				bt.cvgrm.remove(vbo);
+			if (bt.cvgcm !is null)
+				bt.cvgcm.remove(vbo);
 		}
+
+		gfx = false;
+		vbo = null;
 	}
 
 
@@ -351,20 +350,5 @@ public:
 				d.data[x][z][length-1] = 0;
 			}
 		}
-	}
-
-	ChunkVBORigidMesh buildRigidMesh(WorkspaceData *data)
-	{
-		return buildRigidMeshFromChunk(data, xPos, 0, zPos);
-	}
-
-	ChunkVBOCompactMesh buildCompactMesh(WorkspaceData *data)
-	{
-		return buildCompactMeshFromChunk(data, xPos, 0, zPos);
-	}
-
-	ChunkVBOCompactMesh buildCompactMeshIndexed(WorkspaceData *data)
-	{
-		return buildCompactMeshIndexedFromChunk(data, xPos, 0, zPos);
 	}
 }
