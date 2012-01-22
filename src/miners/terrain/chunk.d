@@ -43,7 +43,7 @@ protected:
 	BetaTerrain bt;
 
 	// VBO's.
-	GfxVBO vbo;
+	GfxVBO vbos[height / BuildHeight];
 
 	// Blocks and Data.
 	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */
@@ -65,8 +65,9 @@ public:
 		this.dirty = true;
 
 		static assert(width == BuildWidth);
-		static assert(height == BuildHeight);
 		static assert(depth == BuildDepth);
+		static assert(height % BuildHeight == 0);
+		static assert(height >= BuildHeight);
 
 		// Setup pointers
 		this.empty = true;
@@ -215,7 +216,6 @@ public:
 
 	void build()
 	{
-		GfxVBO v;
 		gfx = true;
 
 		if (empty)
@@ -225,25 +225,27 @@ public:
 		scope(exit)
 			ws.free();
 
-		copyToWorkspace(ws);
+		foreach(int i, v; vbos) {
+			copyToWorkspace(ws, i);
 
-		if (bt.cvgrm !is null) {
-			v = buildRigidMeshFromChunk(ws, xPos, yPos, zPos);
-			if (v !is null)
-				bt.cvgrm.add(v, xPos, yPos, zPos);
+			if (bt.cvgrm !is null) {
+				v = buildRigidMeshFromChunk(ws, xPos, yPos+i, zPos);
+				if (v !is null)
+					bt.cvgrm.add(v, xPos, yPos+i, zPos);
+			}
+
+			if (bt.cvgcm !is null) {
+				if (bt.buildIndexed)
+					v = buildCompactMeshIndexedFromChunk(ws, xPos, yPos+i, zPos);
+				else
+					v = buildCompactMeshFromChunk(ws, xPos, yPos+i, zPos);
+
+				if (v !is null)
+					bt.cvgcm.add(v, xPos, yPos+i, zPos);
+			}
+
+			vbos[i] = v;
 		}
-
-		if (bt.cvgcm !is null) {
-			if (bt.buildIndexed)
-				v = buildCompactMeshIndexedFromChunk(ws, xPos, yPos, zPos);
-			else
-				v = buildCompactMeshFromChunk(ws, xPos, yPos, zPos);
-
-			if (v !is null)
-				bt.cvgcm.add(v, xPos, yPos, zPos);
-		}
-
-		vbo = v;
 	}
 
 	void unbuild()
@@ -253,15 +255,25 @@ public:
 			delete l;
 		}
 		lights = null;
-		if (gfx && vbo !is null) {
+
+		if (!gfx) {
+			gfx = false;
+			return;
+		}
+
+		foreach(int i, v; vbos) {
+			vbos[i] = null;
+
+			if (v is null)
+				continue;
+
 			if (bt.cvgrm !is null)
-				bt.cvgrm.remove(vbo);
+				bt.cvgrm.remove(v);
 			if (bt.cvgcm !is null)
-				bt.cvgcm.remove(vbo);
+				bt.cvgcm.remove(v);
 		}
 
 		gfx = false;
-		vbo = null;
 	}
 
 
@@ -333,21 +345,62 @@ public:
 	 */
 
 
-	void copyToWorkspace(WorkspaceData *d)
+	void copyToWorkspace(WorkspaceData *d, int off)
 	{
+		bool first = off == 0;
+		bool last = off == (vbos.length - 1);
+		int dstStart = 1;
+		int srcStart = 0;
+		int len = d.ws_height-2;
+
+		if (!first) {
+			dstStart = 0;
+			srcStart = BuildHeight * off - 1;
+			len++;
+		}
+
+		if (!last) {
+			len++;
+		}
+
+		if (!last && !first) {
+			for (int x; x < d.ws_width; x++) {
+				for (int z; z < d.ws_depth; z++) {
+					auto tPtr = getTypePointer(x-1, z-1);
+					auto dPtr = getMetaPointer(x-1, z-1);
+					d.blocks[x][z][0 .. $] =
+						tPtr[srcStart .. srcStart + d.ws_height];
+
+					d.data[x][z][0 .. $] =
+						dPtr[srcStart/2 .. srcStart/2 + d.ws_data_height];
+				}
+			}
+
+			return;
+		}
+
+		d.zero;
+
 		for (int x; x < d.ws_width; x++) {
 			for (int z; z < d.ws_depth; z++) {
-				ubyte *ptr = getTypePointer(x-1, z-1);
-				d.blocks[x][z][0] = ptr[0];
-				d.blocks[x][z][1 .. d.ws_height+1-2] =
-					ptr[0 .. d.ws_height-2];
-				d.blocks[x][z][length-1] = 0;
+				auto tPtr = getTypePointer(x-1, z-1);
+				auto dPtr = getMetaPointer(x-1, z-1);
 
-				ptr = getMetaPointer(x-1, z-1);
-				d.data[x][z][0] = cast(ubyte)(ptr[0] << 4);
-				d.data[x][z][1 .. d.ws_data_height+1-2] =
-					ptr[0 .. d.ws_data_height-2];
-				d.data[x][z][length-1] = 0;
+
+				d.blocks[x][z][dstStart .. dstStart + len] =
+					tPtr[srcStart .. srcStart + len];
+
+				d.data[x][z][dstStart .. dstStart + len/2+1] =
+					dPtr[srcStart/2 .. srcStart/2 + len/2+1];
+
+				if (first) {
+					d.blocks[x][z][0] = tPtr[0];
+					d.data[x][z][0] = cast(ubyte)(dPtr[0] << 4);
+				}
+				if (last) {
+					d.blocks[x][z][$-1] = 0;
+					d.data[x][z][$-1] = 0;
+				}
 			}
 		}
 	}
