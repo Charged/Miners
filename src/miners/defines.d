@@ -8,5 +8,5 @@ module miners.defines;
  * are stored in the map format.
  */
 const int BuildWidth = 16;
-const int BuildHeight = 128;
+const int BuildHeight = 16;
 const int BuildDepth = 16;
