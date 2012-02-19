@@ -44,6 +44,30 @@ void manipulateTexture(Picture pic)
 	setupRedstoneWire(pic);
 }
 
+/**
+ * Extract one tile form the given picture.
+ */
+Picture getTileAsSeperate(Picture src, char[] name, int tile_x, int tile_y)
+{
+	uint tile_size = src.width / 16;
+
+	Picture dst = Picture(name, tile_size, tile_size);
+
+	tile_x *= tile_size;
+	tile_y *= tile_size;
+
+	for (int x; x < tile_size; x++) {
+		for (int y; y < tile_size; y++) {
+			auto dstPtr = &dst.pixels[x + y * dst.width];
+			auto srcPtr = &src.pixels[(x + tile_x) + (y + tile_y) * src.width];
+			*dstPtr = *srcPtr;
+		}
+	}
+
+	return dst;
+}
+
+
 /*
  * Functions for manipulating the terrain.png picture.
  */

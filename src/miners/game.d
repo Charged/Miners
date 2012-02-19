@@ -187,7 +187,7 @@ protected:
 	 */
 	void doInit()
 	{
-		GfxTexture t;
+		GfxTexture t, dirt;
 		GfxTextureArray ta;
 		Runner r;
 
@@ -210,6 +210,11 @@ protected:
 		// Do the manipulation of the texture to fit us
 		manipulateTexture(pic);
 
+		// Extract the dirt textur
+		Picture dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0); 
+		dirt = GfxTexture("mc/dirt", dirtPic);
+		dirt.filter = GfxTexture.Filter.Nearest; // Or we get errors near the block edges
+
 		// I just wanted a comment here to make the code look prettier.
 		rm = new RenderManager();
 
@@ -225,9 +230,11 @@ protected:
 
 		// Create and set the textures
 		createTextures(pic, rm.textureArray, t, ta);
-		opts.setTextures(t, ta);
+		opts.setTextures(t, ta, dirt);
 
 		// Not needed anymore.
+		dirtPic.dereference();
+		dirt.dereference();
 		pic.dereference();
 		t.dereference();
 		if (ta !is null)

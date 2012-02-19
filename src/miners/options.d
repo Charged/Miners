@@ -40,7 +40,9 @@ public:
 
 	GfxTexture terrainTexture;
 	GfxTextureArray terrainTextureArray;
+	GfxTexture dirtTexture;
 	Signal!(GfxTexture, GfxTextureArray) terrain;
+	Signal!(GfxTexture) dirt;
 
 
 	/*
@@ -89,6 +91,8 @@ public:
 			terrainTexture.dereference();
 		if (terrainTextureArray !is null)
 			terrainTextureArray.dereference();
+		if (dirtTexture !is null)
+			dirtTexture.dereference();
 
 		playerSkeleton = null;
 		terrainTexture = null;
@@ -101,22 +105,28 @@ public:
 		viewDistance.signal.destruct();
 	}
 
-	void setTextures(GfxTexture t, GfxTextureArray ta)
+	void setTextures(GfxTexture t, GfxTextureArray ta, GfxTexture dirt)
 	{
 		if (terrainTexture !is null)
 			terrainTexture.dereference();
 		if (terrainTextureArray !is null)
 			terrainTextureArray.dereference();
+		if (dirtTexture !is null)
+			dirtTexture.dereference();
 
 		terrainTexture = t;
 		terrainTextureArray = ta;
+		dirtTexture = dirt;
 
 		if (terrainTexture !is null)
 			terrainTexture.reference();
 		if (terrainTextureArray !is null)
 			terrainTextureArray.reference();
+		if (dirtTexture !is null)
+			dirtTexture.reference();
 
-		terrain(t, ta);
+		this.terrain(t, ta);
+		this.dirt(dirt);
 	}
 
 	void setRenderer(TerrainBuildTypes bt, char[] s)
