@@ -38,11 +38,9 @@ public:
 	GfxSimpleSkeleton.VBO playerSkeleton;
 	alias PlayerModelData.bones playerBones;
 
-	GfxTexture terrainTexture;
-	GfxTextureArray terrainTextureArray;
-	GfxTexture dirtTexture;
-	Signal!(GfxTexture, GfxTextureArray) terrain;
-	Signal!(GfxTexture) dirt;
+	Option!(GfxTexture) dirt;
+	Option!(GfxTexture) terrain;
+	Option!(GfxTextureArray) terrainArray;
 
 
 	/*
@@ -87,46 +85,18 @@ public:
 	{
 		if (playerSkeleton !is null)
 			playerSkeleton.dereference();
-		if (terrainTexture !is null)
-			terrainTexture.dereference();
-		if (terrainTextureArray !is null)
-			terrainTextureArray.dereference();
-		if (dirtTexture !is null)
-			dirtTexture.dereference();
 
 		playerSkeleton = null;
-		terrainTexture = null;
-		terrainTextureArray = null;
 
 		terrain.destruct();
 		renderer.destruct();
-		shadow.signal.destruct();
-		showDebug.signal.destruct();
-		viewDistance.signal.destruct();
-	}
+		shadow.destruct();
+		showDebug.destruct();
+		viewDistance.destruct();
 
-	void setTextures(GfxTexture t, GfxTextureArray ta, GfxTexture dirt)
-	{
-		if (terrainTexture !is null)
-			terrainTexture.dereference();
-		if (terrainTextureArray !is null)
-			terrainTextureArray.dereference();
-		if (dirtTexture !is null)
-			dirtTexture.dereference();
-
-		terrainTexture = t;
-		terrainTextureArray = ta;
-		dirtTexture = dirt;
-
-		if (terrainTexture !is null)
-			terrainTexture.reference();
-		if (terrainTextureArray !is null)
-			terrainTextureArray.reference();
-		if (dirtTexture !is null)
-			dirtTexture.reference();
-
-		this.terrain(t, ta);
-		this.dirt(dirt);
+		dirt.destruct();
+		terrain.destruct();
+		terrainArray.destruct();
 	}
 
 	void setRenderer(TerrainBuildTypes bt, char[] s)
@@ -158,7 +128,13 @@ private struct Option(T)
 
 	void opAssign(T t)
 	{
+		static if (is(T : GfxTexture) || is(T : GfxTextureArray))
+			if (value !is null)
+				value.dereference();
 		value = t;
+		static if (is(T : GfxTexture) || is(T : GfxTextureArray))
+			if (value !is null)
+				value.reference();
 		signal(t);
 	}
 
@@ -177,6 +153,17 @@ private struct Option(T)
 		{
 			value = !value;
 			signal(value);
+		}
+	}
+
+	void destruct()
+	{
+		signal.destruct();
+
+		static if (is(T : GfxTexture) || is(T : GfxTextureArray)) {
+			if (value !is null)
+				value.dereference();
+			value = null;
 		}
 	}
 }

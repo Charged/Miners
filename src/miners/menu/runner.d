@@ -124,8 +124,8 @@ public:
 		d.start();
 
 		if (levelRunner is null) {
-			auto t = opts.dirtTexture;
-			d.blit(opts.dirtTexture, Color4f(1, 1, 1, 1), false,
+			auto t = opts.dirt();
+			d.blit(t, Color4f(1, 1, 1, 1), false,
 				0, 0, rt.width / 2, rt.height / 2,
 				0, 0, rt.width, rt.height);
 			//d.fill(Color4f(0, 0, 0, 1), false, 0, 0, rt.width, rt.height);

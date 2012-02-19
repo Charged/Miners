@@ -187,8 +187,7 @@ protected:
 	 */
 	void doInit()
 	{
-		GfxTexture t, dirt;
-		GfxTextureArray ta;
+		GfxTexture dirt;
 		Runner r;
 
 		// First init options
@@ -207,14 +206,6 @@ protected:
 			throw new GameException(text, null);
 		}
 
-		// Do the manipulation of the texture to fit us
-		manipulateTexture(pic);
-
-		// Extract the dirt textur
-		Picture dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0); 
-		dirt = GfxTexture("mc/dirt", dirtPic);
-		dirt.filter = GfxTexture.Filter.Nearest; // Or we get errors near the block edges
-
 		// I just wanted a comment here to make the code look prettier.
 		rm = new RenderManager();
 
@@ -228,17 +219,20 @@ protected:
 		rm.setAa(opts.aa());
 		opts.shadow = true;
 
-		// Create and set the textures
-		createTextures(pic, rm.textureArray, t, ta);
-		opts.setTextures(t, ta, dirt);
-
-		// Not needed anymore.
+		// Extract the dirt texture
+		Picture dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0);
+		dirt = GfxTexture("mc/dirt", dirtPic);
+		dirt.filter = GfxTexture.Filter.Nearest;
+		opts.dirt = dirt;
 		dirtPic.dereference();
 		dirt.dereference();
+
+		// Do the manipulation of the texture to fit us
+		manipulateTexture(pic);
+		createTextures(pic);
+
+		// Not needed anymore.
 		pic.dereference();
-		t.dereference();
-		if (ta !is null)
-			ta.dereference();
 
 		// Should we use classic
 		if (classic) {
@@ -435,14 +429,25 @@ protected:
 		return Picture(terrainFilename);
 	}
 
-	void createTextures(Picture pic, bool array, out GfxTexture t, out GfxTextureArray ta)
+	void createTextures(Picture pic)
 	{
-		t = GfxTexture("mc/terrain", pic);
-		t.filter = GfxTexture.Filter.Nearest; // Or we get errors near the block edges
+		char[] name = "mc/terrain";
+		GfxTexture t;
+		GfxTextureArray ta;
 
-		if (array) {
-			ta = ta.fromTileMap("mc/terrain", pic, 16, 16);
+		t = GfxTexture(name, pic);
+		// Or we get errors near the block edges
+		t.filter = GfxTexture.Filter.Nearest;
+
+		opts.terrain = t;
+		t.dereference();
+
+		if (rm.textureArray) {
+			ta = ta.fromTileMap(name, pic, 16, 16);
 			ta.filter = GfxTexture.Filter.NearestLinear;
+
+			opts.terrainArray = ta;
+			ta.dereference();
 		}
 	}
 

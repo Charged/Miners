@@ -68,19 +68,21 @@ protected:
 		delete cvgcm;
 
 		cvgrm = null; cvgcm = null;
+		GfxTexture t = opts.terrain();
+		GfxTextureArray ta = opts.terrainArray();
 
 		switch(type) {
 		case TerrainBuildTypes.RigidMesh:
 			cvgrm = new ChunkVBOGroupRigidMesh(w.gfx);
-			cvgrm.getMaterial()["tex"] = opts.terrainTexture;
-			cvgrm.getMaterial()["fake"] = true;
+			auto m = cvgrm.getMaterial();
+			m["tex"] = t;
+			m["fake"] = true;
 			break;
 		case TerrainBuildTypes.CompactMesh:
 			cvgcm = new ChunkVBOGroupCompactMesh(w.gfx);
-			cvgcm.getMaterial()["tex"] =
-				buildIndexed ? opts.terrainTextureArray : opts.terrainTexture;
-			cvgcm.getMaterial()["fake"] = true;
-			// No need to setup material handled by the renderer
+			auto m = cvgcm.getMaterial();
+			m["tex"] = buildIndexed ? ta : t;
+			m["fake"] = true;
 			break;
 		default:
 			assert(false);
