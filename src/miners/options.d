@@ -41,6 +41,8 @@ public:
 	Option!(GfxTexture) dirt;
 	Option!(GfxTexture) terrain;
 	Option!(GfxTextureArray) terrainArray;
+	Option!(GfxTexture) classicTerrain;
+	Option!(GfxTextureArray) classicTerrainArray;
 
 
 	/*
@@ -97,6 +99,8 @@ public:
 		dirt.destruct();
 		terrain.destruct();
 		terrainArray.destruct();
+		classicTerrain.destruct();
+		classicTerrainArray.destruct();
 	}
 
 	void setRenderer(TerrainBuildTypes bt, char[] s)

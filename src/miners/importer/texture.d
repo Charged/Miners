@@ -45,6 +45,14 @@ void manipulateTexture(Picture pic)
 }
 
 /**
+ * Futher manipulate a picture so it works with classic.
+ */
+void manipulateTextureClassic(Picture pic)
+{
+	// TODO Wool
+}
+
+/**
  * Extract one tile form the given picture.
  */
 Picture getTileAsSeperate(Picture src, char[] name, int tile_x, int tile_y)
@@ -72,7 +80,6 @@ Picture getTileAsSeperate(Picture src, char[] name, int tile_x, int tile_y)
  * Functions for manipulating the terrain.png picture.
  */
 private:
-
 
 void applyStaticBiome(Picture pic)
 {

@@ -229,7 +229,11 @@ protected:
 
 		// Do the manipulation of the texture to fit us
 		manipulateTexture(pic);
-		createTextures(pic);
+		createTextures(pic, true);
+
+		// Get a texture that works with classic
+		manipulateTextureClassic(pic);
+		createTextures(pic, false);
 
 		// Not needed anymore.
 		pic.dereference();
@@ -429,9 +433,9 @@ protected:
 		return Picture(terrainFilename);
 	}
 
-	void createTextures(Picture pic)
+	void createTextures(Picture pic, bool betaTerrain)
 	{
-		char[] name = "mc/terrain";
+		char[] name = betaTerrain ? "mc/terrain" : "mc/classicTerrain";
 		GfxTexture t;
 		GfxTextureArray ta;
 
@@ -439,14 +443,20 @@ protected:
 		// Or we get errors near the block edges
 		t.filter = GfxTexture.Filter.Nearest;
 
-		opts.terrain = t;
+		if (betaTerrain)
+			opts.terrain = t;
+		else
+			opts.classicTerrain = t;
 		t.dereference();
 
 		if (rm.textureArray) {
 			ta = ta.fromTileMap(name, pic, 16, 16);
 			ta.filter = GfxTexture.Filter.NearestLinear;
 
-			opts.terrainArray = ta;
+			if (betaTerrain)
+				opts.terrainArray = ta;
+			else
+				opts.classicTerrainArray = ta;
 			ta.dereference();
 		}
 	}

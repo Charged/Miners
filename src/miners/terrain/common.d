@@ -16,6 +16,7 @@ public:
 	ChunkVBOGroupRigidMesh cvgrm;
 	ChunkVBOGroupCompactMesh cvgcm;
 	bool buildIndexed; // The renderer supports array textures.
+	bool useClassicTexture;
 
 protected:
 	Options opts;
@@ -26,11 +27,11 @@ private:
 	mixin SysLogging;
 
 public:
-	this(GameWorld w, Options opts)
+	this(GameWorld w, Options opts, bool useClassicTexture)
 	{
 		super(w);
 		this.opts = opts;
-
+		this.useClassicTexture = useClassicTexture;
 		view_radii = 250 / 16 + 1;
 
 		// Setup the groups
@@ -70,6 +71,11 @@ protected:
 		cvgrm = null; cvgcm = null;
 		GfxTexture t = opts.terrain();
 		GfxTextureArray ta = opts.terrainArray();
+
+		if (useClassicTexture) {
+			t = opts.classicTerrain();
+			ta = opts.classicTerrainArray();
+		}
 
 		switch(type) {
 		case TerrainBuildTypes.RigidMesh:

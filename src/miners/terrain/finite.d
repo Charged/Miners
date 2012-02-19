@@ -62,7 +62,9 @@ protected:
 	int zSaved;
 
 public:
-	this(GameWorld w, Options opts, int x, int y, int z)
+	this(GameWorld w, Options opts,
+	     int x, int y, int z,
+	     bool useClassicTerrain)
 	{
 		l.info("Created (%sx%sx%s)", x, y, z);
 
@@ -104,7 +106,7 @@ public:
 		blocks = store.ptr;
 		data = store.ptr + sizeBlocks;
 
-		super(w, opts);
+		super(w, opts, useClassicTerrain);
 	}
 
 	~this()
