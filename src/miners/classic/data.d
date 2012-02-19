@@ -2,6 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.data;
 
+import charge.math.color;
+
+
 /**
  * ClassicBlock info struct.
  */
@@ -17,7 +20,6 @@ struct ClassicBlockInfo {
 /**
  * Table holding information about beta blocks.
  *
- * XXX: Wool doesn't match.
  * XXX: Comfirm which blocks that doesn't match.
  */
 ClassicBlockInfo classicBlocks[50] = [
@@ -42,22 +44,22 @@ ClassicBlockInfo classicBlocks[50] = [
 	{ 18,  0,  true,  true, "Leaves",           "leaves"},
 	{ 19,  0,  true,  true, "Sponge",           "sponge"},
 	{ 20,  0,  true,  true, "Glass",            "glass"},
-	{ 35, 14,  true,  true, "Red Cloth",        "wool red"},
-	{ 35,  1,  true,  true, "Orange Cloth",     "wool orange"},
-	{ 35,  4,  true,  true, "Yellow Cloth",     "wool yellow"},
-	{ 35,  5, false,  true, "Lime Cloth",       "wool l. green"},  // 24
-	{ 35,  5,  true,  true, "Green Cloth",      "wool l. green"},
-	{ 35,  5, false,  true, "Aqua Green Cloth", "wool l. green"},
-	{ 35,  9,  true,  true, "Cyan Cloth",       "wool cyan"},
-	{ 35, 11,  true,  true, "Blue Cloth",       "wool blue"},
-	{ 35, 10,  true,  true, "Purple Cloth",     "wool purple"},
-	{ 35, 10, false,  true, "Indigo Cloth",     "wool purple"},
-	{ 35, 10, false,  true, "Violet Cloth",     "wool purple"},
-	{ 35,  2,  true,  true, "Magenta Cloth",    "wool mangenta"},  // 32
-	{ 35,  6,  true,  true, "Pink Cloth",       "wool pink"},
-	{ 35, 15,  true,  true, "Black Cloth",      "wool black"},
-	{ 35,  8,  true,  true, "Gray Cloth",       "wool light grey"},
-	{ 35,  0,  true,  true, "White Cloth",      "wool white"},
+	{128,  0,  true,  true, "Red Cloth",        "N/A"},
+	{128,  1,  true,  true, "Orange Cloth",     "N/A"},
+	{128,  2,  true,  true, "Yellow Cloth",     "N/A"},
+	{128,  3,  true,  true, "Lime Cloth",       "N/A"},            // 24
+	{128,  4,  true,  true, "Green Cloth",      "N/A"},
+	{128,  5,  true,  true, "Aqua Green Cloth", "N/A"},
+	{128,  6,  true,  true, "Cyan Cloth",       "N/A"},
+	{128,  7,  true,  true, "Blue Cloth",       "N/A"},
+	{128,  8,  true,  true, "Purple Cloth",     "N/A"},
+	{128,  9,  true,  true, "Indigo Cloth",     "N/A"},
+	{128, 10,  true,  true, "Violet Cloth",     "N/A"},
+	{128, 11,  true,  true, "Magenta Cloth",    "N/A"},            // 32
+	{128, 12,  true,  true, "Pink Cloth",       "N/A"},
+	{128, 13,  true,  true, "Black Cloth",      "N/A"},
+	{128, 14,  true,  true, "Gray Cloth",       "N/A"},
+	{128, 15,  true,  true, "White Cloth",      "N/A"},
 	{ 37,  0,  true,  true, "Dandilion",        "flower yellow"},
 	{ 38,  0,  true,  true, "Rose",             "flower red"},
 	{ 39,  0,  true,  true, "Brow Mushroom",    "mushroom brown"},
@@ -71,4 +73,23 @@ ClassicBlockInfo classicBlocks[50] = [
 	{ 47,  0,  true,  true, "Bookshelf",        "bookshelf"},
 	{ 48,  0,  true,  true, "Moss Stone",       "moss stone"},     // 48
 	{ 49,  0,  true,  true, "Obsidian",         "obsidian"},
+];
+
+Color4b classicWoolColors[16] = [
+	Color4b(255,  58,  58, 205),
+	Color4b(255, 156,  58, 205),
+	Color4b(255, 255,  58, 205),
+	Color4b(156, 255,  58, 205),
+	Color4b( 58, 255,  58, 205),
+	Color4b( 58, 255, 156, 205),
+	Color4b( 58, 255, 255, 205),
+	Color4b(120, 187, 255, 205),
+	Color4b(138, 138, 255, 205),
+	Color4b(156,  58, 255, 205),
+	Color4b(200,  85, 255, 205),
+	Color4b(255,  58, 255, 205),
+	Color4b(255,  58, 156, 205),
+	Color4b( 94,  94,  94, 205),
+	Color4b(167, 167, 167, 205),
+	Color4b(255, 255, 255, 205),
 ];

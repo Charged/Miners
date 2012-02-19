@@ -1882,6 +1882,11 @@ template BlockDispatcher()
 			emitQuadMappedUVYP(x1, x2, y2, z1, z2, tex, sideNormal.YP);
 	}
 
+	void classicWool(int x, int y, int z) {
+		auto dec = &classicWoolTile[data.getDataUnsafe(x, y, z)];
+		solidDec(dec, x, y, z);
+	}
+
 	void b(uint x, uint y, uint z) {
 		static int count = 0;
 		ubyte type = data.get(x, y, z);
@@ -2011,6 +2016,9 @@ template BlockDispatcher()
 				break;
 			case 96:
 				trapdoor(x, y, z);
+				break;
+			case 128:
+				classicWool(x, y, z);
 				break;
 			default:
 				if (tile[type].filled)

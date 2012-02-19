@@ -70,7 +70,7 @@ public:
 		delete ft;
 		t = ft = null;
 
-		t = ft = new FiniteTerrain(this, opts, x, y, z, false);
+		t = ft = new FiniteTerrain(this, opts, x, y, z, true);
 	}
 
 	/**

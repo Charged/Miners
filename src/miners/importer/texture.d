@@ -8,6 +8,7 @@ import charge.util.zip;
 import charge.math.color;
 import charge.math.picture;
 
+import miners.classic.data;
 import miners.builder.data;
 import miners.importer.folders;
 
@@ -49,7 +50,18 @@ void manipulateTexture(Picture pic)
  */
 void manipulateTextureClassic(Picture pic)
 {
-	// TODO Wool
+	uint tile_size = pic.width / 16;
+	uint tile_x = 0;
+	uint tile_y = 4;
+	uint max;
+	tile_x *= tile_size;
+	tile_y *= tile_size;
+
+	for (int i; i < 15; i++) {
+		auto t = &classicWoolTile[i];
+		copyTile(pic, 0, 4, t.xz.u, t.xz.v);
+		modulateColor(pic, t.xz.u, t.xz.v, classicWoolColors[i]);
+	}
 }
 
 /**

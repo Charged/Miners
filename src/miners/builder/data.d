@@ -133,12 +133,44 @@ BlockDescriptor tile[256] = [
 	{ false, Stuff,     {  3,  9 }, {  3,  9 }, "redstone repeater on" },
 	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
 	{ false, Stuff,     {  4,  5 }, {  4,  5 }, "trap door" },             // 96
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },                   // 104
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },                   // 112
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },                   // 120
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{ false, NA,        {  0,  0 }, {  0,  0 }, "n/a" },
+	{  true, DataBlock, {  0,  0 }, {  0,  0 }, "Classic Wool" },          // 128
 ];
 
 BlockDescriptor snowyGrassBlock =
 	{  true, Block, { 4,  4 }, { 2,  4 }, "snowy grass" };
 
-BlockDescriptor woolTile[256] = [
+BlockDescriptor woolTile[16] = [
 	{  true, Block,     {  0,  4 }, {  0,  4 }, "white", },                // 0
 	{  true, Block,     {  2, 13 }, {  2, 13 }, "orange" },
 	{  true, Block,     {  2, 12 }, {  2, 12 }, "magenta" },
@@ -155,6 +187,25 @@ BlockDescriptor woolTile[256] = [
 	{  true, Block,     {  1,  9 }, {  1,  9 }, "dark green" },
 	{  true, Block,     {  1,  8 }, {  1,  8 }, "red" },
 	{  true, Block,     {  1,  7 }, {  1,  7 }, "black" },
+];
+
+BlockDescriptor classicWoolTile[16] = [
+	{  true, Block,     {  1,  7 }, {  1,  7 }, "red" },                   // 0
+	{  true, Block,     {  1,  8 }, {  1,  8 }, "orange" },
+	{  true, Block,     {  1,  9 }, {  1,  9 }, "yellow" },
+	{  true, Block,     {  1, 10 }, {  1, 10 }, "lime green" },
+	{  true, Block,     {  1, 11 }, {  1, 11 }, "green" },
+	{  true, Block,     {  1, 12 }, {  1, 12 }, "aqua green" },
+	{  true, Block,     {  1, 13 }, {  1, 13 }, "cyan" },
+	{  true, Block,     {  1, 14 }, {  1, 14 }, "blue" },
+	{  true, Block,     {  2,  7 }, {  2,  7 }, "purple" },                // 8
+	{  true, Block,     {  2,  8 }, {  2,  8 }, "indigo" },
+	{  true, Block,     {  2,  9 }, {  2,  9 }, "violet" },
+	{  true, Block,     {  2, 10 }, {  2, 10 }, "magenta" },
+	{  true, Block,     {  2, 11 }, {  2, 11 }, "pink" },
+	{  true, Block,     {  2, 12 }, {  2, 12 }, "black" },
+	{  true, Block,     {  2, 13 }, {  2, 13 }, "grey" },
+	{  true, Block,     {  0,  4 }, {  0,  4 }, "white", },
 ];
 
 BlockDescriptor woodTile[3] = [
