@@ -45,10 +45,10 @@ LDFLAGS ?= $(DEBUG_DFLAGS)
 DDEFINES = $(ODE_DDEFINES) $(SDL_DDEFINES)
 LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
-CCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
-MCOMP_FLAGS = $(CARCH) -c -o $@ $(CFLAGS)
-DCOMP_FLAGS = -c -w -Isrc -Jres/builtins -Jres/miners $(DDEFINES) -of$@ $(DFLAGS)
-LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl $(LDFLAGS_)
+CCOMP_FLAGS = $(CARCH) -c $(CFLAGS)
+MCOMP_FLAGS = $(CARCH) -c $(CFLAGS)
+DCOMP_FLAGS = -c -w -Isrc -Jres/builtins -Jres/miners $(DDEFINES) $(DFLAGS)
+LINK_FLAGS = -quiet -L-ldl $(LDFLAGS_)
 
 ifneq ($(strip $(USE_SDL)),)
 	SDL_LDFLAGS = -L-lSDL
@@ -72,22 +72,20 @@ ifeq ($(UNAME),Darwin)
 	MSRC = $(shell find src -name "*.m")
 	EXTRA_OBJ = $(patsubst src/%.m, $(OBJ_DIR)/%.$(OBJ_TYPE), $(MSRC))
 	CARCH= -arch i386 -arch x86_64
-	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) -L-ldl -L-framework -LCocoa $(LDFLAGS_)
+	LINK_FLAGS = -quiet -L-ldl -L-framework -LCocoa $(LDFLAGS_)
 else
 ifeq ($(UNAME),WindowsCross)
 	PLATFORM=windows
 	TARGET = Charge.exe
 
 	# Work around winsocket issue
-	LINK_FLAGS = -gc -quiet -of$(TARGET) $(OBJ) -L-lgphobos -L-lws2_32 $(LDFLAGS_)
+	LINK_FLAGS = -gc -quiet -L-lgphobos -L-lws2_32 $(LDFLAGS_)
 else
 	PLATFORM=windows
 	TARGET = Charge.exe
 
-	# Handle compiling with dmc
-	CCOMP_FLAGS = $(CARCH) -c -o"$@" $(CFLAGS)
 	# Change the link flags
-	LINK_FLAGS = -quiet -of$(TARGET) $(OBJ) $(LDFLAGS_)
+	LINK_FLAGS = -quiet $(LDFLAGS_)
 endif
 endif
 endif
@@ -105,21 +103,21 @@ all: $(TARGET)
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.m Makefile
 	@echo "  CC     src/$*.m"
 	@mkdir -p $(dir $@)
-	@$(CC) src/$*.m $(MCOMP_FLAGS)
+	@$(CC) $(MCOMP_FLAGS) -o $@ src/$*.m
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c Makefile
 	@echo "  CC     src/$*.c"
 	@mkdir -p $(dir $@)
-	@$(CC) src/$*.c $(CCOMP_FLAGS)
+	@$(CC) $(CCOMP_FLAGS) -o"$@" src/$*.c
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.d Makefile
 	@echo "  DMD    src/$*.d"
 	@mkdir -p $(dir $@)
-	@$(DMD) src/$*.d $(DCOMP_FLAGS)
+	@$(DMD) $(DCOMP_FLAGS) -of$@ src/$*.d
 
 $(TARGET): $(OBJ) Makefile
 	@echo "  LD     $@"
-	@$(DMD) $(LINK_FLAGS)
+	@$(DMD) $(LINK_FLAGS) -of$@ $(OBJ)
 
 clean:
 	@rm -rf $(TARGET) .obj
