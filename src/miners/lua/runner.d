@@ -38,7 +38,7 @@ public:
 		// Create common actors
 		sl = new SunLight(w);
 		c = new Camera(w);
-		cam = c.current;
+		centerer = c;
 	}
 
 	this(Router r, Options opts, World w, char[] filename)
@@ -98,8 +98,7 @@ public:
 
 	void render(GfxRenderTarget rt)
 	{
-		cam = c.current;
-		super.render(rt);
+		r.render(w.gfx, c.current, rt);
 /*
 		s.getGlobalz("render");
 		if (s.call() == 2) {

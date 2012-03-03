@@ -71,7 +71,7 @@ public:
 	World w;
 	Options opts;
 
-	GfxCamera cam;
+	Movable centerer;
 	int x; /**< Current chunk of camera */
 	int z; /**< Current chunk of camera */
 
@@ -102,10 +102,7 @@ public:
 	{
 	}
 
-	void render(GfxRenderTarget rt)
-	{
-		r.render(w.gfx, cam, rt);
-	}
+	abstract void render(GfxRenderTarget rt);
 
 	void logic()
 	{
@@ -161,7 +158,10 @@ protected:
 	 */
 	void centerMap()
 	{
-		auto p = cam.position;
+		if (centerer is null)
+			return;
+
+		auto p = centerer.position;
 		int x = cast(int)p.x;
 		int z = cast(int)p.z;
 		x = p.x < 0 ? (x - 16) / 16 : x / 16;

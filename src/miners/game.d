@@ -586,8 +586,8 @@ protected:
 			d.blit(debugText, x+8, 16);
 
 			auto grd = cast(GameRunnerBase)runner;
-			if (grd !is null) {
-				auto p = grd.cam.position;
+			if (grd !is null && grd.centerer !is null) {
+				auto p = grd.centerer.position;
 				char[] info = std.string.format("Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
 				GfxFont.render(cameraText, info);
 

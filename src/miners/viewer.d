@@ -10,6 +10,7 @@ import charge.charge;
 import miners.world;
 import miners.runner;
 import miners.options;
+import miners.actors.camera;
 import miners.actors.sunlight;
 import miners.actors.otherplayer;
 
@@ -25,11 +26,9 @@ public:
 	double light_pitch;
 	bool light_moveing;
 
+
 	/* Camera related */
-	GfxProjCamera pcam;
-	GfxIsoCamera icam;
-	GameMover pm;
-	GameMover im;
+	Camera cam;
 	GameMover m;
 	double cam_heading;
 	double cam_pitch;
@@ -47,12 +46,10 @@ public:
 
 		GfxDefaultTarget rt = GfxDefaultTarget();
 
-		cam = icam = new GfxIsoCamera(rt.width/16f, rt.height/16f, -200, 200);
-		m = im = new GameIsoCameraMover(cam);
-
-		cam = pcam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, .1, 250);
-		m = pm = new GameProjCameraMover(cam);
+		centerer = cam = new Camera(w);
 		cam.position = w.spawn + Vector3d(0.5, 1.5, 0.5);
+
+		m = new GameProjCameraMover(cam);
 		cam_heading = 0.0;
 		cam_pitch = 0.0;
 
@@ -204,9 +201,7 @@ public:
 
 	void resize(uint w, uint h)
 	{
-		pcam.ratio = cast(double)w / cast(double)h;
-		icam.width = w / 16.0;
-		icam.height = h / 16.0;
+		cam.resize(w, h);
 	}
 
 	void logic()
@@ -214,4 +209,10 @@ public:
 		m.tick();
 		super.logic();
 	}
+
+	void render(GfxRenderTarget rt)
+	{
+		r.render(w.gfx, cam.current, rt);
+	}
+
 }
