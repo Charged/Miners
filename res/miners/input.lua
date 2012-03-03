@@ -50,6 +50,7 @@ local keyScreenshot
 local keyAA
 local keyShadows
 local keyRenderer
+local keyDistance
 local keyShowDebug
 local keyGrab
 
@@ -71,6 +72,7 @@ function _G.setKeyBindings(def)
 	keyAA = def.keyAA
 	keyShadows = def.keyShadows
 	keyRenderer = def.keyRenderer
+	keyDistance = def.keyDistance
 	keyShowDebug = def.keyShowDebug
 	keyGrab = def.keyGrab
 	keyIso = def.keyIso
@@ -96,6 +98,14 @@ function _G.keyUp(sym)
 	if sym == keyShowDebug then options.showDebug = not options.showDebug end
 	if sym == keyRenderer then options:switchRenderer() end
 	if sym == keyIso then camera.iso = not camera.iso end
+	if sym == keyDistance then
+		local d = options.viewDistance * 2
+
+		if d > 513 then d = 32
+		end
+
+		options.viewDistance = d
+	end
 	if sym == keyGrab and keyboard.ctrl then
 		mouse.grab = not mouse.grab
 		mouse.show = not mouse.grab

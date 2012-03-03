@@ -67,6 +67,7 @@ local defaults = {
 	keyAA = string.byte('b'),
 	keyShadows = string.byte('v'),
 	keyRenderer = string.byte('r'),
+	keyDistance = string.byte('f'),
 	keyIso = string.byte('i'),
 	keyShowDebug = 284, --SDLK_F3
 	keyGrab = string.byte('g'),
