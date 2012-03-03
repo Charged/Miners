@@ -318,7 +318,8 @@ nbt_node* nbt_find(nbt_node* tree, nbt_predicate_t predicate, void* aux)
         struct tag_list* p = list_entry(pos, struct tag_list, entry);
         struct nbt_node* found;
 
-        if((found = nbt_find(p->data, predicate, aux)))
+        found = nbt_find(p->data, predicate, aux);
+        if(found)
             return found;
     }
 
