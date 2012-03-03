@@ -74,9 +74,12 @@ public:
 		pcam = new GfxProjCamera();
 		icam = new GfxIsoCamera(800, 600, -200, 200, GfxIsoCamera.TwoToOne);
 
-		pcam.far = SunLight.defaultFogStop;
-
 		proj = true;
+
+		w.opts.viewDistance ~= &far;
+
+		near = 0.1;
+		far = w.opts.viewDistance();
 
 		resize(800, 600);
 	}
@@ -131,7 +134,6 @@ public:
 	final void far(double value)
 	{
 		pcam.far = value;
-		(cast(World)w).t.setViewRadii(cast(int)(value / 16 + 1));
 	}
 
 	final void isoHeight(double value)

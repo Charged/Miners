@@ -86,12 +86,14 @@ struct CameraWrapper
 		case "rotation":
 			c.setRotation(*s.checkQuatd(3));
 			break;
+/*
 		case "far":
 			c.far = s.toNumber(3);
 			break;
 		case "near":
 			c.near = s.toNumber(3);
 			break;
+*/
 		case "iso":
 			c.iso = s.toBool(3);
 			break;
@@ -182,11 +184,8 @@ struct SunLightWrapper
 			// TODO
 			//s.pushBool(sl.gfx.fog !is null);
 			break;
-		case "fogStart":
-			s.pushNumber(sl.fog.start);
-			break;
-		case "fogStop":
-			s.pushNumber(sl.fog.stop);
+		case "fogProcent":
+			s.pushNumber(sl.procent);
 			break;
 		case "fogColor":
 			s.pushColor4f(sl.fog.color);
@@ -237,11 +236,8 @@ struct SunLightWrapper
 			// TODO
 			//sl.w.gfx.fog = s.toBool(3) ? sl.fog : null;
 			break;
-		case "fogStart":
-			sl.fog.start = s.toNumber(3);
-			break;
-		case "fogStop":
-			sl.fog.stop = s.toNumber(3);
+		case "fogProcent":
+			sl.procent = s.toNumber(3);
 			break;
 		case "fogColor":
 			sl.fog.color = *s.checkColor4f(3);

@@ -32,13 +32,15 @@ public:
 		super(w);
 		this.opts = opts;
 		this.useClassicTexture = useClassicTexture;
-		view_radii = 250 / 16 + 1;
 
 		// Setup the groups
 		buildIndexed = opts.rendererBuildIndexed;
 		doBuildTypeChange(opts.rendererBuildType);
 
+		setViewDistance(opts.viewDistance());
+
 		opts.renderer ~= &setBuildType;
+		opts.viewDistance ~= &setViewDistance;
 	}
 
 	~this() {
@@ -47,7 +49,6 @@ public:
 	}
 
 	abstract void setCenter(int xNew, int zNew);
-	abstract void setViewRadii(int radii);
 	abstract void setBuildType(TerrainBuildTypes type, char[] name);
 	abstract bool buildOne();
 	abstract void unbuildAll();
@@ -62,6 +63,8 @@ public:
 	abstract ubyte setType(ubyte type, int x, int y, int z);
 
 protected:
+	abstract void setViewRadii(int radii);
+
 	void doBuildTypeChange(TerrainBuildTypes type)
 	{
 		this.currentBuildType = type;
@@ -93,5 +96,12 @@ protected:
 		default:
 			assert(false);
 		}
+	}
+
+private:
+	void setViewDistance(double dist)
+	{
+		view_radii = cast(int)(dist / 16 + 2);
+		setViewRadii(view_radii);
 	}
 }

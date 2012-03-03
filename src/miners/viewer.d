@@ -42,8 +42,6 @@ public:
 	{
 		super(r, opts, w);
 
-		w.t.setViewRadii(250/16 + 1);
-
 		GfxDefaultTarget rt = GfxDefaultTarget();
 
 		centerer = cam = new Camera(w);

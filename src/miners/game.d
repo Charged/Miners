@@ -217,6 +217,7 @@ protected:
 		opts.aa = true;
 		opts.aa ~= &rm.setAa;
 		rm.setAa(opts.aa());
+		opts.viewDistance = 256;
 		opts.shadow = true;
 
 		// Extract the dirt texture

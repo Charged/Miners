@@ -15,9 +15,9 @@ class SunLight : public GameActor
 public:
 	GfxSimpleLight gfx;
 	GfxFog fog;
+	double _procent;
 
-	const defaultFogStart = 150;
-	const defaultFogStop = 250;
+	const defaultFogProcent = 0.35;
 	const defaultFogColor = Color4f(89.0/255, 178.0/255, 220.0/255);
 
 public:
@@ -30,9 +30,10 @@ public:
 		fog = new GfxFog();
 		w.gfx.fog = fog;
 
-		fog.start = defaultFogStart;
-		fog.stop = defaultFogStop;
+		fog.stop = w.opts.viewDistance();
 		fog.color = defaultFogColor;
+		procent = defaultFogProcent;
+		w.opts.viewDistance ~= &setViewDistance;
 
 		w.opts.shadow ~= &shadow;
 		shadow = w.opts.shadow();
@@ -57,8 +58,26 @@ public:
 		return gfx.shadow;
 	}
 
+	final void procent(double p)
+	{
+		_procent = p;
+		fog.start = fog.stop - fog.stop * p;
+	}
+
+	final double procent()
+	{
+		return _procent;
+	}
+
 	void setPosition(ref Point3d pos) { gfx.setPosition(pos); }
 	void getPosition(out Point3d pos) { gfx.getPosition(pos); }
 	void setRotation(ref Quatd rot) { gfx.setRotation(rot); }
 	void getRotation(out Quatd rot) { gfx.getRotation(rot); }
+
+private:
+	void setViewDistance(double dist)
+	{
+		fog.stop = dist;
+		procent = _procent;
+	}
 }

@@ -25,7 +25,7 @@ local string = _G.string
 -- Defaults which more then one derive from
 --
 
-local viewDistance = 240 -- Minecraft far ~250
+local viewDistance = 256 -- Minecraft far ~250
 
 local defaults = {
 
@@ -37,8 +37,6 @@ local defaults = {
 
 	cameraPosition = Point(),
 	cameraRotation = Quat(),
-	cameraFar = viewDistance,
-	cameraNear = 0.1,
 
 
 	--
@@ -50,8 +48,7 @@ local defaults = {
 	lightDayDiffuse = Color(165/255, 165/255, 165/255),
 	lightDayAmbient = Color(100/255, 100/255, 100/255),
 
-	fogStop = viewDistance,
-	fogStart = viewDistance - viewDistance / 4,
+	fogProcent = .35,
 	fogDayColor = Color(89/255, 178/255, 220/255),
 
 

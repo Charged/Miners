@@ -27,6 +27,7 @@ local Block = _G.miners.Block
 local light = _G.light
 local world = _G.world
 local camera = _G.camera
+local options = _G.options
 
 
 ----
@@ -57,8 +58,8 @@ function setDefaults(def)
 		def = defaults
 	end
 
-	camera.far = def.cameraFar
-	camera.near = def.cameraNear
+	options.viewDistance = def.viewDistance
+
 	camera.position = def.cameraPosition
 	camera.rotation = Quat(def.cameraHeading, def.cameraPitch, 0)
 
@@ -66,8 +67,7 @@ function setDefaults(def)
 	light.rotation = def.lightRotation
 	light.diffuse = def.lightDayDiffuse
 	light.ambient = def.lightDayAmbient
-	light.fogStart = def.fogStart
-	light.fogStop = def.fogStop
+	light.fogProcent = def.fogProcent
 	light.fogColor = def.fogDayColor
 end
 
