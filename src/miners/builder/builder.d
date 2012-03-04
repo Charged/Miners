@@ -2075,8 +2075,15 @@ static this() {
 	cached = PackerCompact.cAlloc(128 * 1024);
 }
 
-static ~this() {
+static void unleakMemory()
+{
 	cached.cFree();
+	cached = null;
+}
+
+static ~this() {
+	if (cached !is null)
+		cached.cFree();
 }
 
 /**

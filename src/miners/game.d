@@ -177,6 +177,8 @@ public:
 			fm.remBuiltin(terrainFilename);
 			cFree(terrainFile.ptr);
 		}
+
+		miners.builder.builder.unleakMemory();
 	}
 
 
