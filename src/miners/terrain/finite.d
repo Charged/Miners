@@ -446,6 +446,8 @@ protected:
 		unbuild(x, y, z);
 
 		auto ws = extractWorkspace(x, y, z);
+		scope(exit)
+			ws.free();
 		GfxVBO v;
 
 		if (cvgrm !is null) {
