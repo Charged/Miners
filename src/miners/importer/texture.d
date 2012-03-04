@@ -170,6 +170,21 @@ void setupRedstoneWire(Picture pic) {
 		modulateColor(pic, dec.xz.u, dec.xz.v, active);
 }
 
+void blendColor(Picture pic, uint tile_x, uint tile_y, Color4b color)
+{
+	uint tile_size = pic.width / 16;
+	tile_x *= tile_size;
+	tile_y *= tile_size;
+
+	for (int x; x < tile_size; x++) {
+		for (int y; y < tile_size; y++) {
+			auto ptr = &pic.pixels[(x + tile_x) + (y + tile_y) * pic.width];
+			ptr.blend(color);
+			ptr.a = 255;
+		}
+	}
+}
+
 void modulateColor(Picture pic, uint tile_x, uint tile_y, Color4b color)
 {
 	uint tile_size = pic.width / 16;
