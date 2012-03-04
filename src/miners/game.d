@@ -538,6 +538,7 @@ protected:
 				"Charge%7.1fFPS\n"
 				"\n"
 				"Memory:\n"
+				"   Lua%7.1fMB\n"
 				"   VBO%7.1fMB\n"
 				" Chunk%7.1fMB\n"
 				"\n"
@@ -547,6 +548,7 @@ protected:
 				"\tlua   %5.1f%%\n\tbuild %5.1f%%\n"
 				"\tidle  %5.1f%%",
 				cast(double)num_frames / (cast(double)elapsed / 1000.0),
+				lib.lua.state.State.getMemory() / MB,
 				charge.gfx.vbo.VBO.used / MB,
 				Chunk.used_mem / MB,
 				renderTime.calc(elapsed), inputTime.calc(elapsed),

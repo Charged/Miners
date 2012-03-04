@@ -40,16 +40,16 @@ class State
 protected:
 	lua_State *l;
 
+	static size_t memory;
+
+
 public:
 	this()
 	{
-		this.l = luaL_newstate();
+		/* Use the userdata for the alloc function to hold the state */
+		this.l = lua_newstate(&alloc, cast(void*)this);
 		if (!l)
 			throw new Exception("Could not create lua state");
-
-		/* Use the userdata for the alloc function to hold the state */
-		auto af = lua_getallocf(l, null);
-		lua_setallocf(l, af, cast(void*)this);
 	}
 
 	~this()
@@ -491,6 +491,7 @@ public:
 	bool isFunction(int index = -1) { return lua_isfunction(l, index) != 0; }
 	bool isCFunction(int index = -1) { return lua_iscfunction(l, index) != 0; }
 	bool isUserData(int index = -1) { return lua_isuserdata(l, index) != 0; }
+	static size_t getMemory() { return memory; }
 
 protected:
 	extern (C) static int gc(lua_State *l)
@@ -512,5 +513,14 @@ protected:
 			}
 		}
 		return luaL_typerror(l, 1, namez);
+	}
+
+	static extern(C) void* alloc(void *ud, void *data, size_t oldSize, size_t newSize)
+	{
+		/* XXX atomic ops */
+		memory -= oldSize;
+		memory += newSize;
+
+		return std.c.stdlib.realloc(data, newSize);
 	}
 }

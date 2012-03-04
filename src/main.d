@@ -11,6 +11,8 @@ static import test.terrain;
 static import robbers.game;
 static import miners.game;
 
+static import lib.lua.state;
+
 import license;
 
 bool printLicense()
@@ -60,5 +62,14 @@ int main(char[][] args)
 
 	delete g;
 
+	accountMemory();
+
 	return 0;
+}
+
+void accountMemory()
+{
+	auto lua = lib.lua.state.State.getMemory();
+	if (lua != 0)
+		writefln("lua leaked %s bytes", lua);
 }
