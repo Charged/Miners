@@ -7,6 +7,7 @@ import std.outofmemory;
 import charge.sys.file;
 import charge.sys.logger;
 import charge.sys.resource;
+import charge.util.memory;
 
 struct Vertex
 {
@@ -82,8 +83,8 @@ public:
 
 	~this()
 	{
-		std.c.stdlib.free(v);
-		std.c.stdlib.free(t);
+		cFree(v);
+		cFree(t);
 	}
 
 	Vertex[] verts()
@@ -108,13 +109,13 @@ protected:
 		this.tp = type;
 		this.num_verts = verts.length;
 		this.num_tris = tris.length;
-		this.v = cast(Vertex*)std.c.stdlib.malloc(num_verts * Vertex.sizeof);
+		this.v = cast(Vertex*)cMalloc(num_verts * Vertex.sizeof);
 		if (tris !is null)
-			this.t = cast(Triangle*)std.c.stdlib.malloc(num_tris * Triangle.sizeof);
+			this.t = cast(Triangle*)cMalloc(num_tris * Triangle.sizeof);
 
 		if (v is null || (t is null && tris.length != 0)) {
-			std.c.stdlib.free(v);
-			std.c.stdlib.free(t);
+			cFree(v);
+			cFree(t);
 			throw new std.outofmemory.OutOfMemoryException();
 		}
 
@@ -199,8 +200,8 @@ class RigidMeshBuilder
 
 	this(uint max_verts, uint max_tris, RigidMesh.Types type)
 	{
-		verts = cast(Vertex*)std.c.stdlib.malloc(max_verts * Vertex.sizeof);
-		tris = cast(Triangle*)std.c.stdlib.malloc(max_verts * Triangle.sizeof);
+		verts = cast(Vertex*)cMalloc(max_verts * Vertex.sizeof);
+		tris = cast(Triangle*)cMalloc(max_verts * Triangle.sizeof);
 		iv = 0;
 		it = 0;
 		this.type = type;
@@ -208,8 +209,8 @@ class RigidMeshBuilder
 
 	~this()
 	{
-		std.c.stdlib.free(verts);
-		std.c.stdlib.free(tris);
+		cFree(verts);
+		cFree(tris);
 	}
 
 	final void vert(float x, float y, float z, float u, float v, float nx, float ny, float nz)

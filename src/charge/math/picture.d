@@ -10,6 +10,7 @@ import charge.sys.resource;
 import charge.sys.logger;
 import charge.sys.file;
 import charge.util.png;
+import charge.util.memory;
 
 
 class Picture : public Resource
@@ -67,7 +68,7 @@ protected:
 
 		width = w;
 		height = h;
-		pixels = cast(Color4b*)std.c.stdlib.malloc(w*h*Color4b.sizeof);
+		pixels = cast(Color4b*)cMalloc(w*h*Color4b.sizeof);
 	}
 
 	this(Pool p, char[] name, PngImage image, bool dynamic)
@@ -82,7 +83,7 @@ protected:
 
 	~this()
 	{
-		std.c.stdlib.free(pixels);
+		cFree(pixels);
 	}
 
 	static PngImage getImage(char[] filename)

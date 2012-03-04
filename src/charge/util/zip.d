@@ -4,10 +4,10 @@
 module charge.util.zip;
 
 private import etc.c.zlib;
-private import std.c.stdlib : malloc, realloc, free;
 
 private import std.date : DosFileTime;
 private import std.intrinsic : bswap;
+private import charge.util.memory;
 
 // Reuse Exceptions from Phobos
 private import std.zip : ZipException;
@@ -31,7 +31,7 @@ void[] cUncompress(void[] srcbuf, size_t destlen = 0u, int winbits = 15)
 
 	// If we throw something free the C pointer.
 	scope(failure)
-		free(dest);
+		cFree(dest);
 
 	if (!destlen)
 		destlen = srcbuf.length * 2 + 1;
@@ -44,7 +44,7 @@ void[] cUncompress(void[] srcbuf, size_t destlen = 0u, int winbits = 15)
 		throw new ZlibException(err);
 
 	while(1) {
-		dest = realloc(dest, destlen);
+		dest = cRealloc(dest, destlen);
 		zs.next_out = cast(ubyte*)(dest + destpos);
 		zs.avail_out = cast(uint)(destlen - destpos);
 
@@ -216,7 +216,7 @@ void[] cUncompressFromEntry(void[] data, size_t compressedSize, size_t expandedS
 
 	switch (compressionMethod) {
 		case 0:
-			auto ptr = malloc(filedata.length);
+			auto ptr = cMalloc(filedata.length);
 			if (ptr is null)
 				throw new ZipException("out of memory");
 			ptr[0 .. filedata.length] = filedata[0 .. $];

@@ -2,8 +2,28 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.util.memory;
 
+
 static import std.outofmemory;
-static import std.c.stdlib;
+
+debug {
+	static extern(C) void* charge_malloc_dbg(size_t size, char* file, uint line);
+	static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, char* file, uint line);
+	static extern(C) void charge_free_dbg(void *ptr);
+	static extern(C) void* charge_malloc(size_t size);
+	static extern(C) void* charge_realloc(void *ptr, size_t size);
+	static extern(C) void charge_free(void *ptr);
+
+	alias charge_malloc cMalloc;
+	alias charge_realloc cRealloc;
+	alias charge_free cFree;
+} else {
+	private static import std.c.stdlib;
+
+	alias std.c.stdlib.malloc cMalloc;
+	alias std.c.stdlib.realloc cRealloc;
+	alias std.c.stdlib.free cFree;
+}
+
 
 /*
  * A simple c memory allocator.
@@ -44,7 +64,7 @@ struct cMemoryArray(T)
 
 	T* realloc(size_t newLen)
 	{
-		auto ret = std.c.stdlib.realloc(mem, newLen * T.sizeof);
+		auto ret = cRealloc(mem, newLen * T.sizeof);
 
 		// Failed to alloc new memory don't change anything and return null.
 		if (ret == null && newLen != 0)
@@ -57,7 +77,7 @@ struct cMemoryArray(T)
 
 	void free()
 	{
-		std.c.stdlib.free(mem);
+		cFree(mem);
 		mem = null;
 		len = 0;
 	}

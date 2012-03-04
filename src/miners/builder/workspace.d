@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.workspace;
 
-static import std.c.stdlib;
-static import std.c.string;
+
+import charge.util.memory;
 
 import miners.defines;
 import miners.builder.data;
@@ -22,8 +22,7 @@ struct WorkspaceData
 	 */
 	static WorkspaceData* malloc()
 	{
-		return cast(WorkspaceData*)
-			std.c.stdlib.malloc(WorkspaceData.sizeof);
+		return cast(WorkspaceData*)cMalloc(WorkspaceData.sizeof);
 	}
 
 	/**
@@ -31,12 +30,12 @@ struct WorkspaceData
 	 */
 	void free()
 	{
-		std.c.stdlib.free(cast(void*)this);
+		cFree(cast(void*)this);
 	}
 
 	void zero()
 	{
-		std.c.string.memset(this, 0, (*this).sizeof);
+		(cast(ubyte*)this)[0 .. (*this).sizeof] = 0;
 	}
 
 	/*

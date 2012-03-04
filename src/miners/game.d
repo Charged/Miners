@@ -15,6 +15,7 @@ import lib.sdl.sdl;
 import charge.charge;
 import charge.sys.file;
 import charge.sys.memory;
+import charge.util.memory;
 import charge.platform.homefolder;
 
 import miners.types;
@@ -174,7 +175,7 @@ public:
 		if (terrainFile !is null) {
 			auto fm = FileManager();
 			fm.remBuiltin(terrainFilename);
-			std.c.stdlib.free(terrainFile.ptr);
+			cFree(terrainFile.ptr);
 		}
 	}
 

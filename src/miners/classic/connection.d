@@ -2,12 +2,14 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.connection;
 
+
 import std.socket;
 import std.string;
 private static import etc.c.zlib;
 private import std.zlib : ZlibException;
 
 import charge.charge;
+import charge.util.memory;
 
 import miners.types;
 import miners.classic.proto;
@@ -218,11 +220,11 @@ protected:
 
 
 		// Need somewhere to store the uncompressed data
-		auto ptr = cast(ubyte*)std.c.stdlib.malloc(size);
+		auto ptr = cast(ubyte*)cMalloc(size);
 		if (!ptr)
 			throw new ZlibException(etc.c.zlib.Z_MEM_ERROR);
 		scope(exit)
-			std.c.stdlib.free(ptr);
+			cFree(ptr);
 		ubyte[] decomp = ptr[0 .. size];
 
 		// Used as arguments for zlib

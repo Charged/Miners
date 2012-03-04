@@ -3,10 +3,9 @@
 module miners.builder.packers;
 
 
-static import std.c.stdlib;
+import charge.util.memory;
 
 import miners.gfx.vbo;
-
 import miners.builder.types;
 import miners.builder.helpers;
 
@@ -107,7 +106,7 @@ public:
 	{
 		size_t size;
 		size = PackerCompact.sizeof +Vertex.sizeof * numVerts;
-		auto ptr = std.c.stdlib.malloc(size);
+		auto ptr = cMalloc(size);
 
 		return cast(PackerCompact*)ptr;
 	}
@@ -115,6 +114,6 @@ public:
 	void cFree()
 	{
 		auto ptr = cast(void*)this;
-		std.c.stdlib.free(ptr);
+		.cFree(ptr);
 	}
 }

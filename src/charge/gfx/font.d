@@ -24,6 +24,7 @@ public:
 		uint h;
 
 		pixels = FNT_RenderMax(text.ptr, cast(uint)text.length, &w, &h);
+		// This should be stdlib.free.
 		scope(exit) std.c.stdlib.free(pixels);
 
 		if (pixels is null)

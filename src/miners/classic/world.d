@@ -3,6 +3,7 @@
 module miners.classic.world;
 
 import charge.charge;
+import charge.util.memory;
 
 import miners.types;
 import miners.world;
@@ -46,8 +47,8 @@ public:
 		auto b = loadClassicTerrain(filename, x, y, z);
 		if (b is null)
 			throw new Exception("Failed to load level");
-		scope (exit)
-			std.c.stdlib.free(b.ptr);
+		scope(exit)
+			cFree(b.ptr);
 
 		// Setup the terrain from the data.
 		newLevelFromClassic(x, y, z, b[0 .. x * y * z]);

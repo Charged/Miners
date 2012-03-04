@@ -132,6 +132,7 @@ bool getBlocksFromNode(nbt_node *file, out ubyte *blocks_out, out ubyte *data_ou
 	return true;
 
 err:
+	// These should be stdlib.free
 	std.c.stdlib.free(blocks_out);
 	std.c.stdlib.free(data_out);
 	blocks_out = null;

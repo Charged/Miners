@@ -48,5 +48,6 @@ static this()
 
 static ~this()
 {
+	// This should be stdlib free
 	std.c.stdlib.free(privateFrameworksPath.ptr);
 }

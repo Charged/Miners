@@ -11,6 +11,7 @@ import charge.gfx.target;
 import charge.sys.logger;
 import charge.sys.resource;
 import charge.sys.properties;
+import charge.util.memory;
 import charge.platform.homefolder;
 import charge.platform.core.common;
 
@@ -113,11 +114,11 @@ public:
 		scope(exit)
 			SDL_FreeSurface(temp);
 
-		pixels = cast(ubyte*)std.c.stdlib.malloc(3 * width * height);
+		pixels = cast(ubyte*)cMalloc(3 * width * height);
 		if (pixels == null)
 			return;
 		scope(exit)
-			std.c.stdlib.free(pixels);
+			cFree(pixels);
 
 		// Read the image from GL
 		glReadPixels(0, 0, width, height,
