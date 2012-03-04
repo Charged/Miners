@@ -14,6 +14,7 @@ import lib.sdl.sdl;
 
 import charge.charge;
 import charge.sys.file;
+import charge.sys.memory;
 import charge.platform.homefolder;
 
 import miners.types;
@@ -538,6 +539,7 @@ protected:
 				"Charge%7.1fFPS\n"
 				"\n"
 				"Memory:\n"
+				"     C%7.1fMB\n"
 				"   Lua%7.1fMB\n"
 				"   VBO%7.1fMB\n"
 				" Chunk%7.1fMB\n"
@@ -548,6 +550,7 @@ protected:
 				"\tlua   %5.1f%%\n\tbuild %5.1f%%\n"
 				"\tidle  %5.1f%%",
 				cast(double)num_frames / (cast(double)elapsed / 1000.0),
+				charge.sys.memory.MemHeader.getMemory() / MB,
 				lib.lua.state.State.getMemory() / MB,
 				charge.gfx.vbo.VBO.used / MB,
 				Chunk.used_mem / MB,

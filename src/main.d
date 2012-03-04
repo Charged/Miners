@@ -11,7 +11,9 @@ static import test.terrain;
 static import robbers.game;
 static import miners.game;
 
+// For memory tracking
 static import lib.lua.state;
+static import charge.sys.memory;
 
 import license;
 
@@ -71,5 +73,9 @@ void accountMemory()
 {
 	auto lua = lib.lua.state.State.getMemory();
 	if (lua != 0)
-		writefln("lua leaked %s bytes", lua);
+		writefln("lua leaked %s bytes", cast(long)lua);
+
+	auto c = charge.sys.memory.MemHeader.getMemory();
+	if (c != 0)
+		writefln("c leaked %s bytes", cast(long)c);
 }
