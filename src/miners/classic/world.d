@@ -4,6 +4,7 @@ module miners.classic.world;
 
 import charge.charge;
 
+import miners.types;
 import miners.world;
 import miners.options;
 import miners.terrain.finite;
@@ -151,6 +152,12 @@ public:
 					ct.setType(type, x, y, z);
 				}
 			}
+		}
+
+		for (ubyte i; i < 50; i++) {
+			ubyte block, meta;
+			convertClassicToBeta(i, block, meta);
+			ct[32+i, 67, 32] = Block(block, meta);
 		}
 	}
 }
