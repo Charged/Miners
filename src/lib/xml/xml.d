@@ -9,6 +9,7 @@ import std.string;
 import std.file;
 
 import charge.util.vector;
+import charge.util.memory;
 
 class Node
 {
@@ -332,6 +333,11 @@ extern(C) {
 	typedef void function(void *userData, char *name, char **atts) XML_StartElementHandler;
 	typedef void function(void *userData, char *name) XML_EndElementHandler;
 	typedef void function(void *userData, char *data, int len) XML_CharacterDataHandler;
+	struct XML_Memory_Handling_Suite {
+		extern(C) void* function(size_t size) malloc_fcn;
+		extern(C) void* function(void *ptr, size_t size) realloc_fcn;
+		extern(C) void  function(void *ptr) free_fcn;
+	}
 
 	enum XML_Status
 	{
@@ -340,7 +346,10 @@ extern(C) {
 		XML_STATUS_SUSPENDED = 2
 	}
 
-  	XML_Parser* XML_ParserCreate(char*);
+	XML_Parser* XML_ParserCreate_MM(char *encoding,
+					XML_Memory_Handling_Suite *memsuite,
+					char *namespaceSeparator);
+	void XML_ParserFree(XML_Parser *parser);
 	void XML_SetUserData(XML_Parser *parser, void *userData);
 	void XML_SetElementHandler(XML_Parser *parser, XML_StartElementHandler start, XML_EndElementHandler end);
 	void XML_SetStartElementHandler(XML_Parser *parser, XML_StartElementHandler handler);
@@ -357,15 +366,29 @@ class SaxParser
 private:
 	Parser p;
 	XML_Parser *parser;
+	static XML_Memory_Handling_Suite mem = {
+		&cMalloc,
+		&cRealloc,
+		&cFree,
+	};
 
 
 public:
 	this()
 	{
-		parser = XML_ParserCreate(null);
+		parser = XML_ParserCreate_MM(null, &mem, null);
 		XML_SetUserData(parser, cast(void*)this);
 		XML_SetElementHandler(parser, &startElement, &endElement);
 		XML_SetCharacterDataHandler(parser, &charData);
+	}
+
+	~this()
+	{
+		if (parser is null)
+			return;
+
+		XML_ParserFree(parser);
+		parser = null;
 	}
 
 	void parse(char[] filename, Parser p)
