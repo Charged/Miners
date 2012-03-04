@@ -57,10 +57,34 @@ private:
 	Text text;
 
 public:
+	/**
+	 * Create a connection from the server info give, displaying
+	 * the connection status as it is made finally creating the
+	 * ClassicRunner once a level is loaded.
+	 */
 	this(MenuRunner mr, ClassicServerInfo csi)
 	{
 		super(mr, header, Buttons.CANCEL);
 		cc = new ClientConnection(this, csi);
+		mr.ticker = &cc.doPackets;
+
+		auto ct = new CenteredText(null, 0, 0,
+					   childWidth, childHeight,
+					   "Connecting");
+		replacePlane(ct);
+		text = ct.text;
+
+		repack();
+	}
+
+	/**
+	 * This constructor is used we change world, the server
+	 * does this by sending levelInitialize packet.
+	 */
+	this(MenuRunner mr, ClientConnection cc)
+	{
+		super(mr, header, Buttons.CANCEL);
+		this.cc = cc;
 		mr.ticker = &cc.doPackets;
 
 		auto ct = new CenteredText(null, 0, 0,
