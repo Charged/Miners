@@ -59,7 +59,7 @@ public:
 		absX += this.x;
 		absY += this.y;
 
-		foreach(c; children.adup.reverse) {
+		foreach_reverse(c; children) {
 			if (!collidesWith(c, x, y, 1, 1))
 				continue;
 
@@ -116,7 +116,7 @@ public:
 	 */
 	int find(Component c)
 	{
-		foreach(int i, child; children.adup)
+		foreach(int i, child; children[])
 			if (child is c)
 				return i;
 
