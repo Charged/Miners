@@ -229,17 +229,13 @@ public:
 			copyToWorkspace(ws, i);
 
 			if (bt.cvgrm !is null) {
-				v = buildRigidMeshFromChunk(ws, xPos, yPos+i, zPos);
+				v = updateRigidMesh(null, ws, xPos, yPos+i, zPos);
 				if (v !is null)
 					bt.cvgrm.add(v, xPos, yPos+i, zPos);
 			}
 
 			if (bt.cvgcm !is null) {
-				if (bt.buildIndexed)
-					v = buildCompactMeshIndexedFromChunk(ws, xPos, yPos+i, zPos);
-				else
-					v = buildCompactMeshFromChunk(ws, xPos, yPos+i, zPos);
-
+				v = updateCompactMesh(null, bt.buildIndexed, ws, xPos, yPos+i, zPos);
 				if (v !is null)
 					bt.cvgcm.add(v, xPos, yPos+i, zPos);
 			}

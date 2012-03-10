@@ -2044,11 +2044,12 @@ void doBuildMesh(WorkspaceData *data, Packer *p)
 }
 
 /**
- * Build a RigidMesh from a WorkspaceData.
+ * Update a RigidMesh from a WorkspaceData.
  */
-ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
-					  int xPos, int yPos, int zPos,
-					  int xOffArg, int yOffArg, int zOffArg)
+ChunkVBORigidMesh updateRigidMesh(ChunkVBORigidMesh vbo,
+				  WorkspaceData *data,
+				  int xPos, int yPos, int zPos,
+				  int xOffArg, int yOffArg, int zOffArg)
 {
 /*
 	XXX Disabled for now.
@@ -2064,7 +2065,11 @@ ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
 	doBuildMesh(data, &prm.base);
 
 	// C memory freed above with scope(exit)
-	return ChunkVBORigidMesh(mb, xPos, yPos, zPos);
+	if (vbo is null)
+		return ChunkVBORigidMesh(mb, xPos, yPos, zPos);
+
+	vbo.update(mb);
+	return vbo;
 */
 	return null;
 }
@@ -2087,41 +2092,28 @@ static ~this() {
 }
 
 /**
- * Build a CompactMesh from a WorkspaceData.
+ * Build and update a CompactMesh from a WorkspaceData.
  */
-ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
-					      int xPos, int yPos, int zPos,
-					      int xOffArg, int yOffArg, int zOffArg)
+ChunkVBOCompactMesh updateCompactMesh(ChunkVBOCompactMesh vbo, bool indexed,
+				      WorkspaceData *data,
+				      int xPos, int yPos, int zPos,
+				      int xOffArg, int yOffArg, int zOffArg)
 {
 	auto pc = cached;
 
-	pc.ctor(xOffArg, yOffArg, zOffArg, false);
+	pc.ctor(xOffArg, yOffArg, zOffArg, indexed);
 
 	doBuildMesh(data, &pc.base);
 
 	auto verts = pc.getVerts();
 	if (verts.length == 0)
 		return null;
-	return ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
-}
 
-/**
- * Build a indexed CompactMesh from a WorkspaceData.
- */
-ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
-						     int xPos, int yPos, int zPos,
-						     int xOffArg, int yOffArg, int zOffArg)
-{
-	auto pc = cached;
+	if (vbo is null)
+		return ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
 
-	pc.ctor(xOffArg, yOffArg, zOffArg, true);
-
-	doBuildMesh(data, &pc.base);
-
-	auto verts = pc.getVerts();
-	if (verts.length == 0)
-		return null;
-	return ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
+	vbo.update(verts);
+	return vbo;
 }
 
 
@@ -2132,32 +2124,24 @@ ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
  */
 
 
-ChunkVBORigidMesh buildRigidMeshFromChunk(WorkspaceData *data,
-					  int xPos, int yPos, int zPos)
+ChunkVBORigidMesh updateRigidMesh(ChunkVBORigidMesh vbo,
+				  WorkspaceData *data,
+				  int xPos, int yPos, int zPos)
 {
 	int xOff = xPos * BuildWidth;
 	int yOff = yPos * BuildHeight;
 	int zOff = zPos * BuildDepth;
 
-	return buildRigidMeshFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
+	return updateRigidMesh(vbo, data, xPos, yPos, zPos, xOff, yOff, zOff);
 }
 
-ChunkVBOCompactMesh buildCompactMeshFromChunk(WorkspaceData *data,
-					      int xPos, int yPos, int zPos)
+ChunkVBOCompactMesh updateCompactMesh(ChunkVBOCompactMesh vbo, bool indexed,
+				      WorkspaceData *data,
+				      int xPos, int yPos, int zPos)
 {
 	int xOff = xPos * BuildWidth;
 	int yOff = yPos * BuildHeight;
 	int zOff = zPos * BuildDepth;
 
-	return buildCompactMeshFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
-}
-
-ChunkVBOCompactMesh buildCompactMeshIndexedFromChunk(WorkspaceData *data,
-						     int xPos, int yPos, int zPos)
-{
-	int xOff = xPos * BuildWidth;
-	int yOff = yPos * BuildHeight;
-	int zOff = zPos * BuildDepth;
-
-	return buildCompactMeshIndexedFromChunk(data, xPos, yPos, zPos, xOff, yOff, zOff);
+	return updateCompactMesh(vbo, indexed, data, xPos, yPos, zPos, xOff, yOff, zOff);
 }

@@ -451,18 +451,13 @@ protected:
 		GfxVBO v;
 
 		if (cvgrm !is null) {
-			v = buildRigidMeshFromChunk(ws, x, y, z);
-
+			v = updateRigidMesh(null, ws, x, y, z);
 			if (v !is null)
 				cvgrm.add(v, x, y, z);
 		}
 
 		if (cvgcm !is null) {
-			if (buildIndexed)
-				v = buildCompactMeshIndexedFromChunk(ws, x, y, z);
-			else
-				v = buildCompactMeshFromChunk(ws, x, y, z);
-
+			v = updateCompactMesh(null, buildIndexed, ws, x, y, z);
 			if (v !is null)
 				cvgcm.add(v, x, y, z);
 		}
