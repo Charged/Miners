@@ -9,6 +9,7 @@ import std.stream;
 import std.mmfile;
 
 import charge.util.zip;
+import charge.util.memory;
 import charge.util.base36;
 
 import lib.nbt.nbt;
@@ -52,22 +53,26 @@ bool getBetaBlocksForChunk(char[] dir, int x, int z,
 	uint chunkSize;
 	uint chunkExactSize;
 	uint chunkOffset;
-	ubyte chunkData[];
+	cMemoryArray!(ubyte) chunkData;
+	scope(exit)
+		chunkData.free();
 
-	BufferedFile f;
+	File f;
 
 	try {
-		f = new BufferedFile(region);
+		f = new File(region);
 	} catch(Exception e) {
 		return false;
 	}
 
-	scope(exit)
+	scope(exit) {
 		f.close();
+		delete f;
+	}
 
 	// Seek and read 4 bytes
 	f.seek(headerOffset, SeekPos.Set);
-	f.read(headerData);
+	f.readExact(headerData.ptr, headerData.length);
 
 	chunkOffset = (headerData[2] | headerData[1] << 8 | headerData[0] << 16) * 4096;
 	chunkSize = headerData[3] * 4096;
@@ -80,7 +85,7 @@ bool getBetaBlocksForChunk(char[] dir, int x, int z,
 
 	// Seek and read chunkSize bytes
 	f.seek(chunkOffset, SeekPos.Set);
-	f.read(chunkData);
+	f.readExact(chunkData.ptr, chunkData.length);
 
 	chunkExactSize = chunkData[3] | chunkData[2] << 8 | chunkData[1] << 16 | chunkData[0] << 24;
 	assert(chunkExactSize <= chunkSize);
