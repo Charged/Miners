@@ -10,6 +10,9 @@ import std.regexp;
 import std.string;
 import std.c.stdlib;
 
+static import std.gc;
+static import gcstats;
+
 import lib.sdl.sdl;
 
 import charge.charge;
@@ -535,17 +538,30 @@ protected:
 
 		ticks++;
 
+
 		auto elapsed = SDL_GetTicks() - start;
 		if (elapsed > 1000) {
+
+			gcstats.GCStats stats;
+			std.gc.getStats(stats);
+
 			const double MB = 1024 * 1024;
 			char[] info = std.string.format(
 				"Charge%7.1fFPS\n"
 				"\n"
 				"Memory:\n"
 				"     C%7.1fMB\n"
+				"     D%7.1fMB\n"
 				"   Lua%7.1fMB\n"
 				"   VBO%7.1fMB\n"
 				" Chunk%7.1fMB\n"
+				"\n"
+				"GC:\n"
+				"  used%7.1fMB\n"
+				"  pool%7.1fMB\n"
+				"  free%7.1fMB\n"
+				" pages% 7s\n"
+				"  free% 7s\n"
 				"\n"
 				"Time:\n"
 				"\tgfx   %5.1f%%\n\tctl   %5.1f%%\n"
@@ -554,15 +570,23 @@ protected:
 				"\tidle  %5.1f%%",
 				cast(double)num_frames / (cast(double)elapsed / 1000.0),
 				charge.sys.memory.MemHeader.getMemory() / MB,
+				stats.usedsize / MB,
 				lib.lua.state.State.getMemory() / MB,
 				charge.gfx.vbo.VBO.used / MB,
 				Chunk.used_mem / MB,
+				stats.usedsize / MB,
+				stats.poolsize / MB,
+				stats.freelistsize / MB,
+				stats.pageblocks,
+				stats.freeblocks,
 				renderTime.calc(elapsed), inputTime.calc(elapsed),
 				networkTime.calc(elapsed), logicTime.calc(elapsed),
 				luaTime.calc(elapsed), buildTime.calc(elapsed),
 				idleTime.calc(elapsed));
 
 			GfxFont.render(debugText, info);
+
+			delete info;
 
 			num_frames = 0;
 			start = elapsed + start;
