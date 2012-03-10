@@ -226,6 +226,7 @@ protected:
 		rm.setAa(opts.aa());
 		opts.viewDistance = 256;
 		opts.shadow = true;
+		debug { opts.showDebug = true; }
 
 		// Extract the dirt texture
 		Picture dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0);
