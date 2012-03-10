@@ -748,8 +748,10 @@ protected:
 			r = new ScriptRunner(this, opts, w, scriptName);
 		} catch (Exception e) {
 			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
-			r = new ViewerRunner(this, opts, w);
 		}
+
+		if (r is null)
+			r = new ViewerRunner(this, opts, w);
 
 		if (build_all) {
 			int times = 5;
