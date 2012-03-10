@@ -71,7 +71,7 @@ public:
 
 protected:
 	this(Pool p, char[] filename, RigidMesh mesh) {
-		super(p, uri, filename, false);
+		super(p, uri, filename);
 
 		this.mesh = dGeomTriMeshDataCreate();
 		dGeomTriMeshDataBuildSingle(

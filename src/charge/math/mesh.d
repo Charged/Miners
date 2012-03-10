@@ -73,12 +73,7 @@ public:
 
 	static RigidMesh opCall(Vertex verts[], Triangle tris[], Types type)
 	{
-		return RigidMesh(Pool(), "tmp/mesh", verts, tris, type);
-	}
-
-	static RigidMesh opCall(Pool p, char[] name, Vertex verts[], Triangle tris[], Types type)
-	{
-		return new RigidMesh(p, name, true, verts, tris, type);
+		return new RigidMesh(Pool(), null, verts, tris, type);
 	}
 
 	~this()
@@ -103,9 +98,9 @@ public:
 	}
 
 protected:
-	this(Pool p, char[] name, bool tmp, Vertex verts[], Triangle tris[], Types type)
+	this(Pool p, char[] name, Vertex verts[], Triangle tris[], Types type)
 	{
-		super(p, uri, name, tmp);
+		super(p, uri, name);
 		this.tp = type;
 		this.num_verts = verts.length;
 		this.num_tris = tris.length;
@@ -181,7 +176,7 @@ protected:
 		/// TODO test all the indecies.
 		l.info("Loaded ", filename);
 
-		return new RigidMesh(p, filename, false, verts, tris, Types.INDEXED_TRIANGLES);
+		return new RigidMesh(p, filename, verts, tris, Types.INDEXED_TRIANGLES);
 
 	err:
 		return null;

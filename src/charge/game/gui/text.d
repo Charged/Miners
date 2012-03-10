@@ -67,7 +67,7 @@ protected:
 	void makeGfx()
 	{
 		if (gfx is null)
-			gfx = new DynamicTexture("charge/game/gui/basetext");
+			gfx = new DynamicTexture(null);
 		Font.render(gfx, t);
 		dirty = false;
 	}

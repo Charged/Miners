@@ -221,7 +221,7 @@ public:
 		}
 
 		if (tt is null)
-			tt = TextureTarget("charge/game/gui/container", w, h);
+			tt = TextureTarget(null, w, h);
 
 		auto d = new Draw();
 		d.target = tt;

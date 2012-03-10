@@ -34,15 +34,15 @@ private:
 	mixin Logging;
 
 package:
-	this(Pool p, char[] name, bool dynamic, GLuint target)
+	this(Pool p, char[] name, GLuint target)
 	{
-		super(p, uri, name, dynamic);
+		super(p, uri, name);
 		this.glTarget = target;
 	}
 
-	this(Pool p, char[] name, bool dynamic, GLuint target, uint id, uint w, uint h)
+	this(Pool p, char[] name, GLuint target, uint id, uint w, uint h)
 	{
-		this(p, name, dynamic, target);
+		this(p, name, target);
 		this.glId = id;
 		this.w = w;
 		this.h = h;
@@ -82,7 +82,7 @@ public:
 		auto id = textureFromPicture(pic);
 
 		l.info("Loaded %s", filename);
-		t = new Texture(Pool(), filename, false, GL_TEXTURE_2D, id, pic.width, pic.height);
+		t = new Texture(Pool(), filename, GL_TEXTURE_2D, id, pic.width, pic.height);
 		t.filter = Texture.Filter.Linear;
 
 		return t;
@@ -94,7 +94,7 @@ public:
 
 		auto id = textureFromPicture(pic);
 
-		auto t = new Texture(Pool(), name, true, GL_TEXTURE_2D, id, pic.width, pic.height);
+		auto t = new Texture(Pool(), name, GL_TEXTURE_2D, id, pic.width, pic.height);
 		t.filter = Texture.Filter.Linear;
 
 		return t;
@@ -250,7 +250,7 @@ protected:
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		super(p, str, false, GL_TEXTURE_2D, id, 1, 1);
+		super(p, str, GL_TEXTURE_2D, id, 1, 1);
 
 		filter = Texture.Filter.Nearest;
 	}
@@ -260,10 +260,9 @@ protected:
 class DynamicTexture : public Texture
 {
 public:
-	this(char[] append)
+	this(char[] name)
 	{
-		char[] name = "dyn/" ~ append;
-		super(Pool(), name, true, GL_TEXTURE_2D);
+		super(Pool(), name, GL_TEXTURE_2D);
 	}
 
 package:
@@ -342,7 +341,7 @@ protected:
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 			throw new Exception("DoubleTarget framebuffer not complete " ~ std.string.toString(status));
 
-		super(p, name, true, GL_TEXTURE_2D, colorTex, w, h);
+		super(p, name, GL_TEXTURE_2D, colorTex, w, h);
 	}
 }
 
@@ -447,7 +446,7 @@ public:
 protected:
 	this(Pool p, char[] name, uint id, uint w, uint h, uint length)
 	{
-		super(p, name, false, GL_TEXTURE_2D_ARRAY_EXT, id, w, h);
+		super(p, name, GL_TEXTURE_2D_ARRAY_EXT, id, w, h);
 		this.length = length;
 	}
 
@@ -500,7 +499,7 @@ private:
 		id = textureFromPicture(pic);
 
 		l.info("Loaded %s", filename);
-		auto t = new Texture(Pool(), filename, false, GL_TEXTURE_2D, id, pic.width, pic.height);
+		auto t = new Texture(Pool(), filename, GL_TEXTURE_2D, id, pic.width, pic.height);
 		t.filter = Texture.Filter.Linear;
 
 		return t;

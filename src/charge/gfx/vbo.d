@@ -51,9 +51,9 @@ public:
 	static int used() { return used_mem; }
 
 protected:
-	this(Pool p, char[] name, bool dynamic)
+	this(Pool p, char[] name)
 	{
-		super(p, uri, name, dynamic);
+		super(p, uri, name);
 
 		glGenBuffersARB(1, &vboVerts);
 		if (GL_CHARGE_vertex_array_object)
@@ -109,33 +109,29 @@ protected:
 private:
 	mixin Logging;
 
-public:
-	this(Pool p, char[] filename, RigidMesh model)
-	{
-		numVerts = cast(GLuint)model.verts.length;
-		numIndices = cast(GLuint)model.tris.length;
 
-		this(p, filename, false, model.type,
-		     model.verts.ptr, cast(uint)model.verts.length,
-		     model.tris.ptr, cast(uint)model.tris.length);
-	}
-
-	this(Pool p, char[] prefix, RigidMeshBuilder builder)
+protected:
+	this(Pool p, RigidMeshBuilder builder)
 	{
-		this(p, prefix, true, builder.type,
+		this(p, null, builder.type,
 		     builder.verts, builder.iv,
 		     builder.tris, builder.it);
 	}
 
-protected:
-	this(Pool p, char[] filename, bool dynamic, RigidMesh.Types type,
+	this(Pool p, char[] name, RigidMesh model)
+	{
+		numVerts = cast(GLuint)model.verts.length;
+		numIndices = cast(GLuint)model.tris.length;
+
+		this(p, name, model.type,
+		     model.verts.ptr, cast(uint)model.verts.length,
+		     model.tris.ptr, cast(uint)model.tris.length);
+	}
+
+	this(Pool p, char[] name, RigidMesh.Types type,
 	     Vertex *verts, uint numVerts, Triangle *tris, uint numTriangles)
 	{
-		if (filename is null) {
-			assert(dynamic);
-			filename = "charge/gfx/vbo";
-		}
-		super(p, filename, dynamic);
+		super(p, name);
 
 		update(type, verts, numVerts, tris, numTriangles);
 	}
@@ -165,14 +161,14 @@ public:
 		return ret;
 	}
 
-	static RigidMeshVBO opCall(char[] prefix, RigidMeshBuilder builder)
+	static RigidMeshVBO opCall(RigidMeshBuilder builder)
 	{
-		return RigidMeshVBO(Pool(), prefix, builder);
+		return RigidMeshVBO(Pool(), builder);
 	}
 
-	static RigidMeshVBO opCall(Pool p, char[] prefix, RigidMeshBuilder builder)
+	static RigidMeshVBO opCall(Pool p, RigidMeshBuilder builder)
 	{
-		return new RigidMeshVBO(p, prefix, builder);
+		return new RigidMeshVBO(p, builder);
 	}
 
 	void update(RigidMeshBuilder builder)

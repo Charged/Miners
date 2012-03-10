@@ -17,33 +17,40 @@ private:
 	char[] uri;
 
 public:
-	this(Pool p, char[] uri, char[] name, bool tmp)
+	this(Pool p, char[] uri, char[] name)
 	{
 		this.pool = p;
 		this.name = name;
 		this.uri = uri;
 		this.refcount = 1;
 
-		if (tmp)
-			this.name = p.temporaryResource(uri, name, this);
-		else
+		if (name !is null)
 			p.resource(uri, name, this);
 	}
 
 	final void reference()
 	{
-		if (refcount++ == 0)
+		if (refcount++ == 0) {
+			assert(name !is null);
 			pool.unmark(uri, name);
+		}
 
 		assert(refcount > 0);
 	}
 
 	final void dereference()
 	{
-		if (--refcount == 0)
-			pool.mark(uri, name);
+		if (refcount <= 0) {
+			writefln("GAH");
+			*cast(int*)null = 0;
+		}
 
-		assert(refcount >= 0);
+		if (--refcount == 0) {
+			if (name is null)
+				delete this;
+			else
+				pool.mark(uri, name);
+		}
 	}
 
 	final char[] getName()
@@ -169,18 +176,4 @@ package:
 
 		map[full] = Entry(r, 1);
 	}
-
-	char[] temporaryResource(char[] uri, char[] name, Resource r)
-	{
-		char[] full_tmp = uri~name;
-		char[] full;
-
-		do {
-			full = format("%s_%s", full_tmp, dynamic++);
-		} while (full in map);
-
-		map[full] = Entry(r, 1);
-		return full[uri.length .. length].dup;
-	}
-
 }

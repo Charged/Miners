@@ -333,8 +333,10 @@ private:
 
 	void changeWindow(MenuBase mb)
 	{
-		if (menuTexture !is null)
+		if (menuTexture !is null) {
 			menuTexture.dereference();
+			menuTexture = null;
+		}
 		if (menu !is null)
 			menu.breakApart();
 		menu = mb;

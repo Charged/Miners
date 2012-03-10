@@ -3,6 +3,8 @@
 module miners.gfx.vbo;
 
 import charge.math.box;
+import charge.sys.resource;
+
 import miners.gfx.imports;
 import miners.defines;
 
@@ -15,14 +17,18 @@ class ChunkVBORigidMesh : public charge.gfx.vbo.RigidMeshVBO
 public:
 	static ChunkVBORigidMesh opCall(RigidMeshBuilder mb, int x, int y, int z)
 	{
-		return new ChunkVBORigidMesh(charge.sys.resource.Pool(), mb, x, y, z);
+		return ChunkVBORigidMesh(Pool(), mb, x, y, z);
+	}
+
+	static ChunkVBORigidMesh opCall(Pool p, RigidMeshBuilder mb, int x, int y, int z)
+	{
+		return new ChunkVBORigidMesh(p, mb);
 	}
 
 protected:
-	this(charge.sys.resource.Pool p, RigidMeshBuilder mb, int x, int y, int z)
+	this(charge.sys.resource.Pool p, RigidMeshBuilder mb)
 	{
-		auto name = std.string.format("mc/vbo/chunk.%s.%s.%s.rigid", x, y, z);
-		super(p, name, mb);
+		super(p, mb);
 	}
 
 }
@@ -56,7 +62,7 @@ public:
 
 	static ChunkVBOCompactMesh opCall(Vertex[] verts, int x, int y, int z)
 	{
-		return new ChunkVBOCompactMesh(charge.sys.resource.Pool(), verts, x, y, z);
+		return new ChunkVBOCompactMesh(charge.sys.resource.Pool(), verts);
 	}
 
 	void update(Vertex[] verts)
@@ -66,10 +72,9 @@ public:
 	}
 
 protected:
-	this(charge.sys.resource.Pool p, Vertex[] verts, int x, int y, int z)
+	this(charge.sys.resource.Pool p, Vertex[] verts)
 	{
-		auto str = std.string.format("mc/vbo/chunk.%s.%s.%s.compact-mesh", x, y, z);
-		super(p, str, true);
+		super(p, null);
 
 		update(verts);
 

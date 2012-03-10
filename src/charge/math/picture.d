@@ -44,7 +44,7 @@ public:
 		if (i is null)
 			return null;
 
-		return new Picture(p, filename, i, true);
+		return new Picture(p, filename, i);
 	}
 
 	static Picture opCall(char[] name, char[] filename)
@@ -53,28 +53,28 @@ public:
 		if (i is null)
 			return null;
 
-		return new Picture(Pool(), name, i, true);
+		return new Picture(Pool(), name, i);
 	}
 
 	static Picture opCall(char[] name, uint width, uint height)
 	{
-		return new Picture(Pool(), name, width, height, true);
+		return new Picture(Pool(), name, width, height);
 	}
 
 protected:
-	this(Pool p, char[] name, uint w, uint h, bool dynamic)
+	this(Pool p, char[] name, uint w, uint h)
 	{
-		super(p, uri, name, dynamic);
+		super(p, uri, name);
 
 		width = w;
 		height = h;
 		pixels = cast(Color4b*)cMalloc(w*h*Color4b.sizeof);
 	}
 
-	this(Pool p, char[] name, PngImage image, bool dynamic)
+	this(Pool p, char[] name, PngImage image)
 	{
 		// Call base calss constructor
-		super(p, uri, name, dynamic);
+		super(p, uri, name);
 
 		this.width = image.width;
 		this.height = image.height;
