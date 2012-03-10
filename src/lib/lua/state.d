@@ -37,6 +37,9 @@ class ObjectWrapper
 
 class State
 {
+public:
+	const size_t tmpSize = 256;
+
 protected:
 	lua_State *l;
 
@@ -103,11 +106,12 @@ public:
 	State registerStructz(T)(char *namez)
 	{
 		TypeInfo ti = typeid(T);
-		char *checkz = getMangledNamez("d_struct_" ~ ti.toString);
+		char[tmpSize] tmp;
+		char[] check = mangleName(sformat(tmp, "d_struct_", ti.toString));
 		/* picks the wrong toString */
 		alias std.string.toString tSz;
 
-		if (cmp(tSz(namez), tSz(checkz)))
+		if (cmp(tSz(namez), check))
 			throw new Exception("Failed to register Struct " ~ tSz(namez) ~ " is invalid");
 
 		if (!luaL_newmetatable(l, namez))
@@ -119,7 +123,8 @@ public:
 	T* pushStructRef(T)(ref T s)
 	{
 		TypeInfo ti = typeid(T);
-		auto namez = getMangledNamez("d_struct_" ~ ti.toString);
+		char[tmpSize] tmp;
+		char* namez = mangledName(sformat("d_struct_", ti.toString, "\0")).ptr;
 		return pushStructRefz!(T)(s, namez);
 	} 
 
@@ -241,8 +246,9 @@ public:
 	void registerClass(T)()
 	{
 		ClassInfo ci = T.classinfo;
+		char[tmpSize] tmp;
 
-		if (!luaL_newmetatable(l, getClassNamez(ci)))
+		if (!luaL_newmetatable(l, getClassNamez(ci, tmp)))
 			throw new Exception("Class already registered");
 
 		/* set the collector function */
@@ -255,7 +261,7 @@ public:
 
 		/* say which classes the class can be cast to */
 		for(; ci; ci = ci.base) {
-			pushString(getClassName(ci));
+			pushString(getClassName(ci, tmp));
 			pushBool(true);
 			setTable(-3);
 		}
@@ -264,8 +270,9 @@ public:
 	final Instance* pushInstance(Object obj)
 	{
 		Instance *ptr = cast(Instance*)lua_newuserdata(l, Instance.sizeof);
+		char[tmpSize] tmp;
 
-		int ret = luaL_newmetatable(l, getClassNamez(obj.classinfo));
+		int ret = luaL_newmetatable(l, getClassNamez(obj.classinfo, tmp));
 		assert(!ret);
 
 		lua_setmetatable(l, -2);
@@ -325,7 +332,9 @@ public:
 
 	T checkClass(T)(int index, bool nullz)
 	{
-		return checkClassName!(T)(index, nullz, getClassName(T.classinfo));
+		char[tmpSize] tmp;
+		auto name = getClassName(T.classinfo, tmp);
+		return checkClassName!(T)(index, nullz, name);
 	}
 
 	T checkClassName(T)(int index, bool nullz, char[] name)
@@ -336,14 +345,16 @@ public:
 		return cast(T)p.obj;
 	}
 
-	static char[] getClassName(ClassInfo ci)
+	static char[] getClassName(ClassInfo ci, char[] tmp)
 	{
-		return getMangledName("d_class_" ~ ci.name);
+		auto name = sformat(tmp, "d_class_", ci.name);
+		return mangleName(name);
 	}
 
-	static char* getClassNamez(ClassInfo ci)
+	static char* getClassNamez(ClassInfo ci, char[] tmp)
 	{
-		return std.string.toStringz(getClassName(ci));
+		auto namez = sformat(tmp, "d_class_", ci.name, "\0");
+		return mangleName(namez).ptr;
 	}
 
 
@@ -352,7 +363,7 @@ public:
 	 */
 
 
-	static char[] getMangledName(char[] str)
+	static char[] mangleName(char[] str)
 	{
 		foreach (i, c; str) {
 			if (c == '.')
@@ -360,12 +371,6 @@ public:
 		}
 		return str;
 	}
-
-	static char* getMangledNamez(char[] str)
-	{
-		return std.string.toStringz(getMangledName(str));
-	}
-
 
 	bool isUserDataz(int index, char* namez)
 	{
