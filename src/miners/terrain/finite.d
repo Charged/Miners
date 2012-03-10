@@ -443,26 +443,33 @@ protected:
 		if (!shouldBuild(x, y, z))
 			return false;
 
-		unbuild(x, y, z);
 
 		auto ws = extractWorkspace(x, y, z);
 		scope(exit)
 			ws.free();
-		GfxVBO v;
-
-		if (cvgrm !is null) {
-			v = updateRigidMesh(null, ws, x, y, z);
-			if (v !is null)
-				cvgrm.add(v, x, y, z);
-		}
-
-		if (cvgcm !is null) {
-			v = updateCompactMesh(null, buildIndexed, ws, x, y, z);
-			if (v !is null)
-				cvgcm.add(v, x, y, z);
-		}
 
 		int i = calcVboIndex(x, y, z);
+		GfxVBO v, old = vbos[i];
+		ChunkVBOGroup g;
+
+		if (cvgcm !is null) {
+			auto cm = cast(ChunkVBOCompactMesh)old;
+			v = updateCompactMesh(cm, buildIndexed, ws, x, y, z);
+			g = cvgcm;
+
+		} else if (cvgrm !is null) {
+			auto rm = cast(ChunkVBORigidMesh)old;
+			v = updateRigidMesh(rm, ws, x, y, z);
+			g = cvgrm;
+		}
+
+		if (old !is v) {
+			if (old !is null)
+				g.remove(old);
+			if (v !is null)
+				g.add(v, x, y, z);
+		}
+
 		vbos[i] = v;
 		gfx[i] = true;
 		dirty[i] = false;
