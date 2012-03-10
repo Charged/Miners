@@ -83,6 +83,24 @@ public:
 		return r;
 	}
 
+	int opApplyReverse(int delegate(inout T) dg)
+	{
+		int r;
+		for (int i = cast(int)num-1; i >= 0; i--) {
+			r = dg(data[i]);
+			if (r)
+				break;
+		}
+		return r;
+	}
+
+	T[] opSlice()
+	{
+		if (num)
+			return data[0 .. num];
+		return null;
+	}
+
 	/*
 	 * Returns a array that is the copy of the content.
 	 */
