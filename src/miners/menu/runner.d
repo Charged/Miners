@@ -30,6 +30,7 @@ protected:
 	Runner levelRunner;
 
 	GfxTextureTarget menuTexture;
+	GfxDraw d;
 
 	Button currentButton;
 	MenuBase menu;
@@ -60,6 +61,7 @@ public:
 		mouse = CtlInput().mouse;
 
 		keyboard.down ~= &this.keyDown;
+		d = new GfxDraw();
 
 		auto m = new MainMenu(this);
 		changeWindow(m);
@@ -119,7 +121,6 @@ public:
 		menu.x = (rt.width - menuTexture.width) / 2;
 		menu.y = (rt.height - menuTexture.height) / 2;
 
-		auto d = new GfxDraw();
 		d.target = rt;
 		d.start();
 

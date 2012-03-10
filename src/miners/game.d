@@ -547,7 +547,8 @@ protected:
 			std.gc.getStats(stats);
 
 			const double MB = 1024 * 1024;
-			char[] info = std.string.format(
+			char[512] tmp;
+			char[] info = sformat(tmp,
 				"Charge%7.1fFPS\n"
 				"\n"
 				"Memory:\n"
@@ -622,7 +623,8 @@ protected:
 			auto grd = cast(GameRunnerBase)runner;
 			if (grd !is null && grd.centerer !is null) {
 				auto p = grd.centerer.position;
-				char[] info = std.string.format("Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
+				char[256] tmp;
+				char[] info = sformat(tmp, "Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
 				GfxFont.render(cameraText, info);
 
 				w = cameraText.width + 16;
