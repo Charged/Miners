@@ -59,14 +59,19 @@ public:
 		return new ChunkVBOCompactMesh(charge.sys.resource.Pool(), verts, x, y, z);
 	}
 
+	void update(Vertex[] verts)
+	{
+		super.update(verts.ptr, verts.length * Vertex.sizeof,
+		             cast(uint)verts.length, null, 0, 0);
+	}
+
 protected:
 	this(charge.sys.resource.Pool p, Vertex[] verts, int x, int y, int z)
 	{
 		auto str = std.string.format("mc/vbo/chunk.%s.%s.%s.compact-mesh", x, y, z);
-		super(p, str, true, verts.ptr,
-		      verts.length * Vertex.sizeof,
-		      cast(uint)verts.length,
-		      null, 0, 0);
+		super(p, str, true);
+
+		update(verts);
 
 		assert(vao);
 

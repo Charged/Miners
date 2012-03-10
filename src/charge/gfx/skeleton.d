@@ -131,10 +131,10 @@ public:
 		this(Pool p, Vertex verts[])
 		{
 			auto str = "charge/gfx/skeleton/simplevbo";
-			super(p, str, true, verts.ptr,
-			      verts.length * Vertex.sizeof,
-			      cast(uint)verts.length,
-			      null, 0, 0);
+			super(p, str, true);
+
+			update(verts.ptr, verts.length * Vertex.sizeof,
+			       cast(uint)verts.length, null, 0, 0);
 
 			if (!vao)
 				return;
