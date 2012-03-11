@@ -383,7 +383,8 @@ protected:
 		if (arg.length <= 5)
 			return false;
 
-		if (arg[$ - 5 .. $] != ".html")
+		if (arg[$ - 4 .. $] != ".htm" &&
+		    arg[$ - 5 .. $] != ".html")
 			return false;
 
 		try {
