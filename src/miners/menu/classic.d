@@ -167,14 +167,14 @@ protected:
 	void setBlock(short x, short y, short z, ubyte type) {}
 
 	void playerSpawn(byte id, char[] name, double x, double y, double z,
-			 ubyte yaw, ubyte pitch) {}
+			 double heading, double pitch) {}
 
 	void playerMoveTo(byte id, double x, double y, double z,
-			  ubyte yaw, ubyte pitch) {}
+			  double heading, double pitch) {}
 	void playerMove(byte id, double x, double y, double z,
-			ubyte yaw, ubyte pitch) {}
+			double heading, double pitch) {}
 	void playerMove(byte id, double x, double y, double z) {}
-	void playerMove(byte id, ubyte yaw, ubyte pitch) {}
+	void playerMove(byte id, double heading, double pitch) {}
 	void playerDespawn(byte id) {}
 	void playerType(ubyte type) {}
 

@@ -117,18 +117,18 @@ public:
 
 	void playerSpawn(byte id, char[] name,
 			 double x, double y, double z,
-			 ubyte yaw, ubyte pitch)
+			 double heading, double pitch)
 	{
 		name = removeColorTags(name);
 	}
 
 	void playerMoveTo(byte id, double x, double y, double z,
-			  ubyte yaw, ubyte pitch)
+			  double heading, double pitch)
 	{
 	}
 
 	void playerMove(byte id, double x, double y, double z,
-			ubyte yaw, ubyte pitch)
+			double heading, double pitch)
 	{
 	}
 
@@ -136,7 +136,7 @@ public:
 	{
 	}
 
-	void playerMove(byte id, ubyte yaw, ubyte pitch)
+	void playerMove(byte id, double heading, double pitch)
 	{
 	}
 

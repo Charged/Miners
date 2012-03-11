@@ -32,14 +32,14 @@ interface ClientListener
 	void setBlock(short x, short y, short z, ubyte type);
 
 	void playerSpawn(byte id, char[] name, double x, double y, double z,
-			 ubyte yaw, ubyte pitch);
+			 double heading, double pitch);
 
 	void playerMoveTo(byte id, double x, double y, double z,
-			  ubyte yaw, ubyte pitch);
+			  double heading, double pitch);
 	void playerMove(byte id, double x, double y, double z,
-			ubyte yaw, ubyte pitch);
+			double heading, double pitch);
 	void playerMove(byte id, double x, double y, double z);
-	void playerMove(byte id, ubyte yaw, ubyte pitch);
+	void playerMove(byte id, double heading, double pitch);
 	void playerDespawn(byte id);
 	void playerType(ubyte type);
 
@@ -130,24 +130,28 @@ public:
 		ClientSetBlock csb;
 
 		csb.packetId = csb.constId;
-		csb.x = x;
-		csb.y = y;
-		csb.z = z;
+		csb.x = ntoh(x);
+		csb.y = ntoh(y);
+		csb.z = ntoh(z);
 		csb.mode = mode;
 		csb.type = type;
 
 		sendPacket!(csb)(s);
 	}
 
-	void sendClientPlayerUpdatePosOri(short x, short y, short z, ubyte yaw, ubyte pitch)
+	void sendClientPlayerUpdate(double x, double y, double z, double heading, double look)
 	{
 		ClientPlayerUpdatePosOri cpupo;
 
+		ubyte yaw, pitch;
+
+		toYawPitch(heading, look, yaw, pitch);
+
 		cpupo.packetId = cpupo.constId;
-		cpupo.playerId = cast(byte)0xff;
-		cpupo.x = x;
-		cpupo.y = y;
-		cpupo.z = z;
+		cpupo.playerId = -1;
+		cpupo.x = ntoh(cast(short)(x * 32.0));
+		cpupo.y = ntoh(cast(short)(y * 32.0));
+		cpupo.z = ntoh(cast(short)(z * 32.0));
 		cpupo.yaw = yaw;
 		cpupo.pitch = pitch;
 
@@ -289,11 +293,11 @@ protected:
 		double x = cast(double)ntoh(sps.x) / 32.0;
 		double y = cast(double)ntoh(sps.y) / 32.0;
 		double z = cast(double)ntoh(sps.z) / 32.0;
-		auto yaw = sps.yaw;
-		auto pitch = sps.pitch;
+		double heading, pitch;
+		fromYawPitch(sps.yaw, sps.pitch, heading, pitch);
 
 		if (l !is null)
-			l.playerSpawn(id, name, x, y, z, yaw, pitch);
+			l.playerSpawn(id, name, x, y, z, heading, pitch);
 	}
 
 	/**
@@ -305,11 +309,11 @@ protected:
 		double x = cast(double)ntoh(spt.x) / 32.0;
 		double y = cast(double)ntoh(spt.y) / 32.0;
 		double z = cast(double)ntoh(spt.z) / 32.0;
-		auto yaw = spt.yaw;
-		auto pitch = spt.pitch;
+		double heading, pitch;
+		fromYawPitch(spt.yaw, spt.pitch, heading, pitch);
 
 		if (l !is null)
-			l.playerMoveTo(id, x, y, z, yaw, pitch);
+			l.playerMoveTo(id, x, y, z, heading, pitch);
 	}
 
 	/**
@@ -321,11 +325,11 @@ protected:
 		double x = spupo.x / 32.0;
 		double y = spupo.y / 32.0;
 		double z = spupo.z / 32.0;
-		auto yaw = spupo.yaw;
-		auto pitch = spupo.pitch;
+		double heading, pitch;
+		fromYawPitch(spupo.yaw, spupo.pitch, heading, pitch);
 
 		if (l !is null)
-			l.playerMove(id, x, y, z, yaw, pitch);
+			l.playerMove(id, x, y, z, heading, pitch);
 	}
 
 	/**
@@ -348,11 +352,11 @@ protected:
 	void playerUpdateOri(ServerPlayerUpdateOri *spuo)
 	{
 		auto id = spuo.playerId;
-		auto yaw = spuo.yaw;
-		auto pitch = spuo.pitch;
+		double heading, pitch;
+		fromYawPitch(spuo.yaw, spuo.pitch, heading, pitch);
 
 		if (l !is null)
-			l.playerMove(id, yaw, pitch);
+			l.playerMove(id, heading, pitch);
 	}
 
 	/**
