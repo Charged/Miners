@@ -3,6 +3,7 @@
 module miners.classic.runner;
 
 import charge.charge;
+import charge.math.ints;
 
 import miners.types;
 import miners.runner;
@@ -105,6 +106,81 @@ public:
 				sentCounter = 0;
 			}
 		}
+	}
+
+	/*
+	 *
+	 * Input functions.
+	 *
+	 */
+
+
+	void mouseDown(CtlMouse mouse, int button)
+	{
+		super.mouseDown(mouse, button);
+
+		if ((button != 1 && button != 3) || !grabbed)
+			return;
+
+		int xLast, yLast, zLast;
+		int numBlocks;
+
+		bool stepPlace(int x, int y, int z) {
+			numBlocks++;
+
+			auto b = w.t[x, y, z];
+			if (b.type == 0) {
+				xLast = x;
+				yLast = y;
+				zLast = z;
+				return true;
+			}
+
+			// Lets not replace the block the camera happens to be in.
+			if (numBlocks <= 2)
+				return false;
+
+			w.t[xLast, yLast, zLast] = Block(3, 0);
+			w.t.markVolumeDirty(xLast, yLast, zLast, 1, 1, 1);
+			w.t.resetBuild();
+
+			if (c !is null)
+				c.sendClientSetBlock(cast(short)xLast,
+						     cast(short)yLast,
+						     cast(short)zLast,
+						     1, 3);
+
+			// We should only place one block.
+			return false;
+		}
+
+		bool stepRemove(int x, int y, int z) {
+			auto b = w.t[x, y, z];
+
+			if (b.type == 0)
+				return true;
+
+			w.t[x, y, z] = Block();
+			w.t.markVolumeDirty(x, y, z, 1, 1, 1);
+			w.t.resetBuild();
+
+			if (c !is null)
+				c.sendClientSetBlock(cast(short)x,
+						     cast(short)y,
+						     cast(short)z,
+						     0, 3);
+
+			// We should only remove one block.
+			return false;
+		}
+
+		auto pos = cam.position;
+		auto vec = cam.rotation.rotateHeading();
+
+		if (button == 3)
+			stepDirection(pos, vec, 6, &stepPlace);
+		else if (button == 1)
+			stepDirection(pos, vec, 6, &stepRemove);
 	}
 
 
