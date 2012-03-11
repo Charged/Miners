@@ -37,12 +37,18 @@ public:
 		generateLevel(ft);
 	}
 
-	this(Options opts, char[] filename)
+	this(Options opts, uint x, uint y, uint z, ubyte[] data)
 	{
 		this.spawn = Point3d(64, 67, 64);
 
 		super(opts);
 
+		// Setup the terrain from the data.
+		newLevelFromClassic(x, y, z, data[0 .. x * y * z]);
+	}
+
+	this(Options opts, char[] filename)
+	{
 		uint x, y, z;
 		auto b = loadClassicTerrain(filename, x, y, z);
 		if (b is null)
@@ -50,8 +56,7 @@ public:
 		scope(exit)
 			cFree(b.ptr);
 
-		// Setup the terrain from the data.
-		newLevelFromClassic(x, y, z, b[0 .. x * y * z]);
+		this(opts, x, y, z, b[0 .. x * y * z]);
 	}
 
 	~this()

@@ -28,7 +28,8 @@ protected:
 public:
 	this(Router r, Options opts)
 	{
-		w = new ClassicWorld(opts);
+		if (w is null)
+			w = new ClassicWorld(opts);
 
 		super(r, opts, w);
 	}
@@ -38,29 +39,17 @@ public:
 	{
 		w = new ClassicWorld(opts, filename);
 
-		super(r, opts, w);
-	}
-
-	this(Router r, Options opts, ClassicServerInfo csi)
-	{
-		w = new ClassicWorld(opts);
-
-		l.info("Connecting to mc://%s:%s/%s/<redacted>",
-		       csi.hostname, csi.port, csi.username);
-
-		c = new ClientConnection(this, csi);
-		super(r, opts, w);
+		this(r, opts);
 	}
 
 	this(Router r, Options opts, ClientConnection c,
 	     uint xSize, uint ySize, uint zSize, ubyte[] data)
 	{
 		this.c = c;
-		this.w = new ClassicWorld(opts);
-		super(r, opts, w);
+		this.w = new ClassicWorld(opts, xSize, ySize, zSize, data);
+		this(r, opts);
 
 		c.setListener(this);
-		w.newLevelFromClassic(xSize, ySize, zSize, data);
 	}
 
 	~this()
