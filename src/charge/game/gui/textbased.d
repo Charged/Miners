@@ -24,64 +24,76 @@ public import charge.game.gui.text;
  *
  */
 
-/*
- * Single line.
- *
- * const char textGuiTopLeft = 218;
- * const char textGuiTopRight = 191;
- * const char textGuiBottomLeft = 192;
- * const char textGuiBottomRight = 217;
- * const char textGuiHorizontalLine = 196;
- * const char textGuiVerticalLine = 179;
- */
+enum ElmGui {
+	TOP_LEFT,
+	TOP_RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM_RIGHT,
+	VERTICAL_LINE,
+	HORIZONTAL_LINE,
+}
 
-/*
- * Double line.
- *
- * const char textGuiTopLeft = 201;
- * const char textGuiTopRight = 187;
- * const char textGuiBottomLeft = 200;
- * const char textGuiBottomRight = 188;
- * const char textGuiHorizontalLine = 205;
- * const char textGuiVerticalLine = 186;
- */
+const char[] singelGuiElememts = [
+	218, // top left
+	191, // top right
+	192, // bottom left
+	217, // bottom right
+	179, // vertical line
+	196, // horizontal line
+];
 
-const char textGuiTopLeft = 201;
-const char textGuiTopRight = 187;
-const char textGuiBottomLeft = 200;
-const char textGuiBottomRight = 188;
-const char textGuiHorizontalLine = 205;
-const char textGuiVerticalLine = 186;
+const char[] doubleGuiElememts = [
+	201, // top left
+	187, // top right
+	200, // bottom left
+	188, // bottom right
+	186, // vertical line
+	205, // horizontal line
+];
 
-char[] makeTextGuiButton(char[] text, uint minwidth = 0)
+char[] makeFrame(char[] elm, uint width, uint height)
 {
-	size_t width = text.length;
-	if (width < minwidth)
-		width = minwidth;
-	size_t stride = width+3;
+	size_t stride = width+1; // Newline
 
 	char[] ret;
-	ret.length = stride*3-1;
+	ret.length = stride*height-1; // Remove last newline
 
 	// Top row
-	ret[0] = textGuiTopLeft;
-	for (int i = 1; i < stride-2; i++)
-		ret[i] = textGuiHorizontalLine;
-	ret[stride-2] = textGuiTopRight;
+	ret[0] = elm[ElmGui.TOP_LEFT];
+	ret[1 .. stride-2] = elm[ElmGui.HORIZONTAL_LINE];
+	ret[stride-2] = elm[ElmGui.TOP_RIGHT];
 	ret[stride-1] = '\n';
 
 	// Middle row
-	ret[stride] = textGuiVerticalLine;
-	size_t pos = ((stride-1)/2)-(text.length/2)+stride;
-	ret[pos .. pos+text.length] = text[0 .. $];
-	ret[stride*2-2] = textGuiVerticalLine;
-	ret[stride*2-1] = '\n';
+	for (int i = 1; i < height-1; i++) {
+		size_t pos = stride * i;
+		ret[pos] = elm[ElmGui.VERTICAL_LINE];
+		ret[pos+1 .. pos+stride-2] = ' ';
+		ret[pos+stride-2] = elm[ElmGui.VERTICAL_LINE];
+		ret[pos+stride-1] = '\n';
+	}
+
 
 	// Bottom row
-	ret[stride*2] = textGuiBottomLeft;
-	for (size_t i = stride*2+1; i < stride*3-2; i++)
-		ret[i] = textGuiHorizontalLine;
-	ret[stride*3-2] = textGuiBottomRight;
+	ret[$ - stride + 1] = elm[ElmGui.BOTTOM_LEFT];
+	ret[$ - stride + 2 .. $ - 1] = elm[ElmGui.HORIZONTAL_LINE];
+	ret[$ - 1] = elm[ElmGui.BOTTOM_RIGHT];
+
+	return ret;
+
+}
+
+char[] makeTextGuiButton(char[] text, uint minwidth = 0)
+{
+	int width = cast(uint)text.length;
+	if (width < minwidth)
+		width = minwidth;
+	int stride = width+3;
+
+	char[] ret = makeFrame(doubleGuiElememts, stride-1, 3);
+
+	size_t pos = ((stride-1)/2)-(text.length/2)+stride;
+	ret[pos .. pos+text.length] = text[0 .. $];
 
 	return ret;
 }
