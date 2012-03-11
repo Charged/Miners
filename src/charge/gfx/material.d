@@ -191,7 +191,7 @@ public:
 
 		switch(name) {
 			case "color":
-				color = color;
+				this.color = Color4f(color);
 				// Update the color texture if set
 				setTexture("tex", tex);
 				break;
