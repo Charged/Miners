@@ -13,40 +13,10 @@ import charge.util.memory;
 
 import miners.types;
 import miners.classic.proto;
+import miners.classic.interfaces;
 import miners.importer.network;
 
 alias charge.net.util.ntoh ntoh;
-
-
-/**
- * Receiver of client packages.
- */
-interface ClientListener
-{
-	void indentification(ubyte ver, char[] name, char[] motd, ubyte type);
-
-	void levelInitialize();
-	void levelLoadUpdate(ubyte precent);
-	void levelFinalize(uint x, uint y, uint z, ubyte data[]);
-
-	void setBlock(short x, short y, short z, ubyte type);
-
-	void playerSpawn(byte id, char[] name, double x, double y, double z,
-			 double heading, double pitch);
-
-	void playerMoveTo(byte id, double x, double y, double z,
-			  double heading, double pitch);
-	void playerMove(byte id, double x, double y, double z,
-			double heading, double pitch);
-	void playerMove(byte id, double x, double y, double z);
-	void playerMove(byte id, double heading, double pitch);
-	void playerDespawn(byte id);
-	void playerType(ubyte type);
-
-	void ping();
-	void message(byte id, char[] message);
-	void disconnect(char[] reason);
-}
 
 /**
  * A threaded TCP connection to a server that handles protocol parsing. 
@@ -70,10 +40,14 @@ private:
 	/// Receiver of packages
 	ClientListener l;
 
+	/// Receiver of messages.
+	ClientMessageListener ml;
+
 public:
-	this(ClientListener l, ClassicServerInfo csi)
+	this(ClientListener l, ClientMessageListener ml, ClassicServerInfo csi)
 	{
 		this.l = l;
+		this.ml = ml;
 
 		this.hostname = csi.hostname;
 		this.port = csi.port;
@@ -92,6 +66,11 @@ public:
 	void setListener(ClientListener l)
 	{
 		this.l = l;
+	}
+
+	void setMessageListener(ClientMessageListener ml)
+	{
+		this.ml = ml;
 	}
 
 	/**
@@ -378,8 +357,8 @@ protected:
 		byte player = sm.playerId;
 		char[] msg = removeTrailingSpaces(sm.message);
 
-		if (l !is null)
-			l.message(player, msg);
+		if (ml !is null)
+			ml.message(player, msg);
 	}
 
 	/**

@@ -12,6 +12,8 @@ import miners.menu.base;
 import miners.menu.runner;
 import miners.classic.runner;
 import miners.classic.webpage;
+import miners.classic.message;
+import miners.classic.interfaces;
 import miners.classic.connection;
 
 const char[] header = `Classic`;
@@ -53,6 +55,7 @@ class ClassicConnectingMenu : public MenuBase, public ClientListener
 {
 private:
 	ClientConnection cc;
+	MessageLogger ml;
 	Button ca;
 	Text text;
 
@@ -65,7 +68,8 @@ public:
 	this(MenuRunner mr, ClassicServerInfo csi)
 	{
 		super(mr, header, Buttons.CANCEL);
-		cc = new ClientConnection(this, csi);
+		ml = new MessageLogger();
+		cc = new ClientConnection(this, ml, csi);
 		mr.ticker = &cc.doPackets;
 
 		auto ct = new CenteredText(null, 0, 0,
@@ -157,7 +161,7 @@ protected:
 		repack();
 
 		auto cr = new ClassicRunner(mr.router, mr.opts,
-					    cc, x, y, z, data);
+					    cc, ml, x, y, z, data);
 		mr.manageThis(cr);
 		disconnectTicker();
 		cc = null;

@@ -15,7 +15,9 @@ import miners.gfx.selector;
 import miners.actors.otherplayer;
 import miners.classic.data;
 import miners.classic.world;
+import miners.classic.message;
 import miners.classic.connection;
+import miners.classic.interfaces;
 import miners.importer.network;
 import miners.importer.converter;
 
@@ -39,14 +41,20 @@ protected:
 	double saveCamHeading;
 	double saveCamPitch;
 
+	MessageLogger ml;
+
 	GfxDraw d;
 	Selector sel;
 
 	ColorContainer placeGui;
 	Text placeText;
+	ColorContainer chatGui;
+	Text chatText;
 
 	int currentBlock;
 	int savedBlock;
+
+	const chatSep = "----------------------------------------------------------------";
 
 public:
 	this(Router r, Options opts)
@@ -66,6 +74,10 @@ public:
 		d = new GfxDraw();
 		placeGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*16+8*2, 8*3);
 		placeText = new Text(placeGui, 8, 8, classicBlocks[currentBlock].name);
+
+		chatGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*64+8*2, 8*(ml.backlog+2+2));
+		chatText = new Text(chatGui, 8, 8, "");
+		new Text(chatGui, 8, 8+ml.backlog*8, chatSep);
 	}
 
 	this(Router r, Options opts,
@@ -76,10 +88,12 @@ public:
 		this(r, opts);
 	}
 
-	this(Router r, Options opts, ClientConnection c,
+	this(Router r, Options opts,
+	     ClientConnection c, MessageLogger ml,
 	     uint xSize, uint ySize, uint zSize, ubyte[] data)
 	{
 		this.c = c;
+		this.ml = ml;
 		this.w = new ClassicWorld(opts, xSize, ySize, zSize, data);
 		this(r, opts);
 
@@ -93,6 +107,7 @@ public:
 	void close()
 	{
 		placeGui.breakApart();
+		chatGui.breakApart();
 		delete sel;
 
 		if (c is null)
@@ -147,6 +162,12 @@ public:
 			placeGui.paint();
 		}
 
+		if (ml !is null && ml.dirty) {
+			chatText.setText(ml.getAllMessages());
+			chatGui.paint();
+			ml.dirty = false;
+		}
+
 		auto t = placeGui.getTarget();
 		auto x = rt.width - t.width - 8;
 		auto y = rt.height - t.height - 8;
@@ -154,6 +175,13 @@ public:
 		d.target = rt;
 		d.start();
 		d.blit(t, x, y);
+		if (ml !is null) {
+			t.dereference();
+			t = null;
+			t = chatGui.getTarget();
+
+			d.blit(t, 8, rt.height - t.height - 8);
+		}
 		d.stop();
 
 		t.dereference();
@@ -462,14 +490,6 @@ public:
 	void playerType(ubyte type)
 	{
 		l.info("player type changed %s.", type);
-	}
-
-	void message(byte playerId, char[] msg)
-	{
-		if (playerId)
-			l.info("msg: #%s: %s", playerId, removeColorTags(msg));
-		else
-			l.info("msg: %s", removeColorTags(msg));
 	}
 
 	void disconnect(char[] reason)
