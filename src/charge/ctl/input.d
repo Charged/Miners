@@ -117,6 +117,8 @@ private:
 
 	~this()
 	{
+		hotplug.destruct();
+		resize.destruct();
 		quit.destruct();
 	}
 }
