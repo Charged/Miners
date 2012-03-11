@@ -11,6 +11,7 @@ import miners.types;
 import miners.runner;
 import miners.viewer;
 import miners.options;
+import miners.console;
 import miners.gfx.selector;
 import miners.actors.otherplayer;
 import miners.classic.data;
@@ -47,14 +48,20 @@ protected:
 	Selector sel;
 
 	ColorContainer placeGui;
-	Text placeText;
-	ColorContainer chatGui;
-	Text chatText;
 
 	int currentBlock;
 	int savedBlock;
 
+
+	Text placeText;
+	ColorContainer chatGui;
+	Text chatText;
+	Text typedText;
+	bool chatDirty;
+
 	const chatSep = "----------------------------------------------------------------";
+
+	ClassicConsole console;
 
 public:
 	this(Router r, Options opts)
@@ -77,7 +84,14 @@ public:
 
 		chatGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*64+8*2, 8*(ml.backlog+2+2));
 		chatText = new Text(chatGui, 8, 8, "");
-		new Text(chatGui, 8, 8+ml.backlog*8, chatSep);
+		auto spacer = new Text(chatGui, 8, 8+ml.backlog*8, chatSep);
+		typedText = new Text(chatGui, 8, spacer.y+8, "");
+
+		chatGui.repaintDg = &handleRepaint;
+		console = new ClassicConsole(&typedText.setText);
+
+		if (c !is null)
+			console.doneTyping = &c.sendClientMessage;
 	}
 
 	this(Router r, Options opts,
@@ -164,8 +178,12 @@ public:
 
 		if (ml !is null && ml.dirty) {
 			chatText.setText(ml.getAllMessages());
-			chatGui.paint();
 			ml.dirty = false;
+		}
+
+		if (chatDirty) {
+			chatGui.paint();
+			chatDirty = false;
 		}
 
 		auto t = placeGui.getTarget();
@@ -175,7 +193,7 @@ public:
 		d.target = rt;
 		d.start();
 		d.blit(t, x, y);
-		if (ml !is null) {
+		if (ml !is null || console.typing) {
 			t.dereference();
 			t = null;
 			t = chatGui.getTarget();
@@ -209,6 +227,14 @@ public:
 		stepDirection(pos, vec, 6, &step);
 	}
 
+	/**
+	 * Called from chat gui when it wants be repainted.
+	 */
+	void handleRepaint()
+	{
+		chatDirty = true;
+	}
+
 
 	/*
 	 *
@@ -216,6 +242,24 @@ public:
 	 *
 	 */
 
+
+	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
+	{
+		if (console.typing)
+			return console.keyDown(sym, unicode);
+
+		// Start chatting when we press 't'.
+		if (sym == 't')
+			return console.startTyping();
+
+		super.keyDown(kb, sym, unicode, str);
+	}
+
+	void keyUp(CtlKeyboard kb, int sym)
+	{
+		if (!console.typing)
+			return super.keyUp(kb, sym);
+	}
 
 	void mouseDown(CtlMouse mouse, int button)
 	{
@@ -500,5 +544,28 @@ public:
 
 		r.displayError(["Disconencted", rs], false);
 		r.deleteMe(this);
+	}
+}
+
+
+/**
+ * Classic version of the console, used for text input.
+ */
+class ClassicConsole : public Console
+{
+
+	this(TextDg update)
+	{
+		super(update, 64);
+	}
+
+	bool validateChar(dchar unicode)
+	{
+		// Skip invalid characters.
+		if (unicode < 0x20 ||
+		    unicode > 0x7F ||
+		    unicode == '&')
+			return false;
+		return true;
 	}
 }
