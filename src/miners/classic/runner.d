@@ -29,6 +29,11 @@ protected:
 
 	OtherPlayer players[ubyte.max+1];
 
+	int sentCounter;
+	Point3d saveCamPos;
+	double saveCamHeading;
+	double saveCamPitch;
+
 public:
 	this(Router r, Options opts)
 	{
@@ -75,8 +80,31 @@ public:
 	void logic()
 	{
 		super.logic();
-		if (c !is null)
-			c.doPackets();
+
+		if (c is null)
+			return;
+
+		c.doPackets();
+
+		if (!(sentCounter++ % 5)) {
+			auto pos = cam.position;
+			if (pos != saveCamPos ||
+			    cam_heading != saveCamHeading ||
+			    cam_pitch != saveCamPitch) {
+
+				c.sendClientPlayerUpdate(pos.x,
+							 pos.y,
+							 pos.z,
+							 cam_heading,
+							 cam_pitch);
+
+				saveCamPos = pos;
+				saveCamHeading = cam_heading;
+				saveCamPitch = cam_pitch;
+			} else {
+				sentCounter = 0;
+			}
+		}
 	}
 
 
