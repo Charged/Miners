@@ -8,9 +8,11 @@ import miners.types;
 import miners.runner;
 import miners.viewer;
 import miners.options;
+import miners.actors.otherplayer;
 import miners.classic.world;
 import miners.classic.connection;
 import miners.importer.network;
+import miners.importer.converter;
 
 
 /**
@@ -24,6 +26,8 @@ private:
 protected:
 	ClientConnection c;
 	ClassicWorld w;
+
+	OtherPlayer players[ubyte.max+1];
 
 public:
 	this(Router r, Options opts)
@@ -113,6 +117,12 @@ public:
 
 	void setBlock(short x, short y, short z, ubyte type)
 	{
+		Block block;
+
+		convertClassicToBeta(type, block.type, block.meta);
+		w.t[x, y, z] = block;
+		w.t.markVolumeDirty(x, y, z, 1, 1, 1);
+		w.t.resetBuild();
 	}
 
 	void playerSpawn(byte id, char[] name,
@@ -120,32 +130,108 @@ public:
 			 double heading, double pitch)
 	{
 		name = removeColorTags(name);
+
+		auto index = cast(ubyte)id;
+
+		// Skip this player.
+		if (index == 255) {
+			cam.position = Point3d(x, y, z);
+			cam_heading = heading;
+			cam_pitch = pitch;
+			return;
+		}
+
+		// Should not happen, but we arn't trusting the servers.
+		if (players[index] !is null)
+			delete players[index];
+
+		double offset = 52.0 / 32.0;
+		auto pos = Point3d(x, y - offset, z);
+		auto p = new OtherPlayer(w, index, pos, heading, pitch);
+		players[index] = p;
 	}
 
+	/**
+	 * AKA Teleport.
+	 */
 	void playerMoveTo(byte id, double x, double y, double z,
 			  double heading, double pitch)
 	{
+		auto index = cast(ubyte)id;
+
+		// Skip this player.
+		if (index == 255) {
+			cam.position = Point3d(x, y, z);
+			cam_heading = heading;
+			cam_pitch = pitch;
+			return;
+		}
+
+		auto p = players[index];
+		// Stray packets.
+		if (p is null)
+			return;
+
+		// XXX Don't render the player model at all.
+		//if (y == -1024)
+		//	return;
+
+		double offset = 52.0 / 32.0;
+		auto pos = Point3d(x, y - offset, z);
+		p.update(pos, heading, pitch);
 	}
 
 	void playerMove(byte id, double x, double y, double z,
 			double heading, double pitch)
 	{
+		auto p = players[cast(ubyte)id];
+
+		// Stray packets.
+		if (p is null)
+			return;
+
+		auto pos = p.position + Vector3d(x, y, z);
+		p.update(pos, heading, pitch);
 	}
 
 	void playerMove(byte id, double x, double y, double z)
 	{
+		auto p = players[cast(ubyte)id];
+
+		// Stray packets.
+		if (p is null)
+			return;
+
+		auto pos = p.position + Vector3d(x, y, z);
+		p.update(pos, p.heading, p.pitch);
 	}
 
 	void playerMove(byte id, double heading, double pitch)
 	{
+		auto p = players[cast(ubyte)id];
+
+		// Stray packets.
+		if (p is null)
+			return;
+
+		auto pos = p.position;
+		p.update(pos, heading, pitch);
 	}
 
 	void playerDespawn(byte id)
 	{
+		auto index = cast(ubyte)id;
+
+		// Skip player.
+		if (index == 255)
+			return;
+
+		delete players[index];
 	}
 
 	void playerType(ubyte type)
 	{
+		l.info("player type changed %s.", type);
 	}
 
 	void message(byte playerId, char[] msg)
