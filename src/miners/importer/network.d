@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.network;
 
+import std.math;
+
 
 /**
  * String to parse a minecraft url.
@@ -72,4 +74,22 @@ char[] removeColorTags(char[] arg)
 
 	ret.length = k;
 	return ret;
+}
+
+/**
+ * Convert from notchian yaw pitch to the coord system we use.
+ */
+void fromYawPitch(ubyte yaw, ubyte pitch, out double heading, out double look)
+{
+	heading = -(yaw * 2.0 * std.math.PI / 256.0);
+	look = -(pitch * 2.0 * std.math.PI / 256.0);
+}
+
+/**
+ * Convert to notchian yaw pitch from the coord system we use.
+ */
+void toYawPitch(double heading, double look, out ubyte yaw, out ubyte pitch)
+{
+	yaw = cast(ubyte)-(heading / (2.0 * std.math.PI / 256.0));
+	pitch = cast(ubyte)-(look / (2.0 * std.math.PI / 256.0));
 }
