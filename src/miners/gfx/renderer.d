@@ -2,8 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.gfx.renderer;
 
+
 import miners.gfx.vbo;
 import miners.gfx.imports;
+import miners.gfx.selector;
 
 
 class MinecraftForwardRenderer : public GfxForwardRenderer
@@ -282,6 +284,11 @@ protected:
 				renderGroup(cvgmc, m);
 				continue;
 			}
+
+			// XXX Fix me!
+			auto sel = cast(Selector)r;
+			if (sel !is null)
+				continue;
 
 			renderShadow(r, m);
 		}

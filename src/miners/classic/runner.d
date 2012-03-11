@@ -11,6 +11,7 @@ import miners.types;
 import miners.runner;
 import miners.viewer;
 import miners.options;
+import miners.gfx.selector;
 import miners.actors.otherplayer;
 import miners.classic.data;
 import miners.classic.world;
@@ -39,6 +40,8 @@ protected:
 	double saveCamPitch;
 
 	GfxDraw d;
+	Selector sel;
+
 	ColorContainer placeGui;
 	Text placeText;
 
@@ -52,6 +55,10 @@ public:
 			w = new ClassicWorld(opts);
 
 		super(r, opts, w);
+
+		sel = new Selector(w.gfx);
+		sel.show = true;
+		sel.setBlock(0, 0, 0);
 
 		savedBlock = -1;
 		currentBlock = 1;
@@ -129,6 +136,8 @@ public:
 
 	void render(GfxRenderTarget rt)
 	{
+		placeSelector();
+
 		super.render(rt);
 
 		if (currentBlock != savedBlock) {
@@ -147,6 +156,28 @@ public:
 		d.stop();
 
 		t.dereference();
+	}
+
+	void placeSelector()
+	{
+		auto pos = cam.position;
+		auto vec = cam.rotation.rotateHeading();
+
+		sel.show = false;
+
+		bool step(int x, int y, int z) {
+			auto b = w.t[x, y, z];
+
+			if (b.type == 0)
+				return true;
+
+			sel.show = true;
+			sel.setBlock(x, y, z);
+
+			return false;
+		}
+
+		stepDirection(pos, vec, 6, &step);
 	}
 
 
