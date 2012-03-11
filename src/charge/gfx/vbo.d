@@ -171,6 +171,20 @@ public:
 		return new RigidMeshVBO(p, builder);
 	}
 
+	static RigidMeshVBO opCall(RigidMesh.Types type,
+	                           Vertex[] verts, Triangle[] tris)
+	{
+		return RigidMeshVBO(Pool(), type, verts, tris);
+	}
+
+	static RigidMeshVBO opCall(Pool p, RigidMesh.Types type,
+	                           Vertex[] verts, Triangle[] tris)
+	{
+		return new RigidMeshVBO(p, null, type,
+		                        verts.ptr, cast(uint)verts.length,
+		                        tris.ptr, cast(uint)tris.length);
+	}
+
 	void update(RigidMeshBuilder builder)
 	{
 		update(builder.type,
