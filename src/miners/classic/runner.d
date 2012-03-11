@@ -4,12 +4,15 @@ module miners.classic.runner;
 
 import charge.charge;
 import charge.math.ints;
+import charge.game.gui.text;
+import charge.game.gui.textbased;
 
 import miners.types;
 import miners.runner;
 import miners.viewer;
 import miners.options;
 import miners.actors.otherplayer;
+import miners.classic.data;
 import miners.classic.world;
 import miners.classic.connection;
 import miners.importer.network;
@@ -35,6 +38,13 @@ protected:
 	double saveCamHeading;
 	double saveCamPitch;
 
+	GfxDraw d;
+	ColorContainer placeGui;
+	Text placeText;
+
+	int currentBlock;
+	int savedBlock;
+
 public:
 	this(Router r, Options opts)
 	{
@@ -42,6 +52,13 @@ public:
 			w = new ClassicWorld(opts);
 
 		super(r, opts, w);
+
+		savedBlock = -1;
+		currentBlock = 1;
+
+		d = new GfxDraw();
+		placeGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*16+8*2, 8*3);
+		placeText = new Text(placeGui, 8, 8, classicBlocks[currentBlock].name);
 	}
 
 	this(Router r, Options opts,
@@ -68,6 +85,8 @@ public:
 
 	void close()
 	{
+		placeGui.breakApart();
+
 		if (c is null)
 			return;
 
@@ -108,6 +127,29 @@ public:
 		}
 	}
 
+	void render(GfxRenderTarget rt)
+	{
+		super.render(rt);
+
+		if (currentBlock != savedBlock) {
+			placeText.setText(classicBlocks[currentBlock].name);
+			savedBlock = currentBlock;
+			placeGui.paint();
+		}
+
+		auto t = placeGui.getTarget();
+		auto x = rt.width - t.width - 8;
+		auto y = rt.height - t.height - 8;
+
+		d.target = rt;
+		d.start();
+		d.blit(t, x, y);
+		d.stop();
+
+		t.dereference();
+	}
+
+
 	/*
 	 *
 	 * Input functions.
@@ -119,16 +161,22 @@ public:
 	{
 		super.mouseDown(mouse, button);
 
-		if ((button != 1 && button != 3) || !grabbed)
+		if (button == 4)
+			return decBlock();
+		if (button == 5)
+			return incBlock();
+
+		if ((button < 0 && button > 3) || !grabbed)
 			return;
 
 		int xLast, yLast, zLast;
 		int numBlocks;
 
 		bool stepPlace(int x, int y, int z) {
+			auto b = w.t[x, y, z];
+
 			numBlocks++;
 
-			auto b = w.t[x, y, z];
 			if (b.type == 0) {
 				xLast = x;
 				yLast = y;
@@ -140,7 +188,9 @@ public:
 			if (numBlocks <= 2)
 				return false;
 
-			w.t[xLast, yLast, zLast] = Block(3, 0);
+			convertClassicToBeta(cast(ubyte)currentBlock, b.type, b.meta);
+
+			w.t[xLast, yLast, zLast] = b;
 			w.t.markVolumeDirty(xLast, yLast, zLast, 1, 1, 1);
 			w.t.resetBuild();
 
@@ -148,7 +198,7 @@ public:
 				c.sendClientSetBlock(cast(short)xLast,
 						     cast(short)yLast,
 						     cast(short)zLast,
-						     1, 3);
+						     1, cast(ubyte)currentBlock);
 
 			// We should only place one block.
 			return false;
@@ -168,9 +218,32 @@ public:
 				c.sendClientSetBlock(cast(short)x,
 						     cast(short)y,
 						     cast(short)z,
-						     0, 3);
+						     0, cast(ubyte)currentBlock);
 
 			// We should only remove one block.
+			return false;
+		}
+
+		bool stepCopy(int x, int y, int z) {
+			auto b = w.t[x, y, z];
+
+			if (b.type == 0)
+				return true;
+
+			// See which block that match
+			foreach(int i, info; classicBlocks) {
+				if (b.type != info.type ||
+				    b.meta != info.meta)
+					continue;
+
+				if (!info.placable)
+					return false;
+
+				currentBlock = i;
+
+				return false;
+			}
+
 			return false;
 		}
 
@@ -181,6 +254,27 @@ public:
 			stepDirection(pos, vec, 6, &stepPlace);
 		else if (button == 1)
 			stepDirection(pos, vec, 6, &stepRemove);
+		else if (button == 2)
+			stepDirection(pos, vec, 6, &stepCopy);
+
+	}
+
+	void incBlock()
+	{
+		currentBlock++;
+		if (currentBlock >= classicBlocks.length)
+			currentBlock = 0;
+		if (!classicBlocks[currentBlock].placable)
+			incBlock();
+	}
+
+	void decBlock()
+	{
+		currentBlock--;
+		if (currentBlock < 0)
+			currentBlock = classicBlocks.length-1;
+		if (!classicBlocks[currentBlock].placable)
+			decBlock();
 	}
 
 
