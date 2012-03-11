@@ -93,6 +93,7 @@ public:
 	void close()
 	{
 		placeGui.breakApart();
+		delete sel;
 
 		if (c is null)
 			return;

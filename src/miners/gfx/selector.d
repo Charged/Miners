@@ -34,6 +34,11 @@ public:
 		vbo = GfxRigidMeshVBO(RigidMesh.Types.QUADS, vert, null);
 	}
 
+	~this()
+	{
+		delete m;
+	}
+
 	void setBlock(int x, int y, int z)
 	{
 		pos = Point3d(x, y, z);
