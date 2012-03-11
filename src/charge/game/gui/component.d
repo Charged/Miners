@@ -113,7 +113,7 @@ public:
 	void mouseDown(Mouse m, int x, int y, uint b) {}
 	void mouseUp(Mouse m, int x, int y, uint b) {}
 
-	void keyDown(Keyboard k, int sym) {}
+	void keyDown(Keyboard k, int sym, dchar unicode, char[] str) {}
 	void keyUp(Keyboard k, int sym) {}
 
 protected:

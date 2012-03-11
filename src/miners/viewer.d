@@ -82,7 +82,7 @@ public:
 		delete w;
 	}
 
-	void keyDown(CtlKeyboard kb, int sym)
+	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
 		switch(sym) {
 		case SDLK_w:

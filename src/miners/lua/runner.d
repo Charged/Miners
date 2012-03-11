@@ -303,12 +303,17 @@ protected:
 		}
 	}
 
-	void keyDown(CtlKeyboard kb, int sym)
+	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
 		s.getGlobalz("keyDown");
 		s.pushNumber(sym);
+		s.pushNumber(unicode);
+		if (str !is null)
+			s.pushString(str);
+		else
+			s.pushNil();
 
-		if (s.call(1) == 2) {
+		if (s.call(3) == 2) {
 			l.warn(s.toString(-1));
 		}
 	}

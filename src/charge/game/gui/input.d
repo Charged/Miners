@@ -106,12 +106,12 @@ private:
 		return c;
 	}
 
-	void keyDown(Keyboard kb, int sym)
+	void keyDown(Keyboard kb, int sym, dchar unicode, char[] str)
 	{
 		if (keyboardFocus is null)
 			return;
 
-		keyboardFocus.keyDown(kb, sym);
+		keyboardFocus.keyDown(kb, sym, unicode, str);
 	}
 
 	void keyUp(Keyboard kb, int sym)

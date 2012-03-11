@@ -206,6 +206,8 @@ private:
 
 		SDL_Init(SDL_INIT_VIDEO);
 
+		SDL_EnableUNICODE(1);
+
 		width = p.getUint("w", defaultWidth);
 		height = p.getUint("h", defaultHeight);
 		fullscreen = p.getBool("fullscreen", defaultFullscreen);

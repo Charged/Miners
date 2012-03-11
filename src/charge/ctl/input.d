@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.ctl.input;
 
+import std.utf : toUTF8;
+
 import lib.sdl.sdl;
 
 import charge.util.signal;
@@ -68,9 +70,18 @@ public:
 			//		quit();
 
 			if (e.type == SDL_KEYDOWN) {
+				char[4] tmp;
+				char[] str;
+				dchar unicode = e.key.keysym.unicode;
+
 				auto k = keyboardArray[0];
 				k.mod = e.key.keysym.mod;
-				k.down(k, e.key.keysym.sym);
+
+				if (unicode == 27)
+					unicode = 0;
+				if (unicode)
+					str = toUTF8(tmp, unicode);
+				k.down(k, e.key.keysym.sym, unicode, str);
 			}
 
 			if (e.type == SDL_KEYUP) {

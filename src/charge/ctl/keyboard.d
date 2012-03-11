@@ -13,7 +13,7 @@ public:
 	int mod;
 
 public:
-	Signal!(Keyboard, int) down;
+	Signal!(Keyboard, int, dchar, char[]) down;
 	Signal!(Keyboard, int) up;
 
 	~this()

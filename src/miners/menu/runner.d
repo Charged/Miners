@@ -313,7 +313,7 @@ package:
 	}
 
 private:
-	void keyDown(CtlKeyboard kb, int sym)
+	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
 		if (sym != 27) // Escape
 			return;

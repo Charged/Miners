@@ -186,7 +186,7 @@ protected:
 		return grabbed;
 	}
 
-	abstract void keyDown(CtlKeyboard kb, int sym);
+	abstract void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str);
 	abstract void keyUp(CtlKeyboard kb, int sym);
 	abstract void mouseMove(CtlMouse mouse, int ixrel, int iyrel);
 	abstract void mouseDown(CtlMouse m, int button);

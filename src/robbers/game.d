@@ -373,7 +373,7 @@ private:
 		running = false;
 	}
 
-	void keyboardDown(CtlKeyboard key, int sym)
+	void keyboardDown(CtlKeyboard key, int sym, dchar unicode, char[] str)
 	{
 		if (player is null)
 			return;
