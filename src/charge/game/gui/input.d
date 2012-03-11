@@ -23,29 +23,41 @@ public:
 
 	this(Component root)
 	{
-		this.root = root;
 		keyboard = Input().keyboard;
 		mouse = Input().mouse;
+		this.setRoot(root);
 	}
 
 	~this()
 	{
 		dropControl();
+		if (root !is null)
+			root.notifyUnRegister(&unhookRoot);
+		if (keyboardFocus !is null)
+			keyboardFocus.notifyRegister(&unhookFocus);
 	}
 
 	void setRoot(Component c)
 	{
+		if (root !is null) {
+			root.notifyUnRegister(&unhookRoot);
+			root.input = null;
+		}
 		focus(null);
 		root = c;
+		if (root !is null) {
+			root.notifyRegister(&unhookRoot);
+			root.input = this;
+		}
 	}
 
 	void focus(Component c)
 	{
 		if (keyboardFocus !is null)
-			keyboardFocus.notifyUnRegister(&unhook);
+			keyboardFocus.notifyUnRegister(&unhookFocus);
 		keyboardFocus = c;
 		if (keyboardFocus !is null)
-			keyboardFocus.notifyRegister(&unhook);
+			keyboardFocus.notifyRegister(&unhookFocus);
 	}
 
 	void unfocus(Component c)
@@ -85,7 +97,13 @@ public:
 	}
 
 private:
-	void unhook(Object obj)
+	void unhookRoot(Object obj)
+	{
+		assert(root is obj);
+		root = null;
+	}
+
+	void unhookFocus(Object obj)
 	{
 		assert(keyboardFocus is obj);
 		keyboardFocus = null;

@@ -7,6 +7,7 @@ static import std.stdio;
 import charge.ctl.mouse;
 import charge.ctl.keyboard;
 import charge.gfx.draw;
+import charge.game.gui.input;
 import charge.game.gui.container;
 
 alias charge.ctl.mouse.Mouse Mouse;
@@ -19,6 +20,7 @@ public:
 	int y;
 	uint w;
 	uint h;
+	InputHandler input;
 
 private:
 	Container p;
@@ -39,6 +41,18 @@ public:
 	 * Get the parent of this component.
 	 */
 	Container parent() { return p; }
+
+	/**
+	 * Return the input handler for this component or any parent.
+	 */
+	final InputHandler getInput()
+	{
+		if (input !is null)
+			return input;
+		if (parent !is null)
+			return parent.getInput();
+		return null;
+	}
 
 	/**
 	 * Repack this and any eventual children.
