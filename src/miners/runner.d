@@ -55,6 +55,7 @@ class Runner : public GameRunner
 interface Router : public GameRouter
 {
 	Runner loadLevel(char[] dir);
+	Runner startClassic();
 	void render(GfxWorld w, GfxCamera c, GfxRenderTarget t);
 
 	void displayError(Exception e, bool panic);

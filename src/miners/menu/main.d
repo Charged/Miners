@@ -14,7 +14,7 @@ class MainMenu : public MenuBase
 private:
 	Text te;
 	Button ra;
-	//Button cl;
+	Button cl;
 	Button be;
 	Button cb;
 	Button qb;
@@ -37,15 +37,15 @@ public:
 		pos += te.h;
 		ra = new Button(this, 0, pos, "Random", 32);
 		pos += ra.h;
-		//cl = new Button(this, 0, pos, "Classic", 32);
-		//pos += cl.h;
+		cl = new Button(this, 0, pos, "Classic", 32);
+		pos += cl.h;
 		be = new Button(this, 0, pos, "Beta", 32);
 		pos += be.h + 16;
 		cb = new Button(this, 0, pos, "Close", 8);
 		qb = new Button(this, 0, pos, "Quit", 8);
 
 		ra.pressed ~= &mr.selectMenuSelect;
-		//cl.pressed ~= &mr.mainMenuClassic;
+		cl.pressed ~= &mr.mainMenuClassic;
 		be.pressed ~= &mr.mainMenuSelectLevel;
 		cb.pressed ~= &mr.commonMenuClose;
 		qb.pressed ~= &mr.commonMenuQuit;

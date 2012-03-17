@@ -274,7 +274,10 @@ package:
 
 	void mainMenuClassic(Button b)
 	{
+		if (levelRunner !is null)
+			router.deleteMe(levelRunner);
 
+		levelRunner = router.startClassic();
 	}
 
 	void mainMenuSelectLevel(Button b)

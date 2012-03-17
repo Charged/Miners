@@ -787,6 +787,11 @@ protected:
 		return r;
 	}
 
+	Runner startClassic()
+	{
+		return new ClassicRunner(this, opts);
+	}
+
 	void manageRunners()
 	{
 		// Delete any pending runners.
