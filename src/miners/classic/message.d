@@ -27,7 +27,9 @@ public:
 			msgs[i] = msgs[k];
 	}
 
-	void message(byte id, char[] msg)
+	void message(byte id, char[] msg) { message(msg); }
+
+	void message(char[] msg)
 	{
 		upLine();
 

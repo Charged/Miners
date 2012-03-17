@@ -1,10 +1,13 @@
-// Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
+// Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.console;
 
 
+import std.string : split, format, find;
+
+
 /**
- *
+ * A helper class that is the text input part of a console.
  */
 class Console
 {
@@ -17,7 +20,17 @@ public:
 	char[] typed; /**< Typed text. */
 	char[] showing; /**< Text including the cursor. */
 
-	TextDg doneTyping; /**< Called when we are done with the typing */
+	/**
+	 * Command prefix, this is subtracted from all input when doing
+	 * command processing. If the input doesn't start with the prefix
+	 * the input is treated as chat.
+	 *
+	 * If cmdPrefix is null all input is regarded as commands.
+	 */
+	char[] cmdPrefix;
+
+	TextDg message; /**< The console wants to put something on the backlog. */
+	TextDg chat; /**< Called when something was chatted. */
 
 private:
 	TextDg update;
@@ -27,6 +40,9 @@ private:
 public:
 	this(TextDg update, size_t maxChars)
 	{
+		assert(maxChars >= 2);
+		assert(update !is null);
+
 		this.update = update;
 		this.typedBuffer.length = maxChars;
 	}
@@ -41,8 +57,8 @@ public:
 	{
 		// Enter, we are done typing.
 		if (sym == 0x0D) {
-			if (typed.length > 1 && doneTyping !is null)
-				doneTyping(typed);
+			if (typed.length > 0)
+				process(typed);
 
 			typed = null;
 			showing = null;
@@ -74,6 +90,7 @@ public:
 		typed[$-1] = cast(char)unicode;
 	}
 
+protected:
 	bool validateChar(dchar unicode)
 	{
 		if (unicode == '\t' ||
@@ -82,6 +99,72 @@ public:
 		    unicode == 0)
 			return false;
 		return true;
+	}
+
+	void process(char[] str)
+	{
+		char[] findStr;
+
+		// If the command prefix ends with a space,
+		// only search for the command without the space.
+		if (cmdPrefix.length > 0) {
+			if (cmdPrefix[$-1] == ' ')
+				findStr = cmdPrefix[0 .. $-1];
+			else
+				findStr = cmdPrefix;
+
+			// Only a command if we find the command prefix first.
+			if (find(str, findStr) != 0)
+				return doChat(str.dup);
+
+			// Remove the prefix
+			str = str[findStr.length .. $];
+		}
+
+		auto cmds = split(str);
+
+		// Hit the user over the head.
+		if (cmds.length == 0)
+			return msgNoCommandGiven();
+
+		doCommand(cmds, str);
+	}
+
+	void doCommand(char[][] cmds, char[] str)
+	{
+		if (cmds[0] == "help")
+			return msgHelp();
+		msgNoSuchCommand(cmds[0]);
+	}
+
+	final void doMessage(char[] str)
+	{
+		if (message !is null)
+			message(str);
+	}
+
+	final void doChat(char[] str)
+	{
+		if (chat !is null)
+			chat(str);
+	}
+
+	void msgNoCommandGiven()
+	{
+		doMessage(format("No command given type %shelp", cmdPrefix));
+	}
+
+	void msgNoSuchCommand(char[] cmd)
+	{
+		doMessage(format(
+			"Unknown command \"%s\" type %shelp",
+			cmd, cmdPrefix));
+	}
+
+	void msgHelp()
+	{
+		doMessage("Commands:");
+		doMessage("   help - show help message");
 	}
 
 private:
@@ -103,5 +186,3 @@ private:
 		update(showing);
 	}
 }
-
-

@@ -27,6 +27,7 @@ public:
 	Option!(bool) aa; /**< Anti-Aliasing control */
 	Option!(bool) fog; /**< Fog toggle. */
 	Option!(bool) hideUi; /**< Hide the user interface. */
+	Option!(bool) useCmdPrefix; /**< Should we use the command prefix. */
 	Option!(double) viewDistance; /**< The view distance */
 
 
@@ -97,6 +98,7 @@ public:
 		shadow.destruct();
 		showDebug.destruct();
 		viewDistance.destruct();
+		useCmdPrefix.destruct();
 
 		dirt.destruct();
 		terrain.destruct();

@@ -88,10 +88,12 @@ public:
 		typedText = new Text(chatGui, 8, spacer.y+8, "");
 
 		chatGui.repaintDg = &handleRepaint;
-		console = new ClassicConsole(&typedText.setText);
+		console = new ClassicConsole(opts, &typedText.setText);
 
-		if (c !is null)
-			console.doneTyping = &c.sendClientMessage;
+		if (c !is null) {
+			console.chat = &c.sendClientMessage;
+			console.message = &ml.message;
+		}
 	}
 
 	this(Router r, Options opts,
@@ -563,12 +565,26 @@ public:
  */
 class ClassicConsole : public Console
 {
+protected:
+	Options opts;
+	const cmdPrefixStr = "/client ";
 
-	this(TextDg update)
+public:
+	this(Options opts, TextDg update)
 	{
+		this.opts = opts;
+		this.opts.useCmdPrefix ~= &usePrefix;
+		usePrefix(this.opts.useCmdPrefix());
+
 		super(update, 64);
 	}
 
+	void usePrefix(bool useIt = true)
+	{
+		cmdPrefix = useIt ? cmdPrefixStr : null;
+	}
+
+protected:
 	bool validateChar(dchar unicode)
 	{
 		// Skip invalid characters.
@@ -577,5 +593,69 @@ class ClassicConsole : public Console
 		    unicode == '&')
 			return false;
 		return true;
+	}
+
+	void doCommand(char[][] cmds, char[] str)
+	{
+		switch(cmds[0]) {
+		case "help":
+			msgHelp();
+			break;
+		case "aa":
+			opts.aa.toggle();
+			doMessage(format("AA toggled (%s).", opts.aa()));
+			break;
+		case "say":
+			auto i = find(str, "say") + 4;
+			assert(i >= 4);
+
+			if (i >= str.length)
+				break;
+
+			doChat(str[cast(size_t)i .. $].dup);
+			break;
+		case "fps":
+			opts.showDebug.toggle();
+			doMessage(format("FPS toggled (%s).", opts.showDebug()));
+			break;
+		case "fog":
+			opts.fog.toggle();
+			doMessage(format("Fog toggled (%s).", opts.fog()));
+			break;
+		case "hide":
+			opts.hideUi.toggle();
+			doMessage(format("UI toggled (%s).", opts.hideUi()));
+			break;
+		case "prefix":
+			opts.useCmdPrefix.toggle();
+			doMessage(format("Prefix toggled (%s).", opts.useCmdPrefix()));
+			break;
+		case "shadow":
+			opts.shadow.toggle();
+			doMessage(format("Shadows toggled (%s).", opts.shadow()));
+			break;
+		case "view":
+			auto d = opts.viewDistance() * 2;
+			if (d > 1024)
+				d = 32;
+			opts.viewDistance = d;
+			doMessage(format("View distance changed (%s).", d));
+			break;
+		default:
+			msgNoSuchCommand(cmds[0]);
+		}
+	}
+
+	void msgHelp()
+	{
+		doMessage("Commands:");
+		doMessage("  aa     - toggle anti-aliasing");
+		doMessage("  say    - chat the following text");
+		doMessage("  fog    - toggle fog rendering");
+		doMessage("  fps    - toggle fps counter and debug info   (F3)");
+		doMessage("  hide   - toggle UI hide                      (F2)");
+		doMessage("  view   - change view distance");
+		doMessage("  prefix - toogle the command prefix " ~ cmdPrefixStr);
+		doMessage("  shadow - toggle shadows");
 	}
 }
