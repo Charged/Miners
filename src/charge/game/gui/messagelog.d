@@ -16,6 +16,7 @@ class MessageLog : public Component
 protected:
 	uint colums;
 	uint rows;
+	uint rowHeight;
 
 	uint current;
 	DynamicTexture glyphs;
@@ -24,7 +25,7 @@ protected:
 	size_t cur;
 
 public:
-	this(Container p, int x, int y, uint colums, uint rows)
+	this(Container p, int x, int y, uint colums, uint rows, uint spacing)
 	{
 		this.colums = colums;
 		this.rows = rows;
@@ -33,14 +34,16 @@ public:
 
 		repack();
 
-		super(p, x, y, colums * 8, rows * 8);
+		rowHeight = 8 + spacing;
+
+		super(p, x, y, colums * 8, rows * rowHeight);
 
 	}
 
 	void repack()
 	{
 		w = colums * 8;
-		h = rows * 8;
+		h = rows * rowHeight;
 	}
 
 	void releaseResources()
@@ -67,9 +70,9 @@ public:
 
 		int i;
 		foreach(row; text[cur .. $])
-			drawRow(d, (i++)*8, row);
+			drawRow(d, (i++)*rowHeight, row);
 		foreach(row; text[0 .. cur])
-			drawRow(d, (i++)*8, row);
+			drawRow(d, (i++)*rowHeight, row);
 	}
 
 protected:

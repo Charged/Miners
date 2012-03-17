@@ -87,10 +87,13 @@ public:
 		placeText = new Text(placeGui, 8, 8, classicBlocks[currentBlock].name);
 
 		chatDirty = true;
-		chatGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*64+8*2, 8*(ml.backlog+2+2));
+		chatGui = new ColorContainer(
+			Color4f(0, 0, 0, 0.8),
+			8 * 64 + 8 * 2,
+			9 * ml.backlog + 8 * (2 + 2));
 		mlGui = new ClassicMessageLog(chatGui, 8, 8, 20);
-		auto spacer = new Text(chatGui, 8, 8+ml.backlog*8, chatSep);
-		typedText = new Text(chatGui, 8, spacer.y+8, "");
+		auto spacer = new Text(chatGui, 8, mlGui.y+mlGui.h, chatSep);
+		typedText = new Text(chatGui, 8, spacer.y+spacer.h, "");
 
 		chatGui.repaintDg = &handleRepaint;
 		console = new ClassicConsole(opts, &typedText.setText);
@@ -740,7 +743,7 @@ class ClassicMessageLog : public MessageLog
 {
 	this(Container c, int x, int y, uint rows)
 	{
-		super(c, x, y, 64, rows); 
+		super(c, x, y, 64, rows, 1);
 	}
 
 protected:
