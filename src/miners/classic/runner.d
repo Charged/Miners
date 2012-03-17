@@ -124,6 +124,12 @@ public:
 		chatGui.breakApart();
 		delete sel;
 
+		foreach(p; players) {
+			if (p is null)
+				continue;
+			delete p;
+		}	
+
 		if (c is null)
 			return;
 
@@ -532,6 +538,7 @@ public:
 			return;
 
 		delete players[index];
+		players[index] = null;
 	}
 
 	void playerType(ubyte type)
