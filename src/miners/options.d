@@ -25,6 +25,7 @@ public:
 	Option!(bool) showDebug; /**< Should debug info be shown. */
 	Option!(bool) shadow; /**< Should advanced shadowing be used */
 	Option!(bool) aa; /**< Anti-Aliasing control */
+	Option!(bool) fog; /**< Fog toggle. */
 	Option!(double) viewDistance; /**< The view distance */
 
 

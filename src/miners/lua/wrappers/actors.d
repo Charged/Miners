@@ -392,6 +392,9 @@ struct OptionsWrapper
 		case "aa":
 			s.pushBool(opts.aa());
 			break;
+		case "fog":
+			s.pushBool(opts.fog());
+			break;
 		case "shadow":
 			s.pushBool(opts.shadow());
 			break;
@@ -425,6 +428,9 @@ struct OptionsWrapper
 		switch(key)	{
 		case "aa":
 			opts.aa = s.toBool(3);
+			break;
+		case "fog":
+			opts.fog = s.toBool(3);
 			break;
 		case "shadow":
 			opts.shadow = s.toBool(3);

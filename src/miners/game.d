@@ -233,6 +233,7 @@ protected:
 		dirt = GfxTexture("mc/dirt", dirtPic);
 		dirt.filter = GfxTexture.Filter.Nearest;
 		opts.dirt = dirt;
+		opts.fog = true;
 		dirtPic.dereference();
 		dirt.dereference();
 

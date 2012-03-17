@@ -139,6 +139,9 @@ public:
 		case SDLK_b:
 			opts.aa.toggle;
 			break;
+		case SDLK_y:
+			opts.fog.toggle;
+			break;
 		case SDLK_r:
 			opts.changeRenderer();
 			break;

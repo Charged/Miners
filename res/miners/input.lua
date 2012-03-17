@@ -48,6 +48,7 @@ local keyTest
 
 local keyScreenshot
 local keyAA
+local keyFog
 local keyShadows
 local keyRenderer
 local keyDistance
@@ -70,6 +71,7 @@ function _G.setKeyBindings(def)
 
 	keyScreenshot = def.keyScreenshot
 	keyAA = def.keyAA
+	keyFog = def.keyFog
 	keyShadows = def.keyShadows
 	keyRenderer = def.keyRenderer
 	keyDistance = def.keyDistance
@@ -94,6 +96,7 @@ function _G.keyUp(sym)
 
 	if sym == keyScreenshot then options:screenshot() end
 	if sym == keyAA then options.aa = not options.aa end
+	if sym == keyFog then options.fog = not options.fog end
 	if sym == keyShadows then options.shadow = not options.shadow end
 	if sym == keyShowDebug then options.showDebug = not options.showDebug end
 	if sym == keyRenderer then options:switchRenderer() end

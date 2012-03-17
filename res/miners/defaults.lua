@@ -48,6 +48,7 @@ local defaults = {
 	lightDayDiffuse = Color(165/255, 165/255, 165/255),
 	lightDayAmbient = Color(100/255, 100/255, 100/255),
 
+	fog = true,
 	fogProcent = .35,
 	fogDayColor = Color(89/255, 178/255, 220/255),
 
@@ -65,6 +66,7 @@ local defaults = {
 	keyTest = string.byte('t'),
 	keyScreenshot = string.byte('o'),
 	keyAA = string.byte('b'),
+	keyFog = string.byte('y'),
 	keyShadows = string.byte('v'),
 	keyRenderer = string.byte('r'),
 	keyDistance = string.byte('f'),

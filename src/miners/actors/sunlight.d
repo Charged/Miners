@@ -28,15 +28,17 @@ public:
 		w.gfx.add(gfx);
 
 		fog = new GfxFog();
-		w.gfx.fog = fog;
-
 		fog.stop = w.opts.viewDistance();
 		fog.color = defaultFogColor;
 		procent = defaultFogProcent;
-		w.opts.viewDistance ~= &setViewDistance;
 
-		w.opts.shadow ~= &shadow;
+		w.gfx.fog = w.opts.fog() ? fog : null;
+
 		shadow = w.opts.shadow();
+
+		w.opts.fog ~= &setFog;
+		w.opts.shadow ~= &shadow;
+		w.opts.viewDistance ~= &setViewDistance;
 	}
 
 	~this()
@@ -80,4 +82,10 @@ private:
 		fog.stop = dist;
 		procent = _procent;
 	}
+
+	void setFog(bool b)
+	{
+		w.gfx.fog = b ? fog : null;
+	}
+
 }
