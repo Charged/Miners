@@ -2,6 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.runner;
 
+
+import lib.sdl.keysym;
+
 import charge.charge;
 import charge.math.ints;
 import charge.game.gui.text;
@@ -182,7 +185,7 @@ public:
 	{
 		placeSelector();
 
-		super.render(rt);
+		r.render(w.gfx, cam.current, rt);
 
 		if (opts.hideUi())
 			return;
@@ -264,26 +267,85 @@ public:
 		if (sym == 't')
 			return console.startTyping();
 
-		super.keyDown(kb, sym, unicode, str);
+		switch(sym) {
+		case SDLK_w:
+			m.forward = true;
+			break;
+		case SDLK_s:
+			m.backward = true;
+			break;
+		case SDLK_a:
+			m.left = true;
+			break;
+		case SDLK_d:
+			m.right = true;
+			break;
+		case SDLK_LSHIFT:
+			m.speed = true;
+			break;
+		case SDLK_SPACE:
+			m.up = true;
+			break;
+		default:
+		}
 	}
 
 	void keyUp(CtlKeyboard kb, int sym)
 	{
-		if (!console.typing)
-			return super.keyUp(kb, sym);
+		if (console.typing)
+			return;
+
+		switch(sym) {
+		case SDLK_w:
+			m.forward = false;
+			break;
+		case SDLK_s:
+			m.backward = false;
+			break;
+		case SDLK_a:
+			m.left = false;
+			break;
+		case SDLK_d:
+			m.right = false;
+			break;
+		case SDLK_LSHIFT:
+			m.speed = false;
+			break;
+		case SDLK_SPACE:
+			m.up = false;
+			break;
+		case SDLK_g:
+			if (!kb.ctrl)
+				break;
+			grab = !grab;
+			break;
+		case SDLK_o:
+			Core().screenShot();
+			break;
+		case SDLK_F2:
+			opts.hideUi.toggle;
+			break;
+		case SDLK_F3:
+			opts.showDebug.toggle;
+			break;
+		default:
+		}
 	}
 
 	void mouseDown(CtlMouse mouse, int button)
 	{
-		super.mouseDown(mouse, button);
-
 		if (button == 4)
 			return decBlock();
 		if (button == 5)
 			return incBlock();
 
-		if ((button < 0 && button > 3) || !grabbed)
+		if ((button < 0 && button > 3) || !grabbed) {
+			if (button == 1)
+				cam_moveing = true;
+			if (button == 3)
+				light_moveing = true;
 			return;
+		}
 
 		int xLast, yLast, zLast;
 		int numBlocks;
