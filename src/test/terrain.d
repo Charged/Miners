@@ -85,7 +85,7 @@ public:
 
 		gfx.setMaterial(new GfxSimpleMaterial());
 		gfx.getMaterial()["tex"] = "res/water_tile.png";
-		rm.dereference();
+		sysReference(&rm, null);
 	}
 
 	this(GameWorld w, uint seed)
@@ -148,7 +148,7 @@ public:
 
 		gfx.setMaterial(new GfxSimpleMaterial());
 		gfx.getMaterial().setTexture("tex", "res/dirt_tile.png");
-		rm.dereference();
+		sysReference(&rm, null);
 
 
 		hackWater();

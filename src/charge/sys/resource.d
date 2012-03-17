@@ -17,6 +17,22 @@ private:
 	char[] uri;
 
 public:
+	static void reference(void* _oldRes, Resource newRes)
+	{
+		// Stupid D type system
+		auto oldRes = cast(Resource*)_oldRes;
+
+		assert(oldRes !is null);
+
+		if (newRes !is null)
+			newRes.incRef();
+
+		if (*oldRes !is null)
+			(*oldRes).decRef();
+
+		*oldRes = newRes;
+	}
+
 	this(Pool p, char[] uri, char[] name)
 	{
 		this.pool = p;
@@ -28,7 +44,13 @@ public:
 			p.resource(uri, name, this);
 	}
 
-	final void reference()
+	final char[] getName()
+	{
+		return name;
+	}
+
+private:
+	final void incRef()
 	{
 		if (refcount++ == 0) {
 			assert(name !is null);
@@ -38,24 +60,14 @@ public:
 		assert(refcount > 0);
 	}
 
-	final void dereference()
+	final void decRef()
 	{
-		if (refcount <= 0) {
-			writefln("GAH");
-			*cast(int*)null = 0;
-		}
-
 		if (--refcount == 0) {
 			if (name is null)
 				delete this;
 			else
 				pool.mark(uri, name);
 		}
-	}
-
-	final char[] getName()
-	{
-		return name;
 	}
 }
 
@@ -94,8 +106,8 @@ public:
 		if (!e)
 			return null;
 
-		auto r = e.res;
-		r.reference();
+		Resource r = e.res;
+		r.incRef;
 		return r;
 	}
 

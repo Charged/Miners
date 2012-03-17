@@ -77,7 +77,7 @@ public:
 		if (pic is null)
 			return null;
 		scope(exit)
-			pic.dereference;
+			pic.reference(&pic, null);
 
 		auto id = textureFromPicture(pic);
 
@@ -369,7 +369,7 @@ public:
 		if (pic is null)
 			return null;
 		scope(exit)
-			pic.dereference();
+			pic.reference(&pic, null);
 
 		return fromTileMap(name, pic, num_w, num_h);
 	}
@@ -494,7 +494,7 @@ private:
 		if (pic is null)
 			return null;
 		scope(exit)
-			pic.dereference;
+			pic.reference(&pic, null);
 
 		id = textureFromPicture(pic);
 

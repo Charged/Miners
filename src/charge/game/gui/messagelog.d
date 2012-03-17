@@ -51,7 +51,7 @@ public:
 		if (glyphs is null)
 			return;
 
-		glyphs.dereference();
+		glyphs.reference(&glyphs, null);
 		glyphs = null;
 	}
 

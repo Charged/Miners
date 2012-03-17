@@ -186,8 +186,7 @@ public:
 
 	~this()
 	{
-		if (tt !is null)
-			tt.dereference();
+		assert(tt is null);
 	}
 
 	void repaint(int x, int y, uint w, uint h)
@@ -201,10 +200,8 @@ public:
 	/**
 	 * Return the current texture target, referenced.
 	 */
-	TextureTarget getTarget()
+	Texture texture()
 	{
-		if (tt !is null)
-			tt.reference();
 		return tt;
 	}
 
@@ -215,13 +212,10 @@ public:
 	 */
 	void paint()
 	{
-		if (tt !is null && (tt.width != w || tt.height != h)) {
-			tt.dereference();
-			tt = null;
-		}
-
-		if (tt is null)
+		if (tt is null || (tt.width != w || tt.height != h)) {
+			tt.reference(&tt, null);
 			tt = TextureTarget(null, w, h);
+		}
 
 		auto d = new Draw();
 		d.target = tt;
@@ -238,9 +232,6 @@ public:
 	{
 		super.releaseResources();
 
-		if (tt !is null) {
-			tt.dereference();
-			tt = null;
-		}
+		tt.reference(&tt, null);
 	}
 }

@@ -49,10 +49,7 @@ public:
 
 	void releaseResources()
 	{
-		if (gfx !is null) {
-			gfx.dereference();
-			gfx = null;
-		}
+		gfx.reference(&gfx, null);
 	}
 
 protected:

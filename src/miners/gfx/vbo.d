@@ -162,7 +162,7 @@ public:
 				break;
 			i++;
 		}
-		vbo.dereference();
+		sysReference(&vbo, null);
 		assert(i < array.length);
 		array = array[0 .. i] ~ array[i+1 .. array.length];
 	}

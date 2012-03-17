@@ -65,10 +65,8 @@ public:
 	{
 		super(w);
 
-		if (vbo !is null)
-			vbo.reference();
+		vbo.reference(&this.vbo, vbo);
 
-		this.vbo = vbo;
 		this.bones.allocCopy(bones);
 		this.m = MaterialManager.getDefault();
 		(cast(SimpleMaterial)this.m).skel = true;
@@ -77,7 +75,7 @@ public:
 	~this()
 	{
 		delete m;
-		vbo.dereference();
+		vbo.reference(&vbo, null);
 		bones.free();
 	}
 

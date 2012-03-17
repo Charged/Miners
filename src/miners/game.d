@@ -170,10 +170,8 @@ public:
 		delete rm;
 		delete d;
 
-		if (debugText !is null)
-			debugText.dereference();
-		if (cameraText !is null)
-			cameraText.dereference();
+		sysReference(&debugText, null);
+		sysReference(&cameraText, null);
 
 		if (terrainFile !is null) {
 			auto fm = FileManager();
@@ -235,8 +233,8 @@ protected:
 		opts.dirt = dirt;
 		opts.fog = true;
 		opts.useCmdPrefix = true;
-		dirtPic.dereference();
-		dirt.dereference();
+		sysReference(&dirtPic, null);
+		sysReference(&dirt, null);
 
 		// Do the manipulation of the texture to fit us
 		manipulateTexture(pic);
@@ -247,7 +245,7 @@ protected:
 		createTextures(pic, false);
 
 		// Not needed anymore.
-		pic.dereference();
+		sysReference(&pic, null);
 
 		// Should we use classic
 		if (classic) {
@@ -459,7 +457,7 @@ protected:
 			opts.terrain = t;
 		else
 			opts.classicTerrain = t;
-		t.dereference();
+		sysReference(&t, null);
 
 		if (rm.textureArray) {
 			ta = ta.fromTileMap(name, pic, 16, 16);
@@ -469,7 +467,7 @@ protected:
 				opts.terrainArray = ta;
 			else
 				opts.classicTerrainArray = ta;
-			ta.dereference();
+			sysReference(&ta, null);
 		}
 	}
 

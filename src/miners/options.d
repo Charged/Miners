@@ -88,10 +88,7 @@ public:
 
 	~this()
 	{
-		if (playerSkeleton !is null)
-			playerSkeleton.dereference();
-
-		playerSkeleton = null;
+		sysReference(&playerSkeleton, null);
 
 		terrain.destruct();
 		renderer.destruct();
@@ -137,12 +134,9 @@ private struct Option(T)
 	void opAssign(T t)
 	{
 		static if (is(T : GfxTexture) || is(T : GfxTextureArray))
-			if (value !is null)
-				value.dereference();
-		value = t;
-		static if (is(T : GfxTexture) || is(T : GfxTextureArray))
-			if (value !is null)
-				value.reference();
+			sysReference(&value, t);
+		else
+			value = t;
 		signal(t);
 	}
 
@@ -168,11 +162,8 @@ private struct Option(T)
 	{
 		signal.destruct();
 
-		static if (is(T : GfxTexture) || is(T : GfxTextureArray)) {
-			if (value !is null)
-				value.dereference();
-			value = null;
-		}
+		static if (is(T : GfxTexture) || is(T : GfxTextureArray))
+			sysReference(&value, null);
 	}
 }
 

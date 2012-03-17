@@ -64,6 +64,7 @@ public
 
 	static import charge.sys.logger;
 	static import charge.sys.properties;
+	static import charge.sys.resource;
 
 	static import charge.game.world;
 	static import charge.game.app;
@@ -171,6 +172,7 @@ alias charge.sys.properties.Properties SysProperties;
 alias charge.sys.file.File SysFile;
 alias charge.sys.file.FileManager SysFileManager;
 alias charge.sys.file.ZipFile SysZipFile;
+alias charge.sys.resource.Resource.reference sysReference;
 
 alias charge.game.world.Ticker GameTicker;
 alias charge.game.world.Actor GameActor;

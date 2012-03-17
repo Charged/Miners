@@ -76,8 +76,7 @@ public:
 		delete ih;
 		delete levelRunner;
 
-		if (menuTexture !is null)
-			menuTexture.dereference();
+		sysReference(&menuTexture, null);
 	}
 
 	void close()
@@ -109,12 +108,9 @@ public:
 			return;
 
 		if (repaint) {
-			if (menuTexture !is null)
-				menuTexture.dereference();
-
 			menu.paint();
 
-			menuTexture = menu.getTarget();
+			sysReference(&menuTexture, menu.texture);
 			repaint = false;
 		}
 
@@ -336,10 +332,7 @@ private:
 
 	void changeWindow(MenuBase mb)
 	{
-		if (menuTexture !is null) {
-			menuTexture.dereference();
-			menuTexture = null;
-		}
+		sysReference(&menuTexture, null);
 		if (menu !is null)
 			menu.breakApart();
 		menu = mb;
@@ -350,7 +343,7 @@ private:
 
 		menu.paint();
 		menu.repaintDg = &triggerRepaint;
-		menuTexture = menu.getTarget();
+		sysReference(&menuTexture, menu.texture);
 	}
 
 	void triggerRepaint()

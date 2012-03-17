@@ -202,8 +202,7 @@ public:
 
 	~this()
 	{
-		if (spotlight_texture !is null)
-			spotlight_texture.dereference();
+		Texture.reference(&spotlight_texture, null);
 		delete deferredTarget;
 	}
 

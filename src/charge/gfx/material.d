@@ -68,8 +68,7 @@ public:
 			tex = Texture(filename);
 
 		auto ret = setTexture(name, tex);
-		if (tex !is null)
-			tex.dereference();
+		tex.reference(&tex, null);
 
 		return ret;
 	}
@@ -141,10 +140,9 @@ public:
 
 	~this()
 	{
-		texSafe.dereference();
+		texSafe.reference(&texSafe, null);
 		// Does not hold a reference
 		tex = null;
-		texSafe = null;
 	}
 
 	MaterialProperty[] getPropList()
@@ -166,14 +164,11 @@ public:
 			case "tex":
 				// Tex does not hold a reference
 				tex = texture;
-				if (tex !is null)
-					tex.reference();
 
 				// Update the safe texture
-				texSafe.dereference();
+				texSafe.reference(&texSafe, tex);
 
-				texSafe = tex;
-				// Must always be safe to access set to color
+				// Must always be safe to access, set to color
 				if (texSafe is null)
 					texSafe = ColorTexture(color);
 				break;

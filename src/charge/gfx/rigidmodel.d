@@ -65,7 +65,7 @@ protected:
 	~this()
 	{
 		delete m;
-		vbo.dereference;
+		vbo.reference(&vbo, null);
 	}
 
 	void cullAndPush(Cull cull, RenderQueue rq)

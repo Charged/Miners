@@ -61,7 +61,7 @@ public:
 			return null;
 		}
 		auto ret = new GeomMeshData(p, filename, m);
-		m.dereference;
+		Resource.reference(&m, null);
 		return ret;
 	}
 
@@ -100,7 +100,7 @@ public:
 
 	~this() {
 		dGeomDestroy(geom);
-		data.dereference();
+		Resource.reference(&data, null);
 	}
 
 }

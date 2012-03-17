@@ -204,7 +204,7 @@ public:
 			chatDirty = false;
 		}
 
-		auto t = placeGui.getTarget();
+		auto t = placeGui.texture;
 		auto x = rt.width - t.width - 8;
 		auto y = rt.height - t.height - 8;
 
@@ -212,15 +212,11 @@ public:
 		d.start();
 		d.blit(t, x, y);
 		if (ml !is null || console.typing) {
-			t.dereference();
-			t = null;
-			t = chatGui.getTarget();
+			t = chatGui.texture;
 
 			d.blit(t, 8, rt.height - t.height - 8);
 		}
 		d.stop();
-
-		t.dereference();
 	}
 
 	void placeSelector()
