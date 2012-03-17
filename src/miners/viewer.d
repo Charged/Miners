@@ -148,6 +148,9 @@ public:
 		case SDLK_v:
 			opts.shadow.toggle;
 			break;
+		case SDLK_F2:
+			opts.hideUi.toggle;
+			break;
 		case SDLK_F3:
 			opts.showDebug.toggle;
 			break;

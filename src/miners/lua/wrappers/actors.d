@@ -401,6 +401,9 @@ struct OptionsWrapper
 		case "renderer":
 			s.pushString(opts.rendererString);
 			break;
+		case "hideUi":
+			s.pushBool(opts.hideUi());
+			break;
 		case "showDebug":
 			s.pushBool(opts.showDebug());
 			break;
@@ -434,6 +437,9 @@ struct OptionsWrapper
 			break;
 		case "shadow":
 			opts.shadow = s.toBool(3);
+			break;
+		case "hideUi":
+			opts.hideUi = s.toBool(3);
 			break;
 		case "showDebug":
 			opts.showDebug = s.toBool(3);

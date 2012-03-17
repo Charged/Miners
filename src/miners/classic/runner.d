@@ -170,6 +170,9 @@ public:
 
 		super.render(rt);
 
+		if (opts.hideUi())
+			return;
+
 		if (currentBlock != savedBlock) {
 			placeText.setText(classicBlocks[currentBlock].name);
 			savedBlock = currentBlock;

@@ -52,6 +52,7 @@ local keyFog
 local keyShadows
 local keyRenderer
 local keyDistance
+local keyHideUi
 local keyShowDebug
 local keyGrab
 
@@ -75,6 +76,7 @@ function _G.setKeyBindings(def)
 	keyShadows = def.keyShadows
 	keyRenderer = def.keyRenderer
 	keyDistance = def.keyDistance
+	keyHideUi = def.keyHideUi
 	keyShowDebug = def.keyShowDebug
 	keyGrab = def.keyGrab
 	keyIso = def.keyIso
@@ -98,6 +100,7 @@ function _G.keyUp(sym)
 	if sym == keyAA then options.aa = not options.aa end
 	if sym == keyFog then options.fog = not options.fog end
 	if sym == keyShadows then options.shadow = not options.shadow end
+	if sym == keyHideUi then options.hideUi = not options.hideUi end
 	if sym == keyShowDebug then options.showDebug = not options.showDebug end
 	if sym == keyRenderer then options:switchRenderer() end
 	if sym == keyIso then camera.iso = not camera.iso end

@@ -26,6 +26,7 @@ public:
 	Option!(bool) shadow; /**< Should advanced shadowing be used */
 	Option!(bool) aa; /**< Anti-Aliasing control */
 	Option!(bool) fog; /**< Fog toggle. */
+	Option!(bool) hideUi; /**< Hide the user interface. */
 	Option!(double) viewDistance; /**< The view distance */
 
 

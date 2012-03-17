@@ -33,6 +33,8 @@ local defaults = {
 	-- Camera
 	--
 
+	hideUi = false,
+
 	viewDistance = viewDistance,
 
 	cameraPosition = Point(),
@@ -71,6 +73,7 @@ local defaults = {
 	keyRenderer = string.byte('r'),
 	keyDistance = string.byte('f'),
 	keyIso = string.byte('i'),
+	keyHideUi = 283, --SDLK_F2
 	keyShowDebug = 284, --SDLK_F3
 	keyGrab = string.byte('g'),
 }

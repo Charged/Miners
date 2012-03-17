@@ -59,6 +59,7 @@ function setDefaults(def)
 	end
 
 	options.fog = def.fog
+	options.hideUi = def.hideUi
 	options.viewDistance = def.viewDistance
 
 	camera.position = def.cameraPosition
