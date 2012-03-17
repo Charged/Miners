@@ -241,7 +241,12 @@ protected:
 		deferredTarget.setTarget();
 
 		glClearDepth(1);
-		glClear(GL_DEPTH_BUFFER_BIT);
+		if (w.fog is null) {
+			glClearColor(0, 0, 0, 0);
+			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		} else {
+			glClear(GL_DEPTH_BUFFER_BIT);
+		}
 
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);

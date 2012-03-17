@@ -126,8 +126,12 @@ protected:
 			glFogfv(GL_FOG_COLOR, w.fog.color.ptr);
 			glFogf(GL_FOG_START, w.fog.start);
 			glFogf(GL_FOG_END, w.fog.stop);
+		} else {
+			// XXX Work around not having a non-fog set of shaders.
+			glFogfv(GL_FOG_COLOR, Color4f.Black.ptr);
+			glFogf(GL_FOG_START, float.max/4048);
+			glFogf(GL_FOG_END, float.max/2024);
 		}
-		// TODO: no fog
 
 		glAlphaFunc(GL_GEQUAL, 0.5f);
 
