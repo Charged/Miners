@@ -84,7 +84,7 @@ public:
 		gluPushAndTransform(pos, rot);
 
 		glLineWidth(4);
-		glDepthFunc(GL_ALWAYS);
+		glDepthFunc(GL_LEQUAL);
 		glPolygonMode(GL_FRONT, GL_LINE);
 
 		vbo.drawFixed();
@@ -101,7 +101,7 @@ public:
 		gluPushAndTransform(pos, rot);
 
 		glLineWidth(4);
-		glDepthFunc(GL_ALWAYS);
+		glDepthFunc(GL_LEQUAL);
 		glPolygonMode(GL_FRONT, GL_LINE);
 
 		vbo.drawAttrib();
@@ -116,100 +116,100 @@ public:
 
 private static Vertex vert[24] = [
 	{ // X-
-		 0.0f,  0.0f,  0.0f, // Pos
-		 0.0f,  1.0f,        // UV
-		-1.0f,  0.0f,  0.0f, // Normal
+		-0.001f, -0.001f, -0.001f, // Pos
+		 0.0f,    1.0f,            // UV
+		-1.0f,    0.0f,    0.0f,   // Normal
 	}, {
-		 0.0f,  0.0f,  1.0f, // Pos
-		 1.0f,  1.0f,        // UV
-		-1.0f,  0.0f,  0.0f, // Normal
+		-0.001f, -0.001f,  1.001f, // Pos
+		 1.0f,    1.0f,            // UV
+		-1.0f,    0.0f,    0.0f,   // Normal
 	}, {
-		 0.0f,  1.0f,  1.0f, // Pos
-		 1.0f,  0.0f,        // UV
-		-1.0f,  0.0f,  0.0f, // Normal
+		-0.001f,  1.001f,  1.001f, // Pos
+		 1.0f,    0.0f,            // UV
+		-1.0f,    0.0f,    0.0f,   // Normal
 	}, {
-		 0.0f,  1.0f,  0.0f, // Pos
-		 0.0f,  0.0f,        // UV
-		-1.0f,  0.0f,  0.0f, // Normal
+		-0.001f,  1.001f, -0.001f, // Pos
+		 0.0f,    0.0f,            // UV
+		-1.0f,    0.0f,    0.0f,   // Normal
 	}, { // X+
-		 1.0f,  0.0f,  0.0f, // Pos
-		 1.0f,  1.0f,        // UV
-		 1.0f,  0.0f,  0.0f, // Normal
+		 1.001f, -0.001f, -0.001f, // Pos
+		 1.0f,    1.0f,            // UV
+		 1.0f,    0.0f,    0.0f,   // Normal
 	}, {
-		 1.0f,  1.0f,  0.0f, // Pos
-		 1.0f,  0.0f,        // UV
-		 1.0f,  0.0f,  0.0f, // Normal
+		 1.001f,  1.001f, -0.001f, // Pos
+		 1.0f,    0.0f,            // UV
+		 1.0f,    0.0f,    0.0f,   // Normal
 	}, {
-		 1.0f,  1.0f,  1.0f, // Pos
-		 0.0f,  0.0f,        // UV
-		 1.0f,  0.0f,  0.0f, // Normal
+		 1.001f,  1.001f,  1.001f, // Pos
+		 0.0f,    0.0f,            // UV
+		 1.0f,    0.0f,    0.0f,   // Normal
 	}, {
-		 1.0f,  0.0f,  1.0f, // Pos
-		 0.0f,  1.0f,        // UV
-		 1.0f,  0.0f,  0.0f, // Normal
+		 1.001f, -0.001f,  1.001f, // Pos
+		 0.0f,    1.0f,            // UV
+		 1.0f,    0.0f,    0.0f,   // Normal
 	}, { // Y- Bottom
-		 0.0f,  0.0f,  0.0f, // Pos
-		 1.0f,  0.0f,        // UV
-		 0.0f, -1.0f,  0.0f, // Normal
+		-0.001f, -0.001f, -0.001f, // Pos
+		 1.0f,    0.0f,            // UV
+		 0.0f, -  1.0f,    0.0f,   // Normal
 	}, {
-		 1.0f,  0.0f,  0.0f, // Pos
-		 0.0f,  0.0f,        // UV
-		 0.0f, -1.0f,  0.0f, // Normal
+		 1.001f, -0.001f, -0.001f, // Pos
+		 0.0f,    0.0f,            // UV
+		 0.0f, -  1.0f,    0.0f,   // Normal
 	}, {
-		 1.0f,  0.0f,  1.0f, // Pos
-		 0.0f,  1.0f,        // UV
-		 0.0f, -1.0f,  0.0f, // Normal
+		 1.001f, -0.001f,  1.001f, // Pos
+		 0.0f,    1.0f,            // UV
+		 0.0f, -  1.0f,    0.0f,   // Normal
 	}, {
-		 0.0f,  0.0f,  1.0f, // Pos
-		 1.0f,  1.0f,        // UV
-		 0.0f, -1.0f,  0.0f, // Normal
+		-0.001f, -0.001f,  1.001f, // Pos
+		 1.0f,    1.0f,            // UV
+		 0.0f, -  1.0f,    0.0f,   // Normal
 	}, { // Y+ Top
-		 0.0f,  1.0f,  0.0f, // Pos
-		 0.0f,  0.0f,        // UV
-		 0.0f,  1.0f,  0.0f, // Normal
+		-0.001f,  1.001f, -0.001f, // Pos
+		 0.0f,    0.0f,            // UV
+		 0.0f,    1.0f,    0.0f,   // Normal
 	}, {
-		 0.0f,  1.0f,  1.0f, // Pos
-		 0.0f,  1.0f,        // UV
-		 0.0f,  1.0f,  0.0f, // Normal
+		-0.001f,  1.001f,  1.001f, // Pos
+		 0.0f,    1.0f,            // UV
+		 0.0f,    1.0f,    0.0f,   // Normal
 	}, {
-		 1.0f,  1.0f,  1.0f, // Pos
-		 1.0f,  1.0f,        // UV
-		 0.0f,  1.0f,  0.0f, // Normal
+		 1.001f,  1.001f,  1.001f, // Pos
+		 1.0f,    1.0f,            // UV
+		 0.0f,    1.0f,    0.0f,   // Normal
 	}, {
-		 1.0f,  1.0f,  0.0f, // Pos
-		 1.0f,  0.0f,        // UV
-		 0.0f,  1.0f,  0.0f, // Normal
+		 1.001f,  1.001f, -0.001f, // Pos
+		 1.0f,    0.0f,            // UV
+		 0.0f,    1.0f,    0.0f,   // Normal
 	}, { // Z- Front
-		 0.0f,  0.0f,  0.0f, // Pos
-		 1.0f,  1.0f,        // UV
-		 0.0f,  0.0f, -1.0f, // Normal
+		-0.001f, -0.001f, -0.001f, // Pos
+		 1.0f,    1.0f,            // UV
+		 0.0f,    0.0f, -  1.0f,   // Normal
 	}, {
-		 0.0f,  1.0f,  0.0f, // Pos
-		 1.0f,  0.0f,        // UV
-		 0.0f,  0.0f, -1.0f, // Normal
+		-0.001f,  1.001f, -0.001f, // Pos
+		 1.0f,    0.0f,            // UV
+		 0.0f,    0.0f, -  1.0f,   // Normal
 	}, {
-		 1.0f,  1.0f,  0.0f, // Pos
-		 0.0f,  0.0f,        // UV
-		 0.0f,  0.0f, -1.0f, // Normal
+		 1.001f,  1.001f, -0.001f, // Pos
+		 0.0f,    0.0f,            // UV
+		 0.0f,    0.0f, -  1.0f,   // Normal
 	}, {
-		 1.0f,  0.0f,  0.0f, // Pos
-		 0.0f,  1.0f,        // UV
-		 0.0f,  0.0f, -1.0f, // Normal
+		 1.001f, -0.001f, -0.001f, // Pos
+		 0.0f,    1.0f,            // UV
+		 0.0f,    0.0f, -  1.0f,   // Normal
 	}, { // Z- Back
-		 0.0f,  0.0f,  1.0f, // Pos
-		 0.0f,  1.0f,        // UV
-		 0.0f,  0.0f,  1.0f, // Normal
+		-0.001f, -0.001f,  1.001f, // Pos
+		 0.0f,    1.0f,            // UV
+		 0.0f,    0.0f,    1.0f,   // Normal
 	}, {
-		 1.0f,  0.0f,  1.0f, // Pos
-		 1.0f,  1.0f,        // UV
-		 0.0f,  0.0f,  1.0f, // Normal
+		 1.001f, -0.001f,  1.001f, // Pos
+		 1.0f,    1.0f,            // UV
+		 0.0f,    0.0f,    1.0f,   // Normal
 	}, {
-		 1.0f,  1.0f,  1.0f, // Pos
-		 1.0f,  0.0f,        // UV
-		 0.0f,  0.0f,  1.0f, // Normal
+		 1.001f,  1.001f,  1.001f, // Pos
+		 1.0f,    0.0f,            // UV
+		 0.0f,    0.0f,    1.0f,   // Normal
 	}, {
-		 0.0f,  1.0f,  1.0f, // Pos
-		 0.0f,  0.0f,        // UV
-		 0.0f,  0.0f,  1.0f, // Normal
+		-0.001f,  1.001f,  1.001f, // Pos
+		 0.0f,    0.0f,            // UV
+		 0.0f,    0.0f,    1.0f,   // Normal
 	}
 ];
