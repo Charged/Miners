@@ -6,6 +6,7 @@ import charge.charge;
 import charge.math.ints;
 import charge.game.gui.text;
 import charge.game.gui.textbased;
+import charge.game.gui.messagelog;
 
 import miners.types;
 import miners.runner;
@@ -55,7 +56,7 @@ protected:
 
 	Text placeText;
 	ColorContainer chatGui;
-	Text chatText;
+	ClassicMessageLog mlGui;
 	Text typedText;
 	bool chatDirty;
 
@@ -82,8 +83,9 @@ public:
 		placeGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*16+8*2, 8*3);
 		placeText = new Text(placeGui, 8, 8, classicBlocks[currentBlock].name);
 
+		chatDirty = true;
 		chatGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*64+8*2, 8*(ml.backlog+2+2));
-		chatText = new Text(chatGui, 8, 8, "");
+		mlGui = new ClassicMessageLog(chatGui, 8, 8, 20);
 		auto spacer = new Text(chatGui, 8, 8+ml.backlog*8, chatSep);
 		typedText = new Text(chatGui, 8, spacer.y+8, "");
 
@@ -92,7 +94,11 @@ public:
 
 		if (c !is null) {
 			console.chat = &c.sendClientMessage;
-			console.message = &ml.message;
+			console.message = &ml.archive;
+			ml.message = &mlGui.message;
+		} else {
+			console.chat = &mlGui.message;
+			console.message = &mlGui.message;
 		}
 	}
 
@@ -185,11 +191,6 @@ public:
 			placeText.setText(classicBlocks[currentBlock].name);
 			savedBlock = currentBlock;
 			placeGui.paint();
-		}
-
-		if (ml !is null && ml.dirty) {
-			chatText.setText(ml.getAllMessages());
-			ml.dirty = false;
 		}
 
 		if (chatDirty) {
@@ -648,14 +649,90 @@ protected:
 
 	void msgHelp()
 	{
-		doMessage("Commands:");
-		doMessage("  aa     - toggle anti-aliasing");
-		doMessage("  say    - chat the following text");
-		doMessage("  fog    - toggle fog rendering");
-		doMessage("  fps    - toggle fps counter and debug info   (F3)");
-		doMessage("  hide   - toggle UI hide                      (F2)");
-		doMessage("  view   - change view distance");
-		doMessage("  prefix - toogle the command prefix " ~ cmdPrefixStr);
-		doMessage("  shadow - toggle shadows");
+		doMessage("&eCommands:");
+		doMessage("&a  aa&e     - toggle anti-aliasing");
+		doMessage("&a  say&e    - chat the following text");
+		doMessage("&a  fog&e    - toggle fog rendering");
+		doMessage("&a  fps&e    - toggle fps counter and debug info (&cF3&e)");
+		doMessage("&a  hide&e   - toggle UI hide                    (&cF2&e)");
+		doMessage("&a  view&e   - change view distance");
+		doMessage("&a  prefix&e - toogle the command prefix &a" ~ cmdPrefixStr);
+		doMessage("&a  shadow&e - toggle shadows");
 	}
+
+	void msgNoCommandGiven()
+	{
+		doMessage(format(
+			"&eNo command given type &a%shelp", cmdPrefix));
+	}
+
+	void msgNoSuchCommand(char[] cmd)
+	{
+		doMessage(format(
+			"&eUnknown command \"&c%s&e\" type &a%shelp",
+			cmd, cmdPrefix));
+	}
+}
+
+class ClassicMessageLog : public MessageLog
+{
+	this(Container c, int x, int y, uint rows)
+	{
+		super(c, x, y, 64, rows); 
+	}
+
+protected:
+	void drawRow(GfxDraw d, int y, char[] row)
+	{
+		auto color = &colors[15];
+		bool colorSelect;
+		int k;
+
+		foreach(c; row) {
+			if (colorSelect) {
+				colorSelect = false;
+				int index = charToIndex(c);
+				if (index >= 0) {
+					color = &colors[index];
+					continue;
+				}
+			} else if (c == '&') {
+				colorSelect = true;
+				continue;
+			}
+
+			d.blit(glyphs, *color, true,
+				c*8, 0, 8, 8,
+				k*8, y, 8, 8);
+			k++;
+		}
+	}
+
+	int charToIndex(char c)
+	{
+		if (c >= 'a' && c <= 'f')
+			return c - 'a' + 10;
+		if (c >= '0' && c <= '9')
+			return c - '0';
+		return -1;
+	}
+
+	const Color4f colors[16] = [
+		Color4f( 32/255f,  32/255f,  32/255f, 1),
+		Color4f( 45/255f, 100/255f, 200/255f, 1),
+		Color4f( 50/255f, 126/255f,  54/255f, 1),
+		Color4f(  0/255f, 170/255f, 170/255f, 1),
+		Color4f(188/255f,  75/255f,  45/255f, 1),
+		Color4f(172/255f,  56/255f, 172/255f, 1),
+		Color4f(200/255f, 175/255f,  45/255f, 1),
+		Color4f(180/255f, 180/255f, 200/255f, 1),
+		Color4f(100/255f, 100/255f, 100/255f, 1),
+		Color4f( 72/255f, 125/255f, 247/255f, 1),
+		Color4f( 85/255f, 255/255f,  85/255f, 1),
+		Color4f( 85/255f, 255/255f, 255/255f, 1),
+		Color4f(255/255f,  85/255f,  85/255f, 1),
+		Color4f(255/255f,  85/255f, 255/255f, 1),
+		Color4f(255/255f, 255/255f,  85/255f, 1),
+		Color4f.White,
+	];
 }

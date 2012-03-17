@@ -43,5 +43,5 @@ interface ClientListener
  */
 interface ClientMessageListener
 {
-	void message(byte id, char[] message);
+	void archive(byte id, char[] message);
 }

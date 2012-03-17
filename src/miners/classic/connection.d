@@ -358,7 +358,7 @@ protected:
 		char[] msg = removeTrailingSpaces(sm.message);
 
 		if (ml !is null)
-			ml.message(player, msg);
+			ml.archive(player, msg);
 	}
 
 	/**

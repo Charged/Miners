@@ -4,7 +4,6 @@ module miners.classic.message;
 
 
 import miners.classic.interfaces;
-import miners.importer.network;
 
 
 class MessageLogger : public ClientMessageListener
@@ -13,28 +12,22 @@ public:
 	const backlog = 20;
 
 	char[][backlog] msgs;
+	size_t cur;
+
 	bool dirty;
 
+	void delegate(char[]) message;
+
 public:
-	this()
+	void archive(byte id, char[] msg) { archive(msg); }
+
+	void archive(char[] msg)
 	{
-		dirty = true;
-	}
+		auto m = msgs[cur] = escapeBad(msg.dup);
+		if (cur >= msg.length)
+			cur = 0;
 
-	void upLine()
-	{
-		for(int i = backlog-1, k = backlog-2; k >= 0; i--, k--)
-			msgs[i] = msgs[k];
-	}
-
-	void message(byte id, char[] msg) { message(msg); }
-
-	void message(char[] msg)
-	{
-		upLine();
-
-		msgs[0] = escapeBad(removeColorTags(msg));
-		dirty = true;
+		doMessage(m);
 	}
 
 	char[] getAllMessages()
@@ -42,20 +35,33 @@ public:
 		char[(64+2)*backlog] tmp;
 		size_t pos;
 
-		foreach_reverse(m; msgs) {
+		foreach(m; msgs[cur .. $]) {
 			tmp[pos .. pos + m.length] = m[0 .. $];
 			pos += m.length;
 			tmp[pos++] = '\n';
 		}
+
+		foreach(m; msgs[0 .. cur]) {
+			tmp[pos .. pos + m.length] = m[0 .. $];
+			pos += m.length;
+			tmp[pos++] = '\n';
+		}
+
 		return tmp[0 .. pos].dup;
 	}
 
-
-	static char[] escapeBad(char[] msg)
+protected:
+	char[] escapeBad(char[] msg)
 	{
 		foreach(m; msg)
 			if (m == '\0' || m == '\t' || m == '\n')
 				m = ' ';
 		return msg;
+	}
+
+	final void doMessage(char[] msg)
+	{
+		if (message !is null)
+			message(msg);
 	}
 }
