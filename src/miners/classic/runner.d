@@ -16,6 +16,7 @@ import miners.runner;
 import miners.viewer;
 import miners.options;
 import miners.console;
+import miners.interfaces;
 import miners.gfx.selector;
 import miners.actors.otherplayer;
 import miners.classic.data;

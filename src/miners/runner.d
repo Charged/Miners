@@ -8,6 +8,7 @@ import charge.charge;
 
 import miners.world;
 import miners.options;
+import miners.interfaces;
 
 
 /**
@@ -40,27 +41,6 @@ tell us what happened. Also please privode the Exception printout if shown.
             https://github.com/Wallbraker/Charged-Miners/issues`;
 }
 
-
-/**
- * Specialized runner for Minecraft.
- */
-class Runner : public GameRunner
-{
-	abstract bool build();
-}
-
-/**
- * Specialized router for Minecraft.
- */
-interface Router : public GameRouter
-{
-	Runner loadLevel(char[] dir);
-	Runner startClassic();
-	void render(GfxWorld w, GfxCamera c, GfxRenderTarget t);
-
-	void displayError(Exception e, bool panic);
-	void displayError(char[][] texts, bool panic);
-}
 
 /**
  * Base class for lever viewers and game logic runners.

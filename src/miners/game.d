@@ -26,6 +26,7 @@ import miners.world;
 import miners.runner;
 import miners.viewer;
 import miners.options;
+import miners.interfaces;
 import miners.lua.runner;
 import miners.lua.builtin;
 import miners.gfx.manager;
@@ -711,7 +712,7 @@ protected:
 	 */
 
 
-	void switchTo(GameRunner gr)
+	void switchTo(Runner gr)
 	{
 		auto r = cast(Runner)gr;
 		assert(r !is null);
@@ -719,7 +720,7 @@ protected:
 		nextRunner = r;
 	}
 
-	void deleteMe(GameRunner gr)
+	void deleteMe(Runner gr)
 	{
 		auto r = cast(Runner)gr;
 		assert(r !is null);
@@ -727,10 +728,18 @@ protected:
 		deleteRunner ~= r;
 	}
 
-	Runner loadLevel(char[] level)
+	Runner loadLevel(char[] level, bool classic = false)
 	{
 		Runner r;
 		World w;
+
+		if (classic) {
+			if (level is null)
+				return new ClassicRunner(this, opts);
+			else
+				return new ClassicRunner(this, opts, level);
+		}
+
 
 		if (level is null) {
 			w = new IsleWorld(opts);
@@ -783,11 +792,6 @@ protected:
 		}
 
 		return r;
-	}
-
-	Runner startClassic()
-	{
-		return new ClassicRunner(this, opts);
 	}
 
 	void manageRunners()

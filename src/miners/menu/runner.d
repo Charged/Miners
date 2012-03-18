@@ -10,6 +10,7 @@ import miners.types;
 import miners.runner;
 import miners.viewer;
 import miners.options;
+import miners.interfaces;
 import miners.menu.base;
 import miners.menu.main;
 import miners.menu.beta;
@@ -273,7 +274,7 @@ package:
 		if (levelRunner !is null)
 			router.deleteMe(levelRunner);
 
-		levelRunner = router.startClassic();
+		levelRunner = router.loadLevel(null, true);
 	}
 
 	void mainMenuSelectLevel(Button b)
