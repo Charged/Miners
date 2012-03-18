@@ -21,19 +21,17 @@ import miners.menu.classic;
 /**
  * Menu runner
  */
-class MenuRunner : public Runner
+class MenuRunner : public Runner, public MenuManager
 {
 public:
+	bool active;
 	Router router;
 	Options opts;
 
 protected:
-	Runner levelRunner;
-
 	GfxTextureTarget menuTexture;
 	GfxDraw d;
 
-	Button currentButton;
 	MenuBase menu;
 	InputHandler ih;
 	bool repaint;
@@ -61,50 +59,43 @@ public:
 		keyboard = CtlInput().keyboard;
 		mouse = CtlInput().mouse;
 
-		keyboard.down ~= &this.keyDown;
 		d = new GfxDraw();
 
-		auto m = new MainMenu(this);
-		changeWindow(m);
+		//auto m = new MainMenu(this.router);
+		changeWindow(null);
 	}
 
 	~this()
 	{
-		keyboard.down.disconnect(&this.keyDown);
-
 		if (menu !is null)
 			menu.breakApart();
 		delete ih;
-		delete levelRunner;
 
 		sysReference(&menuTexture, null);
 	}
 
 	void close()
 	{
-		if (levelRunner !is null)
-			levelRunner.close();
+		if (menu !is null) {
+			menu.breakApart();
+			menu = null;
+		}
+
+		sysReference(&menuTexture, null);
 	}
 
 	void resize(uint w, uint h)
 	{
-		if (levelRunner !is null)
-			return levelRunner.resize(w, h);
 	}
 
 	void logic()
 	{
-		if (levelRunner !is null)
-			return levelRunner.logic();
 		if (ticker !is null)
 			ticker();
 	}
 
 	void render(GfxRenderTarget rt)
 	{
-		if (levelRunner !is null)
-			levelRunner.render(rt);
-
 		if (menuTexture is null)
 			return;
 
@@ -121,28 +112,18 @@ public:
 		d.target = rt;
 		d.start();
 
-		if (levelRunner is null) {
-			auto t = opts.dirt();
-			d.blit(t, Color4f(1, 1, 1, 1), false,
-				0, 0, rt.width / 2, rt.height / 2,
-				0, 0, rt.width, rt.height);
-			//d.fill(Color4f(0, 0, 0, 1), false, 0, 0, rt.width, rt.height);
-		}
-
 		d.blit(menuTexture, menu.x, menu.y);
 		d.stop();
 	}
 
 	bool build()
 	{
-		if (levelRunner !is null)
-			return levelRunner.build();
-		else
-			return false;
+		return false;
 	}
 
 	void assumeControl()
 	{
+		keyboard.down ~= &this.keyDown;
 		ih.assumeControl();
 		mouse.grab = false;
 		mouse.show = true;
@@ -151,48 +132,47 @@ public:
 
 	void dropControl()
 	{
+		keyboard.down -= &this.keyDown;
 		ih.dropControl();
 		inControl = false;
-	}
-
-	void manageThis(Runner r)
-	{
-		if (levelRunner !is null)
-			router.deleteMe(levelRunner);
-
-		levelRunner = r;
-
-		if (levelRunner !is null)
-			router.switchTo(levelRunner);
-		else
-			router.switchTo(this);
-	}
-
-	/**
-	 * A runner just deleted itself.
-	 */
-	void notifyDelete(Runner r)
-	{
-		if (levelRunner is r)
-			levelRunner = null;
 	}
 
 
 	/*
 	 *
-	 * Misc
+	 * MenuManager functions.
 	 *
 	 */
 
 
-	void connect(char[] usr, char[] pwd, ClassicServerInfo csi)
+	void closeMenu()
 	{
-		changeWindow(new WebpageInfoMenu(this, usr, pwd, csi));
+		changeWindow(null);
 	}
 
-	void connect(ClassicServerInfo csi)
+	void displayMainMenu()
 	{
-		changeWindow(new ClassicConnectingMenu(this, csi));
+		changeWindow(new MainMenu(this.router));
+	}
+
+	void displayLevelSelector()
+	{
+		try {
+			auto lm = new LevelMenu(this.router);
+			changeWindow(lm);
+		} catch (Exception e) {
+			displayError(e, false);
+		}
+	}
+
+	void connectToClassic(char[] usr, char[] pwd, ClassicServerInfo csi)
+	{
+		changeWindow(new WebpageInfoMenu(this.router, usr, pwd, csi));
+	}
+
+	void connectToClassic(ClassicServerInfo csi)
+	{
+		changeWindow(new ClassicConnectingMenu(this.router, csi));
 	}
 
 	void displayError(Exception e, bool panic)
@@ -221,95 +201,20 @@ public:
 
 	void displayError(char[][] texts, bool panic)
 	{
-		auto m = new ErrorMenu(this, texts, panic);
+		auto m = new ErrorMenu(this.router, texts, panic);
 		changeWindow(m);
 		errorMode = panic;
 	}
 
-
-package:
-	/*
-	 *
-	 * Common callbacks.
-	 *
-	 */
-
-	void commonMenuQuit(Button b)
+	void setTicker(void delegate() dg)
 	{
-		if (levelRunner !is null) {
-			router.deleteMe(levelRunner);
-			levelRunner = null;
-		}
-		router.deleteMe(this);
+		ticker = dg;
 	}
 
-	void commonMenuClose(Button b)
+	void unsetTicker(void delegate() dg)
 	{
-		if (levelRunner !is null) {
-			router.switchTo(levelRunner);
-			changeWindow(new MainMenu(this));
-		}
-	}
-
-	void commonMenuBack(Button b)
-	{
-		changeWindow(new MainMenu(this));
-	}
-
-
-	/*
-	 *
-	 * Main menu callbacks and text.
-	 *
-	 */
-
-
-	void mainMenuRandom(Button b)
-	{
-		selectMenuSelect(b);
-	}
-
-	void mainMenuClassic(Button b)
-	{
-		if (levelRunner !is null)
-			router.deleteMe(levelRunner);
-
-		levelRunner = router.loadLevel(null, true);
-	}
-
-	void mainMenuSelectLevel(Button b)
-	{
-		try {
-			auto lm = new LevelMenu(this);
-			changeWindow(lm);
-		} catch (Exception e) {
-			displayError(e, false);
-		}
-	}
-
-
-	/*
-	 *
-	 * Select menu callbacks and text.
-	 *
-	 */
-
-
-	void selectMenuSelect(Button b)
-	{
-		if (currentButton is b)
-			return;
-
-		if (levelRunner !is null)
-			router.deleteMe(levelRunner);
-
-		auto lb = cast(LevelButton)b;
-		if (lb is null) {
-			levelRunner = router.loadLevel(null);
-		} else {
-			levelRunner = router.loadLevel(lb.info.dir);
-		}
-		currentButton = b;
+		if (ticker is dg)
+			ticker = null;
 	}
 
 private:
@@ -319,16 +224,10 @@ private:
 			return;
 
 		if (errorMode)
-			return router.deleteMe(this);
+			return router.quit();
 
-		if (levelRunner is null)
-			return;
-
-		if (inControl) {
-			router.switchTo(levelRunner);
-			changeWindow(new MainMenu(this));
-		} else
-			router.switchTo(this);
+		if (inControl)
+			closeMenu();
 	}
 
 	void changeWindow(MenuBase mb)
@@ -339,8 +238,16 @@ private:
 		menu = mb;
 		ih.setRoot(menu);
 
-		if (menu is null)
+		if (menu is null) {
+			active = false;
+			router.foregroundCurrent();
 			return;
+		}
+
+		if (!active) {
+			active = true;
+			router.backgroundCurrent();
+		}
 
 		menu.paint();
 		menu.repaintDg = &triggerRepaint;

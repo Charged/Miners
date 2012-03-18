@@ -5,13 +5,13 @@ module miners.menu.base;
 import charge.charge;
 import charge.game.gui.textbased;
 
-import miners.menu.runner;
+import miners.interfaces;
 
 
 class MenuBase : public HeaderContainer
 {
 protected:
-	MenuRunner mr;
+	Router r;
 	Button button;
 
 	const bgColor = Color4f(0, 0, 0, 0.8);
@@ -33,15 +33,15 @@ protected:
 	];
 
 public:
-	this(MenuRunner mr, char[] header)
+	this(Router r, char[] header)
 	{
 		super(bgColor, header, fgColor);
-		this.mr = mr;
+		this.r = r;
 	}
 
-	this(MenuRunner mr, char[] header, Buttons buttons)
+	this(Router r, char[] header, Buttons buttons)
 	{
-		this(mr, header);
+		this(r, header);
 
 		// No need to add a button.
 		if (buttons == Buttons.NONE)
@@ -54,10 +54,10 @@ public:
 		case Buttons.OK:
 		case Buttons.BACK:
 		case Buttons.CANCEL:
-			button.pressed ~= &mr.commonMenuBack;
+			button.pressed ~= &back;
 			break;
 		case Buttons.QUIT:
-			button.pressed ~= &mr.commonMenuQuit;
+			button.pressed ~= &quit;
 			break;
 		default:
 			assert(false);
@@ -78,4 +78,9 @@ public:
 		button.y = h;
 		h += button.h + 8;
 	}
+
+private:
+	void quit(Button b) { r.quit(); }
+
+	void back(Button b) { r.menu.displayMainMenu(); }
 }

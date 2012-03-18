@@ -53,19 +53,22 @@ public:
 		incArrays();
 	}
 
+	void stopTyping()
+	{
+		typed = null;
+		showing = null;
+		typing = false;
+
+		update("");
+	}
+
 	void keyDown(int sym, dchar unicode)
 	{
 		// Enter, we are done typing.
 		if (sym == 0x0D) {
 			if (typed.length > 0)
 				process(typed);
-
-			typed = null;
-			showing = null;
-			typing = false;
-
-			update("");
-			return;
+			return stopTyping();
 		}
 
 		// Backspace, remove one character.

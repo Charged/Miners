@@ -260,6 +260,13 @@ public:
 
 	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
+		if (sym == 27) {
+			if (console.typing)
+				return console.stopTyping();
+			else
+				return r.menu.displayMainMenu();
+		}
+
 		if (console.typing)
 			return console.keyDown(sym, unicode);
 
@@ -617,7 +624,7 @@ public:
 
 		l.info("Disconnected: \"%s\"", rs);
 
-		r.displayError(["Disconencted", rs], false);
+		r.menu.displayError(["Disconencted", rs], false);
 		r.deleteMe(this);
 	}
 }

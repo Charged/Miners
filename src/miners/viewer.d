@@ -104,6 +104,9 @@ public:
 		case SDLK_SPACE:
 			m.up = true;
 			break;
+		case SDLK_ESCAPE:
+			r.menu.displayMainMenu();
+			break;
 		default:
 		}
 	}

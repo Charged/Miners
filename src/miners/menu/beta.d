@@ -6,9 +6,9 @@ import charge.charge;
 import charge.game.gui.layout;
 import charge.game.gui.textbased;
 
+import miners.interfaces;
 import miners.runner;
 import miners.menu.base;
-import miners.menu.runner;
 import miners.importer.info;
 
 
@@ -24,17 +24,27 @@ private:
 `Welcome to charged miners, please select level below.`;
 
 public:
-	this(MenuRunner mr)
+	this(Router r)
 	{
-		super(mr, header, Buttons.BACK);
+		super(r, header, Buttons.BACK);
 
 		auto vc = new VerticalContainer(null, 0, 0, 0, 0, 16);
 		replacePlane(vc);
 
 		te = new Text(this, 0, 0, text);
-		ls = new LevelSelector(this, 0, 0, &mr.selectMenuSelect);
+		ls = new LevelSelector(this, 0, 0, &selectLevel);
 
 		repack();
+	}
+
+	void selectLevel(Button b)
+	{
+		auto lb = cast(LevelButton)b;
+
+		if (lb is null)
+			r.loadLevel(null);
+		else
+			r.loadLevel(lb.info.dir);
 	}
 }
 

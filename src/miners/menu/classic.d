@@ -8,6 +8,7 @@ import charge.charge;
 import charge.game.gui.textbased;
 
 import miners.types;
+import miners.interfaces;
 import miners.menu.base;
 import miners.menu.runner;
 import miners.classic.runner;
@@ -65,12 +66,13 @@ public:
 	 * the connection status as it is made finally creating the
 	 * ClassicRunner once a level is loaded.
 	 */
-	this(MenuRunner mr, ClassicServerInfo csi)
+	this(Router r, ClassicServerInfo csi)
 	{
-		super(mr, header, Buttons.CANCEL);
+		super(r, header, Buttons.CANCEL);
 		ml = new MessageLogger();
 		cc = new ClientConnection(this, ml, csi);
-		mr.ticker = &cc.doPackets;
+
+		r.menu.setTicker(&cc.doPackets);
 
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
@@ -85,11 +87,12 @@ public:
 	 * This constructor is used we change world, the server
 	 * does this by sending levelInitialize packet.
 	 */
-	this(MenuRunner mr, ClientConnection cc)
+	this(Router r, ClientConnection cc)
 	{
-		super(mr, header, Buttons.CANCEL);
+		super(r, header, Buttons.CANCEL);
 		this.cc = cc;
-		mr.ticker = &cc.doPackets;
+
+		r.menu.setTicker(&cc.doPackets);
 
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
@@ -110,21 +113,13 @@ public:
 		super.breakApart();
 
 		if (cc !is null) {
-			disconnectTicker();
+			r.menu.unsetTicker(&cc.doPackets);
 			cc.shutdown();
 			cc.close();
 			cc.wait();
 			delete cc;
 			cc = null;
 		}
-	}
-
-
-private:
-	void disconnectTicker()
-	{
-		if (mr.ticker is &cc.doPackets)
-			mr.ticker = null;
 	}
 
 
@@ -160,12 +155,13 @@ protected:
 		text.setText(t);
 		repack();
 
-		auto cr = new ClassicRunner(mr.router, mr.opts,
+		// XXX
+		auto cr = new ClassicRunner(r, null,
 					    cc, ml, x, y, z, data);
-		mr.manageThis(cr);
-		disconnectTicker();
+		r.menu.unsetTicker(&cc.doPackets);
+		r.switchTo(cr);
 		cc = null;
-		mr.commonMenuClose(null);
+		r.menu.closeMenu();
 	}
 
 	void setBlock(short x, short y, short z, ubyte type) {}
@@ -186,7 +182,7 @@ protected:
 	void message(byte id, char[] message) {}
 	void disconnect(char[] reason)
 	{
-		mr.displayError(["Disconnected", reason], false);
+		r.menu.displayError(["Disconnected", reason], false);
 	}
 }
 
@@ -205,18 +201,18 @@ private:
 	WebpageConnection wc;
 	Text text;
 
-	this(MenuRunner mr, WebpageConnection wc,
+	this(Router r, WebpageConnection wc,
 	     ClassicServerInfo csi,
 	     bool idle)
 	{
-		super(mr, header, Buttons.CANCEL);
+		super(r, header, Buttons.CANCEL);
 		this.csi = csi;
 		this.wc = wc;
 
 		if (idle)
 			wc.getServerInfo(csi);
 
-		mr.ticker = &wc.doEvents;
+		r.menu.setTicker(&wc.doEvents);
 
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
@@ -232,19 +228,19 @@ public:
 	 * Retrive information about a server,
 	 * the connection has allready be authenticated.
 	 */
-	this(MenuRunner mr, WebpageConnection wc, ClassicServerInfo csi)
+	this(Router r, WebpageConnection wc, ClassicServerInfo csi)
 	{
-		this(mr, wc, csi, true);
+		this(r, wc, csi, true);
 	}
 
 	/**
 	 * Retrive information about a server, using a new connection
 	 * authenticating with the given credentials.
 	 */
-	this(MenuRunner mr, char[] username, char[] password, ClassicServerInfo csi)
+	this(Router r, char[] username, char[] password, ClassicServerInfo csi)
 	{
 		auto wc = new WebpageConnection(this, username, password);
-		this(mr, wc, csi, false);
+		this(r, wc, csi, false);
 	}
 
 	~this()
@@ -262,16 +258,10 @@ public:
 
 
 private:
-	void disconnectTicker()
-	{
-		if (mr.ticker is &wc.doEvents)
-			mr.ticker = null;
-	}
-
 	void shutdownConnection()
 	{
 		if (wc !is null) {
-			disconnectTicker();
+			r.menu.unsetTicker(&wc.doEvents);
 
 			try {
 				wc.shutdown();
@@ -309,7 +299,7 @@ protected:
 		try {
 			wc.getServerInfo(csi);
 		} catch (Exception e) {
-			mr.displayError(e, false);
+			r.menu.displayError(e, false);
 		}
 	}
 
@@ -322,14 +312,14 @@ protected:
 	{
 		shutdownConnection();
 
-		mr.connect(csi);
+		r.menu.connectToClassic(csi);
 	}
 
 	void error(Exception e)
 	{
 		shutdownConnection();
 
-		mr.displayError(["Disconnected", e.toString()], false);
+		r.menu.displayError(["Disconnected", e.toString()], false);
 	}
 
 	void disconnected()
@@ -337,6 +327,6 @@ protected:
 		// The server closed the connection peacefully.
 		shutdownConnection();
 
-		mr.displayError(["Disconnected"], false);
+		r.menu.displayError(["Disconnected"], false);
 	}
 }

@@ -8,8 +8,8 @@ import charge.charge;
 import charge.game.gui.layout;
 import charge.game.gui.textbased;
 
+import miners.interfaces;
 import miners.menu.base;
-import miners.menu.runner;
 
 
 class ErrorMenu : public MenuBase
@@ -20,10 +20,10 @@ private:
 	const char[] header = `Charged Miners`;
 
 public:
-	this(MenuRunner mr, char[][] errorTexts, bool panic)
+	this(Router r, char[][] errorTexts, bool panic)
 	{
 		auto b = panic ? Buttons.QUIT : Buttons.OK;
-		super(mr, header, b);
+		super(r, header, b);
 
 		auto vc = new VerticalContainer(null, 0, 0, 300, 0, 8);
 		replacePlane(vc);

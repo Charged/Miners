@@ -52,7 +52,6 @@ private:
 	/* program args */
 	char[] level;
 	bool build_all;
-	bool classic;
 	bool classicNetwork;
 	bool classicHttp;
 	char[] username; /**< webpage username */
@@ -137,9 +136,6 @@ public:
 			mr.displayError(ge, true);
 		}
 
-		if (nextRunner is null)
-			nextRunner = mr;
-
 		manageRunners();
 
 		start = SDL_GetTicks();
@@ -194,7 +190,6 @@ protected:
 	void doInit()
 	{
 		GfxTexture dirt;
-		Runner r;
 
 		// First init options
 		opts = new Options();
@@ -249,35 +244,21 @@ protected:
 		sysReference(&pic, null);
 
 		// Should we use classic
-		if (classic) {
-			if (!classicNetwork)
-				r = new ClassicRunner(this, opts);
-			else if (!classicHttp)
-				mr.connect(csi);
+		if (classicNetwork) {
+			if (!classicHttp)
+				mr.connectToClassic(csi);
 			else
-				mr.connect(username, password, csi);
+				mr.connectToClassic(username, password, csi);
 		}
 
-		if (r is null && level !is null) {
-			r = loadLevel(level);
-		}
-
-		// Run the level selector if no other level where given
-		if (r is null)
-			nextRunner = mr;
-		else
-			mr.manageThis(r);
+		if (level !is null)
+			loadLevel(level, false);
 	}
 
 	void parseArgs(char[][] args)
 	{
 		for(int i = 1; i < args.length; i++) {
 			switch(args[i]) {
-			case "-c":
-			case "-classic":
-			case "--classic":
-				classic = true;
-				break;
 			case "-l":
 			case "-level":
 			case "--level":
@@ -303,7 +284,6 @@ protected:
 			case "--help":
 				writefln("   -a, --all             - build all chunks near the camera on start");
 				writefln("   -l, --level <level>   - to specify level directory");
-				writefln("   -c, --classic         - start a classic level (WIP)");
 				writefln("       --license         - print licenses");
 				running = false;
 				break;
@@ -333,7 +313,6 @@ protected:
 		password = r[3];
 		csi.webId = r[5];
 
-		classic = true;
 		classicNetwork = true;
 		classicHttp = true;
 
@@ -366,7 +345,6 @@ protected:
 		} catch (Exception e) {
 		}
 
-		classic = true;
 		classicNetwork = true;
 
 		l.info("Url mc://%s:%s/%s/<redacted>",
@@ -396,7 +374,6 @@ protected:
 			return true;
 		}
 
-		classic = true;
 		classicNetwork = true;
 
 		l.info("Html mc://%s:%s/%s/<redacted>",
@@ -514,33 +491,11 @@ protected:
 		// Delete and switch runners.
 		manageRunners();
 
-		// If we have no runner stop running.
-		if (runner is null) {
-			running = false;
-			return;
-		}
-
-		// This make sure we at least always
-		// builds at least one chunk per frame.
-		built = false;
-
-		// Special case lua runner.
-		if (sr !is null) {
-			logicTime.stop();
-			luaTime.start();
-			sr.logic();
-			luaTime.stop();
-			logicTime.start();
-		} else if (runner !is null) {
-			try {
-				runner.logic();
-			} catch (Exception e) {
-				displayError(e, false);
-			}
-		}
+		// Run the menu.
+		if (mr !is null && mr.active)
+			mr.logic();
 
 		ticks++;
-
 
 		auto elapsed = SDL_GetTicks() - start;
 		if (elapsed > 1000) {
@@ -595,6 +550,29 @@ protected:
 			num_frames = 0;
 			start = elapsed + start;
 		}
+
+		// Do nothing if no runner is running.
+		if (runner is null)
+			return;
+
+		// This make sure we at least always
+		// builds at least one chunk per frame.
+		built = false;
+
+		// Special case lua runner.
+		if (sr !is null) {
+			logicTime.stop();
+			luaTime.start();
+			sr.logic();
+			luaTime.stop();
+			logicTime.start();
+		} else if (runner !is null) {
+			try {
+				runner.logic();
+			} catch (Exception e) {
+				mr.displayError(e, false);
+			}
+		}
 	}
 
 	void render()
@@ -605,20 +583,31 @@ protected:
 
 		num_frames++;
 
-		if (runner is null)
-			return;
-
 		auto rt = defaultTarget;
 
-		runner.render(rt);
-
-		if (opts.showDebug()) {
+		// Draw dirt background if no runner is running.
+		if (runner is null) {
+			auto t = opts.dirt();
 			d.target = rt;
 			d.start();
+			d.blit(t, Color4f(1, 1, 1, 1), false,
+				0, 0, rt.width / 2, rt.height / 2,
+				0, 0, rt.width, rt.height);
+			d.stop();
+		} else {
+			runner.render(rt);
+		}
 
+		if (mr !is null && mr.active)
+			mr.render(rt);
+
+		if (opts.showDebug()) {
 			auto w = debugText.width + 16;
 			auto h = debugText.height + 16;
 			auto x = rt.width - debugText.width - 16 - 8;
+
+			d.target = rt;
+			d.start();
 			d.fill(Color4f(0, 0, 0, .8), true, x, 8, w, h);
 			d.blit(debugText, x+8, 16);
 
@@ -685,50 +674,69 @@ protected:
 
 	/*
 	 *
-	 * Error display functions.
-	 *
-	 */
-
-
-	void displayError(Exception e, bool panic)
-	{
-		if (mr is null)
-			throw e;
-		mr.displayError(e, panic);
-	}
-
-	void displayError(char[][] texts, bool panic)
-	{
-		if (mr is null)
-			throw new Exception("Menu runner not running!");
-		mr.displayError(texts, panic);
-	}
-
-
-	/*
-	 *
 	 * Managing runners functions.
 	 *
 	 */
 
 
-	void switchTo(Runner gr)
+	void quit()
 	{
-		auto r = cast(Runner)gr;
-		assert(r !is null);
+		running = false;
+	}
 
+	MenuManager menu()
+	{
+		return mr;
+	}
+
+	void switchTo(Runner r)
+	{
+		if (r is null)
+			return;
 		nextRunner = r;
 	}
 
-	void deleteMe(Runner gr)
+	void deleteMe(Runner r)
 	{
-		auto r = cast(Runner)gr;
-		assert(r !is null);
+		if (r is null)
+			return;
+
+		foreach(dr; deleteRunner)
+			if (dr is r)
+				return;
 
 		deleteRunner ~= r;
 	}
 
-	Runner loadLevel(char[] level, bool classic = false)
+	void backgroundCurrent()
+	{
+		if (runner !is null)
+			runner.dropControl();
+		if (mr !is null)
+			mr.assumeControl();
+	}
+
+	void foregroundCurrent()
+	{
+		if (runner !is null) {
+			runner.assumeControl();
+			if (mr !is null)
+				mr.dropControl();
+		}
+	}
+
+	void loadLevel(char[] level, bool classic = false)
+	{
+		auto r = doLoadLevel(level, classic);
+
+		// Close the menu and old runner.
+		menu.closeMenu();
+		deleteMe(runner);
+
+		switchTo(r);
+	}
+
+	Runner doLoadLevel(char[] level, bool classic)
 	{
 		Runner r;
 		World w;
@@ -812,10 +820,6 @@ protected:
 				if (r is mr)
 					mr = null;
 
-				// The menu might have a reference.
-				if (mr !is null)
-					mr.notifyDelete(r);
-
 				// To avoid nasty deadlocks with GC.
 				r.close();
 
@@ -826,14 +830,16 @@ protected:
 		}
 
 		// Default to the MenuRunner
-		if (runner is null && nextRunner is null) {
-			nextRunner = mr;
-		}
+		if (runner is null && nextRunner is null &&
+		    mr !is null && !mr.active)
+			mr.displayMainMenu();
 
 		// Do the switch of runners.
 		if (nextRunner !is null) {
 			if (runner !is null)
 				runner.dropControl();
+			if (mr !is null)
+				mr.dropControl();
 
 			runner = nextRunner;
 			sr = cast(ScriptRunner)runner;

@@ -306,6 +306,10 @@ protected:
 
 	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
+		// XXX Hack
+		if (sym == 27)
+			return r.menu.displayMainMenu();
+
 		s.getGlobalz("keyDown");
 		s.pushNumber(sym);
 		s.pushNumber(unicode);

@@ -5,8 +5,8 @@ module miners.menu.main;
 import charge.charge;
 import charge.game.gui.textbased;
 
+import miners.interfaces;
 import miners.menu.base;
-import miners.menu.runner;
 
 
 class MainMenu : public MenuBase
@@ -27,11 +27,11 @@ private:
 `;
 
 public:
-	this(MenuRunner mr)
+	this(Router r)
 	{
 		int pos;
 
-		super(mr, header);
+		super(r, header);
 
 		te = new Text(this, 0, 0, text);
 		pos += te.h;
@@ -44,11 +44,11 @@ public:
 		cb = new Button(this, 0, pos, "Close", 8);
 		qb = new Button(this, 0, pos, "Quit", 8);
 
-		ra.pressed ~= &mr.selectMenuSelect;
-		cl.pressed ~= &mr.mainMenuClassic;
-		be.pressed ~= &mr.mainMenuSelectLevel;
-		cb.pressed ~= &mr.commonMenuClose;
-		qb.pressed ~= &mr.commonMenuQuit;
+		ra.pressed ~= &random;
+		cl.pressed ~= &classic;
+		be.pressed ~= &selectLevel;
+		cb.pressed ~= &back;
+		qb.pressed ~= &quit;
 
 		repack();
 
@@ -63,4 +63,11 @@ public:
 		cb.x = center + 8;
 		qb.x = center - 8 - qb.w;
 	}
+
+private:
+	void random(Button b) { r.loadLevel(null); }
+	void classic(Button b) { r.loadLevel(null, true); }
+	void selectLevel(Button b) { r.menu.displayLevelSelector(); }
+	void back(Button b) { r.menu.closeMenu(); }
+	void quit(Button b) { r.quit(); }
 }

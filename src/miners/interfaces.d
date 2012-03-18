@@ -7,6 +7,8 @@ import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
 
+import miners.types;
+
 
 /**
  * Specialized runner for Miners.
@@ -57,6 +59,17 @@ interface Runner
  */
 interface Router
 {
+	/**
+	 * Gracefully quit the game.
+	 */
+	void quit();
+
+	/**
+	 * Get the menu manager.
+	 */
+	MenuManager menu();
+
+
 	/*
 	 *
 	 * Runner related.
@@ -75,6 +88,16 @@ interface Router
 	void deleteMe(Runner r);
 
 	/**
+	 * Background the current runner, called from menu.
+	 */
+	void backgroundCurrent();
+
+	/**
+	 * Foreground the current runner, called from menu.
+	 */
+	void foregroundCurrent();
+
+	/**
 	 * Render the world, from camera to rt.
 	 */
 	void render(GfxWorld w, GfxCamera c, GfxRenderTarget rt);
@@ -87,15 +110,38 @@ interface Router
 	 * If name is null it opens a random level for beta
 	 * and a flatland for classic.
 	 */
-	Runner loadLevel(char[] name, bool classic = false);
+	void loadLevel(char[] name, bool classic = false);
+}
 
-
-	/*
-	 *
-	 * Menu related.
-	 *
+interface MenuManager
+{
+	/**
+	 * Close the current menu hiding it.
 	 */
+	void closeMenu();
 
+	/**
+	 * Closes any other menu and overlays the current runner.
+	 */
+	void displayMainMenu();
+
+	/**
+	 * See above.
+	 */
+	void displayLevelSelector();
+
+	/**
+	 * Connect to a classic server using the server address,
+	 * port, mppass & username in the given ClassicServerInfo.
+	 */
+	void connectToClassic(ClassicServerInfo csi);
+
+	/**
+	 * Connect to a classic server by first connecting to the
+	 * minecraft.net server looking up mppass and other details
+	 * with the serverId given in ClassicServerInfo.
+	 */
+	void connectToClassic(char[] user, char[] pass, ClassicServerInfo csi);
 
 	/**
 	 * Displays a error message menu, if panic is true the
@@ -109,4 +155,14 @@ interface Router
 	 * See above.
 	 */
 	void displayError(char[][] texts, bool panic);
+
+	/**
+	 * XXX These two are a bit of a hack.
+	 */
+	void setTicker(void delegate());
+
+	/**
+	 * XXX These two are a bit of a hack.
+	 */
+	void unsetTicker(void delegate());
 }
