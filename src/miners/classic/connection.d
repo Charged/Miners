@@ -21,7 +21,7 @@ alias charge.net.util.ntoh ntoh;
 /**
  * A threaded TCP connection to a server that handles protocol parsing. 
  */
-class ClientConnection : public NetThreadedPacketQueue
+class ClientConnection : public NetThreadedPacketQueue, public Connection
 {
 private:
 	// Server details
@@ -71,6 +71,11 @@ public:
 	void setMessageListener(ClientMessageListener ml)
 	{
 		this.ml = ml;
+	}
+
+	ClientMessageListener getMessageListener()
+	{
+		return ml;
 	}
 
 	/**

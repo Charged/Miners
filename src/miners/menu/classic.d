@@ -10,8 +10,6 @@ import charge.game.gui.textbased;
 import miners.types;
 import miners.interfaces;
 import miners.menu.base;
-import miners.menu.runner;
-import miners.classic.runner;
 import miners.classic.webpage;
 import miners.classic.message;
 import miners.classic.interfaces;
@@ -87,16 +85,17 @@ public:
 	 * This constructor is used we change world, the server
 	 * does this by sending levelInitialize packet.
 	 */
-	this(Router r, ClientConnection cc)
+	this(Router r, ClassicConnection cc)
 	{
 		super(r, header, Buttons.CANCEL);
-		this.cc = cc;
+		this.cc = cast(ClientConnection)cc;
 
-		r.menu.setTicker(&cc.doPackets);
+		r.menu.setTicker(&(this.cc).doPackets);
+		this.cc.setListener(this);
 
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
-					   "Connecting");
+					   "Changing World");
 		replacePlane(ct);
 		text = ct.text;
 
@@ -155,13 +154,13 @@ protected:
 		text.setText(t);
 		repack();
 
-		// XXX
-		auto cr = new ClassicRunner(r, null,
-					    cc, ml, x, y, z, data);
 		r.menu.unsetTicker(&cc.doPackets);
-		r.switchTo(cr);
+
+		// Make sure cc is null before breakApart gets called.
+		auto tmp = cc;
 		cc = null;
-		r.menu.closeMenu();
+
+		r.connectedTo(tmp, x, y, z, data);
 	}
 
 	void setBlock(short x, short y, short z, ubyte type) {}

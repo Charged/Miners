@@ -175,6 +175,11 @@ public:
 		changeWindow(new ClassicConnectingMenu(this.router, csi));
 	}
 
+	void classicWorldChange(ClassicConnection cc)
+	{
+		changeWindow(new ClassicConnectingMenu(this.router, cc));
+	}
+
 	void displayError(Exception e, bool panic)
 	{
 		// Always handle exception via the game exception.

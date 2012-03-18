@@ -8,6 +8,7 @@ import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
 
 import miners.types;
+import miners.classic.interfaces : ClassicConnection = Connection;
 
 
 /**
@@ -111,6 +112,13 @@ interface Router
 	 * and a flatland for classic.
 	 */
 	void loadLevel(char[] name, bool classic = false);
+
+	/**
+	 * Start a classic runner listening to the given connection.
+	 */
+	void connectedTo(ClassicConnection cc,
+	                 uint x, uint y, uint z,
+	                 ubyte[] data);
 }
 
 interface MenuManager
@@ -142,6 +150,11 @@ interface MenuManager
 	 * with the serverId given in ClassicServerInfo.
 	 */
 	void connectToClassic(char[] user, char[] pass, ClassicServerInfo csi);
+
+	/**
+	 * Display the a world change menu.
+	 */
+	void classicWorldChange(ClassicConnection cc);
 
 	/**
 	 * Displays a error message menu, if panic is true the

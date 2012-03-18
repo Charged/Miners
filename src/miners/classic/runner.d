@@ -118,15 +118,18 @@ public:
 	}
 
 	this(Router r, Options opts,
-	     ClientConnection c, MessageLogger ml,
-	     uint xSize, uint ySize, uint zSize, ubyte[] data)
+	     Connection cc, uint xSize, uint ySize, uint zSize, ubyte[] data)
 	{
-		this.c = c;
-		this.ml = ml;
+		this.c = cast(ClientConnection)cc;
+		this.ml = cast(MessageLogger)cc.getMessageListener();
+
+		assert(this.c !is null);
+		assert(this.ml !is null);
+
+		this.c.setListener(this);
+
 		this.w = new ClassicWorld(opts, xSize, ySize, zSize, data);
 		this(r, opts);
-
-		c.setListener(this);
 	}
 
 	~this()
@@ -163,6 +166,10 @@ public:
 			return;
 
 		c.doPackets();
+
+		// Might have gotten a levelInitialize packet.
+		if (c is null)
+			return;
 
 		if (!(sentCounter++ % 5)) {
 			auto pos = cam.position;
@@ -485,6 +492,13 @@ public:
 	void levelInitialize()
 	{
 		l.info("levelInitialize: Starting to load level");
+
+		auto tmp = c;
+		c = null;
+
+		r.deleteMe(this);
+
+		r.menu.classicWorldChange(tmp);
 	}
 
 	void levelLoadUpdate(ubyte percent)

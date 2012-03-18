@@ -725,6 +725,15 @@ protected:
 		}
 	}
 
+	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
+	{
+		auto r = new ClassicRunner(this, opts, cc, x, y, z, data);
+		menu.closeMenu();
+		deleteMe(runner);
+
+		switchTo(r);
+	}
+
 	void loadLevel(char[] level, bool classic = false)
 	{
 		auto r = doLoadLevel(level, classic);

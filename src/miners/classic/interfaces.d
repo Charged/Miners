@@ -5,6 +5,21 @@ module miners.classic.interfaces;
 
 
 /**
+ * A classic connection interface.
+ */
+interface Connection
+{
+	void setListener(ClientListener l);
+
+	/*
+	 * Message Listener
+	 */
+
+	void setMessageListener(ClientMessageListener ml);
+	ClientMessageListener getMessageListener();
+}
+
+/**
  * Receiver of client packages from a ClientConnection.
  */
 interface ClientListener
