@@ -23,11 +23,22 @@ public:
 
 	void archive(char[] msg)
 	{
-		auto m = msgs[cur] = escapeBad(msg.dup);
-		if (cur >= msg.length)
+		auto m = msgs[cur++] = escapeBad(msg.dup);
+		if (cur >= m.length)
 			cur = 0;
 
 		doMessage(m);
+	}
+
+	void pushAll()
+	{
+		if (message is null)
+			return;
+
+		foreach(m; msgs[cur .. $])
+			message(m);
+		foreach(m; msgs[0 .. cur])
+			message(m);
 	}
 
 	char[] getAllMessages()

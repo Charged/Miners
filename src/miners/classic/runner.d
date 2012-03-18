@@ -103,6 +103,7 @@ public:
 			console.chat = &c.sendClientMessage;
 			console.message = &ml.archive;
 			ml.message = &mlGui.message;
+			ml.pushAll();
 		} else {
 			console.chat = &mlGui.message;
 			console.message = &mlGui.message;
@@ -147,6 +148,9 @@ public:
 				continue;
 			delete p;
 		}	
+
+		if (ml !is null)
+			ml.message = null;
 
 		if (c is null)
 			return;
@@ -495,6 +499,8 @@ public:
 
 		auto tmp = c;
 		c = null;
+		ml.message = null;
+		ml = null;
 
 		r.deleteMe(this);
 
