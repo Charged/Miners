@@ -24,7 +24,7 @@ public:
 	void archive(char[] msg)
 	{
 		auto m = msgs[cur++] = escapeBad(msg.dup);
-		if (cur >= m.length)
+		if (cur >= msgs.length)
 			cur = 0;
 
 		doMessage(m);
