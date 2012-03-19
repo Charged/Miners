@@ -1,4 +1,4 @@
-// Copyright Â© 2011, Jakob Bornecrantz.  All rights reserved.
+// Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.runner;
 
@@ -149,7 +149,7 @@ public:
 			if (p is null)
 				continue;
 			delete p;
-		}	
+		}
 
 		if (ml !is null)
 			ml.message = null;
@@ -286,6 +286,12 @@ public:
 		// Start chatting when we press 't'.
 		if (sym == 't')
 			return console.startTyping();
+
+		// Start entering a command when we press '/'.
+		if (sym == SDLK_SLASH && !console.typing) {
+			console.startTyping();
+			return console.keyDown(sym, unicode);
+		}
 
 		switch(sym) {
 		case SDLK_w:
