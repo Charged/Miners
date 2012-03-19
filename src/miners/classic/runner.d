@@ -3,6 +3,8 @@
 module miners.classic.runner;
 
 
+import std.string : format, find;
+
 import lib.sdl.keysym;
 
 import charge.charge;

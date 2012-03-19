@@ -2,11 +2,15 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module test.lua;
 
+
 import std.stdio;
 import std.string;
 
+import lib.lua.lua : LUA_GLOBALSINDEX;
+
 import charge.charge;
 import charge.game.lua;
+
 
 class GameCamera : public GameActor
 {
@@ -112,7 +116,7 @@ struct GameWorldWrapper
 
 		s.pushString("GameWorld");
 		s.pushCFunction(&newGameWorld);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+		s.setTable(LUA_GLOBALSINDEX);
 	}
 }
 
@@ -164,7 +168,7 @@ struct GameCameraWrapper
 
 		s.pushString("GameCamera");
 		s.pushCFunction(&newGameCamera);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+		s.setTable(LUA_GLOBALSINDEX);
 	}
 }
 
@@ -201,7 +205,7 @@ struct GameCubeWrapper
 
 		s.pushString("GameCube");
 		s.pushCFunction(&newGameCube);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+		s.setTable(LUA_GLOBALSINDEX);
 	}
 }
 
@@ -238,7 +242,7 @@ struct GameSunLightWrapper
 
 		s.pushString("GameSunLight");
 		s.pushCFunction(&newGameSunLight);
-		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+		s.setTable(LUA_GLOBALSINDEX);
 	}
 }
 

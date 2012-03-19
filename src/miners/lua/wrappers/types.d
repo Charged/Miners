@@ -2,6 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.lua.wrappers.types;
 
+
+import std.string : format;
+
 import miners.types;
 
 import miners.lua.state;
@@ -20,7 +23,7 @@ struct BlockWrapper
 	{
 		auto s = LuaState(l);
 		auto b = check(s, 1);
-		s.pushString(std.string.format("(%s, %s)", b.type, b.meta));
+		s.pushString(format("(%s, %s)", b.type, b.meta));
 		return 1;
 	}
 

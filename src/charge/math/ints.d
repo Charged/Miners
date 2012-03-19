@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.ints;
 
+
+import std.math : floor;
 import charge.math.point3d;
 import charge.math.vector3d;
 
@@ -34,12 +36,12 @@ void stepDirection(ref Point3d start,
 	vec.scale(step);
 
 	// We just need a coord that is different from the first.
-	xCur = cast(int)std.math.floor(pos.x) + 1;
+	xCur = cast(int)floor(pos.x) + 1;
 
 	for (double t = 0; t <= dist; t += step) {
-		int xCalc = cast(int)std.math.floor(pos.x);
-		int yCalc = cast(int)std.math.floor(pos.y);
-		int zCalc = cast(int)std.math.floor(pos.z);
+		int xCalc = cast(int)floor(pos.x);
+		int yCalc = cast(int)floor(pos.y);
+		int zCalc = cast(int)floor(pos.z);
 
 		pos += vec;
 		if (xCalc == xCur &&

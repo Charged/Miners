@@ -8,7 +8,7 @@ import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
 
 import miners.types;
-import miners.classic.interfaces : ClassicConnection = Connection;
+public import miners.classic.interfaces : ClassicConnection = Connection;
 
 
 /**
