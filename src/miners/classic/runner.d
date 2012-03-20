@@ -283,11 +283,18 @@ public:
 		if (console.typing)
 			return console.keyDown(sym, unicode);
 
-		// Start chatting when we press 't'.
-		if (sym == 't')
-			return console.startTyping();
-
 		switch(sym) {
+		case SDLK_SLASH:
+			// Start entering a command when we press '/'
+			console.startTyping();
+			console.keyDown(sym, unicode);
+			break;
+
+		case SDLK_t:
+			// Start chatting when we press 't'
+			console.startTyping();
+			break;
+
 		case SDLK_w:
 			m.forward = true;
 			break;
