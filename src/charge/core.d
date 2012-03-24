@@ -2,6 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.core;
 
+
+import charge.sys.properties;
+
+
 enum coreFlag
 {
 	CTL  = (1 << 0),
@@ -65,6 +69,8 @@ public:
 	abstract void resize(uint w, uint h, bool fullscreen);
 
 	abstract void screenShot();
+
+	abstract Properties properties();
 
 protected:
 	this(coreFlag flags)

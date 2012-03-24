@@ -98,6 +98,11 @@ protected:
 			l.info("%s not found, this not an error.", name);
 	}
 
+	Properties properties()
+	{
+		return p;
+	}
+
 
 	/*
 	 *
