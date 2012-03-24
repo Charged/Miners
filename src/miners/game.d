@@ -163,6 +163,13 @@ public:
 
 		manageRunners();
 
+		auto p = Core().properties;
+		p.add("mc.aa", opts.aa());
+		p.add("mc.fog", opts.fog());
+		p.add("mc.shadow", opts.shadow());
+		p.add("mc.viewDistance", opts.viewDistance());
+		p.add("mc.useCmdPrefix", opts.useCmdPrefix());
+
 		delete opts;
 		delete rm;
 		delete d;
@@ -191,8 +198,23 @@ protected:
 	{
 		GfxTexture dirt;
 
+		// Properties
+		auto p = Core().properties;
+		p.addIfNotSet("mc.aa", true);
+		p.addIfNotSet("mc.fog", true);
+		p.addIfNotSet("mc.shadow", true);
+		p.addIfNotSet("mc.viewDistance", 256);
+		p.addIfNotSet("mc.useCmdPrefix", true);
+
 		// First init options
 		opts = new Options();
+		opts.aa = p.getBool("mc.aa", true);
+		opts.fog = p.getBool("mc.fog", true);
+		opts.shadow = p.getBool("mc.shadow", true);
+		opts.viewDistance = p.getDouble("mc.viewDistance", 256.0);
+		opts.useCmdPrefix = p.getBool("mc.useCmdPrefix", true);
+		debug { opts.showDebug = true; }
+
 
 		// The menu is used to display error messages
 		mr = new MenuRunner(this, opts);
@@ -215,20 +237,15 @@ protected:
 		opts.rendererBuildType = rm.bt;
 		opts.rendererBuildIndexed = rm.textureArray;
 		opts.changeRenderer = &changeRenderer;
-		opts.aa = true;
 		opts.aa ~= &rm.setAa;
 		rm.setAa(opts.aa());
-		opts.viewDistance = 256;
-		opts.shadow = true;
-		debug { opts.showDebug = true; }
 
 		// Extract the dirt texture
 		Picture dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0);
 		dirt = GfxTexture("mc/dirt", dirtPic);
 		dirt.filter = GfxTexture.Filter.Nearest;
 		opts.dirt = dirt;
-		opts.fog = true;
-		opts.useCmdPrefix = true;
+
 		sysReference(&dirtPic, null);
 		sysReference(&dirt, null);
 
