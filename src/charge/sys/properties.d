@@ -7,11 +7,11 @@ import std.conv;
 import std.stdio;
 import std.stream;
 import std.regexp;
-import std.string;
+import std.string : toString, toStringz;
 
 import charge.sys.logger;
 
-class Properties
+final class Properties
 {
 	mixin Logging;
 protected:
@@ -19,6 +19,22 @@ protected:
 	char[][] order;
 
 public:
+	bool opIn_r(char[] key)
+	{
+		return (key in map) !is null;
+	}
+
+	void addIfNotSet(char[] key, char[] value)
+	{
+		if ((key in map) !is null)
+			return;
+		order ~= key;
+		map[key] = value;
+	}
+
+	void addIfNotSet(char[] key, bool value) { addIfNotSet(key, .toString(value)); }
+	void addIfNotSet(char[] key, real value) { addIfNotSet(key, .toString(value)); }
+
 	void add(char[] key, char[] value)
 	{
 		if ((key in map) is null)
@@ -26,15 +42,8 @@ public:
 		map[key] = value;
 	}
 
-	void add(char[] key, bool value)
-	{
-		add(key, std.string.toString(value));
-	}
-
-	void add(char[] key, real value)
-	{
-		add(key, std.string.toString(value));
-	}
+	void add(char[] key, bool value) { add(key, .toString(value)); }
+	void add(char[] key, real value) { add(key, .toString(value)); }
 
 	char[] get(char[] key, char[] def)
 	{
