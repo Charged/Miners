@@ -251,11 +251,11 @@ protected:
 
 		// Do the manipulation of the texture to fit us
 		manipulateTexture(pic);
-		createTextures(pic, true);
+		createTextures(pic);
 
 		// Get a texture that works with classic
 		manipulateTextureClassic(pic);
-		createTextures(pic, false);
+		createTextures(pic, true);
 
 		// Not needed anymore.
 		sysReference(&pic, null);
@@ -438,9 +438,16 @@ protected:
 		return Picture(terrainFilename);
 	}
 
-	void createTextures(Picture pic, bool betaTerrain)
+	/**
+	 * Create textures and set the option terrain textures. Handleds
+	 * both beta- and classic-textures, default is beta. Does not do
+	 * any manipulation.
+	 *
+	 * @classic should the classic options terrain textures be set.
+	 */
+	void createTextures(Picture pic, bool classic = false)
 	{
-		char[] name = betaTerrain ? "mc/terrain" : "mc/classicTerrain";
+		char[] name = classic ? "mc/classicTerrain" : "mc/terrain";
 		GfxTexture t;
 		GfxTextureArray ta;
 
@@ -448,7 +455,7 @@ protected:
 		// Or we get errors near the block edges
 		t.filter = GfxTexture.Filter.Nearest;
 
-		if (betaTerrain)
+		if (!classic)
 			opts.terrain = t;
 		else
 			opts.classicTerrain = t;
@@ -458,7 +465,7 @@ protected:
 			ta = ta.fromTileMap(name, pic, 16, 16);
 			ta.filter = GfxTexture.Filter.NearestLinear;
 
-			if (betaTerrain)
+			if (!classic)
 				opts.terrainArray = ta;
 			else
 				opts.classicTerrainArray = ta;
