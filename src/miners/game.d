@@ -164,11 +164,11 @@ public:
 		manageRunners();
 
 		auto p = Core().properties;
-		p.add("mc.aa", opts.aa());
-		p.add("mc.fog", opts.fog());
-		p.add("mc.shadow", opts.shadow());
-		p.add("mc.viewDistance", opts.viewDistance());
-		p.add("mc.useCmdPrefix", opts.useCmdPrefix());
+		p.add(opts.aaName, opts.aa());
+		p.add(opts.fogName, opts.fog());
+		p.add(opts.shadowName, opts.shadow());
+		p.add(opts.useCmdPrefixName, opts.useCmdPrefix());
+		p.add(opts.viewDistanceName, opts.viewDistance());
 
 		delete opts;
 		delete rm;
@@ -200,19 +200,19 @@ protected:
 
 		// Properties
 		auto p = Core().properties;
-		p.addIfNotSet("mc.aa", true);
-		p.addIfNotSet("mc.fog", true);
-		p.addIfNotSet("mc.shadow", true);
-		p.addIfNotSet("mc.viewDistance", 256);
-		p.addIfNotSet("mc.useCmdPrefix", true);
+		p.addIfNotSet(opts.aaName, opts.aaDefault);
+		p.addIfNotSet(opts.fogName, opts.fogDefault);
+		p.addIfNotSet(opts.shadowName, opts.shadowDefault);
+		p.addIfNotSet(opts.viewDistanceName, opts.viewDistanceDefault);
+		p.addIfNotSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
 
 		// First init options
 		opts = new Options();
-		opts.aa = p.getBool("mc.aa", true);
-		opts.fog = p.getBool("mc.fog", true);
-		opts.shadow = p.getBool("mc.shadow", true);
-		opts.viewDistance = p.getDouble("mc.viewDistance", 256.0);
-		opts.useCmdPrefix = p.getBool("mc.useCmdPrefix", true);
+		opts.aa = p.getBool(opts.aaName, opts.aaDefault);
+		opts.fog = p.getBool(opts.fogName, opts.fogDefault);
+		opts.shadow = p.getBool(opts.shadowName, opts.shadowDefault);
+		opts.useCmdPrefix = p.getBool(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
+		opts.viewDistance = p.getDouble(opts.viewDistanceName, opts.viewDistanceDefault);
 		debug { opts.showDebug = true; }
 
 

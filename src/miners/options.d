@@ -22,13 +22,25 @@ public:
 	 */
 
 
-	Option!(bool) showDebug; /**< Should debug info be shown. */
-	Option!(bool) shadow; /**< Should advanced shadowing be used */
-	Option!(bool) aa; /**< Anti-Aliasing control */
-	Option!(bool) fog; /**< Fog toggle. */
-	Option!(bool) hideUi; /**< Hide the user interface. */
-	Option!(bool) useCmdPrefix; /**< Should we use the command prefix. */
-	Option!(double) viewDistance; /**< The view distance */
+	Option!(bool) aa; /**< should anti-aliasing be used */
+	Option!(bool) fog; /**< should fog be drawn */
+	Option!(bool) hideUi; /**< hide the user interface */
+	Option!(bool) shadow; /**< should advanced shadowing be used */
+	Option!(bool) showDebug; /**< should debug info be shown */
+	Option!(bool) useCmdPrefix; /**< should we use the command prefix */
+	Option!(double) viewDistance; /**< the view distance */
+
+	const string aaName = "mc.aa";
+	const string fogName = "mc.fog";
+	const string shadowName = "mc.shadow";
+	const string useCmdPrefixName = "mc.useCmdPrefix";
+	const string viewDistanceName = "mc.viewDistance";
+
+	const bool aaDefault = true;
+	const bool fogDefault = true;
+	const bool shadowDefault = true;
+	const bool useCmdPrefixDefault = true;
+	const double viewDistanceDefault = 256;
 
 
 	/*
