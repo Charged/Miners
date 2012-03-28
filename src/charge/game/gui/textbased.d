@@ -123,6 +123,12 @@ public:
 		pressed.destruct();
 	}
 
+	void breakApart()
+	{
+		pressed.destruct();
+		super.breakApart();
+	}
+
 	void setText(char[] text, int minwidth = -1)
 	{
 		if (minwidth >= 0)
