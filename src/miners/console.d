@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.console;
 
-
 import std.string : split, format, find;
 
 

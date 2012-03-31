@@ -2,10 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.gfx.selector;
 
-
 import charge.math.mesh;
 import miners.gfx.imports;
-
 
 
 /**

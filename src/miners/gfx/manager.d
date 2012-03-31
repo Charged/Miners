@@ -7,6 +7,7 @@ import charge.charge;
 import miners.types;
 import miners.gfx.renderer;
 
+
 /**
  * Class for managing the different renderers.
  */

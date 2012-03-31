@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.actors.camera;
 
-
 import std.math;
 
 import charge.charge;

@@ -3,7 +3,6 @@
 module miners.classic.interfaces;
 
 
-
 /**
  * A classic connection interface.
  */

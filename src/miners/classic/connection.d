@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.connection;
 
-
 import std.socket;
 import std.string;
 private static import etc.c.zlib;
@@ -15,6 +14,7 @@ import miners.types;
 import miners.classic.proto;
 import miners.classic.interfaces;
 import miners.importer.network;
+
 
 alias charge.net.util.ntoh ntoh;
 

@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.workspace;
 
-
 import charge.util.memory;
 
 import miners.defines;

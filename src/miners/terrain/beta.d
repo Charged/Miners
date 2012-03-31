@@ -11,6 +11,7 @@ import miners.options;
 import miners.terrain.chunk;
 import miners.terrain.common;
 
+
 final class BetaTerrain : public Terrain
 {
 public:

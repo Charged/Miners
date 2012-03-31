@@ -13,6 +13,7 @@ import miners.terrain.common;
 import miners.builder.builder;
 import miners.builder.workspace;
 
+
 /**
  * Finite terrain that doesn't doesn't handle growing as good
  * as infinite terrain (like alpha/beta). Used for classic levels.

@@ -6,6 +6,7 @@ import charge.charge;
 
 import miners.world;
 
+
 /**
  * Base class for OtherPlayers and Mobs.
  */

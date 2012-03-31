@@ -10,6 +10,7 @@ import miners.types;
 import miners.options;
 import miners.gfx.vbo;
 
+
 class Terrain : public GameActor
 {
 public:

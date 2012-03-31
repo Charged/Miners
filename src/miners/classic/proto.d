@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.proto;
 
+
 uint clientPacketSizes[16] = [
 	ClientIdentification.sizeof,     // 0x00
 	0,                               // 0x01

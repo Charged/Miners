@@ -4,6 +4,7 @@ module miners.importer.converter;
 
 import miners.classic.data;
 
+
 /**
  * Convert a single block of classic type to a beta block and meta.
  */

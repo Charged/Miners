@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.runner;
 
-
 import std.string : format, find;
 
 import lib.sdl.keysym;

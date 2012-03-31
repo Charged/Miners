@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.data;
 
+
 /*
  * Data for converting a minecraft block array into a mesh.
  */

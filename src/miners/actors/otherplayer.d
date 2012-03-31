@@ -8,6 +8,7 @@ import miners.world;
 import miners.options;
 import miners.actors.mob;
 
+
 /**
  * Another player on the server.
  */

@@ -8,6 +8,7 @@ import std.string;
 import charge.util.base36;
 import charge.platform.homefolder;
 
+
 /**
  * Return the folder where the Minecraft config, saves & texture packs lives.
  */

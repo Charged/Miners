@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.lua.wrappers.types;
 
-
 import std.string : format;
 
 import miners.types;

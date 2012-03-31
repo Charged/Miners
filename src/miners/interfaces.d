@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.interfaces;
 
-
 import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;

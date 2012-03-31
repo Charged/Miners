@@ -15,6 +15,7 @@ import miners.classic.message;
 import miners.classic.interfaces;
 import miners.classic.connection;
 
+
 const char[] header = `Classic`;
 const uint childWidth = 424;
 const uint childHeight = 9*16;

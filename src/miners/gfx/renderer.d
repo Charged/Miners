@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.gfx.renderer;
 
-
 import miners.gfx.vbo;
 import miners.gfx.imports;
 import miners.gfx.selector;
