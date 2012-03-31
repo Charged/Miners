@@ -6,8 +6,8 @@ import charge.charge;
 import charge.game.gui.layout;
 import charge.game.gui.textbased;
 
+import miners.error;
 import miners.interfaces;
-import miners.runner;
 import miners.menu.base;
 import miners.importer.info;
 
@@ -64,7 +64,7 @@ public:
 		char[] str;
 
 		if (levels.length == 0)
-			throw new GameException("No levels found", null);
+			throw new GameException("No levels found", null, false);
 
 		foreach(l; levels) {
 			if (!l.beta)

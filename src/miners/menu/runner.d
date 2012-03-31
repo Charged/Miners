@@ -7,6 +7,7 @@ import charge.game.gui.input;
 import charge.game.gui.textbased;
 
 import miners.types;
+import miners.error;
 import miners.runner;
 import miners.viewer;
 import miners.options;
@@ -185,7 +186,7 @@ public:
 		// Always handle exception via the game exception.
 		auto ge = cast(GameException)e;
 		if (ge is null)
-			ge = new GameException(null, e);
+			ge = new GameException(null, e, panic);
 
 
 		char[][] texts;
@@ -201,7 +202,7 @@ public:
 			];
 		}
 
-		displayError(texts, panic);
+		displayError(texts, ge.panic);
 	}
 
 	void displayError(char[][] texts, bool panic)

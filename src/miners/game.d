@@ -22,6 +22,7 @@ import charge.util.memory;
 import charge.platform.homefolder;
 
 import miners.types;
+import miners.error;
 import miners.world;
 import miners.runner;
 import miners.viewer;
@@ -127,13 +128,13 @@ public:
 			if (mr is null)
 				throw ge;
 
+			// Make sure we panic at init.
+			ge.panic = true;
 			mr.displayError(ge, true);
 		} catch (Exception e) {
 			if (mr is null)
 				throw e;
-
-			auto ge = new GameException(null, e);
-			mr.displayError(ge, true);
+			mr.displayError(e, true);
 		}
 
 		manageRunners();
@@ -226,7 +227,7 @@ protected:
 		Picture pic = getMinecraftTexture();
 		if (pic is null) {
 			auto text = format(terrainNotFoundText, chargeConfigFolder);
-			throw new GameException(text, null);
+			throw new GameException(text, null, true);
 		}
 
 		// I just wanted a comment here to make the code look prettier.
@@ -789,7 +790,7 @@ protected:
 
 			// XXX Better warning
 			if (!info || !info.beta)
-				throw new GameException("Invalid Level Given", null);
+				throw new GameException("Invalid Level Given", null, false);
 
 			w = new BetaWorld(info, opts);
 		} else {
