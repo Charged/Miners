@@ -113,7 +113,7 @@ public:
 		BufferedFile f;
 
 		try {
-			f = new BufferedFile(filename, FileMode.Out);
+			f = new BufferedFile(filename, FileMode.OutNew);
 		} catch (Exception e) {
 			return false;
 		}
