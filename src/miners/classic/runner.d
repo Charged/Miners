@@ -5,6 +5,7 @@ module miners.classic.runner;
 import std.string : format, find;
 
 import lib.sdl.keysym;
+import lib.gl.gl;
 
 import charge.charge;
 import charge.math.ints;
@@ -233,6 +234,28 @@ public:
 
 			d.blit(t, 8, rt.height - t.height - 8);
 		}
+
+		{
+			auto w = rt.width / 2 - 5;
+			auto h = rt.height / 2 - 5;
+
+			glLogicOp(GL_INVERT);
+			glEnable(GL_COLOR_LOGIC_OP);
+			glBegin(GL_QUADS);
+			glColor3f(1, 1, 1);
+			glVertex2d(   w,  h+4);
+			glVertex2d(   w,  h+6);
+			glVertex2d(w+10,  h+6);
+			glVertex2d(w+10,  h+4);
+			glVertex2d( w+4,    h);
+			glVertex2d( w+6,    h);
+			glVertex2d( w+6, h+10);
+			glVertex2d( w+4, h+10);
+			glEnd();
+			glDisable(GL_COLOR_LOGIC_OP);
+			glLogicOp(GL_COPY);
+		}
+
 		d.stop();
 	}
 
