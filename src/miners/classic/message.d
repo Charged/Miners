@@ -17,7 +17,16 @@ public:
 
 	void delegate(char[]) message;
 
+	char[][ubyte.max+1] players;
+
 public:
+	/*
+	 *
+	 * ClientMessageListener functions.
+	 *
+	 */
+
+
 	void archive(byte id, char[] msg) { archive(msg); }
 
 	void archive(char[] msg)
@@ -28,6 +37,29 @@ public:
 
 		doMessage(m);
 	}
+
+	void addPlayer(byte id, char[] name)
+	{
+		players[cast(ubyte)id] = name;
+	}
+
+	void removePlayer(byte id)
+	{
+		players[cast(ubyte)id] = null;
+	}
+
+	void removeAllPlayers()
+	{
+		players[0 .. $] = null;
+	}
+
+
+	/*
+	 *
+	 * Misc functions.
+	 *
+	 */
+
 
 	void pushAll()
 	{

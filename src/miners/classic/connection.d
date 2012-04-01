@@ -282,6 +282,8 @@ protected:
 
 		if (l !is null)
 			l.playerSpawn(id, name, x, y, z, heading, pitch);
+		if (ml !is null)
+			ml.addPlayer(id, name);
 	}
 
 	/**
@@ -352,6 +354,8 @@ protected:
 
 		if (l !is null)
 			l.playerDespawn(id);
+		if (ml !is null)
+			ml.removePlayer(id);
 	}
 
 	/**
@@ -394,10 +398,14 @@ protected:
 			serverIdentification(p);
 			break;
 		case 0x01:
-			l.ping();
+			if (l !is null)
+				l.ping();
 			break;
 		case 0x02:
-			l.levelInitialize();
+			if (l !is null)
+				l.levelInitialize();
+			if (ml !is null)
+				ml.removeAllPlayers();
 			break;
 		case 0x03:
 			auto p = cast(ServerLevelDataChunk*)pkg;

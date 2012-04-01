@@ -58,4 +58,12 @@ interface ClientListener
 interface ClientMessageListener
 {
 	void archive(byte id, char[] message);
+
+	/*
+	 * Player tracking.
+	 */
+
+	void addPlayer(byte id, char[] name);
+	void removePlayer(byte id);
+	void removeAllPlayers();
 }
