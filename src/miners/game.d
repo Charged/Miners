@@ -207,13 +207,17 @@ protected:
 		p.addIfNotSet(opts.viewDistanceName, opts.viewDistanceDefault);
 		p.addIfNotSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
 
+		double viewDistance = p.getDouble(opts.viewDistanceName, opts.viewDistanceDefault);
+		viewDistance = fmax(32, viewDistance);
+		viewDistance = fmin(viewDistance, short.max);
+
 		// First init options
 		opts = new Options();
 		opts.aa = p.getBool(opts.aaName, opts.aaDefault);
 		opts.fog = p.getBool(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getBool(opts.shadowName, opts.shadowDefault);
 		opts.useCmdPrefix = p.getBool(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
-		opts.viewDistance = p.getDouble(opts.viewDistanceName, opts.viewDistanceDefault);
+		opts.viewDistance = viewDistance;
 		debug { opts.showDebug = true; }
 
 
