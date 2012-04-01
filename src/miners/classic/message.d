@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.message;
 
+import std.string : tolower;
+
 import miners.classic.interfaces;
 
 
@@ -17,6 +19,7 @@ public:
 
 	void delegate(char[]) message;
 
+	char[][ubyte.max+1] tabs;
 	char[][ubyte.max+1] players;
 
 public:
@@ -40,16 +43,27 @@ public:
 
 	void addPlayer(byte id, char[] name)
 	{
+		tabs[cast(ubyte)id] = null;
 		players[cast(ubyte)id] = name;
+
+		if (name is null)
+			return;
+
+		if (name[0] == '&' && name.length > 2)
+			name = name[2 .. $];
+
+		tabs[cast(ubyte)id] = tolower(name);
 	}
 
 	void removePlayer(byte id)
 	{
+		tabs[cast(ubyte)id] = null;
 		players[cast(ubyte)id] = null;
 	}
 
 	void removeAllPlayers()
 	{
+		tabs[0 .. $] = null;
 		players[0 .. $] = null;
 	}
 
@@ -60,6 +74,31 @@ public:
 	 *
 	 */
 
+
+	char[] tabCompletePlayer(char[] start)
+	{
+		auto search = tolower(start);
+		int found = -1;
+
+		foreach(int i, tab; tabs) {
+			if (tab.length < search.length)
+				continue;
+
+			if (tab[0 .. search.length] != search[0 .. $])
+				continue;
+
+			// Don't return anything on multiple hits.
+			if (found >= 0)
+				return null;
+
+			found = i;
+		}
+
+		if (found >= 0)
+			return players[found];
+
+		return null;
+	}
 
 	void pushAll()
 	{

@@ -15,6 +15,7 @@ public:
 
 	bool typing;
 	const typingCursor = 219;
+	size_t maxChars;
 
 	char[] typed; /**< Typed text. */
 	char[] showing; /**< Text including the cursor. */
@@ -33,7 +34,6 @@ public:
 
 private:
 	TextDg update;
-	size_t maxChars;
 	char[] typedBuffer;
 
 public:
@@ -42,6 +42,7 @@ public:
 		assert(maxChars >= 2);
 		assert(update !is null);
 
+		this.maxChars = maxChars;
 		this.update = update;
 		this.typedBuffer.length = maxChars;
 	}
@@ -78,6 +79,12 @@ public:
 			return decArrays();
 		}
 
+		// I'm sure there is somebody out there that
+		// has tab bound to something else then the
+		// tab button and whats to use it.
+		if (unicode == '\t')
+			return tabComplete();
+
 		// Some chars don't display that well,
 		// Also ClassicConsole override this to
 		// to be even more restrictive.
@@ -102,6 +109,8 @@ protected:
 			return false;
 		return true;
 	}
+
+	abstract void tabComplete();
 
 	void process(char[] str)
 	{
@@ -169,7 +178,7 @@ protected:
 		doMessage("   help - show help message");
 	}
 
-private:
+protected:
 	void incArrays()
 	{
 		showing = typedBuffer[0 .. showing.length + 1];

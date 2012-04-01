@@ -103,6 +103,7 @@ public:
 		if (c !is null) {
 			console.chat = &c.sendClientMessage;
 			console.message = &ml.archive;
+			console.tabCompletePlayer = &ml.tabCompletePlayer;
 			ml.message = &mlGui.message;
 			ml.pushAll();
 		} else {
@@ -663,7 +664,11 @@ public:
  */
 class ClassicConsole : public Console
 {
+public:
+	char[] delegate(char[]) tabCompletePlayer;
+
 protected:
+	MessageLogger ml;
 	Options opts;
 	const cmdPrefixStr = "/client ";
 
@@ -683,6 +688,52 @@ public:
 	}
 
 protected:
+	void tabComplete()
+	{
+		if (tabCompletePlayer is null)
+			return;
+
+		int i = cast(int)typed.length;
+		foreach_reverse(c; typed) {
+			if (c == ' ')
+				break;
+			i--;
+		}
+
+		// Ends with space
+		if (i == typed.length)
+			return;
+
+		auto tabbing = typed[i .. $];
+
+		auto t = tabCompletePlayer(tabbing);
+
+		// Nothing found return.
+		if (t is null)
+			return;
+
+		// tabCompletePlayer returns with color encoding.
+		t = removeColorTags(t);
+
+		// We it this way so that all the arrays are
+		// correctly matched, we are apt to get it wrong.
+		for(int k; k < tabbing.length; k++)
+			decArrays();
+
+		if (typed.length == 0)
+			t = t ~ ": ";
+
+		// See comment above.
+		foreach(c; t) {
+			// Don't add any more once the buffer is full.
+			if (showing.length >= maxChars)
+				return;
+
+			incArrays();
+			typed[$-1] = c;
+		}
+	}
+
 	bool validateChar(dchar unicode)
 	{
 		// Skip invalid characters.
