@@ -33,6 +33,7 @@ public:
 	TextDg chat; /**< Called when something was chatted. */
 
 private:
+	uint backspaceCounter;
 	TextDg update;
 	char[] typedBuffer;
 
@@ -47,6 +48,18 @@ public:
 		this.typedBuffer.length = maxChars;
 	}
 
+	void logic()
+	{
+		if (backspaceCounter > 0) {
+			backspaceCounter++;
+
+			if (backspaceCounter >= 30) {
+				backspaceCounter -= 5;
+				keyDown(0x08, 0);
+			}
+		}
+	}
+
 	void startTyping()
 	{
 		typing = true;
@@ -58,6 +71,7 @@ public:
 		typed = null;
 		showing = null;
 		typing = false;
+		backspaceCounter = 0;
 
 		update("");
 	}
@@ -75,6 +89,9 @@ public:
 		if (sym == 0x08) {
 			if (typed.length == 0)
 				return;
+
+			if (backspaceCounter <= 0)
+				backspaceCounter = 1;
 
 			return decArrays();
 		}
@@ -97,6 +114,12 @@ public:
 
 		incArrays();
 		typed[$-1] = cast(char)unicode;
+	}
+
+	void keyUp(uint sym)
+	{
+		if (sym == 0x08)
+			backspaceCounter = 0;
 	}
 
 protected:

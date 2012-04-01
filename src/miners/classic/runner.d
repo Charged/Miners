@@ -168,6 +168,9 @@ public:
 	{
 		super.logic();
 
+		if (console.typing)
+			console.logic();
+
 		if (c is null)
 			return;
 
@@ -320,7 +323,7 @@ public:
 	void keyUp(CtlKeyboard kb, int sym)
 	{
 		if (console.typing)
-			return;
+			return console.keyUp(sym);;
 
 		switch(sym) {
 		case SDLK_w:
