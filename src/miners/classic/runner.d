@@ -206,6 +206,7 @@ public:
 	{
 		placeSelector();
 
+		cam.resize(rt.width, rt.height);
 		r.render(w.gfx, cam.current, rt);
 
 		if (opts.hideUi())
