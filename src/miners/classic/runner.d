@@ -575,6 +575,7 @@ public:
 		// Skip this player.
 		if (index == 255) {
 			cam.position = Point3d(x, y, z);
+			cam.rotation = Quatd(heading, pitch, 0);
 			cam_heading = heading;
 			cam_pitch = pitch;
 			return;
@@ -601,6 +602,7 @@ public:
 		// Skip this player.
 		if (index == 255) {
 			cam.position = Point3d(x, y, z);
+			cam.rotation = Quatd(heading, pitch, 0);
 			cam_heading = heading;
 			cam_pitch = pitch;
 			return;
