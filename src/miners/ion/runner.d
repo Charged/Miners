@@ -5,6 +5,8 @@ module miners.ion.runner;
 import std.stdio;
 static import std.file;
 
+import lib.dcpu.dcpu;
+
 import charge.charge;
 
 import charge.game.gui.container;
@@ -15,7 +17,6 @@ import miners.runner;
 import miners.viewer;
 import miners.options;
 import miners.interfaces;
-import miners.ion.dcpu;
 import miners.ion.texture;
 import miners.classic.world;
 import miners.actors.camera;
