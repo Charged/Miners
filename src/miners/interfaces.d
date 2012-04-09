@@ -103,6 +103,11 @@ interface Router
 	void render(GfxWorld w, GfxCamera c, GfxRenderTarget rt);
 
 	/**
+	 * Start the Ion Runner.
+	 */
+	void chargeIon();
+
+	/**
 	 * Load a level, name should be a level directory
 	 * containing level.dat for final and a file for
 	 * classic levels.

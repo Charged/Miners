@@ -13,6 +13,7 @@ class MainMenu : public MenuBase
 {
 private:
 	Text te;
+	Button io;
 	Button ra;
 	Button cl;
 	Button be;
@@ -35,6 +36,8 @@ public:
 
 		te = new Text(this, 0, 0, text);
 		pos += te.h;
+		io = new Button(this, 0, pos, "Ion", 32);
+		pos += io.h;
 		ra = new Button(this, 0, pos, "Random", 32);
 		pos += ra.h;
 		cl = new Button(this, 0, pos, "Classic", 32);
@@ -44,6 +47,7 @@ public:
 		cb = new Button(this, 0, pos, "Close", 8);
 		qb = new Button(this, 0, pos, "Quit", 8);
 
+		io.pressed ~= &ion;
 		ra.pressed ~= &random;
 		cl.pressed ~= &classic;
 		be.pressed ~= &selectLevel;
@@ -65,6 +69,7 @@ public:
 	}
 
 private:
+	void ion(Button b) { r.chargeIon(); }
 	void random(Button b) { r.loadLevel(null); }
 	void classic(Button b) { r.loadLevel(null, true); }
 	void selectLevel(Button b) { r.menu.displayLevelSelector(); }

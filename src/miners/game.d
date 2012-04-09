@@ -28,6 +28,7 @@ import miners.runner;
 import miners.viewer;
 import miners.options;
 import miners.interfaces;
+import miners.ion.runner;
 import miners.lua.runner;
 import miners.lua.builtin;
 import miners.gfx.manager;
@@ -752,6 +753,15 @@ protected:
 			if (mr !is null)
 				mr.dropControl();
 		}
+	}
+
+	void chargeIon()
+	{
+		// Close the menu and old runner.
+		menu.closeMenu();
+		deleteMe(runner);
+
+		switchTo(new IonRunner(this, opts));
 	}
 
 	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
