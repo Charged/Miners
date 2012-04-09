@@ -761,7 +761,7 @@ protected:
 		menu.closeMenu();
 		deleteMe(runner);
 
-		switchTo(new IonRunner(this, opts));
+		switchTo(new IonRunner(this, opts, null));
 	}
 
 	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
