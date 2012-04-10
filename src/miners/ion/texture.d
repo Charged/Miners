@@ -23,7 +23,7 @@ public:
 	this(ushort *mem)
 	{
 		container = new TextureContainer(
-			null, 0, 0, width * 8, height * (8 + 1));
+			null, 0, 0, width * (8 + 1), height * (8 + 1));
 		super(container, 0, 0, width, height, 1);
 
 		foreach(int i, t; text) {
@@ -64,7 +64,7 @@ protected:
 		int top;
 		int bottom = top + rowHeight;
 		int left;
-		int right = left + 8;
+		int right = left + rowHeight;
 
 		glDisable(GL_BLEND);
 		glBegin(GL_QUADS);
@@ -82,17 +82,17 @@ protected:
 				top += rowHeight;
 				bottom += rowHeight;
 				left = 0;
-				right = left + 8;
+				right = left + rowHeight;
 			} else {
-				left += 8;
-				right = left + 8;
+				left += rowHeight;
+				right = left + rowHeight;
 			}
 		}
 		glEnd();
 
 		top = 1;
 		bottom = top + 8;
-		left = 0;
+		left = 1;
 		right = left + 8;
 
 		glEnable(GL_BLEND);
@@ -123,10 +123,10 @@ protected:
 			if (i % 32 == 31) {
 				top += rowHeight;
 				bottom = top + 8;
-				left = 0;
+				left = 1;
 				right = left + 8;
 			} else {
-				left += 8;
+				left += rowHeight;
 				right = left + 8;
 			}
 		}
@@ -153,4 +153,10 @@ protected:
 		Color4f(0xFF/255f, 0xFF/255f, 0x55/255f, 1),
 		Color4f(0xFF/255f, 0xFF/255f, 0xFF/255f, 1),
 	];
+
+	void repack()
+	{
+		w = colums * 9;
+		h = rows * rowHeight;
+	}
 }
