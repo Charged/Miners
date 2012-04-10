@@ -64,9 +64,7 @@ void NonBasic(Dcpu* me, uint16_t* v1, uint16_t* v2)
 		bool found = false;
 		Vector_ForEach(me->sysCalls, s){
 			if(s->id == *v2){
-				Dcpu_DumpState(me);
 				s->fun(me, s->data);
-				Dcpu_DumpState(me);
 				found = true;
 				break;
 			}
@@ -282,8 +280,6 @@ int Dcpu_Execute(Dcpu* me, int execCycles)
 			me->ins[ins](me, pv[0], pv[1]);
 		}
 		else me->performNextIns = true;
-
-		Dcpu_DumpState(me);
 
 		if(me->exit) return 0;
 	}
