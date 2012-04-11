@@ -87,10 +87,11 @@ public:
 	void render(GfxRenderTarget rt)
 	{
 		cam.resize(rt.width, rt.height);
-		r.render(w.gfx, cam.current, rt);
 
 		sl.position = cam.position + cam.rotation * Vector3d(.5, -.5, 0);
 		sl.rotation = Quatd(cam_heading, cam_pitch, 0);
+
+		r.render(w.gfx, cam.current, rt);
 
 		ct.paint();
 		auto t = ct.texture;
