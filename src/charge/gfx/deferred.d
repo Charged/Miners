@@ -880,8 +880,8 @@ protected:
 
 	void getSpotLightMatrix(SpotLight l, ref Matrix4x4d view, ref Matrix4x4d texture)
 	{
-		float shadowNear = 1.0;
-		float shadowFar = l.length;
+		float shadowNear = l.near;
+		float shadowFar = l.far;
 		auto point = l.position + l.rotation.rotateHeading();
 		auto up = l.rotation.rotateUp();
 		GLfloat d = shadowNear * std.math.tan(PI/180*10.0);
@@ -941,7 +941,7 @@ protected:
 		spotlight_shader.float4("lightDiffuse", sl.diffuse);
 		spotlight_shader.float3("lightPosition", view * sl.position);
 		spotlight_shader.float3("lightDirection", view * sl.rotation.rotateHeading);
-		spotlight_shader.float1("lightLength", sl.length);
+		spotlight_shader.float1("lightLength", sl.far);
 
 		gluTexUnitEnableBind(GL_TEXTURE_2D, 3, spotlight_texture);
 

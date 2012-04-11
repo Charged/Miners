@@ -36,6 +36,7 @@ private:
 	bool cpuRunning;
 	DpcuTexture ct;
 	GfxDraw d;
+	GfxSpotLight sl;
 
 public:
 	this(Router r, Options opts, char[] file)
@@ -55,6 +56,9 @@ public:
 
 		d = new GfxDraw();
 		ct = new DpcuTexture(Dcpu_GetRam(c));
+
+		sl = new GfxSpotLight();
+		w.gfx.add(sl);
 	}
 
 	~this()
@@ -84,6 +88,9 @@ public:
 	{
 		cam.resize(rt.width, rt.height);
 		r.render(w.gfx, cam.current, rt);
+
+		sl.position = cam.position + cam.rotation * Vector3d(.5, -.5, 0);
+		sl.rotation = Quatd(cam_heading, cam_pitch, 0);
 
 		ct.paint();
 		auto t = ct.texture;

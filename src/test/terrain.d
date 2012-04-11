@@ -686,7 +686,7 @@ public:
 		w.gfx.add(pl);
 		spl = new GfxSpotLight();
 		spl.position = Point3d(0.0, 5.0, 15.0);
-		spl.length = 150;
+		spl.far = 150;
 		w.gfx.add(spl);
 
 		w.phy.setStepLength(10);

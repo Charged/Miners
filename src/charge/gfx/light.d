@@ -49,13 +49,17 @@ class SpotLight : public Light
 public:
 	Color4f diffuse;
 	float angle;
-	float length;
+	float ratio;
+	float near;
+	float far;
 	bool shadow;
 
 	this()
 	{
 		diffuse = Color4f(0.8, 0.8, 0.8);
-		length = 100.0;
+		far = 100.0;
+		near = 0.1;
+		ratio = 1.0;
 		angle = 20.0;
 	}
 
