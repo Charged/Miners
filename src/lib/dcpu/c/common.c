@@ -41,7 +41,7 @@ void LoadRam(uint16_t* ram, const char* filename)
 uint16_t GetUsedRam(uint16_t* ram)
 {
 	int end = 0xffff;
-	while(ram[--end] == 0);
+	while(ram[--end] == 0) {}
 	return end;
 }
 
