@@ -183,7 +183,10 @@ void Dcpu_Destroy(Dcpu** me)
 
 void Dcpu_SetSysCall(Dcpu* me, void (*sc)(Dcpu* me, void* data), int id, void* data)
 {
-	SysCall s = {sc, id, data};
+	SysCall s;
+	s.fun = sc;
+	s.id = id;
+	s.data = data;
 	Vector_Add(me->sysCalls, s);
 }
 
