@@ -9,304 +9,17 @@ import miners.gfx.vbo;
 
 import miners.builder.data;
 import miners.builder.emit;
+import miners.builder.quad;
 import miners.builder.types;
 import miners.builder.packers;
 import miners.builder.helpers;
 import miners.builder.workspace;
-
-
-/**
- * Constructs fullsized quads.
- *
- * Coordinates are shifted.
- */
-template QuadBuilder()
-{
-	void makeY(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
-	{
-		bool positive = isNormalPositive(normal);
-		auto aoy = y + positive - !positive;
-		mixin AOScannerY!();
-		mixin AOCalculator!();
-
-		int x1 = x, x2 = x+1;
-		int z1 = z, z2 = z+1;
-		y += positive;
-
-		const shift = VERTEX_SIZE_BIT_SHIFT;
-		x1 <<= shift;
-		x2 <<= shift;
-		y  <<= shift;
-		z1 <<= shift;
-		z2 <<= shift;
-
-		ubyte texture = calcTextureY(dec);
-
-		if (positive) {
-			emitQuadAOYP(p, x1, x2, y, z1, z2,
-				     aoBL, aoBR, aoTL, aoTR,
-				     texture, normal);
-		} else {
-			emitQuadAOYN(p, x1, x2, y, z1, z2,
-				     aoBL, aoBR, aoTL, aoTR,
-				     texture, normal);
-		}
-	}
-
-	void makeStairXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal, bool left)
-	{
-		bool positive = isNormalPositive(normal);
-		bool normalIsZ = isNormalZ(normal);
-		bool normalIsX = !normalIsZ;
-
-		mixin AOSetupScannerCoordsXZ!();
-		mixin AOScannerXZ!();
-		mixin AOCalculator!();
-
-		// Where does the side stand.
-		int x1 = x + (positive & normalIsX);
-		int z1 = z + (positive & normalIsZ);
-
-		// If the normal is parallel to the other axis change the coordinate.
-		int x2 = x1 + normalIsZ;
-		int z2 = z1 + normalIsX;
-
-		// Height
-		int y1 = y, y2 = y+1;
-
-		ubyte texture = calcTextureXZ(dec);
-
-		const shift = VERTEX_SIZE_BIT_SHIFT;
-		x1 <<= shift;
-		x2 <<= shift;
-		y1 <<= shift;
-		y2 <<= shift;
-		z1 <<= shift;
-		z2 <<= shift;
-
-		auto emitStairQuads = &emitStairQuadsLP;
-		if (positive) {
-			if (left) {
-				emitStairQuads = &emitStairQuadsLP;
-			} else {
-				emitStairQuads = &emitStairQuadsRP;
-			}
-		} else {
-			if (left) {
-				emitStairQuads = &emitStairQuadsLN;
-			} else {
-				emitStairQuads = &emitStairQuadsRN;
-			}
-		}
-
-		emitStairQuads(p, x1, x2, y1, y2, z1, z2,
-			       aoBL, aoBR, aoTL, aoTR,
-			       texture, normal);
-	}
-
-	void makeXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal)
-	{
-		bool positive = isNormalPositive(normal);
-		bool normalIsZ = isNormalZ(normal);
-		bool normalIsX = !normalIsZ;
-
-		mixin AOSetupScannerCoordsXZ!();
-		mixin AOScannerXZ!();
-		mixin AOCalculator!();
-
-		// Where does the side stand.
-		int x1 = x + (positive & normalIsX);
-		int z1 = z + (positive & normalIsZ);
-
-		// If the normal is parallel to the other axis change the coordinate.
-		int x2 = x1 + normalIsZ;
-		int z2 = z1 + normalIsX;
-
-		// Height
-		int y1 = y, y2 = y+1;
-
-		const shift = VERTEX_SIZE_BIT_SHIFT;
-		x1 <<= shift;
-		x2 <<= shift;
-		y1 <<= shift;
-		y2 <<= shift;
-		z1 <<= shift;
-		z2 <<= shift;
-
-		ubyte texture = calcTextureXZ(dec);
-
-		if (positive) {
-			emitQuadAOXZP(p, x1, x2, y1, y2, z1, z2,
-				      aoBL, aoBR, aoTL, aoTR,
-				      texture, normal);
-		} else {
-			emitQuadAOXZN(p, x1, x2, y1, y2, z1, z2,
-				      aoBL, aoBR, aoTL, aoTR,
-				      texture, normal);
-		}
-	}
-
-	void makeXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set)
-	{
-		if (set & sideMask.XN)
-			makeXZ(dec, x, y, z, sideNormal.XN);
-
-		if (set & sideMask.XP)
-			makeXZ(dec, x, y, z, sideNormal.XP);
-
-		if (set & sideMask.YN)
-			makeY(dec, x, y, z, sideNormal.YN);
-
-		if (set & sideMask.YP)
-			makeY(dec, x, y, z, sideNormal.YP);
-
-		if (set & sideMask.ZN)
-			makeXZ(dec, x, y, z, sideNormal.ZN);
-
-		if (set & sideMask.ZP)
-			makeXZ(dec, x, y, z, sideNormal.ZP);
-	}
-
-	void makeHalfY(BlockDescriptor *dec, uint x, uint y, uint z,
-		       uint height = VERTEX_SIZE_DIVISOR / 2)
-	{
-		auto aoy = y;
-		mixin AOScannerY!();
-		mixin AOCalculator!();
-
-		int x1 = x, x2 = x+1;
-		int z1 = z, z2 = z+1;
-
-		const shift = VERTEX_SIZE_BIT_SHIFT;
-		x1 <<= shift;
-		x2 <<= shift;
-		z1 <<= shift;
-		z2 <<= shift;
-
-		y <<= shift;
-		y += height;
-
-		ubyte texture = calcTextureY(dec);
-
-		emitQuadAOYP(p, x1, x2, y, z1, z2,
-			     aoBL, aoBR, aoTL, aoTR,
-			     texture, sideNormal.YP);
-	}
-
-	void makeHalfXZ(BlockDescriptor *dec, uint x, uint y, uint z, sideNormal normal,
-			uint height = VERTEX_SIZE_DIVISOR / 2)
-	{
-		bool positive = isNormalPositive(normal);
-		bool normalIsZ = isNormalZ(normal);
-		bool normalIsX = !normalIsZ;
-
-		mixin AOSetupScannerCoordsXZ!();
-
-		auto c1 = data.filled(aoXn, y-1, aoZn);
-		auto c2 = data.filled(aoXm, y-1, aoZm);
-		auto c3 = data.filled(aoXp, y-1, aoZp);
-		auto c4 = data.filled(aoXn, y  , aoZn);
-		auto c5 = data.filled(aoXp, y  , aoZp);
-		auto c6 = false;
-		auto c7 = false;
-		auto c8 = false;
-
-		mixin AOCalculator!();
-
-		// Where does the side stand.
-		int x1 = x + (positive & normalIsX);
-		int z1 = z + (positive & normalIsZ);
-
-		// If the normal is parallel to the other axis change the coordinate.
-		int x2 = x1 + normalIsZ;
-		int z2 = z1 + normalIsX;
-
-		// Height
-		int y1 = y, y2;
-
-		const shift = VERTEX_SIZE_BIT_SHIFT;
-		x1 <<= shift;
-		x2 <<= shift;
-		y1 <<= shift;
-		y2 = y1 + height;
-		z1 <<= shift;
-		z2 <<= shift;
-
-		ubyte texture = calcTextureXZ(dec);
-
-		if (height == VERTEX_SIZE_DIVISOR / 2) {
-			if (positive) {
-				emitHalfQuadAOXZP(p, x1, x2, y1, y2, z1, z2,
-						  aoBL, aoBR, aoTL, aoTR,
-						  texture, normal);
-			} else {
-				emitHalfQuadAOXZM(p, x1, x2, y1, y2, z1, z2,
-						  aoBL, aoBR, aoTL, aoTR,
-						  texture, normal);
-			}
-		} else {
-			if (positive) {
-				emitQuadMappedUVAOXZP(p, x1, x2, y1, y2, z1, z2,
-						      aoBL, aoBR, aoTL, aoTR,
-						      texture, normal,
-						      0, 0, uvManip.NONE);
-			} else {
-				emitQuadMappedUVAOXZN(p, x1, x2, y1, y2, z1, z2,
-						      aoBL, aoBR, aoTL, aoTR,
-						      texture, normal,
-						      0, 0, uvManip.NONE);
-			}
-		}
-	}
-
-	void makeHalfXYZ(BlockDescriptor *dec, uint x, uint y, uint z, int set,
-			 uint height = VERTEX_SIZE_DIVISOR / 2)
-	{
-		if (set & sideMask.XN)
-			makeHalfXZ(dec, x, y, z, sideNormal.XN, height);
-
-		if (set & sideMask.XP)
-			makeHalfXZ(dec, x, y, z, sideNormal.XP, height);
-
-		if (set & sideMask.YN)
-			makeY(dec, x, y, z, sideNormal.YN);
-
-		if (set & sideMask.YP)
-			makeHalfY(dec, x, y, z, height);
-
-		if (set & sideMask.ZN)
-			makeHalfXZ(dec, x, y, z, sideNormal.ZN, height);
-
-		if (set & sideMask.ZP)
-			makeHalfXZ(dec, x, y, z, sideNormal.ZP, height);
-	}
-
-	void makeFacedBlock(BlockDescriptor *dec, BlockDescriptor *decFace,
-			    uint x, uint y, uint z, sideNormal faceNormal, int set)
-	{
-
-		if (set & sideMask.ZN)
-			makeXZ((faceNormal == sideNormal.ZN) ? decFace : dec, x, y, z, sideNormal.ZN);
-		if (set & sideMask.ZP)
-			makeXZ((faceNormal == sideNormal.ZP) ? decFace : dec, x, y, z, sideNormal.ZP);
-		if (set & sideMask.XN)
-			makeXZ((faceNormal == sideNormal.XN) ? decFace : dec, x, y, z, sideNormal.XN);
-		if (set & sideMask.XP)
-			makeXZ((faceNormal == sideNormal.XP) ? decFace : dec, x, y, z, sideNormal.XP);
-		if (set & sideMask.YN)
-			makeY(dec, x, y, z, sideNormal.YN);
-		if (set & sideMask.YP)
-			makeY(dec, x, y, z, sideNormal.YP);
-	}
-}
 
 /**
  * Dispatches blocks from a chunk.
  */
 template BlockDispatcher()
 {
-	mixin QuadBuilder!();
-
 	void solidDec(BlockDescriptor *dec, uint x, uint y, uint z) {
 		int set = data.getSolidSet(x, y, z);
 
@@ -314,7 +27,7 @@ template BlockDispatcher()
 		if (set == 0)
 			return;
 
-		makeXYZ(dec, x, y, z, set);
+		makeXYZ(p, data, dec, x, y, z, set);
 	}
 
 	void solid(ubyte type, uint x, uint y, uint z) {
@@ -329,12 +42,12 @@ template BlockDispatcher()
 		auto snowDec = &snowyGrassBlock;
 
 		if (data.get(x, y + 1, z) == 78 /* snow */)
-			makeXYZ(snowDec, x, y, z, set & ~sideMask.YN);
+			makeXYZ(p, data, snowDec, x, y, z, set & ~sideMask.YN);
 		else
-			makeXYZ(grassDec, x, y, z, set & ~sideMask.YN);
+			makeXYZ(p, data, grassDec, x, y, z, set & ~sideMask.YN);
 
 		if (set & sideMask.YN)
-			makeY(dirtDec, x, y, z, sideNormal.YN);
+			makeY(p, data, dirtDec, x, y, z, sideNormal.YN);
 	}
 
 	void water(int x, int y, int z) {
@@ -391,7 +104,7 @@ template BlockDispatcher()
 		if (set == 0)
 			return;
 
-		makeXYZ(dec, x, y, z, set);
+		makeXYZ(p, data, dec, x, y, z, set);
 	}
 
 	void dispenser(int x, int y, int z) {
@@ -403,7 +116,7 @@ template BlockDispatcher()
 		auto faceNormal = [sideNormal.ZN, sideNormal.ZP,
 				   sideNormal.XN, sideNormal.XP][d-2];
 
-		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
+		makeFacedBlock(p, data, dec, decFront, x, y, z, faceNormal, set);
 	}
 
 	void bed(int x, int y, int z) {
@@ -523,10 +236,10 @@ template BlockDispatcher()
 		auto dec = &slabTile[d];
 
 		if (type == 44)
-			makeHalfXYZ(dec, x, y, z, set | sideMask.YP);
+			makeHalfXYZ(p, data, dec, x, y, z, set | sideMask.YP);
 
 		else if (set != 0) /* nothing to do */
-			makeXYZ(dec, x, y, z, set);
+			makeXYZ(p, data, dec, x, y, z, set);
 	}
 
 	void standing_torch(int x, int y, int z, ubyte tex) {
@@ -610,7 +323,7 @@ template BlockDispatcher()
 		// No chest around, render a single chest.
 		if (!north && !south && !east && !west) {
 			auto frontDec = &chestTile[1];
-			return makeFacedBlock(dec, frontDec, x, y, z, sideNormal.ZP, set);
+			return makeFacedBlock(p, data, dec, frontDec, x, y, z, sideNormal.ZP, set);
 		}
 
 		// Double chest along the z-axis will face west.
@@ -619,32 +332,32 @@ template BlockDispatcher()
 			auto back_dec = (north) ? &chestTile[5] : &chestTile[4];
 
 			if (set & sideMask.ZN)
-				makeXZ(dec, x, y, z, sideNormal.ZN);
+				makeXZ(p, data, dec, x, y, z, sideNormal.ZN);
 			if (set & sideMask.ZP)
-				makeXZ(dec, x, y, z, sideNormal.ZP);
+				makeXZ(p, data, dec, x, y, z, sideNormal.ZP);
 			if (set & sideMask.XN)
-				makeXZ(back_dec, x, y, z, sideNormal.XN);
+				makeXZ(p, data, back_dec, x, y, z, sideNormal.XN);
 			if (set & sideMask.XP)
-				makeXZ(front_dec, x, y, z, sideNormal.XP);
+				makeXZ(p, data, front_dec, x, y, z, sideNormal.XP);
 		// Double chest along the x-axis will face south.
 		} else {
 			auto front_dec = (west) ? &chestTile[2] : &chestTile[3];
 			auto back_dec = (west) ? &chestTile[5] : &chestTile[4];
 
 			if (set & sideMask.ZN)
-				makeXZ(back_dec, x, y, z, sideNormal.ZN);
+				makeXZ(p, data, back_dec, x, y, z, sideNormal.ZN);
 			if (set & sideMask.ZP)
-				makeXZ(front_dec, x, y, z, sideNormal.ZP);
+				makeXZ(p, data, front_dec, x, y, z, sideNormal.ZP);
 			if (set & sideMask.XN)
-				makeXZ(dec, x, y, z, sideNormal.XN);
+				makeXZ(p, data, dec, x, y, z, sideNormal.XN);
 			if (set & sideMask.XP)
-				makeXZ(dec, x, y, z, sideNormal.XP);
+				makeXZ(p, data, dec, x, y, z, sideNormal.XP);
 		}
 
 		if (set & sideMask.YN)
-			makeY(dec, x, y, z, sideNormal.YN);
+			makeY(p, data, dec, x, y, z, sideNormal.YN);
 		if (set & sideMask.YP)
-			makeY(dec, x, y, z, sideNormal.YP);
+			makeY(p, data, dec, x, y, z, sideNormal.YP);
 	}
 
 	void redstone_wire(int x, int y, int z) {
@@ -730,10 +443,10 @@ template BlockDispatcher()
 		set &= ~setAlt;
 
 		if (set != 0)
-			makeXYZ(dec, x, y, z, set);
+			makeXYZ(p, data, dec, x, y, z, set);
 
 		if (setAlt != 0)
-			makeXYZ(decAlt, x, y, z, setAlt);
+			makeXYZ(p, data, decAlt, x, y, z, setAlt);
 	}
 
 	void crops(int x, int y, int z) {
@@ -776,16 +489,16 @@ template BlockDispatcher()
 
 		// Half front
 		sideMask frontMask = [sideMask.XN, sideMask.XP, sideMask.ZN, sideMask.ZP][d];
-		makeHalfXYZ(dec, x, y, z, frontMask & set);
+		makeHalfXYZ(p, data, dec, x, y, z, frontMask & set);
 
 		sideMask backMask = [sideMask.XP, sideMask.XN, sideMask.ZP, sideMask.ZN][d];
-		makeXYZ(dec, x, y, z, (backMask | sideMask.YN) & set);
+		makeXYZ(p, data, dec, x, y, z, (backMask | sideMask.YN) & set);
 
 		sideNormal norm1 = [sideNormal.ZN, sideNormal.ZP, sideNormal.XN, sideNormal.XP][d];
-		makeStairXZ(dec, x, y, z, norm1, d == 1 || d == 2);
+		makeStairXZ(p, data, dec, x, y, z, norm1, d == 1 || d == 2);
 
 		sideNormal norm2 = [sideNormal.ZP, sideNormal.ZN, sideNormal.XP, sideNormal.XN][d];
-		makeStairXZ(dec, x, y, z, norm2, d == 1 || d == 2);
+		makeStairXZ(p, data, dec, x, y, z, norm2, d == 1 || d == 2);
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
 		x <<= shift;
@@ -996,7 +709,7 @@ template BlockDispatcher()
 		auto faceNormal = [sideNormal.ZN, sideNormal.ZP,
 				   sideNormal.XN, sideNormal.XP][d-2];
 
-		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
+		makeFacedBlock(p, data, dec, decFront, x, y, z, faceNormal, set);
 	}
 
 	void signpost(int x, int y, int z) {
@@ -1154,7 +867,7 @@ template BlockDispatcher()
 			return;
 
 		set |= sideMask.YP;
-		makeHalfXYZ(dec, x, y, z, set, 2);
+		makeHalfXYZ(p, data, dec, x, y, z, set, 2);
 	}
 
 	void fence(int x, int y, int z) {
@@ -1230,7 +943,7 @@ template BlockDispatcher()
 		auto faceNormal = [sideNormal.ZN, sideNormal.XP,
 				   sideNormal.ZP, sideNormal.XN][d];
 
-		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
+		makeFacedBlock(p, data, dec, decFront, x, y, z, faceNormal, set);
 	}
 
 	void jack_o_lantern(int x, int y, int z) {
@@ -1242,7 +955,7 @@ template BlockDispatcher()
 		auto faceNormal = [sideNormal.ZN, sideNormal.XP,
 				   sideNormal.ZP, sideNormal.XN][d];
 
-		makeFacedBlock(dec, decFront, x, y, z, faceNormal, set);
+		makeFacedBlock(p, data, dec, decFront, x, y, z, faceNormal, set);
 	}
 
 	void cake(int x, int y, int z) {
@@ -1291,10 +1004,10 @@ template BlockDispatcher()
 		int z2 = z+1;
 
 		if (!data.filledOrType(type, x, y+1, z))
-			makeY(dec, x, y, z, sideNormal.YP);
+			makeY(p, data, dec, x, y, z, sideNormal.YP);
 		if (!data.filledOrType(type, x, y-1, z)) {
 			dec = &cactusBottomTile;
-			makeY(dec, x, y, z, sideNormal.YN);
+			makeY(p, data, dec, x, y, z, sideNormal.YN);
 		}
 
 		const shift = VERTEX_SIZE_BIT_SHIFT;
