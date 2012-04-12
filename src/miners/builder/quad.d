@@ -3,9 +3,7 @@
 module miners.builder.quad;
 
 import miners.builder.emit;
-import miners.builder.data;
 import miners.builder.types;
-import miners.builder.packers;
 import miners.builder.helpers;
 import miners.builder.workspace;
 

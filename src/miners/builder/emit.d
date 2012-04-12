@@ -2,9 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.emit;
 
-import miners.builder.data;
 import miners.builder.types;
-import miners.builder.packers;
 import miners.builder.helpers;
 
 

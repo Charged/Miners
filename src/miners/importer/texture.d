@@ -9,6 +9,7 @@ import charge.math.color;
 import charge.math.picture;
 
 import miners.classic.data;
+import miners.builder.types;
 import miners.builder.data;
 import miners.importer.folders;
 

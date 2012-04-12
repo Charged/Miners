@@ -2,31 +2,14 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.data;
 
+import miners.builder.types;
+
 
 /*
- * Data for converting a minecraft block array into a mesh.
+ * This file contains data for converting a minecraft
+ * block array into a mesh.
  */
 
-struct BlockDescriptor {
-	enum Type {
-		Air,       /* you think that air you are breathing? */
-		Block,     /* simple filled block, no data needed to cunstruct it */
-		DataBlock, /* filled block, data needed create*/
-		Stuff,     /* unfilled, data may be needed to create */
-		NA,        /* Unused */
-	}
-
-	static struct TexCoord {
-		ubyte u;
-		ubyte v;
-	};
-
-	bool filled; /* A complete filled block */
-	Type type;
-	TexCoord xz;
-	TexCoord y;
-	char[] name;
-};
 
 private {
 	alias BlockDescriptor.Type.Air Air;

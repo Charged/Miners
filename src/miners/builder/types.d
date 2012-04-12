@@ -172,6 +172,31 @@ uvCoord uvCoords[uvManip.SIZE][4][2] = [
 
 
 /**
+ * Describes a block.
+ */
+struct BlockDescriptor {
+	enum Type {
+		Air,       /* you think that air you are breathing? */
+		Block,     /* simple filled block, no data needed to cunstruct it */
+		DataBlock, /* filled block, data needed create*/
+		Stuff,     /* unfilled, data may be needed to create */
+		NA,        /* Unused */
+	}
+
+	static struct TexCoord {
+		ubyte u;
+		ubyte v;
+	};
+
+	bool filled; /* A complete filled block */
+	Type type;
+	TexCoord xz;
+	TexCoord y;
+	char[] name;
+};
+
+
+/**
  * Base struct for all packers.
  */
 struct Packer
