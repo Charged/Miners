@@ -47,9 +47,11 @@ public:
 		opts.viewDistance ~= &setViewDistance;
 	}
 
-	~this() {
+	~this()
+	{
 		delete cvgrm;
 		delete cvgcm;
+		delete builder;
 	}
 
 	abstract void setCenter(int xNew, int zNew);
