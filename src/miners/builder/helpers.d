@@ -80,7 +80,7 @@ bool isNormalZ(sideNormal normal)
 /**
  * Convinience function for texture array
  */
-ubyte calcTextureXZ(BlockDescriptor *dec)
+ubyte calcTextureXZ(BuildBlockDescriptor *dec)
 {
 	return dec.xzTex;
 }
@@ -88,7 +88,7 @@ ubyte calcTextureXZ(BlockDescriptor *dec)
 /**
  * Convinience function for texture array
  */
-ubyte calcTextureY(BlockDescriptor *dec)
+ubyte calcTextureY(BuildBlockDescriptor *dec)
 {
 	return dec.yTex;
 }

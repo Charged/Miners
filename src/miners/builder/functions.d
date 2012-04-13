@@ -22,7 +22,7 @@ import miners.builder.workspace;
 /**
  * Pretty much used for all solid blocks.
  */
-void solidDec(Packer *p, WorkspaceData *data, BlockDescriptor *dec, uint x, uint y, uint z)
+void solidDec(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec, uint x, uint y, uint z)
 {
 	int set = data.getSolidSet(x, y, z);
 
@@ -37,7 +37,7 @@ void solidDec(Packer *p, WorkspaceData *data, BlockDescriptor *dec, uint x, uint
 /**
  * Used for saplings & plants.
  */
-void diagonalSprite(Packer *p, int x, int y, int z, BlockDescriptor *dec)
+void diagonalSprite(Packer *p, int x, int y, int z, BuildBlockDescriptor *dec)
 {
 	auto tex = calcTextureXZ(dec);
 

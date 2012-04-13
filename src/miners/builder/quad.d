@@ -20,7 +20,7 @@ import miners.builder.workspace;
  */
 
 
-void makeY(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
+void makeY(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec,
            uint x, uint y, uint z, sideNormal normal)
 {
 	bool positive = isNormalPositive(normal);
@@ -52,7 +52,7 @@ void makeY(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
 	}
 }
 
-void makeXZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
+void makeXZ(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec,
             uint x, uint y, uint z, sideNormal normal)
 {
 	bool positive = isNormalPositive(normal);
@@ -95,7 +95,7 @@ void makeXZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
 	}
 }
 
-void makeXYZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
+void makeXYZ(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec,
              uint x, uint y, uint z, int set)
 {
 	if (set & sideMask.XN)
@@ -125,7 +125,7 @@ void makeXYZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
  */
 
 
-void makeHalfY(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
+void makeHalfY(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec,
                uint x, uint y, uint z,
                uint height = VERTEX_SIZE_DIVISOR / 2)
 {
@@ -152,7 +152,7 @@ void makeHalfY(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
 		     texture, sideNormal.YP);
 }
 
-void makeHalfXZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
+void makeHalfXZ(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec,
                 uint x, uint y, uint z, sideNormal normal,
                 uint height = VERTEX_SIZE_DIVISOR / 2)
 {
@@ -219,7 +219,7 @@ void makeHalfXZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
 	}
 }
 
-void makeHalfXYZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
+void makeHalfXYZ(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec,
                  uint x, uint y, uint z, int set,
                  uint height = VERTEX_SIZE_DIVISOR / 2)
 {
@@ -243,7 +243,7 @@ void makeHalfXYZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
 }
 
 void makeFacedBlock(Packer *p, WorkspaceData *data,
-                    BlockDescriptor *dec, BlockDescriptor *decFace,
+                    BuildBlockDescriptor *dec, BuildBlockDescriptor *decFace,
                     uint x, uint y, uint z, sideNormal faceNormal, int set)
 {
 
@@ -269,7 +269,7 @@ void makeFacedBlock(Packer *p, WorkspaceData *data,
  */
 
 
-void makeStairXZ(Packer *p, WorkspaceData *data, BlockDescriptor *dec,
+void makeStairXZ(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec,
                  uint x, uint y, uint z, sideNormal normal, bool left)
 {
 	bool positive = isNormalPositive(normal);

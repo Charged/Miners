@@ -174,21 +174,17 @@ uvCoord uvCoords[uvManip.SIZE][4][2] = [
 /**
  * Describes a block.
  */
-struct BlockDescriptor {
-	enum Type {
-		Air,       /* you think that air you are breathing? */
-		Block,     /* simple filled block, no data needed to cunstruct it */
-		DataBlock, /* filled block, data needed create*/
-		Stuff,     /* unfilled, data may be needed to create */
-		NA,        /* Unused */
-	}
-
+struct BuildBlockDescriptor
+{
+public:
 	bool filled; /* A complete filled block */
-	Type type;
+
 	ubyte xzTex;
 	ubyte yTex;
-	char[] name;
 
+	ubyte _pad;
+
+public:
 	static ubyte toTex(int u, int v)
 	{
 		return cast(ubyte)u + v * 16;

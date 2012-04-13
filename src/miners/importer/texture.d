@@ -143,7 +143,7 @@ void setupRedstoneWire(Picture pic) {
 		clearTile(pic, u, v);
 	}
 
-	foreach(BlockDescriptor dec; redstoneWireTile[1]) {
+	foreach(BuildBlockDescriptor dec; redstoneWireTile[1]) {
 		int u = dec.xzTex % 16, v = dec.xzTex / 16;
 		clearTile(pic, u, v);
 	}
@@ -183,12 +183,12 @@ void setupRedstoneWire(Picture pic) {
 	}
 
 	// Color the wire tiles.
-	foreach(BlockDescriptor dec; redstoneWireTile[0]) {
+	foreach(BuildBlockDescriptor dec; redstoneWireTile[0]) {
 		int u = dec.xzTex % 16, v = dec.xzTex / 16;
 		modulateColor(pic, u, v, inactive);
 	}
 
-	foreach(BlockDescriptor dec; redstoneWireTile[1]) {
+	foreach(BuildBlockDescriptor dec; redstoneWireTile[1]) {
 		int u = dec.xzTex % 16, v = dec.xzTex / 16;
 		modulateColor(pic, u, v, active);
 	}
