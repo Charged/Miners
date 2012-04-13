@@ -221,9 +221,9 @@ public:
 		if (empty)
 			return;
 
-		auto ws = WorkspaceData.malloc();
+		auto ws = bt.builder.getWorkspace();
 		scope(exit)
-			ws.free();
+			bt.builder.putWorkspace(ws);
 
 		foreach(int i, v; vbos) {
 			copyToWorkspace(ws, i);

@@ -11,6 +11,10 @@ import miners.builder.workspace;
  */
 interface MeshBuilder
 {
+	WorkspaceData* getWorkspace();
+
+	void putWorkspace(WorkspaceData *ws);
+
 	ChunkVBOCompactMesh update(ChunkVBOCompactMesh vbo, bool indexed,
 	                           WorkspaceData *data,
 	                           int xPos, int yPos, int zPos);

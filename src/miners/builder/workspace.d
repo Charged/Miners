@@ -5,7 +5,7 @@ module miners.builder.workspace;
 import charge.util.memory;
 
 import miners.defines;
-import miners.builder.data;
+import miners.builder.types;
 
 
 /**
@@ -19,9 +19,11 @@ struct WorkspaceData
 	/**
 	 * Allocate a workspace from the C heap.
 	 */
-	static WorkspaceData* malloc()
+	static WorkspaceData* malloc(BuildBlockDescriptor *tile)
 	{
-		return cast(WorkspaceData*)cMalloc(WorkspaceData.sizeof);
+		auto ws = cast(WorkspaceData*)cMalloc(WorkspaceData.sizeof);
+		ws.tile = tile;
+		return ws;
 	}
 
 	/**
@@ -34,7 +36,7 @@ struct WorkspaceData
 
 	void zero()
 	{
-		(cast(ubyte*)this)[0 .. (*this).sizeof] = 0;
+		(cast(ubyte*)this)[0 .. (*this).sizeof - (void*).sizeof] = 0;
 	}
 
 	/*
@@ -55,6 +57,7 @@ struct WorkspaceData
 
 	ubyte blocks[ws_width][ws_depth][ws_height];
 	ubyte data[ws_data_width][ws_data_depth][ws_data_height];
+	BuildBlockDescriptor *tile;
 
 	ubyte opIndex(int x, int y, int z)
 	{

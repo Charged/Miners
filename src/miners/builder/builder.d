@@ -7,6 +7,7 @@ import charge.charge;
 import miners.defines;
 import miners.gfx.vbo;
 
+import miners.builder.data;
 import miners.builder.types;
 import miners.builder.packers;
 import miners.builder.functions;
@@ -127,6 +128,16 @@ public:
 	this(BuildFunction *buildArray)
 	{
 		this.buildArray = buildArray;
+	}
+
+	WorkspaceData* getWorkspace()
+	{
+		return WorkspaceData.malloc(miners.builder.data.tile.ptr);
+	}
+
+	void putWorkspace(WorkspaceData *ws)
+	{
+		ws.free();
 	}
 
 	ChunkVBORigidMesh update(ChunkVBORigidMesh vbo,

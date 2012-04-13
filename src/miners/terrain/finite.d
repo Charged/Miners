@@ -228,7 +228,7 @@ public:
 	 */
 	WorkspaceData* extractWorkspace(int xPos, int yPos, int zPos)
 	{
-		auto ws = WorkspaceData.malloc();
+		auto ws = builder.getWorkspace();
 
 		assert(xPos >= 0 && yPos >= 0 && zPos >= 0);
 
@@ -448,7 +448,7 @@ protected:
 
 		auto ws = extractWorkspace(x, y, z);
 		scope(exit)
-			ws.free();
+			builder.putWorkspace(ws);
 
 		int i = calcVboIndex(x, y, z);
 		GfxVBO v, old = vbos[i];
