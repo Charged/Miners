@@ -3,6 +3,10 @@
 module miners.builder.helpers;
 
 import miners.builder.types;
+import miners.builder.emit;
+import miners.builder.quad;
+import miners.builder.helpers;
+import miners.builder.workspace;
 
 
 /*
@@ -376,4 +380,73 @@ template AOCalculator()
 	auto aoTR = calcAmbient(c5, c7, c8);
 	auto aoTL = calcAmbient(c4, c7, c6);
 	auto aoBL = calcAmbient(c2, c4, c1);
+}
+
+
+/*
+ *
+ * Build helper functions.
+ *
+ */
+
+
+/**
+ * Pretty much used for all solid blocks.
+ */
+void solidDec(Packer *p, WorkspaceData *data, BuildBlockDescriptor *dec, uint x, uint y, uint z)
+{
+	int set = data.getSolidSet(x, y, z);
+
+	/* all set */
+	if (set == 0)
+		return;
+
+	makeXYZ(p, data, dec, x, y, z, set);
+}
+
+
+/**
+ * Used for saplings & plants.
+ */
+void diagonalSprite(Packer *p, int x, int y, int z, BuildBlockDescriptor *dec)
+{
+	auto tex = calcTextureXZ(dec);
+
+	const shift = VERTEX_SIZE_BIT_SHIFT;
+	x <<= shift;
+	y <<= shift;
+	z <<= shift;
+
+	int x1 = x, x2 = x+16;
+	int y1 = y, y2 = y+16;
+	int z1 = z, z2 = z+16;
+
+	emitDiagonalQuads(p, x1, x2, y1, y2, z1, z2, tex);
+}
+
+
+/**
+ * Used for redstone- & regular-torches also for redstone repeaters.
+ *
+ * Coords are shifted.
+ */
+void standingTorch(Packer *p, int x, int y, int z, ubyte tex)
+{
+	// Renders a torch with its center at x,z in shifted coordinates.
+	int x1 = x-8, x2 = x+8;
+	int y1 = y,   y2 = y+16;
+	int z1 = z+1, z2 = z-1;
+
+	emitQuadXZN(p, x1, x2, y1, y2, z2, z2, tex, sideNormal.ZN);
+	emitQuadXZP(p, x1, x2, y1, y2, z1, z1, tex, sideNormal.ZP);
+
+	x1 = x+1; x2 = x-1;
+	z1 = z-8; z2 = z+8;
+
+	emitQuadXZN(p, x2, x2, y1, y2, z1, z2, tex, sideNormal.XN);
+	emitQuadXZP(p, x1, x1, y1, y2, z1, z2, tex, sideNormal.XP);
+
+	// Use center part of the texture as top.
+	emitQuadMappedUVYP(p, x-1, x+1, y+10, z-1, z+1, tex, sideNormal.YP,
+			8 - x % 16, 8 - z % 16 -1, uvManip.NONE);
 }
