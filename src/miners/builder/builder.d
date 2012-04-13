@@ -11,12 +11,13 @@ import miners.builder.types;
 import miners.builder.packers;
 import miners.builder.functions;
 import miners.builder.workspace;
+import miners.builder.interfaces;
 
 
 /**
  * Builds a mesh packed with p from data in data.
  */
-void doBuildMesh(WorkspaceData *data, Packer *p)
+void doBuildMesh(Packer *p, BuildFunction *buildArray, WorkspaceData *data)
 {
 	for (int x; x < BuildWidth; x++) {
 		for (int y; y < BuildHeight; y++) {
@@ -32,6 +33,7 @@ void doBuildMesh(WorkspaceData *data, Packer *p)
  * Update a RigidMesh from a WorkspaceData.
  */
 ChunkVBORigidMesh updateRigidMesh(ChunkVBORigidMesh vbo,
+				  BuildFunction *buildArray,
 				  WorkspaceData *data,
 				  int xPos, int yPos, int zPos,
 				  int xOffArg, int yOffArg, int zOffArg)
@@ -47,7 +49,7 @@ ChunkVBORigidMesh updateRigidMesh(ChunkVBORigidMesh vbo,
 
 	prm.ctor(mb, xOffArg, yOffArg, zOffArg);
 
-	doBuildMesh(data, &prm.base);
+	doBuildMesh(&prm.base, buildArray, data);
 
 	// C memory freed above with scope(exit)
 	if (vbo is null)
@@ -80,6 +82,7 @@ static ~this() {
  * Build and update a CompactMesh from a WorkspaceData.
  */
 ChunkVBOCompactMesh updateCompactMesh(ChunkVBOCompactMesh vbo, bool indexed,
+				      BuildFunction *buildArray,
 				      WorkspaceData *data,
 				      int xPos, int yPos, int zPos,
 				      int xOffArg, int yOffArg, int zOffArg)
@@ -88,7 +91,7 @@ ChunkVBOCompactMesh updateCompactMesh(ChunkVBOCompactMesh vbo, bool indexed,
 
 	pc.ctor(xOffArg, yOffArg, zOffArg, indexed);
 
-	doBuildMesh(data, &pc.base);
+	doBuildMesh(&pc.base, buildArray, data);
 
 	auto verts = pc.getVerts();
 	if (verts.length == 0)
@@ -104,29 +107,47 @@ ChunkVBOCompactMesh updateCompactMesh(ChunkVBOCompactMesh vbo, bool indexed,
 
 /*
  *
- * Offset helper functions
+ * Helper class.
  *
  */
 
 
-ChunkVBORigidMesh updateRigidMesh(ChunkVBORigidMesh vbo,
-				  WorkspaceData *data,
-				  int xPos, int yPos, int zPos)
+class MeshBuilderBuildArray : public MeshBuilder
 {
-	int xOff = xPos * BuildWidth;
-	int yOff = yPos * BuildHeight;
-	int zOff = zPos * BuildDepth;
+public:
+	BuildFunction *buildArray;
 
-	return updateRigidMesh(vbo, data, xPos, yPos, zPos, xOff, yOff, zOff);
-}
 
-ChunkVBOCompactMesh updateCompactMesh(ChunkVBOCompactMesh vbo, bool indexed,
-				      WorkspaceData *data,
-				      int xPos, int yPos, int zPos)
-{
-	int xOff = xPos * BuildWidth;
-	int yOff = yPos * BuildHeight;
-	int zOff = zPos * BuildDepth;
+public:
+	this()
+	{
+		this(&miners.builder.functions.buildArray[0]);
+	}
 
-	return updateCompactMesh(vbo, indexed, data, xPos, yPos, zPos, xOff, yOff, zOff);
+	this(BuildFunction *buildArray)
+	{
+		this.buildArray = buildArray;
+	}
+
+	ChunkVBORigidMesh update(ChunkVBORigidMesh vbo,
+	                         WorkspaceData *data,
+	                         int xPos, int yPos, int zPos)
+	{
+		int xOff = xPos * BuildWidth;
+		int yOff = yPos * BuildHeight;
+		int zOff = zPos * BuildDepth;
+
+		return updateRigidMesh(vbo, buildArray, data, xPos, yPos, zPos, xOff, yOff, zOff);
+	}
+
+	ChunkVBOCompactMesh update(ChunkVBOCompactMesh vbo, bool indexed,
+	                           WorkspaceData *data,
+	                           int xPos, int yPos, int zPos)
+	{
+		int xOff = xPos * BuildWidth;
+		int yOff = yPos * BuildHeight;
+		int zOff = zPos * BuildDepth;
+
+		return updateCompactMesh(vbo, indexed, buildArray, data, xPos, yPos, zPos, xOff, yOff, zOff);
+	}
 }

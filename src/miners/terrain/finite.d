@@ -10,8 +10,8 @@ import miners.options;
 import miners.gfx.vbo;
 import miners.gfx.imports;
 import miners.terrain.common;
-import miners.builder.builder;
 import miners.builder.workspace;
+import miners.builder.interfaces;
 
 
 /**
@@ -64,6 +64,7 @@ protected:
 
 public:
 	this(GameWorld w, Options opts,
+	     MeshBuilder builder,
 	     int x, int y, int z,
 	     bool useClassicTerrain)
 	{
@@ -107,7 +108,7 @@ public:
 		blocks = store.ptr;
 		data = store.ptr + sizeBlocks;
 
-		super(w, opts, useClassicTerrain);
+		super(w, opts, builder, useClassicTerrain);
 	}
 
 	~this()
@@ -455,12 +456,12 @@ protected:
 
 		if (cvgcm !is null) {
 			auto cm = cast(ChunkVBOCompactMesh)old;
-			v = updateCompactMesh(cm, buildIndexed, ws, x, y, z);
+			v = builder.update(cm, buildIndexed, ws, x, y, z);
 			g = cvgcm;
 
 		} else if (cvgrm !is null) {
 			auto rm = cast(ChunkVBORigidMesh)old;
-			v = updateRigidMesh(rm, ws, x, y, z);
+			v = builder.update(rm, ws, x, y, z);
 			g = cvgrm;
 		}
 

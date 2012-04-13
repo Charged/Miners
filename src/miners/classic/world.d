@@ -9,6 +9,7 @@ import miners.types;
 import miners.world;
 import miners.options;
 import miners.terrain.finite;
+import miners.builder.builder;
 import miners.importer.classic;
 import miners.importer.converter;
 
@@ -77,7 +78,9 @@ public:
 		delete ft;
 		t = ft = null;
 
-		t = ft = new FiniteTerrain(this, opts, x, y, z, true);
+		auto builder = new MeshBuilderBuildArray();
+
+		t = ft = new FiniteTerrain(this, opts, builder, x, y, z, true);
 	}
 
 	/**

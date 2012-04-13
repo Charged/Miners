@@ -8,10 +8,11 @@ import charge.charge;
 
 import miners.world;
 import miners.options;
-import miners.builder.data;
 import miners.terrain.beta;
 import miners.terrain.chunk;
 import miners.terrain.common;
+import miners.builder.data;
+import miners.builder.builder;
 import miners.importer.info;
 import miners.importer.blocks;
 
@@ -32,7 +33,8 @@ public:
 		this.dir = info ? info.dir : null;
 		super(opts);
 
-		t = bt = new BetaTerrain(this, opts, &newChunk);
+		auto builder = new MeshBuilderBuildArray();
+		t = bt = new BetaTerrain(this, opts, &newChunk, builder);
 
 		// Find the actuall spawn height
 		auto x = cast(int)spawn.x;

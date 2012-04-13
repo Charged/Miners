@@ -9,6 +9,7 @@ import charge.charge;
 import miners.types;
 import miners.options;
 import miners.gfx.vbo;
+import miners.builder.interfaces;
 
 
 class Terrain : public GameActor
@@ -17,6 +18,7 @@ public:
 	ChunkVBOGroupRigidMesh cvgrm;
 	ChunkVBOGroupCompactMesh cvgcm;
 	bool buildIndexed; // The renderer supports array textures.
+	MeshBuilder builder;
 	bool useClassicTexture;
 
 protected:
@@ -28,10 +30,11 @@ private:
 	mixin SysLogging;
 
 public:
-	this(GameWorld w, Options opts, bool useClassicTexture)
+	this(GameWorld w, Options opts, MeshBuilder builder, bool useClassicTexture)
 	{
 		super(w);
 		this.opts = opts;
+		this.builder = builder;
 		this.useClassicTexture = useClassicTexture;
 
 		// Setup the groups

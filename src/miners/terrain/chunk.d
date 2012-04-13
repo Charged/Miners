@@ -12,9 +12,8 @@ import miners.gfx.vbo;
 import miners.gfx.imports;
 import miners.gfx.renderer;
 import miners.terrain.beta;
-import miners.builder.data;
-import miners.builder.builder;
 import miners.builder.workspace;
+import miners.builder.interfaces;
 
 
 class Chunk
@@ -230,13 +229,13 @@ public:
 			copyToWorkspace(ws, i);
 
 			if (bt.cvgrm !is null) {
-				v = updateRigidMesh(null, ws, xPos, yPos+i, zPos);
+				v = bt.builder.update(null, ws, xPos, yPos+i, zPos);
 				if (v !is null)
 					bt.cvgrm.add(v, xPos, yPos+i, zPos);
 			}
 
 			if (bt.cvgcm !is null) {
-				v = updateCompactMesh(null, bt.buildIndexed, ws, xPos, yPos+i, zPos);
+				v = bt.builder.update(null, bt.buildIndexed, ws, xPos, yPos+i, zPos);
 				if (v !is null)
 					bt.cvgcm.add(v, xPos, yPos+i, zPos);
 			}

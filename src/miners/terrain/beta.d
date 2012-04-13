@@ -10,6 +10,7 @@ import miners.types;
 import miners.options;
 import miners.terrain.chunk;
 import miners.terrain.common;
+import miners.builder.interfaces;
 
 
 final class BetaTerrain : public Terrain
@@ -30,11 +31,11 @@ public:
 	NewChunkDg newChunkDg;
 
 public:
-	this(GameWorld w, Options opts, NewChunkDg dg)
+	this(GameWorld w, Options opts, NewChunkDg dg, MeshBuilder builder)
 	{
 		this.rxOff = 0;
 		this.rzOff = 0;
-		super(w, opts, false);
+		super(w, opts, builder, false);
 
 		assert(dg !is null);
 
