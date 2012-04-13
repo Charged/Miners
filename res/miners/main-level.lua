@@ -27,6 +27,7 @@ local Block = _G.miners.Block
 local light = _G.light
 local world = _G.world
 local camera = _G.camera
+local terrain = _G.terrain
 local options = _G.options
 
 
