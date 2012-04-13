@@ -41,6 +41,11 @@ private:
 public:
 	this(Router r, Options opts, char[] file)
 	{
+		if (file is null)
+			file = "a.dcpu16";
+
+		auto mem = cast(ushort[])std.file.read(file);
+
 		super(r, opts, new ClassicWorld(opts));
 
 		c = Dcpu_Create();
@@ -48,10 +53,6 @@ public:
 		cpuRunning = true;
 		Dcpu_SetSysCall(c, &cPrintf, 2, cast(void*)this);
 
-		if (file is null)
-			file = "a.dcpu16";
-
-		auto mem = cast(ushort[])std.file.read(file);
 		Dcpu_GetRam(c)[0 .. mem.length] = mem;
 
 		d = new GfxDraw();
@@ -63,8 +64,13 @@ public:
 
 	~this()
 	{
-		Dcpu_Destroy(&c);
-		ct.destruct();
+		if (c !is null)
+			Dcpu_Destroy(&c);
+
+		if (ct !is null) {
+			ct.destruct();
+			ct = null;
+		}
 	}
 
 	void render()

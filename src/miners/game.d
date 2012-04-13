@@ -755,11 +755,20 @@ protected:
 
 	void chargeIon()
 	{
+		Runner r;
+
+		try {
+			r = new IonRunner(this, opts, null);
+		} catch (Exception e) {
+			menu.displayError(e, false);
+			return;
+		}
+
 		// Close the menu and old runner.
 		menu.closeMenu();
 		deleteMe(runner);
 
-		switchTo(new IonRunner(this, opts, null));
+		switchTo(r);
 	}
 
 	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
