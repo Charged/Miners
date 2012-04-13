@@ -27,7 +27,6 @@ import miners.classic.message;
 import miners.classic.connection;
 import miners.classic.interfaces;
 import miners.importer.network;
-import miners.importer.converter;
 
 
 /**
@@ -420,9 +419,7 @@ public:
 			if (numBlocks <= 2)
 				return false;
 
-			convertClassicToBeta(cast(ubyte)currentBlock, b.type, b.meta);
-
-			w.t[xLast, yLast, zLast] = b;
+			w.t[xLast, yLast, zLast] = Block(cast(ubyte)currentBlock, 0);
 			w.t.markVolumeDirty(xLast, yLast, zLast, 1, 1, 1);
 			w.t.resetBuild();
 
@@ -462,19 +459,15 @@ public:
 			if (b.type == 0)
 				return true;
 
-			// See which block that match
-			foreach(int i, info; classicBlocks) {
-				if (b.type != info.type ||
-				    b.meta != info.meta)
-					continue;
-
-				if (!info.placable)
-					return false;
-
-				currentBlock = i;
-
+			if (b.type >= classicBlocks.length)
 				return false;
-			}
+
+			auto info = classicBlocks[b.type];
+
+			if (!info.placable)
+				return false;
+
+			currentBlock = b.type;
 
 			return false;
 		}
@@ -556,10 +549,7 @@ public:
 
 	void setBlock(short x, short y, short z, ubyte type)
 	{
-		Block block;
-
-		convertClassicToBeta(type, block.type, block.meta);
-		w.t[x, y, z] = block;
+		w.t[x, y, z] = Block(type, 0);
 		w.t.markVolumeDirty(x, y, z, 1, 1, 1);
 		w.t.resetBuild();
 	}

@@ -10,11 +10,10 @@ import charge.math.noise;
 
 import miners.world;
 import miners.options;
+import miners.builder.beta;
 import miners.terrain.beta;
 import miners.terrain.chunk;
 import miners.terrain.common;
-import miners.builder.data;
-import miners.builder.builder;
 import miners.importer.info;
 
 
@@ -32,7 +31,7 @@ public:
 		this.spawn = Point3d(-10, 64, -10);
 		super(opts);
 
-		auto builder = new MeshBuilderBuildArray();
+		auto builder = new BetaMeshBuilder();
 		t = bt = new BetaTerrain(this, opts, &newChunk, builder);
 
 		// Find the actuall spawn height

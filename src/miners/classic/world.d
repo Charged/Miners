@@ -9,9 +9,8 @@ import miners.types;
 import miners.world;
 import miners.options;
 import miners.terrain.finite;
-import miners.builder.builder;
+import miners.builder.classic;
 import miners.importer.classic;
-import miners.importer.converter;
 
 
 /**
@@ -78,7 +77,7 @@ public:
 		delete ft;
 		t = ft = null;
 
-		auto builder = new MeshBuilderBuildArray();
+		auto builder = new ClassicMeshBuilder();
 
 		t = ft = new FiniteTerrain(this, opts, builder, x, y, z, true);
 	}
@@ -98,38 +97,18 @@ public:
 		auto p = ft.getTypePointerUnsafe(0, 0, 0);
 		auto pm = ft.getMetaPointerUnsafe(0, 0, 0);
 
+		pm[0 .. ft.sizeData] = 0;
+
 		// Flip & convert the world
 		for (int z; z < zSize; z++) {
 			for (int x; x < xSize; x++) {
 				auto src = &data[(zSize*0 + z) * xSize + x];
 
 				for (int y; y < ySize; y++) {
-					ubyte block, meta;
-					convertClassicToBeta(*src, block, meta);
-
-					*p = block;
-
-					// Should we shift the meta data to the higher coords.
-					int shift = (4 * (y % 2));
-
-					// Get the mask of bits we need to mask out,
-					// data is uninitialized.
-					ubyte mask = cast(ubyte)~(0xf << shift);
-
-					// Mask out old bits and mask in new.
-					*pm = (*pm & mask) | meta << shift;
+					*p = *src;
 
 					p += 1;
-					pm += y % 2;
 					src += ySrcStride;
-				}
-
-				// If height is uneaven we need to increment
-				// this. Also remove uninitialized bits in the
-				// high part of the bytes.
-				if (ySize % 2) {
-					(*pm) &= 0xf;
-					pm++;
 				}
 			}
 		}
@@ -164,9 +143,7 @@ public:
 		}
 
 		for (ubyte i; i < 50; i++) {
-			ubyte block, meta;
-			convertClassicToBeta(i, block, meta);
-			ct[32+i, 67, 32] = Block(block, meta);
+			ct[32+i, 67, 32] = Block(i, 0);
 		}
 	}
 }

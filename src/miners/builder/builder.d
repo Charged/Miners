@@ -2,15 +2,11 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.builder;
 
-import charge.charge;
-
 import miners.defines;
 import miners.gfx.vbo;
 
-import miners.builder.data;
 import miners.builder.types;
 import miners.builder.packers;
-import miners.builder.functions;
 import miners.builder.workspace;
 import miners.builder.interfaces;
 
@@ -117,22 +113,18 @@ class MeshBuilderBuildArray : public MeshBuilder
 {
 public:
 	BuildFunction *buildArray;
-
+	BuildBlockDescriptor *tile;
 
 public:
-	this()
-	{
-		this(&miners.builder.functions.buildArray[0]);
-	}
-
-	this(BuildFunction *buildArray)
+	this(BuildFunction *buildArray, BuildBlockDescriptor *tile)
 	{
 		this.buildArray = buildArray;
+		this.tile = tile;
 	}
 
 	WorkspaceData* getWorkspace()
 	{
-		return WorkspaceData.malloc(miners.builder.data.tile.ptr);
+		return WorkspaceData.malloc(tile);
 	}
 
 	void putWorkspace(WorkspaceData *ws)

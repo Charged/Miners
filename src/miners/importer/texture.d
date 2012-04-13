@@ -10,7 +10,8 @@ import charge.math.picture;
 
 import miners.classic.data;
 import miners.builder.types;
-import miners.builder.data;
+import miners.builder.beta;
+import miners.builder.classic;
 import miners.importer.folders;
 
 
@@ -59,7 +60,7 @@ void manipulateTextureClassic(Picture pic)
 	tile_y *= tile_size;
 
 	for (int i; i < 15; i++) {
-		auto t = &classicWoolTile[i];
+		auto t = &miners.builder.classic.tile[i+21];
 		int u = t.xzTex % 16, v = t.xzTex / 16;
 		copyTile(pic, 0, 4, u, v);
 		modulateColor(pic, u, v, classicWoolColors[i]);

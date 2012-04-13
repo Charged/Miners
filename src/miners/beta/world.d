@@ -11,8 +11,7 @@ import miners.options;
 import miners.terrain.beta;
 import miners.terrain.chunk;
 import miners.terrain.common;
-import miners.builder.data;
-import miners.builder.builder;
+import miners.builder.beta;
 import miners.importer.info;
 import miners.importer.blocks;
 
@@ -33,7 +32,7 @@ public:
 		this.dir = info ? info.dir : null;
 		super(opts);
 
-		auto builder = new MeshBuilderBuildArray();
+		auto builder = new BetaMeshBuilder();
 		t = bt = new BetaTerrain(this, opts, &newChunk, builder);
 
 		// Find the actuall spawn height

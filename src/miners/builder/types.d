@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.types;
 
+import miners.builder.workspace;
+
 
 /*
  *
@@ -190,6 +192,9 @@ public:
 		return cast(ubyte)u + v * 16;
 	}
 };
+
+
+alias void function(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data) BuildFunction;
 
 
 /**
