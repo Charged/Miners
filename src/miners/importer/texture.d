@@ -60,8 +60,9 @@ void manipulateTextureClassic(Picture pic)
 
 	for (int i; i < 15; i++) {
 		auto t = &classicWoolTile[i];
-		copyTile(pic, 0, 4, t.xz.u, t.xz.v);
-		modulateColor(pic, t.xz.u, t.xz.v, classicWoolColors[i]);
+		int u = t.xzTex % 16, v = t.xzTex / 16;
+		copyTile(pic, 0, 4, u, v);
+		modulateColor(pic, u, v, classicWoolColors[i]);
 	}
 }
 
@@ -132,43 +133,65 @@ void setupRedstoneWire(Picture pic) {
 	auto inactive = Color4b(65, 0, 0, 155);
 
 	// Clear tiles.
-	auto tile = redstoneWireTile[0][RedstoneWireType.Corner];
-	clearTile(pic, tile.xz.u, tile.xz.v);
-	tile = redstoneWireTile[0][RedstoneWireType.Tjunction];
-	clearTile(pic, tile.xz.u, tile.xz.v);
+	{
+		int u, v;
+		auto tile = redstoneWireTile[0][RedstoneWireType.Corner];
+		u = tile.xzTex % 16; v = tile.xzTex / 16;
+		clearTile(pic, u, v);
+		tile = redstoneWireTile[0][RedstoneWireType.Tjunction];
+		u = tile.xzTex % 16; v = tile.xzTex / 16;
+		clearTile(pic, u, v);
+	}
 
-	foreach(BlockDescriptor dec; redstoneWireTile[1])
-		clearTile(pic, dec.xz.u, dec.xz.v);
+	foreach(BlockDescriptor dec; redstoneWireTile[1]) {
+		int u = dec.xzTex % 16, v = dec.xzTex / 16;
+		clearTile(pic, u, v);
+	}
+
 
 	// Create corner (2 connections) tile and T-form (3 connections) tile
 	// from the crossover tile.
-	auto src = redstoneWireTile[0][RedstoneWireType.Crossover];
-	auto corner_dst = redstoneWireTile[0][RedstoneWireType.Corner];
-	auto tjunction_dst = redstoneWireTile[0][RedstoneWireType.Tjunction];
+	{
+		auto src = redstoneWireTile[0][RedstoneWireType.Crossover];
+		auto corner_dst = redstoneWireTile[0][RedstoneWireType.Corner];
+		auto tjunction_dst = redstoneWireTile[0][RedstoneWireType.Tjunction];
 
-	// AFAIK there are no non-square tile maps.
-	uint tile_size = pic.width / 16;
-	int h = tile_size / 2;
-	int f = tile_size;
-	copyTilePart(pic, src.xz.u*f, src.xz.v*f+h, f-h, f-h,
-			corner_dst.xz.u*f, corner_dst.xz.v*f+h);
+		// AFAIK there are no non-square tile maps.
+		uint tile_size = pic.width / 16;
+		int h = tile_size / 2;
+		int f = tile_size;
+		int uSrc = src.xzTex % 16, vSrc = src.xzTex / 16;
+		int uCornerDst = corner_dst.xzTex % 16;
+		int vCornerDst = corner_dst.xzTex / 16;
+		int uTjunctionDst = tjunction_dst.xzTex % 16;
+		int vTjunctionDst = tjunction_dst.xzTex / 16;
 
-	copyTilePart(pic, src.xz.u*f, src.xz.v*f, f-h, f,
-			tjunction_dst.xz.u*f, tjunction_dst.xz.v*f);
+		copyTilePart(pic, uSrc*f, vSrc*f+h, f-h, f-h,
+		             uCornerDst*f, vCornerDst*f+h);
+
+		copyTilePart(pic, uSrc*f, vSrc*f, f-h, f,
+		             uTjunctionDst*f, vTjunctionDst*f);
+	}
 
 	// Copy all four wire tiles.
 	for (int i = 0; i < 4; i++) {
-		src = redstoneWireTile[0][i];
+		auto src = redstoneWireTile[0][i];
 		auto dst = redstoneWireTile[1][i];
-		copyTile(pic, src.xz.u, src.xz.v, dst.xz.u, dst.xz.v);
+		int uSrc = src.xzTex % 16, vSrc = src.xzTex / 16;
+		int uDst = dst.xzTex % 16, vDst = dst.xzTex / 16;
+		copyTile(pic, uSrc, vSrc, uDst, vDst);
 	}
 
 	// Color the wire tiles.
-	foreach(BlockDescriptor dec; redstoneWireTile[0])
-		modulateColor(pic, dec.xz.u, dec.xz.v, inactive);
+	foreach(BlockDescriptor dec; redstoneWireTile[0]) {
+		int u = dec.xzTex % 16, v = dec.xzTex / 16;
+		modulateColor(pic, u, v, inactive);
+	}
 
-	foreach(BlockDescriptor dec; redstoneWireTile[1])
-		modulateColor(pic, dec.xz.u, dec.xz.v, active);
+	foreach(BlockDescriptor dec; redstoneWireTile[1]) {
+		int u = dec.xzTex % 16, v = dec.xzTex / 16;
+		modulateColor(pic, u, v, active);
+	}
 }
 
 void blendColor(Picture pic, uint tile_x, uint tile_y, Color4b color)

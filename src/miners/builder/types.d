@@ -183,16 +183,16 @@ struct BlockDescriptor {
 		NA,        /* Unused */
 	}
 
-	static struct TexCoord {
-		ubyte u;
-		ubyte v;
-	};
-
 	bool filled; /* A complete filled block */
 	Type type;
-	TexCoord xz;
-	TexCoord y;
+	ubyte xzTex;
+	ubyte yTex;
 	char[] name;
+
+	static ubyte toTex(int u, int v)
+	{
+		return cast(ubyte)u + v * 16;
+	}
 };
 
 

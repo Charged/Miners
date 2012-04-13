@@ -82,7 +82,7 @@ bool isNormalZ(sideNormal normal)
  */
 ubyte calcTextureXZ(BlockDescriptor *dec)
 {
-	return cast(ubyte)(dec.xz.u + 16 * dec.xz.v);
+	return dec.xzTex;
 }
 
 /**
@@ -90,7 +90,7 @@ ubyte calcTextureXZ(BlockDescriptor *dec)
  */
 ubyte calcTextureY(BlockDescriptor *dec)
 {
-	return cast(ubyte)(dec.y.u + 16 * dec.y.v);
+	return dec.yTex;
 }
 
 /**
