@@ -15,8 +15,6 @@ struct ClassicBlockInfo {
 
 /**
  * Table holding information about beta blocks.
- *
- * XXX: Comfirm which blocks that doesn't match.
  */
 ClassicBlockInfo classicBlocks[50] = [
 	{ false, "Air" },               // 0
