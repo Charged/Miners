@@ -20,7 +20,7 @@ import robbers.actors.cube;
 
 bool running = false;
 
-class Game : NetConnectionListener
+class Game : GameApp, NetConnectionListener
 {
 private:
 	mixin SysLogging;
@@ -65,6 +65,8 @@ public:
 		stepLength = 10;
 
 		parseArgs(arg);
+
+		super(coreFlag.AUTO);
 
 		basePackage = SysZipFile("base.ch7");
 
