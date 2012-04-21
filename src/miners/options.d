@@ -50,6 +50,9 @@ public:
 	 */
 
 
+	GfxTexture blackTexture;
+	GfxTexture whiteTexture;
+
 	GfxSimpleSkeleton.VBO playerSkeleton;
 	alias PlayerModelData.bones playerBones;
 
@@ -96,11 +99,15 @@ public:
 	this()
 	{
 		playerSkeleton = GfxSimpleSkeleton.VBO(PlayerModelData.verts);
+		blackTexture = GfxColorTexture(Color4f.Black);
+		whiteTexture = GfxColorTexture(Color4f.White);
 	}
 
 	~this()
 	{
 		sysReference(&playerSkeleton, null);
+		sysReference(&blackTexture, null);
+		sysReference(&whiteTexture, null);
 
 		terrain.destruct();
 		renderer.destruct();
