@@ -95,6 +95,8 @@ protected:
 		glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, false, size, dataOffset); // data
 
 		glBindVertexArrayCHARGE(0);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
 }

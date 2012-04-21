@@ -150,6 +150,8 @@ public:
 			glVertexAttribPointer(2, 4, GL_FLOAT, false, size, normalOffset);   // normal + bone
 
 			glBindVertexArrayCHARGE(0);
+
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 		}
 
 		final void draw()

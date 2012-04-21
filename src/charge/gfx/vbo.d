@@ -246,6 +246,9 @@ public:
 
 		// Restore default
 		glBindVertexArrayCHARGE(0);
+
+		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
 	/**
