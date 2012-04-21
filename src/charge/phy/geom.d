@@ -38,6 +38,7 @@ public:
 
 private:
 	mixin Logging;
+	RigidMesh rigidMesh;
 	dTriMeshDataID mesh;
 
 public:
@@ -65,13 +66,18 @@ public:
 		return ret;
 	}
 
-	~this() {
+	~this()
+	{
+		Resource.reference(&rigidMesh, null);
 		dGeomTriMeshDataDestroy(mesh);
 	}
 
 protected:
-	this(Pool p, char[] filename, RigidMesh mesh) {
+	this(Pool p, char[] filename, RigidMesh mesh)
+	{
 		super(p, uri, filename);
+
+		Resource.reference(&rigidMesh, mesh);
 
 		this.mesh = dGeomTriMeshDataCreate();
 		dGeomTriMeshDataBuildSingle(
@@ -88,7 +94,8 @@ private:
 	dTriMeshDataID mesh_data;
 
 public:
-	this(char[] filename) {
+	this(char[] filename)
+	{
 		data = GeomMeshData(filename);
 
 		if (data is null)
@@ -98,9 +105,9 @@ public:
 		dGeomSetData(geom, null);
 	}
 
-	~this() {
+	~this()
+	{
 		dGeomDestroy(geom);
 		Resource.reference(&data, null);
 	}
-
 }
