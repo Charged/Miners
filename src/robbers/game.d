@@ -425,6 +425,8 @@ private:
 
 		r.render(w.camera, w.gfx);
 
+		d.start();
+
 		/* Draw the sidebar and text */
 		int x, y;
 		x = rt.width - sidebar.width - 2;
@@ -476,6 +478,7 @@ private:
 			y += 11;
 		}
 */
+		d.stop();
 		rt.swap();
 	}
 }
