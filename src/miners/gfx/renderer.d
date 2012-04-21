@@ -371,6 +371,8 @@ public:
 	 */
 
 	const char[] materialFragForward = "
+#version 120
+
 uniform sampler2D diffuseTex;
 
 uniform vec3 lightDir;
@@ -403,6 +405,7 @@ void main()
 ";
 
 	const char[] materialFragForwardIndexed = "
+#version 120
 #extension GL_EXT_texture_array : require
 
 uniform sampler2DArray diffuseTex;
@@ -437,6 +440,7 @@ void main()
 ";
 
 	const char[] materialFragDeferred = "
+#version 120
 #extension GL_EXT_texture_array : require
 
 uniform sampler2DArray diffuseTex;
@@ -463,6 +467,8 @@ void main()
 	 */
 
 	const char[] materialVertCompactMesh = "
+#version 120
+
 uniform vec4 normals[10];
 uniform vec4 uv_mixs[10];
 
@@ -488,6 +494,8 @@ void main()
 ";
 
 	const char[] materialVertCompactMeshIndexed = "
+#version 120
+
 varying vec3 normal;
 varying float light;
 varying vec3 uvi;

@@ -47,8 +47,8 @@ public:
 		checked = true;
 
 		try {
-			if (!GL_VERSION_2_0)
-				throw new Exception("GL_VERSION < 2.0");
+			if (!GL_VERSION_2_1)
+				throw new Exception("GL_VERSION < 2.1");
 
 			if (!GL_ARB_vertex_buffer_object)
 				throw new Exception("ARB VBO extension not available");
@@ -237,6 +237,8 @@ protected:
 	 */
 
 	const char[] materialFragTex = "
+#version 120
+
 uniform sampler2D diffuseTex;
 
 uniform vec3 lightDir;
@@ -265,6 +267,8 @@ void main()
 ";
 
 	const char[] materialFragBlack = "
+#version 120
+
 varying vec3 normal;
 varying vec2 uv;
 
@@ -287,6 +291,8 @@ void main()
 	 */
 
 	const char[] materialVertMesh = "
+#version 120
+
 varying vec3 normal;
 varying vec2 uv;
 
@@ -303,6 +309,8 @@ void main()
 ";
 
 	const char[] materialVertSkel = "
+#version 120
+
 varying vec3 normal;
 varying vec2 uv;
 

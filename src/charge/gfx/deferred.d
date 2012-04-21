@@ -65,13 +65,15 @@ public:
 		checked = true;
 
 		try {
-			if (!GL_VERSION_2_0)
-				throw new Exception("GL_VERSION < 2.0");
+			if (!GL_VERSION_2_1)
+				throw new Exception("GL_VERSION < 2.1");
 
 			if (!GL_EXT_geometry_shader4)
 				throw new Exception("GL_EXT_geometry_shader4 not supported");
 			if (!GL_EXT_texture_array)
 				throw new Exception("GL_EXT_texture_array not supported");
+			//if (!GL_EXT_gpu_shader4)
+			//	throw new Exception("GL_EXT_gpu_shader4 not supported");
 
 			auto t = new DeferredTarget(64, 48);
 			auto dep1 = new DepthTargetArray(1024, 1024, 2);
@@ -1068,6 +1070,8 @@ protected:
 
 
 	const char[] material_shader_mesh_vert = "
+#version 120
+
 varying vec2 uv;
 varying vec3 normal;
 
@@ -1084,6 +1088,8 @@ void main()
 ";
 
 	const char[] material_shader_skel_vert = "
+#version 120
+
 varying vec3 normal;
 varying vec2 uv;
 
@@ -1124,6 +1130,8 @@ void main()
 ";
 
 	const char[] material_shader_tex_frag = "
+#version 120
+
 uniform sampler2D diffuseTex;
 
 varying vec2 uv;
@@ -1137,6 +1145,8 @@ void main()
 ";
 
 	const char[] material_shader_fake_frag = "
+#version 120
+
 uniform sampler2D diffuseTex;
 
 varying vec2 uv;
@@ -1154,6 +1164,8 @@ void main()
 ";
 
 	const char[] material_shader_color_frag = "
+#version 120
+
 uniform vec4 color;
 
 varying vec3 normal;
@@ -1166,6 +1178,8 @@ void main()
 ";
 
 	const char[] deferred_base_vert = "
+#version 120
+
 void main()
 {
 	/* Both matrixes are identity so just copy the position */
@@ -1174,6 +1188,8 @@ void main()
 ";
 
 	const char[] spotlight_shader_frag = "
+#version 120
+
 uniform vec2 screen;
 uniform sampler2D colorTex;
 uniform sampler2D normalTex;
@@ -1220,6 +1236,8 @@ void main()
 ";
 
 	const char[] pointlight_shader_frag = "
+#version 120
+
 uniform vec2 screen;
 uniform sampler2D colorTex;
 uniform sampler2D normalTex;
@@ -1262,6 +1280,9 @@ void main()
 ";
 
 	const char[] pointlight_shader_geom = "
+#version 120
+#extension GL_EXT_geometry_shader4 : require
+
 uniform float near_clip;
 
 varying in vec3 position[1];
@@ -1319,6 +1340,8 @@ void main() {
 ";
 
 	const char[] pointlight_shader_vertex = "
+#version 120
+
 varying float size;
 varying vec3 position;
 varying vec3 diffuse;
@@ -1332,6 +1355,8 @@ void main() {
 ";
 
 	const char[] directionlight_shader_frag = "
+#version 120
+
 uniform vec2 screen;
 uniform sampler2D colorTex;
 uniform sampler2D normalTex;
@@ -1362,8 +1387,8 @@ void main()
 
 	const char[] directionlight_split_shader_frag = "
 #version 120
-#extension GL_EXT_texture_array : enable
-#extension GL_EXT_gpu_shader4 : enable
+#extension GL_EXT_gpu_shader4 : require
+#extension GL_EXT_texture_array : require
 
 uniform vec2 screen;
 uniform sampler2D colorTex;
@@ -1438,8 +1463,8 @@ void main()
 
 	const char[] directionlight_iso_shader_frag = "
 #version 120
-#extension GL_EXT_texture_array : enable
-#extension GL_EXT_gpu_shader4 : enable
+#extension GL_EXT_gpu_shader4 : require
+#extension GL_EXT_texture_array : require
 
 uniform vec2 screen;
 uniform sampler2D colorTex;
@@ -1497,6 +1522,8 @@ void main()
 ";
 
 	const char[] fog_shader_frag = "
+#version 120
+
 uniform vec2 screen;
 uniform sampler2D depthTex;
 uniform mat4 projectionMatrixInverse;
