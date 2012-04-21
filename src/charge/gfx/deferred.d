@@ -31,7 +31,7 @@ private:
 	mixin Logging;
 
 	DeferredTarget deferredTarget;
-	DepthTargetArray depthTarget;
+	DepthTargetArray depthTargetArray;
 
 	enum matShdr {
 		TEX,
@@ -191,7 +191,7 @@ public:
 	{
 		assert(initilized);
 
-		depthTarget = new DepthTargetArray(2048, 2048, 4);
+		depthTargetArray = new DepthTargetArray(2048, 2048, 4);
 
 		// If we where to fail to allocate the depthtarget for some reason
 		// and throw a error and we allocated the spotlight texture before
@@ -524,8 +524,8 @@ protected:
 		glGetDoublev(GL_MODELVIEW_MATRIX, mat.array.ptr);
 		mat.transpose();
 		auto p = mat * Point3d(0.0, 0.0, 0.0);
-		double tx = p.x % ((radius*2) / depthTarget.width);
-		double ty = p.y % ((radius*2) / depthTarget.height);
+		double tx = p.x % ((radius*2) / depthTargetArray.width);
+		double ty = p.y % ((radius*2) / depthTargetArray.height);
 
 		glLoadIdentity();
 		glTranslated(-tx, -ty, 0);
@@ -562,8 +562,8 @@ protected:
 		glEnable(GL_POLYGON_OFFSET_FILL);
 
 		for (int i; i < num_splits; i++) {
-			depthTarget.setTarget(i);
-			glViewport(0, 0, depthTarget.width, depthTarget.height);
+			depthTargetArray.setTarget(i);
+			glViewport(0, 0, depthTargetArray.width, depthTargetArray.height);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			setDirSplitMatrices(dl, cam, nears[i], fars[i]);
 			// XXX better position.
@@ -590,7 +590,7 @@ protected:
 
 		glActiveTexture(GL_TEXTURE3);
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, depthTarget.depthArray);
+		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, depthTargetArray.depthArray);
 		glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT,
 		                GL_TEXTURE_COMPARE_MODE,
 		                GL_COMPARE_R_TO_TEXTURE);
@@ -711,8 +711,8 @@ protected:
 		glGetDoublev(GL_MODELVIEW_MATRIX, mat.array.ptr);
 		mat.transpose();
 		auto tweekP = mat * Point3d(0.0, 0.0, 0.0);
-		double tx = tweekP.x % (width / depthTarget.width);
-		double ty = tweekP.y % (height / depthTarget.height);
+		double tx = tweekP.x % (width / depthTargetArray.width);
+		double ty = tweekP.y % (height / depthTargetArray.height);
 
 		glLoadIdentity();
 		glTranslated(-tx, -ty, 0);
@@ -744,8 +744,8 @@ protected:
 		glEnable(GL_POLYGON_OFFSET_FILL);
 
 		{
-			depthTarget.setTarget(0);
-			glViewport(0, 0, depthTarget.width, depthTarget.height);
+			depthTargetArray.setTarget(0);
+			glViewport(0, 0, depthTargetArray.width, depthTargetArray.height);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			setDirIsoMatricies(dl, cam, view, proj);
 			renderShadowLoop(dl.position, cam, w);
@@ -771,7 +771,7 @@ protected:
 
 		glActiveTexture(GL_TEXTURE3);
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, depthTarget.depthArray);
+		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, depthTargetArray.depthArray);
 		glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT,
 		                GL_TEXTURE_COMPARE_MODE,
 		                GL_COMPARE_R_TO_TEXTURE);
