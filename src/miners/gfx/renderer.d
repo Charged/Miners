@@ -269,7 +269,7 @@ protected:
 		glUseProgram(0);
 	}
 
-	void renderShadowLoop(Point3d pos, GfxCamera cam, GfxWorld w)
+	void renderShadowLoop(Point3d pos, GfxWorld w)
 	{
 		auto cull = new GfxCull(pos);
 		auto rq = new GfxRenderQueue();

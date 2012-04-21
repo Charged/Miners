@@ -382,7 +382,7 @@ protected:
 	 * Render all shadow casting actors as shadow casters into
 	 * the currently set render target.
 	 */
-	void renderShadowLoop(Point3d pos, Camera cam, World w)
+	void renderShadowLoop(Point3d pos, World w)
 	{
 		auto cull = new Cull(pos);
 		auto rq = new RenderQueue();
@@ -567,7 +567,7 @@ protected:
 			glClear(GL_DEPTH_BUFFER_BIT);
 			setDirSplitMatrices(dl, cam, nears[i], fars[i]);
 			// XXX better position.
-			renderShadowLoop(dl.position, cam, w);
+			renderShadowLoop(dl.position, w);
 			getSceneViewToProjMatrix(view, mat[i]);
 		}
 
@@ -748,7 +748,7 @@ protected:
 			glViewport(0, 0, depthTargetArray.width, depthTargetArray.height);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			setDirIsoMatricies(dl, cam, view, proj);
-			renderShadowLoop(dl.position, cam, w);
+			renderShadowLoop(dl.position, w);
 			getSceneViewToProjMatrix(view, mat);
 		}
 
