@@ -340,25 +340,38 @@ private:
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 		}
 
-		if (status == 0) {
-			char[] buffer = new char[++length];
+		char[] buffer = new char[length+1];
+		if (program)
+			glGetProgramInfoLog(shader, length, &length, buffer.ptr);
+		else
+			glGetShaderInfoLog(shader, length, &length, buffer.ptr);
+		buffer.length = length;
 
-			if (program)
-				glGetProgramInfoLog(shader, length, &length, buffer.ptr);
+		switch (status) {
+		case GL_TRUE:
+			// Only print warnings from the linking stage.
+			if (length != 0 && program)
+				l.warn("%s status: ok!\n%s", type, buffer);
 			else
-				glGetShaderInfoLog(shader, length, &length, buffer.ptr);
+				l.trace("%s status: ok!", type);
 
-			buffer.length = length;
+			return true;
 
+		case GL_FALSE:
 			if (length != 0)
-				l.warn("%s status: %s\n%s", type, status, buffer);
+				l.error("%s status: bad!\n%s", type, buffer);
 			else
-				l.warn("%s status: %s", type, status);
+				l.error("%s status: bad!", type);
 
 			return false;
-		} else {
-			//l.trace("status: %s", status);
-			return true;
+
+		default:
+			if (length != 0)
+				l.error("%s status: %s\n%s", type, status, buffer);
+			else
+				l.error("%s status: %s", type, status);
+
+			return false;
 		}
 	}
 
