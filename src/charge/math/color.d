@@ -68,7 +68,7 @@ struct Color3f
 struct Color4f
 {
 	const static Color4f White = {1.0f, 1.0f, 1.0f, 1.0f};
-	const static Color4f Black = {0.0f, 0.0f, 0.0f, 0.0f};
+	const static Color4f Black = {0.0f, 0.0f, 0.0f, 1.0f};
 
 	static Color4f opCall()
 	{
