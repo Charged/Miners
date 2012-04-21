@@ -1689,7 +1689,9 @@ public:
 		this.h = h;
 		uint depthFormat;
 
-		if (!GL_NV_depth_buffer_float) {
+		if (1) {
+			depthFormat = GL_DEPTH_COMPONENT24;
+		} else if (!GL_NV_depth_buffer_float) {
 			depthFormat = GL_DEPTH_COMPONENT32;
 		} else {
 			depthFormat = GL_DEPTH_COMPONENT32F_NV;
