@@ -188,32 +188,11 @@ public:
 	static int makeShader(char[] vertex, char[] geom, char[] fragment,
 	                      GLenum in_type, GLenum out_type, uint num_out)
 	{
-		if (!GL_EXT_geometry_shader4)
-			throw new Exception("Geometry shaders not supported");
-
-		// Create the handels
-		uint geomShader = glCreateShader(GL_GEOMETRY_SHADER_EXT);
-		uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		uint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		uint programShader = glCreateProgram();
-
-		// Attach the shaders to a program handel.
-		glAttachShader(programShader, geomShader);
-		glAttachShader(programShader, vertexShader);
-		glAttachShader(programShader, fragmentShader);
+		int programShader = createAndCompileShader(vertex, geom, fragment);
 
 		glProgramParameteriEXT(programShader, GL_GEOMETRY_INPUT_TYPE_EXT, in_type);
 		glProgramParameteriEXT(programShader, GL_GEOMETRY_OUTPUT_TYPE_EXT, out_type);
 		glProgramParameteriEXT(programShader, GL_GEOMETRY_VERTICES_OUT_EXT, num_out);
-
-		// Load and compile the Geometry Shader
-		compileShader(geomShader, geom, "geometry");
-
-		// Load and compile the Vertex Shader
-		compileShader(vertexShader, vertex, "vertex");
-
-		// Load and compile the Fragment Shader
-		compileShader(fragmentShader, fragment, "fragment");
 
 		// Linking the Shader Program
 		glLinkProgram(programShader);
@@ -221,16 +200,10 @@ public:
 		// Print any debug message
 		printDebug(programShader, true, "program (vert/geom/frag)");
 
-		// The shader objects are not needed any more,
-		// the programShader is the complete shader to be used.
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-
 		return programShader;
 	}
 
 	static int makeShader(char[] vertex, char[] fragment)
-
 	{
 		// Compile the shaders
 		auto programShader = createAndCompileShader(vertex, fragment);
@@ -286,7 +259,7 @@ public:
 	}
 
 private:
-	static uint createAndCompileShader(char[] vertex, char[] fragment)
+	static int createAndCompileShader(char[] vertex, char[] fragment)
 	{
 		// Create the handels
 		uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -305,6 +278,37 @@ private:
 
 		// The shader objects are not needed any more,
 		// the programShader is the complete shader to be used.
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+
+		return programShader;
+	}
+
+	static int createAndCompileShader(char[] vertex, char[] geometry, char[] fragment)
+	{
+		// Create the handels
+		uint geomShader = glCreateShader(GL_GEOMETRY_SHADER_EXT);
+		uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		uint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		uint programShader = glCreateProgram();
+
+		// Attach the shaders to a program handel.
+		glAttachShader(programShader, geomShader);
+		glAttachShader(programShader, vertexShader);
+		glAttachShader(programShader, fragmentShader);
+
+		// Load and compile the Geometry Shader
+		compileShader(geomShader, geometry, "geometry");
+
+		// Load and compile the Vertex Shader
+		compileShader(vertexShader, vertex, "vertex");
+
+		// Load and compile the Fragment Shader
+		compileShader(fragmentShader, fragment, "fragment");
+
+		// The shader objects are not needed any more,
+		// the programShader is the complete shader to be used.
+		glDeleteShader(geomShader);
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
 
