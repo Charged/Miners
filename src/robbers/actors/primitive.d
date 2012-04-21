@@ -31,6 +31,12 @@ public:
 		phy.rotation = rot;
 	}
 
+	~this()
+	{
+		delete gfx;
+		delete phy;
+	}
+
 }
 
 class FixedRigid : public GameActor
@@ -52,6 +58,12 @@ public:
 		phy = new PhyStatic(w.phy, new PhyGeomMesh(phyModel));
 		phy.position = pos;
 		phy.rotation = rot;
+	}
+
+	~this()
+	{
+		delete gfx;
+		delete phy;
 	}
 
 }

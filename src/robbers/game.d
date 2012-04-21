@@ -120,6 +120,11 @@ public:
 	}
 
 
+	~this()
+	{
+		delete w;
+	}
+
 
 	void loop()
 	{
