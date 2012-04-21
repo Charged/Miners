@@ -113,18 +113,17 @@ public:
 
 	void collect()
 	{
-		if (marked.length < 1)
-			return;
+		while (marked.length > 0) {
+			auto values = marked.values.dup;
+			auto keys = marked.keys.dup;
 
-		auto values = marked.values.dup;
-		auto keys = marked.keys.dup;
+			marked = null;
 
-		foreach(k; keys)
-			map.remove(k.dup);
-		foreach(v; values)
-			delete v;
-
-		marked = null;
+			foreach(k; keys)
+				map.remove(k.dup);
+			foreach(v; values)
+				delete v;
+		}
 	}
 
 	void clean()
