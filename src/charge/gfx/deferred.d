@@ -879,17 +879,13 @@ protected:
 
 	void getSpotLightMatrix(SpotLight l, ref Matrix4x4d view, ref Matrix4x4d texture)
 	{
-		float shadowNear = l.near;
-		float shadowFar = l.far;
 		auto point = l.position + l.rotation.rotateHeading();
 		auto up = l.rotation.rotateUp();
-		GLfloat d = shadowNear * std.math.tan(PI/180*10.0);
 		Matrix4x4d viewInverse = view;
 		Matrix4x4d lightProjection;
 		Matrix4x4d lightModelView;
 		viewInverse.transpose;
 		viewInverse.inverse;
-		//texture = viewInverse;
 
 		static const GLfloat biasMatrix[16] = [
 			0.5, 0.0, 0.0, 0.0,
@@ -901,7 +897,7 @@ protected:
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
-		glFrustum(-d, d, -d, d, shadowNear, shadowFar);
+		gluPerspective(l.angle, 1, l.near, l.far);
 		glGetDoublev(GL_PROJECTION_MATRIX, lightProjection.array.ptr);
 		glPopMatrix();
 
@@ -919,7 +915,6 @@ protected:
 		glMatrixMode(GL_TEXTURE);
 
 		glLoadMatrixf(biasMatrix.ptr);
-		glTranslatef(0.0, 0.0, 0.0);
 		glMultMatrixd(lightProjection.array.ptr);
 		glMultMatrixd(lightModelView.array.ptr);
 		glMultMatrixd(viewInverse.array.ptr);
