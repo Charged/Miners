@@ -10,8 +10,8 @@ private import std.intrinsic : bswap;
 private import charge.util.memory;
 
 // Reuse Exceptions from Phobos
-private import std.zip : ZipException;
-private import std.zlib : ZlibException;
+public import std.zip : ZipException;
+public import std.zlib : ZlibException;
 
 
 /**
