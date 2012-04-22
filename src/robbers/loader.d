@@ -54,8 +54,18 @@ public:
 	{
 		XmlElement level;
 
+		auto f = SysFileManager(filename);
+		if (f is null)
+			return l.error("could not load %s", filename);
+		scope (exit)
+			delete f;
+
+		auto p = new XmlDomParser();
+		scope (exit)
+			delete p;
+
 		try {
-			level = XmlDomParser(filename);
+			level = p.parseData(cast(char[])f.peekMem());
 		} catch (XmlException xe) {
 			l.error(xe.msg);
 			return;
