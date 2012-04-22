@@ -68,7 +68,7 @@ public:
 
 		super(coreFlag.AUTO);
 
-		basePackage = SysZipFile("base.ch7");
+		basePackage = SysZipFile("base.chz");
 
 		if (server) {
 			l.info("Server listening on ", port);
@@ -123,6 +123,7 @@ public:
 	~this()
 	{
 		delete w;
+		delete basePackage;
 	}
 
 
