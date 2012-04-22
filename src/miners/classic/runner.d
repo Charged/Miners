@@ -26,6 +26,7 @@ import miners.classic.world;
 import miners.classic.message;
 import miners.classic.connection;
 import miners.classic.interfaces;
+import miners.classic.playerphysics;
 import miners.importer.network;
 
 
@@ -69,6 +70,8 @@ protected:
 
 	ClassicConsole console;
 
+	PlayerPhysics pp;
+
 public:
 	this(Router r, Options opts)
 	{
@@ -110,6 +113,8 @@ public:
 			console.chat = &mlGui.message;
 			console.message = &mlGui.message;
 		}
+
+		pp = new PlayerPhysics(&ppGetBlock);
 	}
 
 	this(Router r, Options opts,
@@ -166,8 +171,17 @@ public:
 
 	void logic()
 	{
-		super.logic();
+		if (false) {
+			m.tick();
+		} else {
+			cam.position = pp.movePlayer(cam.position, cam_heading);
+		}
 
+		// From BaseRunner class.
+		w.tick();
+		centerMap();
+
+		// Handle console repeat.
 		if (console.typing)
 			console.logic();
 
@@ -290,6 +304,16 @@ public:
 	}
 
 
+	/**
+	 * Callback for the PlayerPhysics to get a block.
+	 */
+	ubyte ppGetBlock(int x, int y, int z)
+	{
+		auto b = w.t[x, y, z];
+		return b.type;
+	}
+
+
 	/*
 	 *
 	 * Input functions.
@@ -323,21 +347,30 @@ public:
 			break;
 		case SDLK_w:
 			m.forward = true;
+			pp.forward = true;
 			break;
 		case SDLK_s:
 			m.backward = true;
+			pp.backward = true;
 			break;
 		case SDLK_a:
 			m.left = true;
+			pp.left = true;
 			break;
 		case SDLK_d:
 			m.right = true;
+			pp.right = true;
 			break;
 		case SDLK_LSHIFT:
 			m.speed = true;
+			pp.speed = true;
 			break;
 		case SDLK_SPACE:
 			m.up = true;
+			pp.jumping = true;
+			break;
+		case SDLK_LCTRL:
+			pp.crouching = true;
 			break;
 		default:
 		}
@@ -351,21 +384,30 @@ public:
 		switch(sym) {
 		case SDLK_w:
 			m.forward = false;
+			pp.forward = false;
 			break;
 		case SDLK_s:
 			m.backward = false;
+			pp.backward = false;
 			break;
 		case SDLK_a:
 			m.left = false;
+			pp.left = false;
 			break;
 		case SDLK_d:
 			m.right = false;
+			pp.right = false;
 			break;
 		case SDLK_LSHIFT:
 			m.speed = false;
+			pp.speed = false;
 			break;
 		case SDLK_SPACE:
 			m.up = false;
+			pp.jumping = false;
+			break;
+		case SDLK_LCTRL:
+			pp.crouching = false;
 			break;
 		case SDLK_g:
 			if (!kb.ctrl)
