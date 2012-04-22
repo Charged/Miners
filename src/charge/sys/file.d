@@ -3,11 +3,12 @@
 module charge.sys.file;
 
 import std.file;
-import std.zip;
+import std.mmfile;
 
 import lib.sdl.rwops;
 
 import charge.sys.logger;
+import charge.util.zip;
 import charge.util.vector;
 import charge.util.memory;
 
@@ -194,23 +195,48 @@ class ZipFile
 {
 private:
 	mixin Logging;
+	MmFile mmap;
 
 	File load(char[] filename)
 	{
-		//l.trace("tried to load file ", filename);
-		return null;
+		void[] data;
+
+		try {
+			// XXX Use preparesed header.
+			data = cUncompressFromFile(mmap[], filename);
+		} catch (Exception e) {
+			return null;
+		}
+
+		return new CMemFile(data);
 	}
 
-public
-	static ZipFile opCall(char[] filename)
+	this(MmFile mmap)
 	{
-		auto f = new ZipFile();
-		FileManager().add(&f.load);
-		return f;
+		// XXX Preparse header.
+		this.mmap = mmap;
+
+		FileManager().add(&this.load);
 	}
 
 	~this()
 	{
 		FileManager().rem(&this.load);
+		delete mmap;
+	}
+
+public:
+	static ZipFile opCall(char[] filename)
+	{
+		MmFile mmap;
+
+		try {
+			mmap = new MmFile(filename);
+		} catch (Exception e) {
+			return null;
+		}
+
+		auto f = new ZipFile(mmap);
+		return f;
 	}
 }
