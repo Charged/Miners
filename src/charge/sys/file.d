@@ -7,8 +7,9 @@ import std.zip;
 
 import lib.sdl.rwops;
 
-import charge.util.vector;
 import charge.sys.logger;
+import charge.util.vector;
+import charge.util.memory;
 
 alias File delegate(char[] filename) FileLoader;
 
@@ -102,7 +103,7 @@ private:
 			return null;
 		}
 
-		auto df = new DiskFile(data);
+		auto df = new DMemFile(data);
 
 		return df;
 	}
@@ -124,20 +125,15 @@ private:
 
 
 /**
- * A file on the filesystem or disk.
+ * Base class for all memory based files.
  */
-class DiskFile : public File
+abstract class BaseMemFile : public File
 {
 	void[] mem;
 
 	this(void[] mem)
 	{
 		this.mem = mem;
-	}
-
-	~this()
-	{
-		delete mem;
 	}
 
 	SDL_RWops* peekSDL()
@@ -154,23 +150,43 @@ class DiskFile : public File
 /**
  * A builtin file pointing to data in memory.
  */
-class BuiltinFile : public File
+class BuiltinFile : public BaseMemFile
 {
-	void[] mem;
-
 	this(void[] mem)
 	{
-		this.mem = mem;
+		super(mem);
+	}
+}
+
+/**
+ * A file backed by D memory.
+ */
+class DMemFile : public BaseMemFile
+{
+	this(void[] mem)
+	{
+		super(mem);
 	}
 
-	SDL_RWops* peekSDL()
+	~this()
 	{
-		return SDL_RWFromConstMem(mem.ptr, cast(int)mem.length);
+		delete mem;
+	}
+}
+
+/**
+ * A file backed by C memory.
+ */
+class CMemFile : public BaseMemFile
+{
+	this(void[] mem)
+	{
+		super(mem);
 	}
 
-	void[] peekMem()
+	~this()
 	{
-		return mem;
+		cFree(mem.ptr);
 	}
 }
 
