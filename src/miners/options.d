@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.options;
 
+import lib.sdl.keysym;
+
 import charge.util.signal;
 import charge.charge;
 
@@ -41,6 +43,66 @@ public:
 	const bool shadowDefault = true;
 	const bool useCmdPrefixDefault = true;
 	const double viewDistanceDefault = 256;
+
+
+	/*
+	 *
+	 * Key bindings.
+	 *
+	 */
+
+
+	const string[12] keyNames = [
+		"mc.keyForward",
+		"mc.keyBackward",
+		"mc.keyLeft",
+		"mc.keyRight",
+		"mc.keyCameraUp",
+		"mc.keyCameraDown",
+		"mc.keyJump",
+		"mc.keyCrouch",
+		"mc.keyRun",
+		"mc.keyFlightMode",
+		"mc.keyChat",
+		"mc.keySelector",
+	];
+
+	const int[12] keyDefaults = [
+		SDLK_w,
+		SDLK_s,
+		SDLK_a,
+		SDLK_d,
+		SDLK_q,
+		SDLK_e,
+		SDLK_SPACE,
+		SDLK_LCTRL,
+		SDLK_LSHIFT,
+		SDLK_z,
+		SDLK_t,
+		SDLK_b,
+	];
+
+	static assert(keyNames.length == keyDefaults.length);
+	static assert(keyArray.length == keyDefaults.length);
+
+	union {
+		struct {
+			int keyForward;
+			int keyBackward;
+			int keyLeft;
+			int keyRight;
+			int keyCameraUp;
+			int keyCameraDown;
+			int keyJump;
+			int keyCrouch;
+			int keyRun;
+			int keyFlightMode;
+			int keyChat;
+			int keySelector;
+		};
+		int[12] keyArray;
+	}
+	Signal!() keyBindings;
 
 
 	/*
