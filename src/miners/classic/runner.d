@@ -232,12 +232,21 @@ public:
 			chatDirty = false;
 		}
 
+		// Start drawing the gui.
+		d.target = rt;
+		d.start();
+		scope (exit)
+			d.stop();
+
+		drawSlotBar(d, rt);
+
+		// If a menu is shown don't draw chat or crosshair
+		if (!inControl)
+			return;
+
 		GfxTexture t;
 		int x;
 		int y;
-
-		d.target = rt;
-		d.start();
 
 		if (ml !is null || console.typing) {
 			t = chatGui.texture;
@@ -266,10 +275,6 @@ public:
 			glDisable(GL_COLOR_LOGIC_OP);
 			glLogicOp(GL_COPY);
 		}
-
-		drawSlotBar(d, rt);
-
-		d.stop();
 	}
 
 	void drawSlotBar(GfxDraw d, GfxRenderTarget rt)
@@ -327,6 +332,16 @@ public:
 		stepDirection(pos, vec, 6, &step);
 	}
 
+
+	/**
+	 * The block selected menu has selected a block type.
+	 */
+	void selectedBlock(ubyte block)
+	{
+		slots[currentSlot] = block;
+	}
+
+
 	/**
 	 * Called from chat gui when it wants be repainted.
 	 */
@@ -373,6 +388,9 @@ public:
 		}
 
 		switch(sym) {
+		case SDLK_b:
+			r.menu.displayClassicBlockSelector(&selectedBlock);
+			break;
 		case SDLK_t:
 			// Start chatting when we press 't'
 			console.startTyping();

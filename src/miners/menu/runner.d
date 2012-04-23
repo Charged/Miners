@@ -17,6 +17,7 @@ import miners.menu.main;
 import miners.menu.beta;
 import miners.menu.error;
 import miners.menu.classic;
+import miners.menu.blockselector;
 
 
 /**
@@ -164,6 +165,11 @@ public:
 		} catch (Exception e) {
 			displayError(e, false);
 		}
+	}
+
+	void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
+	{
+		changeWindow(new ClassicBlockMenu(this.router, opts, selectedDg));
 	}
 
 	void connectToClassic(char[] usr, char[] pwd, ClassicServerInfo csi)
