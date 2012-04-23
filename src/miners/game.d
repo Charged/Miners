@@ -37,12 +37,15 @@ import miners.isle.world;
 import miners.menu.runner;
 import miners.terrain.beta;
 import miners.terrain.chunk;
+import miners.classic.data;
 import miners.classic.world;
 import miners.classic.runner;
 import miners.importer.info;
 import miners.importer.network;
 import miners.importer.texture;
 import miners.importer.classicinfo;
+
+static import miners.builder.classic;
 
 
 /**
@@ -260,6 +263,33 @@ protected:
 		// Get a texture that works with classic
 		manipulateTextureClassic(pic);
 		createTextures(pic, true);
+
+		assert(classicBlocks.length == opts.classicSides.length);
+
+		foreach (int i, ref tex; opts.classicSides) {
+			if (!classicBlocks[i].placable)
+				continue;
+
+			// Get the location of the block
+			ubyte index = miners.builder.classic.tile[i].xzTex;
+			int x = index % 16;
+			int y = index / 16;
+
+			auto texPic = getTileAsSeperate(pic, null, x, y);
+
+			// XXX Hack for half slabs
+			if (i == 44) {
+				auto d = texPic.pixels[0 .. texPic.width * texPic.height];
+				d[$ / 2 .. $] = d[0 .. $ / 2];
+				d[0 .. $ / 2] = Color4b(0, 0, 0, 0);
+			}
+
+			tex = GfxTexture(null, texPic);
+			tex.filter = tex.width <= 32 ? GfxTexture.Filter.Nearest :
+			                               GfxTexture.Filter.NearestLinear;
+
+			sysReference(&texPic, null);
+		}
 
 		// Not needed anymore.
 		sysReference(&pic, null);

@@ -62,6 +62,8 @@ public:
 	Option!(GfxTexture) classicTerrain;
 	Option!(GfxTextureArray) classicTerrainArray;
 
+	GfxTexture[50] classicSides;
+
 
 	/*
 	 *
@@ -121,6 +123,10 @@ public:
 		terrainArray.destruct();
 		classicTerrain.destruct();
 		classicTerrainArray.destruct();
+
+		foreach (ref tex; classicSides) {
+			sysReference(&tex, null);
+		}
 	}
 
 	void setRenderer(TerrainBuildTypes bt, char[] s)
