@@ -54,13 +54,9 @@ protected:
 	GfxDraw d;
 	Selector sel;
 
-	ColorContainer placeGui;
+	int currentSlot;
+	ubyte[9] slots;
 
-	int currentBlock;
-	int savedBlock;
-
-
-	Text placeText;
 	ColorContainer chatGui;
 	ClassicMessageLog mlGui;
 	Text typedText;
@@ -84,12 +80,18 @@ public:
 		sel.show = true;
 		sel.setBlock(0, 0, 0);
 
-		savedBlock = -1;
-		currentBlock = 1;
+		currentSlot = 0;
+		slots[0] = 1;
+		slots[1] = 4;
+		slots[2] = 45;
+		slots[3] = 3;
+		slots[4] = 5;
+		slots[5] = 17;
+		slots[6] = 18;
+		slots[7] = 20;
+		slots[8] = 44;
 
 		d = new GfxDraw();
-		placeGui = new ColorContainer(Color4f(0, 0, 0, 0.8), 8*16+8*2, 8*3);
-		placeText = new Text(placeGui, 8, 8, classicBlocks[currentBlock].name);
 
 		chatDirty = true;
 		chatGui = new ColorContainer(
@@ -146,7 +148,7 @@ public:
 
 	void close()
 	{
-		placeGui.breakApart();
+		//placeGui.breakApart();
 		chatGui.breakApart();
 		delete sel;
 
@@ -225,30 +227,25 @@ public:
 		if (opts.hideUi())
 			return;
 
-		if (currentBlock != savedBlock) {
-			placeText.setText(classicBlocks[currentBlock].name);
-			savedBlock = currentBlock;
-			placeGui.paint();
-		}
-
 		if (chatDirty) {
 			chatGui.paint();
 			chatDirty = false;
 		}
 
-		auto t = placeGui.texture;
-		auto x = rt.width - t.width - 8;
-		auto y = rt.height - t.height - 8;
+		GfxTexture t;
+		int x;
+		int y;
 
 		d.target = rt;
 		d.start();
-		d.blit(t, x, y);
+
 		if (ml !is null || console.typing) {
 			t = chatGui.texture;
 
-			d.blit(t, 8, rt.height - t.height - 8);
+			d.blit(t, 8, rt.height - t.height - (32 + 8 + 8));
 		}
 
+		// Crosshair
 		{
 			auto w = rt.width / 2 - 5;
 			auto h = rt.height / 2 - 5;
@@ -270,7 +267,42 @@ public:
 			glLogicOp(GL_COPY);
 		}
 
+		drawSlotBar(d, rt);
+
 		d.stop();
+	}
+
+	void drawSlotBar(GfxDraw d, GfxRenderTarget rt)
+	{
+		int blockSize = 32;
+		int slotEdge = 4;
+		int slotSize = blockSize + slotEdge * 2;
+		int width = cast(int)slots.length * slotSize;
+		int startX = rt.width / 2 - width / 2;
+		int startY = rt.height - slotSize;
+		int pos = startX;
+
+		d.fill(Color4f(0, 0, 0, 0.8), true, startX, startY, width, slotSize);
+		foreach (int i, slot; slots) {
+			auto tex = opts.classicSides[slot];
+
+			// Shouldn't happen.
+			if (tex is null)
+				continue;
+
+			if (i == currentSlot) {
+				d.fill(Color4f.White, false, pos, startY, slotSize, slotEdge);
+				d.fill(Color4f.White, false, pos, startY + slotSize - slotEdge, slotSize, slotEdge);
+				d.fill(Color4f.White, false, pos, startY, slotEdge, slotSize);
+				d.fill(Color4f.White, false, pos + slotSize - slotEdge, startY, slotEdge, slotSize);
+			}
+
+			d.blit(tex, Color4f.White, true,
+			       0, 0, tex.width, tex.height,
+			       pos + slotEdge, startY + slotEdge, blockSize, blockSize);
+
+			pos += slotSize;
+		}
 	}
 
 	void placeSelector()
@@ -429,10 +461,18 @@ public:
 
 	void mouseDown(CtlMouse mouse, int button)
 	{
-		if (button == 4)
-			return decBlock();
-		if (button == 5)
-			return incBlock();
+		if (button == 4) {
+			currentSlot--;
+			if (currentSlot < 0)
+				currentSlot = slots.length - 1;
+			return;
+		}
+		if (button == 5) {
+			currentSlot++;
+			if (currentSlot >= slots.length)
+				currentSlot = 0;
+			return;
+		}
 
 		if ((button < 0 && button > 3) || !grabbed) {
 			if (button == 1)
@@ -461,7 +501,8 @@ public:
 			if (numBlocks <= 2)
 				return false;
 
-			w.t[xLast, yLast, zLast] = Block(cast(ubyte)currentBlock, 0);
+			auto cur = slots[currentSlot];
+			w.t[xLast, yLast, zLast] = Block(cur, 0);
 			w.t.markVolumeDirty(xLast, yLast, zLast, 1, 1, 1);
 			w.t.resetBuild();
 
@@ -469,7 +510,7 @@ public:
 				c.sendClientSetBlock(cast(short)xLast,
 						     cast(short)yLast,
 						     cast(short)zLast,
-						     1, cast(ubyte)currentBlock);
+						     1, cur);
 
 			// We should only place one block.
 			return false;
@@ -481,6 +522,7 @@ public:
 			if (b.type == 0)
 				return true;
 
+			auto cur = slots[currentSlot];
 			w.t[x, y, z] = Block();
 			w.t.markVolumeDirty(x, y, z, 1, 1, 1);
 			w.t.resetBuild();
@@ -489,7 +531,7 @@ public:
 				c.sendClientSetBlock(cast(short)x,
 						     cast(short)y,
 						     cast(short)z,
-						     0, cast(ubyte)currentBlock);
+						     0, cur);
 
 			// We should only remove one block.
 			return false;
@@ -509,7 +551,7 @@ public:
 			if (!info.placable)
 				return false;
 
-			currentBlock = b.type;
+			slots[currentSlot] = b.type;
 
 			return false;
 		}
@@ -524,24 +566,6 @@ public:
 		else if (button == 2)
 			stepDirection(pos, vec, 6, &stepCopy);
 
-	}
-
-	void incBlock()
-	{
-		currentBlock++;
-		if (currentBlock >= classicBlocks.length)
-			currentBlock = 0;
-		if (!classicBlocks[currentBlock].placable)
-			incBlock();
-	}
-
-	void decBlock()
-	{
-		currentBlock--;
-		if (currentBlock < 0)
-			currentBlock = classicBlocks.length-1;
-		if (!classicBlocks[currentBlock].placable)
-			decBlock();
 	}
 
 
