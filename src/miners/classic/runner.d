@@ -387,43 +387,7 @@ public:
 			return;
 		}
 
-		switch(sym) {
-		case SDLK_b:
-			r.menu.displayClassicBlockSelector(&selectedBlock);
-			break;
-		case SDLK_t:
-			// Start chatting when we press 't'
-			console.startTyping();
-			break;
-		case SDLK_w:
-			m.forward = true;
-			pp.forward = true;
-			break;
-		case SDLK_s:
-			m.backward = true;
-			pp.backward = true;
-			break;
-		case SDLK_a:
-			m.left = true;
-			pp.left = true;
-			break;
-		case SDLK_d:
-			m.right = true;
-			pp.right = true;
-			break;
-		case SDLK_LSHIFT:
-			m.speed = true;
-			pp.speed = true;
-			break;
-		case SDLK_SPACE:
-			m.up = true;
-			pp.jumping = true;
-			break;
-		case SDLK_LCTRL:
-			pp.crouching = true;
-			break;
-		default:
-		}
+		keyBinding(kb, sym, true);
 	}
 
 	void keyUp(CtlKeyboard kb, int sym)
@@ -432,33 +396,6 @@ public:
 			return console.keyUp(sym);;
 
 		switch(sym) {
-		case SDLK_w:
-			m.forward = false;
-			pp.forward = false;
-			break;
-		case SDLK_s:
-			m.backward = false;
-			pp.backward = false;
-			break;
-		case SDLK_a:
-			m.left = false;
-			pp.left = false;
-			break;
-		case SDLK_d:
-			m.right = false;
-			pp.right = false;
-			break;
-		case SDLK_LSHIFT:
-			m.speed = false;
-			pp.speed = false;
-			break;
-		case SDLK_SPACE:
-			m.up = false;
-			pp.jumping = false;
-			break;
-		case SDLK_LCTRL:
-			pp.crouching = false;
-			break;
 		case SDLK_g:
 			if (!kb.ctrl)
 				break;
@@ -474,6 +411,59 @@ public:
 			opts.showDebug.toggle;
 			break;
 		default:
+			keyBinding(kb, sym, false);
+		}
+	}
+
+	/**
+	 * Handle both up and key down via the keyBindings work.
+	 */
+	void keyBinding(CtlKeyboard kb, int sym, bool keyDown)
+	{
+		if (sym == opts.keyForward) {
+			m.forward = keyDown;
+			pp.forward = keyDown;
+
+		} else if (sym == opts.keyBackward) {
+			m.backward = keyDown;
+			pp.backward = keyDown;
+
+		} else if (sym == opts.keyLeft) {
+			m.left = keyDown;
+			pp.left = keyDown;
+
+		} else if (sym == opts.keyRight) {
+			m.right = keyDown;
+			pp.right = keyDown;
+
+		} else if (sym == opts.keyCameraUp) {
+			m.up = keyDown;
+			pp.up = keyDown;
+
+		} else if (sym == opts.keyCameraDown) {
+			pp.down = keyDown;
+
+		} else if (sym == opts.keyJump) {
+			pp.jump = keyDown;
+
+		} else if (sym == opts.keyCrouch) {
+			pp.crouch = keyDown;
+
+		} else if (sym == opts.keyRun) {
+			m.speed = keyDown;
+			pp.run = keyDown;
+
+		} else if (sym == opts.keyFlightMode) {
+			// XXX Fix
+
+		} else if (sym == opts.keyChat) {
+			if (keyDown)
+				console.startTyping();
+
+		} else if (sym == opts.keySelector) {
+			if (keyDown)
+				r.menu.displayClassicBlockSelector(&selectedBlock);
+
 		}
 	}
 

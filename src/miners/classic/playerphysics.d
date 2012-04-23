@@ -89,9 +89,11 @@ public:
 	bool backward;
 	bool left;
 	bool right;
-	bool speed;
-	bool jumping;
-	bool crouching;
+	bool run;
+	bool up; // Camera
+	bool down; // Camera
+	bool jump;
+	bool crouch;
 
 protected:
 	BlockDg getBlock;
@@ -127,17 +129,17 @@ public:
 		}
 
 		// The speed at which we move.
-		double velSpeed = speed ? 0.4 : 0.1;
+		double velSpeed = run ? 0.4 : 0.1;
 
 		// Normalize function is safe.
 		vel.normalize();
 		// Scale the speed vector.
 		vel.scale(velSpeed);
 
-		if (jumping)
+		if (up)
 			vel.y += velSpeed;
 
-		if (crouching)
+		if (down)
 			vel.y -= velSpeed;
 
 		return movePlayer(pos, vel);
