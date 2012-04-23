@@ -33,7 +33,7 @@ public:
 	}
 
 	void addIfNotSet(char[] key, bool value) { addIfNotSet(key, .toString(value)); }
-	void addIfNotSet(char[] key, real value) { addIfNotSet(key, .toString(value)); }
+	void addIfNotSet(char[] key, double value) { addIfNotSet(key, .toString(value)); }
 
 	void add(char[] key, char[] value)
 	{
@@ -43,7 +43,7 @@ public:
 	}
 
 	void add(char[] key, bool value) { add(key, .toString(value)); }
-	void add(char[] key, real value) { add(key, .toString(value)); }
+	void add(char[] key, double value) { add(key, .toString(value)); }
 
 	char[] get(char[] key, char[] def)
 	{
