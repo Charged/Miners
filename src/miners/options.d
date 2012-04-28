@@ -52,7 +52,7 @@ public:
 	 */
 
 
-	const string[12] keyNames = [
+	const string[21] keyNames = [
 		"mc.keyForward",
 		"mc.keyBackward",
 		"mc.keyLeft",
@@ -65,9 +65,18 @@ public:
 		"mc.keyFlightMode",
 		"mc.keyChat",
 		"mc.keySelector",
+		"mc.keySlot0",
+		"mc.keySlot1",
+		"mc.keySlot2",
+		"mc.keySlot3",
+		"mc.keySlot4",
+		"mc.keySlot5",
+		"mc.keySlot6",
+		"mc.keySlot7",
+		"mc.keySlot8",
 	];
 
-	const int[12] keyDefaults = [
+	const int[21] keyDefaults = [
 		SDLK_w,
 		SDLK_s,
 		SDLK_a,
@@ -80,6 +89,15 @@ public:
 		SDLK_z,
 		SDLK_t,
 		SDLK_b,
+		SDLK_1, // mc.keySlot1
+		SDLK_2,
+		SDLK_3,
+		SDLK_4,
+		SDLK_5,
+		SDLK_6,
+		SDLK_7,
+		SDLK_8,
+		SDLK_9,
 	];
 
 	static assert(keyNames.length == keyDefaults.length);
@@ -99,8 +117,17 @@ public:
 			int keyFlightMode;
 			int keyChat;
 			int keySelector;
+			int keySlot0;
+			int keySlot1;
+			int keySlot2;
+			int keySlot3;
+			int keySlot4;
+			int keySlot5;
+			int keySlot6;
+			int keySlot7;
+			int keySlot8;
 		};
-		int[12] keyArray;
+		int[21] keyArray;
 	}
 	Signal!() keyBindings;
 
