@@ -464,6 +464,24 @@ public:
 			if (keyDown)
 				r.menu.displayClassicBlockSelector(&selectedBlock);
 
+		} else if (sym == opts.keySlot0) {
+			currentSlot = 0;
+		} else if (sym == opts.keySlot1) {
+			currentSlot = 1;
+		} else if (sym == opts.keySlot2) {
+			currentSlot = 2;
+		} else if (sym == opts.keySlot3) {
+			currentSlot = 3;
+		} else if (sym == opts.keySlot4) {
+			currentSlot = 4;
+		} else if (sym == opts.keySlot5) {
+			currentSlot = 5;
+		} else if (sym == opts.keySlot6) {
+			currentSlot = 6;
+		} else if (sym == opts.keySlot7) {
+			currentSlot = 7;
+		} else if (sym == opts.keySlot8) {
+			currentSlot = 8;
 		}
 	}
 
