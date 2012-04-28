@@ -26,6 +26,11 @@ public:
 		up.destruct();
 	}
 
+	void warp(uint x, uint y)
+	{
+		SDL_WarpMouse(cast(Uint16)x, cast(Uint16)y);
+	}
+
 	bool grab(bool status)
 	{
 		auto mode = status ? SDL_GrabMode.SDL_GRAB_ON : SDL_GrabMode.SDL_GRAB_OFF;
