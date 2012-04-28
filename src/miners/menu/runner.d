@@ -125,10 +125,15 @@ public:
 
 	void assumeControl()
 	{
+		uint w, h;
+		bool fullscreen;
+		Core().size(w, h, fullscreen);
+
 		keyboard.down ~= &this.keyDown;
 		ih.assumeControl();
 		mouse.grab = false;
 		mouse.show = true;
+		mouse.warp(w / 2, h / 2);
 		inControl = true;
 	}
 
