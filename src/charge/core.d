@@ -67,6 +67,7 @@ public:
 
 	abstract void resize(uint w, uint h);
 	abstract void resize(uint w, uint h, bool fullscreen);
+	abstract void size(out uint w, out uint h, out bool fullscreen);
 
 	abstract void screenShot();
 

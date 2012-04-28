@@ -169,6 +169,13 @@ public:
 		DefaultTarget.initDefaultTarget(w, h);
 	}
 
+	void size(out uint w, out uint h, out bool fullscreen)
+	{
+		w = this.width;
+		h = this.height;
+		fullscreen = this.fullscreen;
+	}
+
 private:
 	/*
 	 *
