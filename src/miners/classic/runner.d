@@ -148,7 +148,6 @@ public:
 
 	void close()
 	{
-		//placeGui.breakApart();
 		chatGui.breakApart();
 		delete sel;
 
