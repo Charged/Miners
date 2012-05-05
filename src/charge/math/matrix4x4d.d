@@ -2,8 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.matrix4x4d;
 
+import std.math : cos, sin, PI;
 import std.string : format;
 
+import charge.math.quatd;
 import charge.math.point3d;
 import charge.math.vector3d;
 
@@ -17,6 +19,33 @@ public:
 	};
 
 public:
+	static Matrix4x4d opCall(Point3d p, Quatd q)
+	{
+		Matrix4x4d ret;
+
+		ret.m[0][0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
+		ret.m[0][1] =     2 * q.x * q.y - 2 * q.w * q.z;
+		ret.m[0][2] =     2 * q.x * q.z + 2 * q.w * q.y;
+		ret.m[0][3] = p.x;
+
+		ret.m[1][0] =     2 * q.x * q.y + 2 * q.w * q.z;
+		ret.m[1][1] = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
+		ret.m[1][2] =     2 * q.y * q.z - 2 * q.w * q.x;
+		ret.m[1][3] = p.y;
+
+		ret.m[2][0] =     2 * q.x * q.z - 2 * q.w * q.y;
+		ret.m[2][1] =     2 * q.y * q.z + 2 * q.w * q.x;
+		ret.m[2][2] = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+		ret.m[2][3] = p.z;
+
+		ret.m[3][0] = 0;
+		ret.m[3][1] = 0;
+		ret.m[3][2] = 0;
+		ret.m[3][3] = 1;
+
+		return ret;
+	}
+
 	Point3d opMul(Point3d point)
 	{
 		Point3d result;
@@ -50,6 +79,103 @@ public:
 		result.z = vector.x * m[2][0] + vector.y * m[2][1] + vector.z * m[2][2];
 		//result.w = vector.x * m[3][0] + vector.y * m[3][1] + vector.z * m[3][2];
 		return result;
+	}
+
+	void opMulAssign(ref Matrix4x4d b)
+	{
+		for(int i; i < 4; i++) {
+			double a0 = m[i][0], a1 = m[i][1], a2 = m[i][2], a3 = m[i][3];
+			m[i][0] = a0 * b.m[0][0] + a1 * b.m[1][0] + a2 * b.m[2][0] + a3 * b.m[3][0];
+			m[i][1] = a0 * b.m[0][1] + a1 * b.m[1][1] + a2 * b.m[2][1] + a3 * b.m[3][1];
+			m[i][2] = a0 * b.m[0][2] + a1 * b.m[1][2] + a2 * b.m[2][2] + a3 * b.m[3][2];
+			m[i][3] = a0 * b.m[0][3] + a1 * b.m[1][3] + a2 * b.m[2][3] + a3 * b.m[3][3];
+		}
+	}
+
+	void setToIdentity()
+	{
+		array[0 .. $] = 0;
+		m[0][0] = 1;
+		m[1][1] = 1;
+		m[2][2] = 1;
+		m[3][3] = 1;
+	}
+
+	/**
+	 * Sets the matrix to a lookAt matrix looking at eye + rot * forward.
+	 *
+	 * Similar to gluLookAt.
+	 */
+	void setToLookFrom(Point3d eye, Quatd rot)
+	{
+		Point3d p;
+		Quatd q;
+
+		q.x = -rot.x;
+		q.y = -rot.y;
+		q.z = -rot.z;
+		q.w =  rot.w;
+
+		p.x = -eye.x;
+		p.y = -eye.y;
+		p.z = -eye.z;
+
+		m[0][0] = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
+		m[0][1] =     2 * q.x * q.y - 2 * q.w * q.z;
+		m[0][2] =     2 * q.x * q.z + 2 * q.w * q.y;
+		m[0][3] = p.x * m[0][0] + p.y * m[0][1] + p.z * m[0][2];
+
+		m[1][0] =     2 * q.x * q.y + 2 * q.w * q.z;
+		m[1][1] = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
+		m[1][2] =     2 * q.y * q.z - 2 * q.w * q.x;
+		m[1][3] = p.x * m[1][0] + p.y * m[1][1] + p.z * m[1][2];
+
+		m[2][0] =     2 * q.x * q.z - 2 * q.w * q.y;
+		m[2][1] =     2 * q.y * q.z + 2 * q.w * q.x;
+		m[2][2] = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+		m[2][3] = p.x * m[2][0] + p.y * m[2][1] + p.z * m[2][2];
+
+		m[3][0] = 0;
+		m[3][1] = 0;
+		m[3][2] = 0;
+		m[3][3] = 1;
+	}
+
+	/**
+	 * Sets the matrix to the same as gluPerspective does.
+	 */
+	void setToPerspective(double fovy, double aspect, double near, double far)
+	{
+		double sine, cotangent, delta;
+		double radians = fovy / 2 * PI / 180;
+
+		delta = far - near;
+		sine = sin(radians);
+
+		if ((delta == 0) || (sine == 0) || (aspect == 0))
+			return;
+
+		cotangent = cos(radians) / sine;
+
+		m[0][0] = cotangent / aspect;
+		m[0][1] = 0;
+		m[0][2] = 0;
+		m[0][3] = 0;
+
+		m[1][0] = 0;
+		m[1][1] = cotangent;
+		m[1][2] = 0;
+		m[1][3] = 0;
+
+		m[2][0] = 0;
+		m[2][1] = 0;
+		m[2][2] = -(far + near) / delta;
+		m[2][3] = -2 * near * far / delta;
+
+		m[3][0] = 0;
+		m[3][1] = 0;
+		m[3][2] = -1;
+		m[3][3] = 0;
 	}
 
 	void transpose()
