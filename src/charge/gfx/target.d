@@ -5,6 +5,7 @@ module charge.gfx.target;
 import lib.sdl.sdl;
 
 import charge.math.color;
+import charge.sys.logger;
 import charge.gfx.gl;
 
 interface RenderTarget
@@ -82,26 +83,77 @@ private:
 class DoubleTarget : public RenderTarget
 {
 private:
+	mixin Logging;
+
 	uint w;
 	uint h;
 	uint colorTex;
 	uint depthTex;
 	uint fbo;
 
+	static bool checked;
+	static bool checkStatus;
+	static bool initialized;
+	static GLint probedFormat;
+
 public:
+	static bool check()
+	{
+		if (checked)
+			return checkStatus;
+
+		checked = true;
+		probedFormat = 0;
+
+		try {
+			if (!GL_EXT_framebuffer_object)
+				throw new Exception("GL_EXT_framebuffer_object not supported");
+
+			Exception eSaved;
+
+			// Try different formats to find one that works.
+			foreach(f; [GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT32]) {
+				try {
+					auto dt = new DoubleTarget(15, 15, f);
+					delete dt;
+					probedFormat = f;
+				} catch (Exception e) {
+					eSaved = e;
+				}
+			}
+
+			if (probedFormat == 0)
+				throw eSaved;
+
+		} catch (Exception e) {
+			l.warn("Double target not supported (%s)", e);
+			return false;
+		}
+
+		checkStatus = true;
+		return true;
+	}
+
 	this(uint w, uint h)
 	{
+		if (!check)
+			throw new Exception("Double target not supported");
+
+		this(w, h, probedFormat);
+	}
+
+private:
+	this(uint w, uint h, GLint depthFormat)
+	{
+
+
 		w *= 2;
 		h *= 2;
 		this.w = w;
 		this.h = h;
-		uint depthFormat, colorFormat;
-
-		if (!GL_EXT_framebuffer_object)
-			throw new Exception("GL_EXT_framebuffer_object not supported");
+		uint colorFormat;
 
 		colorFormat = GL_RGBA8;
-		depthFormat = GL_DEPTH_COMPONENT32;
 
 		glGenTextures(1, &colorTex);
 		glGenTextures(1, &depthTex);
@@ -142,6 +194,7 @@ public:
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 	}
 
+public:
 	~this()
 	{
 		if (fbo || colorTex || depthTex) {
