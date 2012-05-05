@@ -71,6 +71,11 @@ public:
 		return Point3d(x - v.x, y - v.y, z - v.z);
 	}
 
+	Point3d opNeg()
+	{
+		return Point3d(-x, -y, -z);
+	}
+
 	Point3d opSubAssign(Vector3d v)
 	{
 		x -= v.x;
