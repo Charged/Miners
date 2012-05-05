@@ -239,6 +239,10 @@ public:
 		scope (exit)
 			d.stop();
 
+		auto cam = cast(GfxProjCamera)cam.current;
+		if (cam !is null)
+			drawPlayerNames(cam, rt);
+
 		drawSlotBar(d, rt);
 
 		// If a menu is shown don't draw chat or crosshair
@@ -308,6 +312,83 @@ public:
 			       pos + slotEdge, startY + slotEdge, blockSize, blockSize);
 
 			pos += slotSize;
+		}
+	}
+
+	void drawPlayerNames(GfxProjCamera cam, GfxRenderTarget rt)
+	{
+		Matrix4x4d mat;
+		cam.getMatrixFromGlobalToScreen(rt.width, rt.height, mat);
+
+		struct Elm
+		{
+			int index;
+			float dist;
+
+			int opCmp(ref Elm l)
+			{
+				return typeid(float).compare(&dist, &l.dist);
+			}
+		}
+
+		Elm[players.length] store;
+		Elm[] list;
+		int[players.length] xList;
+		int[players.length] yList;
+
+		// We need to sort the players according
+		// to distance from camera.
+		foreach(int i, p; players) {
+			if (p is null)
+				continue;
+
+			auto pos = p.position;
+			pos.y += 1.85;
+			pos = mat / pos;
+
+			if (pos.x < 0 || pos.x > rt.width ||
+			    pos.y < 0 || pos.y > rt.height - 8 ||
+			    pos.z < 0 || pos.z > 1)
+				continue;
+
+			store[list.length] = Elm(i, pos.z);
+			list = store[0 .. list.length + 1];
+
+			xList[i] = cast(int)pos.x;
+			yList[i] = rt.height - cast(int)pos.y;
+		}
+
+		list.sort;
+
+		foreach_reverse(ref e; list) {
+			auto p = players[e.index];
+			int x = xList[e.index];
+			int y = yList[e.index];
+
+			const int arrowSize = 4;
+			const int borderSize = 2;
+
+			auto t = p.text;
+			uint width = t.width + borderSize * 2;
+			uint height = 8 + borderSize * 2;
+
+			int tX = x - width / 2;
+			int tY = y - height - arrowSize;
+
+			y = imax(height + arrowSize, y);
+
+			tX = imin(imax(0, tX), rt.width - width);
+			tY = imax(0, tY);
+
+			d.fill(Color4f(0, 0, 0, 0.8), true, tX, tY, width, height);
+
+			glBegin(GL_TRIANGLES);
+			glVertex2d(x + .5, y);
+			glVertex2d(x + arrowSize + 1, y - arrowSize);
+			glVertex2d(x - arrowSize,     y - arrowSize);
+			glEnd();
+
+			d.blit(p.text, tX + borderSize, tY + borderSize);
 		}
 	}
 
