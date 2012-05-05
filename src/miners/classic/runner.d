@@ -20,12 +20,12 @@ import miners.options;
 import miners.console;
 import miners.interfaces;
 import miners.gfx.selector;
-import miners.actors.otherplayer;
 import miners.classic.data;
 import miners.classic.world;
 import miners.classic.message;
 import miners.classic.connection;
 import miners.classic.interfaces;
+import miners.classic.otherplayer;
 import miners.classic.playerphysics;
 import miners.importer.network;
 
@@ -112,7 +112,7 @@ public:
 			ml.message = &mlGui.message;
 			ml.pushAll();
 		} else {
-			players[0] = new OtherPlayer(w, 0, w.spawn, 0, 0);
+			players[0] = new OtherPlayer(w, 0, "Herobrine", w.spawn, 0, 0);
 
 			console.chat = &mlGui.message;
 			console.message = &mlGui.message;
@@ -670,7 +670,7 @@ public:
 
 		double offset = 52.0 / 32.0;
 		auto pos = Point3d(x, y - offset, z);
-		auto p = new OtherPlayer(w, index, pos, heading, pitch);
+		auto p = new OtherPlayer(w, index, name, pos, heading, pitch);
 		players[index] = p;
 	}
 
