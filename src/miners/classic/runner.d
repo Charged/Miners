@@ -112,6 +112,8 @@ public:
 			ml.message = &mlGui.message;
 			ml.pushAll();
 		} else {
+			players[0] = new OtherPlayer(w, 0, w.spawn, 0, 0);
+
 			console.chat = &mlGui.message;
 			console.message = &mlGui.message;
 		}
