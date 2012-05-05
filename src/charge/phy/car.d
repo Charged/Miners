@@ -3,6 +3,7 @@
 module charge.phy.car;
 
 import std.stdio;
+import std.math : abs, fmin;
 
 import charge.math.movable;
 

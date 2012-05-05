@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.camera;
 
+import std.math : atan, asin, PI, PI_4;
+
 import charge.math.movable;
 import charge.gfx.gl;
 import charge.gfx.cull;
