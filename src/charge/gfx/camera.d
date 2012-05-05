@@ -5,6 +5,7 @@ module charge.gfx.camera;
 import std.math : atan, asin, PI, PI_4;
 
 import charge.math.movable;
+import charge.math.matrix4x4d;
 import charge.gfx.gl;
 import charge.gfx.cull;
 import charge.sys.logger;
@@ -52,23 +53,45 @@ public:
 
 	void transform()
 	{
-		auto point = pos + rot.rotateHeading();
-		auto up = rot.rotateUp();
+		Matrix4x4d mat;
+
+		mat.setToPerspective(fov, ratio, near, far);
+		mat.transpose();
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(fov, ratio, near, far);
+		glLoadMatrixd(mat.array.ptr);
+
+		mat.setToLookFrom(pos, rot);
+		mat.transpose();
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		gluLookAt(pos.x, pos.y, pos.z,
-		          point.x, point.y, point.z,
-		          up.x, up.y, up.z);
+		glLoadMatrixd(mat.array.ptr);
 	}
 
 	Cull cull()
 	{
 		return new Cull(this);
+	}
+
+	void getMatrixFromGlobalToScreen(uint width, uint height, ref Matrix4x4d mat)
+	{
+		Matrix4x4d tmp;
+
+		// Bias matrix to go from -1 .. 1 to width, height and 0 .. 1 depth.
+		mat.array[] = [
+			width / 2.0, .0,  .0,  width / 2.0,
+			.0, height / 2.0, .0, height / 2.0,
+			.0,    .0,   1 / 2.0,      1 / 2.0,
+			.0,    .0,         0,            1
+		];
+
+		tmp.setToPerspective(fov, ratio, near, far);
+
+		mat *= tmp;
+
+		tmp.setToLookFrom(pos, rot);
+
+		mat *= tmp;
 	}
 }
 
@@ -88,18 +111,17 @@ public:
 
 	void transform()
 	{
-		auto point = pos + rot.rotateHeading();
-		auto up = rot.rotateUp();
+		Matrix4x4d mat;
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(-width / 2, width / 2, -height / 2, height / 2, near, far);
 
+		mat.setToLookFrom(pos, rot);
+		mat.transpose();
+
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		gluLookAt(pos.x, pos.y, pos.z,
-		          point.x, point.y, point.z,
-		          up.x, up.y, up.z);
+		glLoadMatrixd(mat.array.ptr);
 	}
 
 }
