@@ -2,12 +2,17 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.point3d;
 
-import std.math;
+import std.math : floor;
+import std.string : string;
 
 import charge.math.vector3d;
 
+
 struct Point3d
 {
+public:
+	double x, y, z;
+
 public:
 	static Point3d opCall()
 	{
@@ -76,9 +81,9 @@ public:
 
 	void floor()
 	{
-		x = cast(double)std.math.floor(x);
-		y = cast(double)std.math.floor(y);
-		z = cast(double)std.math.floor(z);
+		x = cast(double).floor(x);
+		y = cast(double).floor(y);
+		z = cast(double).floor(z);
 	}
 
 	Vector3d vec()
@@ -88,8 +93,6 @@ public:
 
 	char[] toString()
 	{
-		return "(" ~ std.string.toString(x) ~ ", " ~ std.string.toString(y) ~ ", " ~ std.string.toString(z) ~ ")";
+		return format("(%s, %s, %s)", x, y, z);
 	}
-
-	double x, y, z;
 }

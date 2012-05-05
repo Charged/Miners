@@ -20,7 +20,8 @@ public:
 	}
 
 public:
-	void opAssign(Quatd q) {
+	void opAssign(Quatd q)
+	{
 		a = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
 		b =     2 * q.x * q.y - 2 * q.w * q.z;
 		c =     2 * q.x * q.z + 2 * q.w * q.y;

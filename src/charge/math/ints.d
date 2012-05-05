@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.ints;
 
-
 import std.math : floor;
+
 import charge.math.point3d;
 import charge.math.vector3d;
 

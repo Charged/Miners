@@ -2,16 +2,21 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.matrix4x4d;
 
+import std.string : format;
+
 import charge.math.point3d;
 import charge.math.vector3d;
 
+
 struct Matrix4x4d
 {
+public:
 	union {
-		double m[4][4];
-		double array[16];
+		double[4][4] m;
+		double[16] array;
 	};
 
+public:
 	Point3d opMul(Point3d point)
 	{
 		Point3d result;
@@ -126,4 +131,8 @@ struct Matrix4x4d
 		array[15] = temp.array[15] * fInvDet;
 	}
 
+	string toString()
+	{
+		return format("(%s, %s, %s, %s)", m[0], m[1], m[2], m[3]);
+	}
 }

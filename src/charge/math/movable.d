@@ -2,18 +2,21 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.movable;
 
-public {
-	import charge.math.point3d;
-	import charge.math.quatd;
-	import std.math;
-}
+public import charge.math.point3d;
+public import charge.math.quatd;
+
 
 /**
  * Base class for all movable objects
  */
 class Movable
 {
+protected:
+	Point3d pos;
+	Quatd rot;
+	bool dirty;
 
+public:
 	final Point3d position()
 	{
 		Point3d p;
@@ -58,9 +61,4 @@ class Movable
 		dirty = true;
 		this.rot = rot;
 	}
-
-protected:
-	Point3d pos;
-	Quatd rot;
-	bool dirty;
 }

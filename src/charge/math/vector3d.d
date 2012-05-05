@@ -2,16 +2,22 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.vector3d;
 
-import std.math;
+import std.math : sqrt, floor;
+import std.string : format;
 
 import charge.math.point3d;
 
+
 struct Vector3d
 {
+public:
+	double x, y, z;
+
 	const static Vector3d Up = Vector3d(0.0, 1.0, 0.0);
 	const static Vector3d Heading = Vector3d(0.0, 0.0, -1.0);
 	const static Vector3d Left = Vector3d(-1.0, 0.0, 0.0);
 
+public:
 	static Vector3d opCall()
 	{
 		return Vector3d(0.0, 0.0, 0.0);
@@ -102,9 +108,9 @@ struct Vector3d
 
 	void floor()
 	{
-		x = cast(double)std.math.floor(x);
-		y = cast(double)std.math.floor(y);
-		z = cast(double)std.math.floor(z);
+		x = cast(double).floor(x);
+		y = cast(double).floor(y);
+		z = cast(double).floor(z);
 	}
 
 	void normalize()
@@ -136,8 +142,6 @@ struct Vector3d
 
 	char[] toString()
 	{
-		return "(" ~ std.string.toString(x) ~ ", " ~ std.string.toString(y) ~ ", " ~ std.string.toString(z) ~ ")";
+		return format("(%s, %s, %s)", x, y, z);
 	}
-
-	double x, y, z;
 }

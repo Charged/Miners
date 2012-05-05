@@ -2,16 +2,19 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.box;
 
+
 /**
  * A simple 2D box used for collision detection.
  */
 struct Box(T, V)
 {
+public:
 	T x;
 	T y;
 	V w;
 	V h;
 
+public:
 	bool collides(ref Box!(T, V) b)
 	{
 		T xw = x + w;
@@ -37,7 +40,7 @@ struct Box(T, V)
 
 		return false;
 	}
-
 }
+
 
 alias Box!(int, uint) BoxI;

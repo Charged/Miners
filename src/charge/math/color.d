@@ -2,22 +2,25 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.color;
 
-import std.string;
+import std.string : format;
+
 
 struct Color4b
 {
+public:
 	ubyte r, g, b, a;
 
 	const static Color4b White = {255, 255, 255, 255};
 	const static Color4b Black = {  0,   0,   0, 255};
 
-	ubyte* ptr() { return &r; }
-
+public:
 	static Color4b opCall(ubyte r, ubyte g, ubyte b, ubyte a)
 	{
 		Color4b res = {r, g, b, a};
 		return res;
 	}
+
+	ubyte* ptr() { return &r; }
 
 	void modulate(Color4b c)
 	{
@@ -46,15 +49,20 @@ struct Color4b
 
 	char[] toString()
 	{
-		return "(" ~ std.string.toString(r) ~ ", " ~ std.string.toString(g) ~ ", " ~ std.string.toString(b) ~ ", " ~ std.string.toString(a) ~ ")";
+		return format("(%s, %s, %s, %s)", r, g, b, a);
 	}
 }
 
+
 struct Color3f
 {
+public:
+	float r, g, b;
+
 	const static Color3f White = {1.0f, 1.0f, 1.0f};
 	const static Color3f Black = {0.0f, 0.0f, 0.0f};
 
+public:
 	static Color3f opCall(float r, float g, float b)
 	{
 		Color3f res = {r, g, b};
@@ -62,14 +70,23 @@ struct Color3f
 	}
 
 	float* ptr() { return &r; }
-	float r, g, b;
+
+	char[] toString()
+	{
+		return format("(%s, %s, %s)", r, g, b);
+	}
 }
+
 
 struct Color4f
 {
+public:
+	float r, g, b, a;
+
 	const static Color4f White = {1.0f, 1.0f, 1.0f, 1.0f};
 	const static Color4f Black = {0.0f, 0.0f, 0.0f, 1.0f};
 
+public:
 	static Color4f opCall()
 	{
 		return Black;
@@ -96,13 +113,10 @@ struct Color4f
 		return res;
 	}
 
+	float* ptr() { return &r; }
+
 	char[] toString()
 	{
-		return "(" ~ std.string.toString(r) ~ ", " ~ std.string.toString(g) ~ ", " ~ std.string.toString(b) ~ ", " ~ std.string.toString(a) ~ ")";
+		return format("(%s, %s, %s, %s)", r, g, b, a);
 	}
-
-	float* ptr() { return &r; }
-	float r, g, b, a;
 }
-
-

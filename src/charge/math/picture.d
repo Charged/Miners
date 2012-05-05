@@ -2,9 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.picture;
 
-import std.string;
-import std.stdio;
-
 import charge.math.color;
 import charge.sys.resource;
 import charge.sys.logger;

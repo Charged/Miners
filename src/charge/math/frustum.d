@@ -2,8 +2,11 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.frustum;
 
+import std.string : format;
+
 import charge.math.movable;
 import charge.math.matrix4x4d;
+
 
 struct ABox
 {
@@ -11,8 +14,10 @@ struct ABox
 	Point3d max;
 }
 
+
 struct Planed
 {
+public:
 	union {
 		struct {
 			double a, b, c, d;
@@ -24,6 +29,7 @@ struct Planed
 		double array[4];
 	};
 
+public:
 	void normalize()
 	{
 		auto mag = vec.length;
@@ -31,14 +37,6 @@ struct Planed
 		b /= mag;
 		c /= mag;
 		d /= mag;
-	}
-
-	char[] toString()
-	{
-		return "(" ~ std.string.toString(a) ~
-		       ", " ~ std.string.toString(b) ~
-		       ", " ~ std.string.toString(c) ~
-		       ", " ~ std.string.toString(d) ~ ")";
 	}
 
 	bool check(ref ABox box)
@@ -54,11 +52,19 @@ struct Planed
 			return false;
 		return true;
 	}
+
+	char[] toString()
+	{
+		return format("((%s, %s, %s), %s)", a, b, c, d);
+	}
 }
+
 
 struct Frustum
 {
+public:
 	Planed p[6];
+
 	enum Planes {
 		Left,
 		Right,
@@ -75,6 +81,7 @@ struct Frustum
 	alias Planes.Far Far;
 	alias Planes.Near Near;
 
+public:
 	void setGLMatrix(ref Matrix4x4d mat)
 	{
 		p[Left].a = mat.m[0][3] + mat.m[0][0];

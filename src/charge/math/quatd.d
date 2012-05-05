@@ -2,11 +2,11 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.quatd;
 
-import std.math;
+import std.math : sin, cos, sqrt;
+import std.string : format;
 
 public import charge.math.vector3d;
 
-import std.string;
 
 struct Quatd
 {
@@ -143,9 +143,6 @@ public:
 
 	char[] toString()
 	{
-		return "(" ~ std.string.toString(w) ~ ", " ~
-			     std.string.toString(x) ~ ", " ~
-			     std.string.toString(y) ~ ", " ~
-			     std.string.toString(z) ~ ")";
+		return format("(%s, %s, %s, %s)", w, x, y, z);
 	}
 }

@@ -9,6 +9,7 @@ import charge.sys.logger;
 import charge.sys.resource;
 import charge.util.memory;
 
+
 struct Vertex
 {
 	float x, y, z;
@@ -16,10 +17,12 @@ struct Vertex
 	float nx, ny, nz;
 }
 
+
 struct Triangle
 {
 	uint i1, i2, i3;
 }
+
 
 struct RigidMeshStruct
 {
@@ -40,6 +43,7 @@ struct RigidMeshStruct
 		Vertex* verts;
 	}
 }
+
 
 class RigidMesh : public Resource
 {
