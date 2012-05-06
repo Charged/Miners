@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.gfx.vbo;
 
-import charge.math.box;
+import charge.math.frustum;
 import charge.sys.resource;
 
 import miners.gfx.imports;
@@ -150,8 +150,8 @@ public:
 	void add(GfxVBO vbo, int x, int y, int z)
 	{
 		Entry e;
-		e.aabb.min = Point3d(x * BuildWidth, y * BuildHeight, z * BuildDepth);
-		e.aabb.max = Point3d((x+1) * BuildWidth, (y+1) * BuildHeight, (z+1) * BuildDepth);
+		e.aabb.min = Vector3f(x * BuildWidth, y * BuildHeight, z * BuildDepth);
+		e.aabb.max = Vector3f((x+1) * BuildWidth, (y+1) * BuildHeight, (z+1) * BuildDepth);
 		e.vbo = vbo;
 		array ~= e;
 	}

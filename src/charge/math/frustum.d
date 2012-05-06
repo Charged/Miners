@@ -2,37 +2,46 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.frustum;
 
+import std.math : sqrt;
 import std.string : format;
 
 import charge.math.movable;
 import charge.math.matrix4x4d;
 
 
-struct ABox
+align(16) struct Vector3f
 {
-	Point3d min;
-	Point3d max;
+	float x, y, z;
 }
 
 
-struct Planed
+align(16) struct ABox
+{
+	Vector3f min;
+	int pad1;
+	Vector3f max;
+	int pad2;
+}
+
+
+align(16) struct Planed
 {
 public:
 	union {
 		struct {
-			double a, b, c, d;
+			float a, b, c, d;
 		};
 		struct {
-			Vector3d vec;
-			double vec_length;
+			Vector3f vec;
+			float vec_length;
 		};
-		double array[4];
+		float array[4];
 	};
 
 public:
 	void normalize()
 	{
-		auto mag = vec.length;
+		auto mag = sqrt(a * a + b * b + c * c);
 		a /= mag;
 		b /= mag;
 		c /= mag;
@@ -41,14 +50,16 @@ public:
 
 	bool check(ref ABox box)
 	{
-		Vector3d p = box.min;
+		Vector3f p = box.min;
 		if (a > 0)
 			p.x = box.max.x;
 		if (b > 0)
 			p.y = box.max.y;
 		if (c > 0)
 			p.z = box.max.z;
-		if (vec.dot(p) <= -d)
+
+		auto tmp = a * p.x + b * p.y + c * p.z;
+		if (tmp <= -d)
 			return false;
 		return true;
 	}
@@ -60,7 +71,7 @@ public:
 }
 
 
-struct Frustum
+align(16) struct Frustum
 {
 public:
 	Planed p[6];
