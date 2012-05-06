@@ -126,9 +126,12 @@ public:
 				throw eSaved;
 
 		} catch (Exception e) {
-			l.warn("Double target not supported (%s)", e);
+			l.warn("Double target not supported");
+			l.warn("%s", e);
 			return false;
 		}
+
+		l.info("Double target supported (%s)", probedFormat);
 
 		checkStatus = true;
 		return true;
@@ -137,7 +140,7 @@ public:
 	this(uint w, uint h)
 	{
 		if (!check)
-			throw new Exception("Double target not supported");
+			throw new Exception("DoubleTarget not supported");
 
 		this(w, h, probedFormat);
 	}
@@ -145,8 +148,6 @@ public:
 private:
 	this(uint w, uint h, GLint depthFormat)
 	{
-
-
 		w *= 2;
 		h *= 2;
 		this.w = w;
@@ -186,12 +187,11 @@ private:
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTex, 0);
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, depthTex, 0);
 
-		GLenum status = cast(GLenum)glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-
-		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
-			throw new Exception("DoubleTarget framebuffer not complete " ~ std.string.toString(status));
-
+		auto status = gluCheckFramebufferStatus();
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
+		if (status !is null)
+			throw new Exception(format("DoubleTarget framebuffer not complete (%s)", status));
 	}
 
 public:

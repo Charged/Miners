@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.texture;
 
-import std.string;
+import std.string : format;
 import std.stdio;
 
 import charge.sys.resource;
@@ -288,9 +288,15 @@ public:
 		return new TextureTarget(Pool(), name, w, h);
 	}
 
+	~this()
+	{
+		if (fbo != 0)
+			glDeleteFramebuffersEXT(1, &fbo);
+	}
+
 	void setTarget()
 	{
-		static GLenum buffers[3] = [
+		static GLenum buffers[1] = [
 			GL_COLOR_ATTACHMENT0_EXT,
 		];
 		gluFrameBufferBind(fbo, buffers, w, h);
@@ -309,12 +315,12 @@ public:
 protected:
 	this(Pool p, char[] name, uint w, uint h)
 	{
-		uint colorTex, colorFormat;
+		GLuint colorTex;
 
 		if (!GL_EXT_framebuffer_object)
 			throw new Exception("GL_EXT_framebuffer_object not supported");
 
-		colorFormat = GL_RGBA8;
+		GLint colorFormat = GL_RGBA8;
 
 		glGenTextures(1, &colorTex);
 		glGenFramebuffersEXT(1, &fbo);
@@ -336,10 +342,11 @@ protected:
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTex, 0);
 
-		GLenum status = cast(GLenum)glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+		auto status = gluCheckFramebufferStatus();
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
-		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
-			throw new Exception("DoubleTarget framebuffer not complete " ~ std.string.toString(status));
+		if (status !is null)
+			throw new Exception(format("TextureTarget framebuffer not complete (%s) :(", status));
 
 		super(p, name, GL_TEXTURE_2D, colorTex, w, h);
 	}
