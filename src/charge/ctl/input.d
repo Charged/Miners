@@ -2,16 +2,19 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.ctl.input;
 
+import std.stdio;
 import std.utf : toUTF8;
 
 import lib.sdl.sdl;
 
+import charge.math.ints;
 import charge.util.signal;
 import charge.sys.logger;
 
 import charge.ctl.device;
 import charge.ctl.mouse;
 import charge.ctl.keyboard;
+import charge.ctl.joystick;
 
 class Input
 {
@@ -21,6 +24,7 @@ private:
 	static Input instance;
 	Mouse[] mouseArray;
 	Keyboard[] keyboardArray;
+	Joystick[] joystickArray;
 
 public:
 	Signal!(Device) hotplug;
@@ -46,6 +50,11 @@ public:
 		return keyboardArray[0];
 	}
 
+	Joystick joystick()
+	{
+		return joystickArray[0];
+	}
+
 	Mouse[] mice()
 	{
 		return mouseArray.dup;
@@ -56,20 +65,44 @@ public:
 		return keyboardArray.dup;
 	}
 
+	Joystick[] joysticks()
+	{
+		return joystickArray.dup;
+	}
+
+
 	void tick()
 	{
 		SDL_Event e;
 
+		SDL_JoystickUpdate();
+
 		while(SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT)
+			switch (e.type) {
+			case SDL_QUIT:
 				quit();
+				break;
 
-			// Hack
-			//if (e.type == SDL_KEYUP)
-			//	if (e.key.keysym.sym == SDLK_ESCAPE)
-			//		quit();
+			case SDL_VIDEORESIZE:
+				resize(cast(uint)e.resize.w, cast(uint)e.resize.h);
+				break;
 
-			if (e.type == SDL_KEYDOWN) {
+			case SDL_JOYBUTTONDOWN:
+				auto j = joystickArray[e.jbutton.which];
+				j.down(j, e.jbutton.button);
+				break;
+
+			case SDL_JOYBUTTONUP:
+				auto j = joystickArray[e.jbutton.which];
+				j.up(j, e.jbutton.button);
+				break;
+
+			case SDL_JOYAXISMOTION:
+				auto j = joystickArray[e.jbutton.which];
+				j.handleAxis(e.jaxis.axis, e.jaxis.value);
+				break;
+
+			case SDL_KEYDOWN:
 				char[4] tmp;
 				char[] str;
 				dchar unicode = e.key.keysym.unicode;
@@ -82,40 +115,41 @@ public:
 				if (unicode)
 					str = toUTF8(tmp, unicode);
 				k.down(k, e.key.keysym.sym, unicode, str);
-			}
+				break;
 
-			if (e.type == SDL_KEYUP) {
+			case SDL_KEYUP:
 				auto k = keyboardArray[0];
 				k.mod = e.key.keysym.mod;
 				k.up(k, e.key.keysym.sym);
-			}
+				break;
 
-			if (e.type == SDL_MOUSEMOTION) {
+			case SDL_MOUSEMOTION:
 				auto m = mouseArray[0];
 				m.state = e.motion.state;
 				m.x = e.motion.x;
 				m.y = e.motion.y;
 				m.move(m, e.motion.xrel, e.motion.yrel);
-			}
+				break;
 
-			if (e.type == SDL_MOUSEBUTTONDOWN) {
+			case SDL_MOUSEBUTTONDOWN:
 				auto m = mouseArray[0];
 				m.state |= (1 << e.button.button);
 				m.x = e.button.x;
 				m.y = e.button.y;
 				m.down(m, e.button.button);
-			}
+				break;
 
-			if (e.type == SDL_MOUSEBUTTONUP) {
+			case SDL_MOUSEBUTTONUP:
 				auto m = mouseArray[0];
 				m.state = ~(1 << e.button.button) & m.state;
 				m.x = e.button.x;
 				m.y = e.button.y;
 				m.up(m, e.button.button);
-			}
+				break;
 
-			if (e.type == SDL_VIDEORESIZE)
-				resize(cast(uint)e.resize.w, cast(uint)e.resize.h);
+			default:
+				break;
+			}
 		}
 	}
 
@@ -124,6 +158,13 @@ private:
 	{
 		keyboardArray ~= new Keyboard();
 		mouseArray ~= new Mouse();
+
+		// Small hack to allow hotplug.
+		auto num = imax(8, SDL_NumJoysticks());
+
+		joystickArray.length = num;
+		for (int i; i < num; i++)
+			joystickArray[i] = new Joystick(i);
 	}
 
 	~this()
