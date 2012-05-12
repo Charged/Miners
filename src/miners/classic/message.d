@@ -10,7 +10,7 @@ import miners.classic.interfaces;
 class MessageLogger : public ClientMessageListener
 {
 public:
-	const backlog = 20;
+	const backlog = 100;
 
 	char[][backlog] msgs;
 	size_t cur;

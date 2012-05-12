@@ -57,10 +57,20 @@ protected:
 	int currentSlot;
 	ubyte[9] slots;
 
+	const int chatBorder = 4;
+	const int chatBacklog = 40;
+	const int chatBacklogSmall = 4;
+
 	ColorContainer chatGui;
 	ClassicMessageLog mlGui;
 	Text typedText;
 	bool chatDirty;
+
+	ColorContainer chatGuiSmall;
+	ClassicMessageLog mlGuiSmall;
+
+
+	ColorContainer chatGuiCurrent;
 
 	const chatSep = "----------------------------------------------------------------";
 
@@ -96,26 +106,33 @@ public:
 		chatDirty = true;
 		chatGui = new ColorContainer(
 			Color4f(0, 0, 0, 0.8),
-			8 * 64 + 8 * 2,
-			9 * ml.backlog + 8 * (2 + 2));
-		mlGui = new ClassicMessageLog(chatGui, 8, 8, 20);
-		auto spacer = new Text(chatGui, 8, mlGui.y+mlGui.h, chatSep);
-		typedText = new Text(chatGui, 8, spacer.y+spacer.h, "");
-
+			8 * 64 + 1 * 2,
+			9 * chatBacklog + 8 * 2 + chatBorder * 2);
 		chatGui.repaintDg = &handleRepaint;
+		mlGui = new ClassicMessageLog(chatGui, chatBorder, chatBorder, chatBacklog);
+		auto spacer = new Text(chatGui, chatBorder, mlGui.y+mlGui.h, chatSep);
+		typedText = new Text(chatGui, chatBorder, spacer.y+spacer.h, "");
+
+
+		chatGuiSmall = new ColorContainer(
+			Color4f(0, 0, 0, 0.0),
+			8 * 64 + 1 * 2,
+			9 * chatBacklogSmall + chatBorder * 2);
+		chatGuiSmall.repaintDg = &handleRepaint;
+		mlGuiSmall = new ClassicMessageLog(chatGuiSmall, chatBorder, chatBorder, chatBacklogSmall);
+
 		console = new ClassicConsole(opts, &typedText.setText);
 
 		if (c !is null) {
 			console.chat = &c.sendClientMessage;
 			console.message = &ml.archive;
 			console.tabCompletePlayer = &ml.tabCompletePlayer;
-			ml.message = &mlGui.message;
-			ml.pushAll();
 		} else {
 			players[0] = new OtherPlayer(w, 0, "Herobrine", w.spawn, 0, 0);
 
-			console.chat = &mlGui.message;
-			console.message = &mlGui.message;
+			ml = new MessageLogger();
+			console.chat = &ml.archive;
+			console.message = &ml.archive;
 		}
 
 		pp = new PlayerPhysics(&ppGetBlock);
@@ -151,6 +168,7 @@ public:
 	void close()
 	{
 		chatGui.breakApart();
+		chatGuiSmall.breakApart();
 		delete sel;
 
 		foreach(p; players) {
@@ -228,8 +246,16 @@ public:
 		if (opts.hideUi())
 			return;
 
+		auto tmpChatGui = console.typing ? chatGui : chatGuiSmall;
+		auto tmpMlGui = console.typing ? mlGui : mlGuiSmall;
+		if (chatGuiCurrent !is tmpChatGui) {
+			chatGuiCurrent = tmpChatGui;
+			ml.message = &tmpMlGui.message;
+			ml.pushAll();
+		}
+
 		if (chatDirty) {
-			chatGui.paint();
+			tmpChatGui.paint();
 			chatDirty = false;
 		}
 
@@ -253,14 +279,12 @@ public:
 		int x;
 		int y;
 
-		if (ml !is null || console.typing) {
-			t = chatGui.texture;
-
-			d.blit(t, 8, rt.height - t.height - (32 + 8 + 8));
-		}
+		uint offset = 32 + 8 + 8 + (console.typing ? 0 : 8 * 2);
+		t = tmpChatGui.texture;
+		d.blit(t, 8, rt.height - t.height - offset);
 
 		// Crosshair
-		{
+		if (!console.typing) {
 			auto w = rt.width / 2 - 5;
 			auto h = rt.height / 2 - 5;
 
