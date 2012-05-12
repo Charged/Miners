@@ -59,8 +59,9 @@ public
 
 	static import charge.ctl.input;
 	static import charge.ctl.device;
-	static import charge.ctl.keyboard;
 	static import charge.ctl.mouse;
+	static import charge.ctl.keyboard;
+	static import charge.ctl.joystick;
 
 	static import charge.sys.logger;
 	static import charge.sys.properties;
@@ -164,8 +165,9 @@ alias charge.phy.world.World PhyWorld;
 
 alias charge.ctl.input.Input CtlInput;
 alias charge.ctl.input.Device CtlDevice;
-alias charge.ctl.input.Keyboard CtlKeyboard;
 alias charge.ctl.input.Mouse CtlMouse;
+alias charge.ctl.input.Keyboard CtlKeyboard;
+alias charge.ctl.input.Joystick CtlJoystick;
 
 alias charge.sys.logger.Logger SysLogger;
 alias charge.sys.logger.Logging SysLogging;
