@@ -211,7 +211,7 @@ private:
 		version (DynamicSDL)
 			loadSDL(&sdl.symbol);
 
-		SDL_Init(SDL_INIT_VIDEO);
+		SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
 		SDL_EnableUNICODE(1);
 
@@ -261,6 +261,16 @@ private:
 		l.info(str);
 		str = std.string.toString(glGetString(GL_RENDERER));
 		l.info(str);
+
+
+		auto numSticks = SDL_NumJoysticks();
+		
+		if (numSticks != 0)
+			l.info("Found %s joystick%s", numSticks, numSticks != 1 ? "s" : "");
+		else
+			l.info("No joysticks found");
+		for(int i; i < numSticks; i++)
+			l.info("   %s", .toString(SDL_JoystickName(i)));
 	}
 
 	void closeGfx()
