@@ -26,7 +26,7 @@ public:
 
 	void addIfNotSet(char[] key, char[] value)
 	{
-		if ((key in map) !is null)
+		if (key in this)
 			return;
 		order ~= key;
 		map[key] = value;
@@ -34,6 +34,46 @@ public:
 
 	void addIfNotSet(char[] key, bool value) { addIfNotSet(key, .toString(value)); }
 	void addIfNotSet(char[] key, double value) { addIfNotSet(key, .toString(value)); }
+
+	char[] getNotFoundSet(char[] key, char[] value)
+	{
+		if (key in this)
+			return map[key];
+		addKeyNotFound(key, value);
+		return value;
+	}
+
+	int getIfNotFoundSet(char[] key, int def)
+	{
+		if (key in this)
+			return toIntOrDef(map[key], def);
+		addIfNotSet(key, .toString(def));
+		return def;
+	}
+
+	uint getIfNotFoundSet(char[] key, uint def)
+	{
+		if (key in this)
+			return toUintOrDef(map[key], def);
+		addIfNotSet(key, .toString(def));
+		return def;
+	}
+
+	double getIfNotFoundSet(char[] key, double def)
+	{
+		if (key in this)
+			return toDoubleOrDef(map[key], def);
+		addIfNotSet(key, .toString(def));
+		return def;
+	}
+
+	bool getIfNotFoundSet(char[] key, bool def)
+	{
+		if (key in this)
+			return toBoolOrDef(map[key], def);
+		addIfNotSet(key, .toString(def));
+		return def;
+	}
 
 	void add(char[] key, char[] value)
 	{
@@ -58,50 +98,10 @@ public:
 		return toStringz(get(key, def));
 	}
 
-	int getUint(char[] key, uint def)
-	{
-		try {
-			return toUint(safeGet(key));
-		} catch (Exception e) {
-			return def;
-		}
-	}
-
-	double getDouble(char[] key, double def)
-	{
-		try {
-			return toDouble(safeGet(key));
-		} catch (Exception e) {
-			return def;
-		}
-	}
-
-	int getInt(char[] key, int def)
-	{
-		try {
-			return toInt(safeGet(key));
-		} catch (Exception e) {
-			return def;
-		}
-	}
-
-	bool getBool(char[] key, bool def)
-	{
-		try {
-			auto v = safeGet(key);
-
-			if (v is null)
-				return def;
-			else if (v == "true")
-				return true;
-			else if (v == "false")
-				return false;
-		} catch (Exception e) {
-			return def;
-		}
-
-		return def;
-	}
+	int getInt(char[] key, int def) { return toIntOrDef(safeGet(key), def); }
+	uint getUint(char[] key, uint def) { return toUintOrDef(safeGet(key), def); }
+	double getDouble(char[] key, double def) { return toDoubleOrDef(safeGet(key), def); }
+	bool getBool(char[] key, bool def) { return toBoolOrDef(safeGet(key), def); }
 
 	void print()
 	{
@@ -181,5 +181,65 @@ private:
 		if (v is null)
 			return null;
 		return *v;
+	}
+
+	/**
+	 * Helper function to add a key know to be not there.
+	 */
+	void addKeyNotFound(char[] key, char[] value)
+	{
+		order ~= key;
+		map[key] = value;
+	}
+
+
+	/*
+	 *
+	 * Conversion keys.
+	 *
+	 */
+
+
+	uint toUintOrDef(char[] str, uint def)
+	{
+		try {
+			return toUint(str);
+		} catch (Exception e) {
+			return def;
+		}
+	}
+
+	double toDoubleOrDef(char[] str, double def)
+	{
+		try {
+			return toDouble(str);
+		} catch (Exception e) {
+			return def;
+		}
+	}
+
+	int toIntOrDef(char[] str, int def)
+	{
+		try {
+			return toInt(str);
+		} catch (Exception e) {
+			return def;
+		}
+	}
+
+	bool toBoolOrDef(char[] str, bool def)
+	{
+		try {
+			if (str is null)
+				return def;
+			else if (str == "true")
+				return true;
+			else if (str == "false")
+				return false;
+		} catch (Exception e) {
+			return def;
+		}
+
+		return def;
 	}
 }
