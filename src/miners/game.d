@@ -201,31 +201,24 @@ protected:
 	{
 		GfxTexture dirt;
 
-		// Properties
+		// For options
 		auto p = Core().properties;
-		p.addIfNotSet(opts.aaName, opts.aaDefault);
-		p.addIfNotSet(opts.fogName, opts.fogDefault);
-		p.addIfNotSet(opts.shadowName, opts.shadowDefault);
-		p.addIfNotSet(opts.viewDistanceName, opts.viewDistanceDefault);
-		p.addIfNotSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
 
-		for (int i; i < opts.keyNames.length; i++)
-			p.addIfNotSet(opts.keyNames[i], opts.keyDefaults[i]);
-
-		double viewDistance = p.getDouble(opts.viewDistanceName, opts.viewDistanceDefault);
+		// Have to validate the view distance value.
+		double viewDistance = p.getIfNotFoundSet(opts.viewDistanceName, opts.viewDistanceDefault);
 		viewDistance = fmax(32, viewDistance);
 		viewDistance = fmin(viewDistance, short.max);
 
 		// First init options
 		opts = new Options();
-		opts.aa = p.getBool(opts.aaName, opts.aaDefault);
-		opts.fog = p.getBool(opts.fogName, opts.fogDefault);
-		opts.shadow = p.getBool(opts.shadowName, opts.shadowDefault);
-		opts.useCmdPrefix = p.getBool(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
+		opts.aa = p.getIfNotFoundSet(opts.aaName, opts.aaDefault);
+		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
+		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
+		opts.useCmdPrefix = p.getIfNotFoundSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
 		opts.viewDistance = viewDistance;
 		debug { opts.showDebug = true; }
 		for (int i; i < opts.keyNames.length; i++)
-			opts.keyArray[i] =  p.getInt(opts.keyNames[i], opts.keyDefaults[i]);
+			opts.keyArray[i] =  p.getIfNotFoundSet(opts.keyNames[i], opts.keyDefaults[i]);
 
 
 		// The menu is used to display error messages
