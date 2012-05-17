@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module minecraft.net.threaded;
+module charge.net.threaded;
 
 version(Unix) {
 	import std.c.unix.unix;
