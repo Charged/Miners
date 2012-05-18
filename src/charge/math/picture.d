@@ -26,7 +26,11 @@ private:
 public:
 	static Picture opCall(char[] filename)
 	{
-		auto p = Pool();
+		return Picture(Pool(), filename);
+	}
+
+	static Picture opCall(Pool p, char[] filename)
+	{
 		if (filename is null)
 			return null;
 		
