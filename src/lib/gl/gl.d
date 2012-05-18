@@ -20,12 +20,14 @@ import lib.gl.core.gl20;
 import lib.gl.core.gl21;
 import lib.gl.ext.extframebufferobject;
 import lib.gl.ext.nvdepthbufferfloat;
+import lib.gl.ext.arbtexturecompression;
 import lib.gl.ext.arbvertexbufferobject;
 import lib.gl.ext.arbvertexarrayobject;
 import lib.gl.ext.applevertexarrayobject;
 import lib.gl.ext.chargevertexarrayobject;
 import lib.gl.ext.extgeometryshader4;
 import lib.gl.ext.exttexturearray;
+import lib.gl.ext.exttexturecompressions3tc;
 import lib.gl.glu;
 
 struct glVersion {
@@ -52,6 +54,7 @@ void loadGL(Loader l)
 	findExtentions();
 	loadGL_EXT_framebuffer_object(l);
 	loadGL_NV_depth_buffer_float(l);
+	loadGL_ARB_texture_compression(l);
 	loadGL_ARB_vertex_buffer_object(l);
 	loadGL_ARB_vertex_array_object(l);
 	loadGL_APPLE_vertex_array_object(l);
@@ -95,12 +98,14 @@ void findExtentions()
 	char[] e = toString(glGetString(GL_EXTENSIONS));
 
 	testFunc!(GL_EXT_framebuffer_object)(e);
+	testFunc!(GL_ARB_texture_compression)(e);
 	testFunc!(GL_NV_depth_buffer_float)(e);
 	testFunc!(GL_ARB_vertex_buffer_object)(e);
 	testFunc!(GL_ARB_vertex_array_object)(e);
 	testFunc!(GL_APPLE_vertex_array_object)(e);
 	testFunc!(GL_EXT_geometry_shader4)(e);
 	testFunc!(GL_EXT_texture_array)(e);
+	testFunc!(GL_EXT_texture_compression_s3tc)(e);
 }
 
 
