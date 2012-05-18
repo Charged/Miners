@@ -16,6 +16,25 @@ static final int iclamp(int min, int v, int max) { return imax(min, imin(v, max)
 
 
 /**
+ * Calculate the mipmap level size with value as the
+ * starting size, as defined by the OpenGL spec.
+ */
+int minify(int value, int level)
+{
+	return value >> level;
+}
+
+
+/**
+ * Calculate the number of blocks a given size is for blocksize.
+ */
+int nblocks(int size, int blockSize)
+{
+	return (size+blockSize-1)/blockSize;
+}
+
+
+/**
  * Step from the point start in the vector given by heading dist long.
  *
  * Calls the given delegate for each integer unit that we step.
