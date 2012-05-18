@@ -8,8 +8,10 @@ import std.stdio;
 import charge.sys.resource;
 import charge.sys.logger;
 import charge.sys.file;
+import charge.math.ints;
 import charge.math.color;
 import charge.math.picture;
+import charge.util.dds;
 import charge.gfx.gl;
 import charge.gfx.target;
 
@@ -72,20 +74,10 @@ public:
 			return t;
 		}
 
-		auto pic = Picture(filename);
-		/* Error printing already taken care of */
-		if (pic is null)
-			return null;
-		scope(exit)
-			pic.reference(&pic, null);
-
-		auto id = textureFromPicture(pic);
-
-		l.info("Loaded %s", filename);
-		t = new Texture(Pool(), filename, GL_TEXTURE_2D, id, pic.width, pic.height);
-		t.filter = Texture.Filter.Linear;
-
-		return t;
+		if (filename[$ - 4 .. $] ==  ".dds")
+			return fromDdsFile(p, filename);
+		else
+			return fromPicture(p, filename);
 	}
 
 	static Texture opCall(char[] name, Picture pic)
@@ -152,6 +144,25 @@ public:
 	}
 
 private:
+	static Texture fromPicture(Pool p, char[] filename)
+	{
+		Texture t;
+		auto pic = Picture(p, filename);
+		/* Error printing already taken care of */
+		if (pic is null)
+			return null;
+		scope(exit)
+			pic.reference(&pic, null);
+
+		auto id = textureFromPicture(pic);
+
+		l.info("Loaded %s", filename);
+		t = new Texture(Pool(), filename, GL_TEXTURE_2D, id, pic.width, pic.height);
+		t.filter = Texture.Filter.Linear;
+
+		return t;
+	}
+
 	static int textureFromPicture(Picture pic)
 	{
 		int glFormat = GL_RGBA;
@@ -175,6 +186,72 @@ private:
 			GL_UNSIGNED_BYTE, //type
 			pic.pixels);      //pixels
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+
+		return id;
+	}
+
+	static Texture fromDdsFile(Pool p, char[] filename)
+	{
+		auto file = FileManager(filename);
+		if (file is null) {
+			l.warn("Failed to load %s: file not found", filename);
+			return null;
+		}
+		scope(exit)
+			delete file;
+
+		DdsHeader* dds;
+		void[][] data;
+		try {
+			auto mem = file.peekMem;
+			dds = cast(DdsHeader*)mem.ptr;
+			data = extractBytes(mem);
+		} catch (Exception e) {
+			l.warn("%s: %s", e.classinfo, e);
+			return null;
+		}
+
+		GLuint id = textureFromDdsDataDXT(dds, data);
+
+		auto t = new Texture(p, filename, GL_TEXTURE_2D, id, dds.width, dds.height);
+		t.filter = Texture.Filter.Linear;
+
+		return t;
+	}
+
+	static int textureFromDdsDataDXT(DdsHeader* dds, void[][] data)
+	{
+		GLuint internalFormat;
+		GLuint id;
+
+		switch(dds.pf.fourCC) {
+		case "DXT1":
+			internalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+			break;
+		case "DXT5":
+			internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			break;
+		default:
+			l.warn("Unknown fourCC format");
+		}
+			
+		glGenTextures(1, cast(GLuint*)&id);
+
+		glBindTexture(GL_TEXTURE_2D, id);
+
+		foreach (int i, d; data)
+			glCompressedTexImage2DARB(
+				GL_TEXTURE_2D,         //target
+				i,                     //level
+				internalFormat,        //internalformat
+				minify(dds.width, i),  //width
+				minify(dds.height, i), //height
+				0,                     //border
+				cast(GLuint)d.length,  //imageSize
+				d.ptr);                //pixels
+
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return id;
 	}
