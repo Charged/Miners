@@ -77,11 +77,6 @@ private:
 	/// List of completed operations, protected by this
 	Op[] opList;
 
-	/// Username used for authentication
-	char[] username;
-	/// Password used for authentication
-	char[] password;
-
 	/// Receiver of packages
 	ClassicWebpageListener l;
 
@@ -96,12 +91,9 @@ private:
 
 
 public:
-	this(ClassicWebpageListener l,
-	     char[] username, char[] password)
+	this(ClassicWebpageListener l)
 	{
 		this.l = l;
-		this.username = username;
-		this.password = password;
 		this.curOp = Op.CONNECTING;
 
 		super(hostname, port);
@@ -125,7 +117,7 @@ public:
 		"\r\n";
 
 		if (curOp != Op.NO_OP)
-			throw new Exception("Can't handle more then on request");
+			throw new Exception("Can't handle more then one request");
 
 		if (playSession is null)
 			throw new Exception("Not authenticated");
@@ -147,7 +139,7 @@ public:
 		"\r\n";
 
 		if (curOp != Op.NO_OP)
-			throw new Exception("Can't handle more then on request");
+			throw new Exception("Can't handle more then one request");
 
 		if (playSession is null)
 			throw new Exception("Not authenticated");
@@ -160,10 +152,57 @@ public:
 		curOp = Op.GET_SERVER_INFO;
 	}
 
+
+	/*
+	 *
+	 * Http POST functions.
+	 *
+	 */
+
+
+	/**
+	 * Login to login.minecraft.net and retrive the PLAY_SESSION cookie.
+	 *
+	 * XXX: This method is insecure, should only be used for debugging purposes.
+	 */
+	void postLogin(char[] username, char[] password)
+	{
+		const char[] http =
+		"POST /login HTTP/1.1\r\n"
+		"User-Agent: Charged-Miners\r\n"
+		"Host: %s\r\n"
+		"Content-Length: %s\r\n"
+		"Content-Type: application/x-www-form-urlencoded\r\n"
+		"\r\n"
+		"%s";
+		const char[] content =
+		"username=%s&password=%s";
+
+		if (curOp != Op.NO_OP)
+			throw new Exception("Can't handle more then one request");
+
+		auto bdy = format(content,
+				  uri.encode(username),
+				  uri.encode(password));
+		auto req = format(http, hostname, bdy.length, bdy);
+
+		s.send(req);
+		curOp = Op.POST_LOGIN;
+	}
+
+
+	/*
+	 *
+	 * Event handling.
+	 *
+	 */
+
+
 	void doEvents()
 	{
 		auto ops = getOps();
 		foreach(op; ops) {
+			// Which op was done.
 			switch(op) {
 			case Op.CONNECTING:
 				l.connected();
@@ -190,42 +229,6 @@ public:
 	}
 
 protected:
-	/*
-	 *
-	 * Http POST functions.
-	 *
-	 */
-
-
-	void postLogin(char[] username, char[] password)
-	{
-		const char[] http =
-		"POST /login HTTP/1.1\r\n"
-		"User-Agent: Charged-Miners\r\n"
-		"Host: %s\r\n"
-		"Content-Length: %s\r\n"
-		"Content-Type: application/x-www-form-urlencoded\r\n"
-		"\r\n"
-		"%s";
-		const char[] content =
-		"username=%s&password=%s";
-
-		auto bdy = format(content,
-				  uri.encode(username),
-				  uri.encode(password));
-		auto req = format(http, hostname, bdy.length, bdy);
-
-		s.send(req);
-	}
-
-
-	/*
-	 *
-	 * Event handling.
-	 *
-	 */
-
-
 	void handleError(Exception e)
 	{
 		this.e = e;
@@ -244,6 +247,8 @@ protected:
 		case Op.GET_SERVER_INFO:
 			getClassicServerInfo(csi, res);
 			break;
+		case Op.NO_OP:
+			writefln("GAH");
 		default:
 			throw new Exception("Unhandled operation");
 		}
@@ -253,8 +258,7 @@ protected:
 
 	void handleConnected()
 	{
-		pushOp(curOp, Op.POST_LOGIN);
-		postLogin(username, password);
+		pushOp(curOp, Op.NO_OP);
 	}
 
 	void handleDisconnect()

@@ -201,6 +201,49 @@ private:
 	WebpageConnection wc;
 	Text text;
 
+	/// Username used for authentication
+	char[] username;
+	/// Password used for authentication
+	char[] password;
+
+public:
+	/**
+	 * Retrive information about a server,
+	 * the connection has allready be authenticated.
+	 */
+	this(Router r, WebpageConnection wc, ClassicServerInfo csi)
+	{
+		this(r, wc, csi, true);
+	}
+
+	/**
+	 * Retrive information about a server, using a new connection
+	 * authenticating with the given credentials.
+	 */
+	this(Router r, char[] username, char[] password, ClassicServerInfo csi)
+	{
+		auto wc = new WebpageConnection(this);
+
+		this.username = username;
+		this.password = password;
+		this(r, wc, csi, false);
+	}
+
+	~this()
+	{
+		assert(wc is null);
+	}
+
+	void breakApart()
+	{
+		super.breakApart();
+
+		shutdownConnection();
+
+	}
+
+
+private:
 	this(Router r, WebpageConnection wc,
 	     ClassicServerInfo csi,
 	     bool idle)
@@ -223,41 +266,6 @@ private:
 		repack();
 	}
 
-public:
-	/**
-	 * Retrive information about a server,
-	 * the connection has allready be authenticated.
-	 */
-	this(Router r, WebpageConnection wc, ClassicServerInfo csi)
-	{
-		this(r, wc, csi, true);
-	}
-
-	/**
-	 * Retrive information about a server, using a new connection
-	 * authenticating with the given credentials.
-	 */
-	this(Router r, char[] username, char[] password, ClassicServerInfo csi)
-	{
-		auto wc = new WebpageConnection(this, username, password);
-		this(r, wc, csi, false);
-	}
-
-	~this()
-	{
-		assert(wc is null);
-	}
-
-	void breakApart()
-	{
-		super.breakApart();
-
-		shutdownConnection();
-
-	}
-
-
-private:
 	void shutdownConnection()
 	{
 		if (wc !is null) {
@@ -288,6 +296,7 @@ protected:
 	void connected()
 	{
 		text.setText("Authenticating");
+		wc.postLogin(username, password);
 		repack();
 	}
 
