@@ -138,6 +138,9 @@ BuildBlockDescriptor tile[256] = [
 	{ false, toTex(  4,  5 ), toTex(  4,  5 ) }, // trap door             // 96
 ];
 
+BuildBlockDescriptor grassSideTile =
+	{  true, toTex( 0,  0 ), toTex( 0,  0 ) }; // side grass
+
 BuildBlockDescriptor snowyGrassBlock =
 	{  true, toTex( 4,  4 ), toTex( 2,  4 ) }; // snowy grass
 
@@ -321,14 +324,37 @@ void grass(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data)
 	auto grassDec = &tile[2];
 	auto dirtDec = &tile[3];
 	auto snowDec = &snowyGrassBlock;
+	auto side = &grassSideTile;
 
 	if (data.get(x, y + 1, z) == 78 /* snow */)
-		makeXYZ(p, data, snowDec, x, y, z, set & ~sideMask.YN);
-	else
-		makeXYZ(p, data, grassDec, x, y, z, set & ~sideMask.YN);
+		return makeXYZ(p, data, snowDec, x, y, z, set & ~sideMask.YN);
 
-	if (set & sideMask.YN)
-		makeY(p, data, dirtDec, x, y, z, sideNormal.YN);
+	makeXYZ(p, data, grassDec, x, y, z, set & (sideMask.YN | sideMask.YP));
+
+
+	if (set & sideMask.XN) {
+		auto type = data.get(x-1, y-1, z);
+		auto dec = type == 2 ? side : grassDec;
+		makeXZ(p, data, dec, x, y, z, sideNormal.XN);
+	}
+
+	if (set & sideMask.XP) {
+		auto type = data.get(x+1, y-1, z);
+		auto dec = type == 2 ? side : grassDec;
+		makeXZ(p, data, dec, x, y, z, sideNormal.XP);
+	}
+
+	if (set & sideMask.ZN) {
+		auto type = data.get(x, y-1, z-1);
+		auto dec = type == 2 ? side : grassDec;
+		makeXZ(p, data, dec, x, y, z, sideNormal.ZN);
+	}
+
+	if (set & sideMask.ZP) {
+		auto type = data.get(x, y-1, z+1);
+		auto dec = type == 2 ? side : grassDec;
+		makeXZ(p, data, dec, x, y, z, sideNormal.ZP);
+	}
 }
 
 
