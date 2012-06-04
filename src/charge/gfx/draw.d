@@ -58,10 +58,11 @@ public:
 		glLoadIdentity();
 
 		// Need to flip the coords if rendering to a FBO.
-		if (rt !is DefaultTarget())
-			gluOrtho2D(0.0, rt.width, 0.0, rt.height);
-		else
+		if (cast(DefaultTarget)rt !is null ||
+		    cast(DoubleTarget)rt !is null)
 			gluOrtho2D(0.0, rt.width, rt.height, 0.0);
+		else
+			gluOrtho2D(0.0, rt.width, 0.0, rt.height);
 	}
 
 	void save()
