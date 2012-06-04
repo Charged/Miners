@@ -99,6 +99,12 @@ public:
 		super(hostname, port);
 	}
 
+	this(ClassicWebpageListener l, char[] playSession)
+	{
+		this.playSession = playSession;
+		this(l);
+	}
+
 
 	/*
 	 *
