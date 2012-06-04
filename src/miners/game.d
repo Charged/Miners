@@ -59,8 +59,10 @@ private:
 	bool build_all;
 	bool classicNetwork;
 	bool classicHttp;
+
 	char[] username; /**< webpage username */
 	char[] password; /**< webpage password */
+	char[] playSessionCookie; /**< webpage cookie */
 
 	/* Classic server information */
 	ClassicServerInfo csi;
@@ -69,6 +71,8 @@ private:
 	RegExp mcUrl;
 	/** Regexp for extracting information out of a http url */
 	RegExp httpUrl;
+	/** Regexp for extracting the play session cookie */
+	RegExp playSessionCookieExp;
 
 	/* time keepers */
 	charge.game.app.TimeKeeper luaTime;
@@ -107,6 +111,7 @@ public:
 	{
 		mcUrl = RegExp(mcUrlStr);
 		httpUrl = RegExp(httpUrlStr);
+		playSessionCookieExp = RegExp(playSessionCookieStr);
 
 		// Some defaults
 		csi = new ClassicServerInfo();
@@ -211,6 +216,7 @@ protected:
 
 		// First init options
 		opts = new Options();
+		opts.playSessionCookie = playSessionCookie;
 		opts.aa = p.getIfNotFoundSet(opts.aaName, opts.aaDefault);
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
@@ -326,7 +332,7 @@ protected:
 				build_all = true;
 				break;
 			default:
-				if (tryArgUrl(args[i]))
+				if (tryArgs(args[i]))
 					break;
 
 				l.fatal("Unknown argument %s", args[i]);
@@ -344,11 +350,12 @@ protected:
 	}
 
 	/**
-	 * Try both Urls.
+	 * Try all arguments.
 	 */
-	bool tryArgUrl(char[] arg)
+	bool tryArgs(char[] arg)
 	{
-		return tryArgHttpUrl(arg) || tryArgMcUrl(arg) || tryArgHtml(arg);
+		return tryArgHttpUrl(arg) || tryArgMcUrl(arg) ||
+		       tryArgHtml(arg)    || tryArgCookie(arg);
 	}
 
 	/**
@@ -430,6 +437,22 @@ protected:
 
 		l.info("Html mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);
+
+		return true;
+	}
+
+	/**
+	 * Is this argument a Minecraft PLAY_SESSION cookie?
+	 */
+	bool tryArgCookie(char[] arg)
+	{
+		auto r = playSessionCookieExp.exec(arg);
+		if (r.length < 2)
+			return false;
+
+		playSessionCookie = r[1];
+
+		l.info("PLAY_SESSION=<redacted>");
 
 		return true;
 	}

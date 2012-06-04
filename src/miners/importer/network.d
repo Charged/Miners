@@ -26,6 +26,14 @@ const httpUrlStr = "http://([^/:]+)" "(:([^@]+))?" "@" "(www\\.)?"
 		   "minecraft.net/classic/play/" "(.+)";
 
 /**
+ * String to parse a PLAY_SESSION cookie string.
+ *
+ * playSessionCookie = r[1]
+ */
+const playSessionCookieStr = "PLAY_SESSION=([^;]+)";
+
+
+/**
  * Remove any trailing spaces from a string.
  *
  * Used to deal with strings from classic servers.

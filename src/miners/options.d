@@ -19,6 +19,21 @@ class Options
 public:
 	/*
 	 *
+	 * Global shared information.
+	 *
+	 */
+
+
+	/**
+	 * Authentication cookie of mc page.
+	 *
+	 * Do not share to mods.
+	 */
+	Option!(char[]) playSessionCookie;
+
+
+	/*
+	 *
 	 * Options
 	 *
 	 */
