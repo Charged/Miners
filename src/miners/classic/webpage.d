@@ -305,10 +305,14 @@ protected:
 
 		start += startTag.length;
 
-		const stopTag = ";Path=/";
+		const stopTag = ";";
 		auto stop = cast(size_t)find(header[start .. $], stopTag);
 		if (stop == size_t.max)
 			throw new Exception("Malformed HTTP header");
+
+		// No cookie given
+		if (stop == 0)
+			throw new Exception("Failed to authenticate!");
 
 		return header[start .. start + stop].dup;
 	}
