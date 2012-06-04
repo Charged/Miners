@@ -303,7 +303,9 @@ protected:
 
 		// Should we use classic
 		if (classicNetwork) {
-			if (!classicHttp)
+			if (playSessionCookie !is null)
+				mr.displayClassicMenu();
+			else if (!classicHttp)
 				mr.connectToClassic(csi);
 			else
 				mr.connectToClassic(username, password, csi);
@@ -451,6 +453,7 @@ protected:
 			return false;
 
 		playSessionCookie = r[1];
+		classicNetwork = true;
 
 		l.info("PLAY_SESSION=<redacted>");
 

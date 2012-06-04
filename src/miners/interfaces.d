@@ -148,6 +148,11 @@ interface MenuManager
 	void displayClassicBlockSelector(void delegate(ubyte) selectedDg);
 
 	/**
+	 * Display the classic server list.
+	 */
+	void displayClassicMenu();
+
+	/**
 	 * Connect to a classic server using the server address,
 	 * port, mppass & username in the given ClassicServerInfo.
 	 */

@@ -15,6 +15,7 @@ import miners.interfaces;
 import miners.menu.base;
 import miners.menu.main;
 import miners.menu.beta;
+import miners.menu.list;
 import miners.menu.error;
 import miners.menu.classic;
 import miners.menu.blockselector;
@@ -175,6 +176,14 @@ public:
 	void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
 	{
 		changeWindow(new ClassicBlockMenu(this.router, opts, selectedDg));
+	}
+
+	void displayClassicMenu()
+	{
+		auto r = this.router;
+		auto psc = opts.playSessionCookie();
+
+		changeWindow(new ClassicServerListMenu(r, psc));
 	}
 
 	void connectToClassic(char[] usr, char[] pwd, ClassicServerInfo csi)
