@@ -69,6 +69,8 @@ ClassicServerInfo[] getClassicServerList(char[] text)
 	// The parser will crap out eventually since the page is not
 	// valid xml, but we get the parts we are interested in.
 	auto p = new DomParser();
+	scope(exit)
+		delete p;
 	auto root = p.parseData(text);
 
 	// Sanity checking.
@@ -165,6 +167,8 @@ void getClassicServerInfo(ClassicServerInfo csi, char[] text)
 	// The parser will crap out eventually since the page is not
 	// valid xml, but we get the parts we are interested in.
 	auto p = new DomParser();
+	scope(exit)
+		delete p;
 	auto root = p.parseData(text);
 
 	// Sanity checking.
