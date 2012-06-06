@@ -76,9 +76,9 @@ public:
 			//	throw new Exception("GL_EXT_gpu_shader4 not supported");
 
 			auto t = new DeferredTarget(64, 48);
-			auto dep1 = new DepthTargetArray(1024, 1024, 2);
-
 			delete t;
+
+			auto dep1 = new DepthTargetArray(1024, 1024, 2);
 			delete dep1;
 		} catch (Exception e) {
 			l.info("Is not cabable of running deferred renderer!");
@@ -1627,6 +1627,7 @@ public:
 			glDeleteTextures(1, &colorTex);
 			glDeleteTextures(1, &normalTex);
 			glDeleteTextures(1, &depthTex);
+			fbo = colorTex = normalTex = depthTex = 0;
 		}
 	}
 
@@ -1731,6 +1732,7 @@ public:
 		if (fbo || depthTex) {
 			glDeleteFramebuffersEXT(1, &fbo);
 			glDeleteTextures(1, &depthTex);
+			fbo = depthTex = 0;
 		}
 	}
 
@@ -1834,6 +1836,7 @@ public:
 		if (fbo || depthTex) {
 			glDeleteFramebuffersEXT(1, &fbo);
 			glDeleteTextures(1, &depthTex);
+			fbo = depthTex = 0;
 		}
 	}
 
