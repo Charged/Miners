@@ -4,6 +4,10 @@ module charge.sys.memory;
 
 static import std.c.stdlib;
 
+version(MemDump) {
+	import std.stdio : writefln;
+	import std.string : toString;
+}
 
 private struct MemHeader
 {
@@ -79,15 +83,16 @@ public:
 
 static extern(C) void* charge_malloc_dbg(size_t size, char* file, uint line)
 {
-	debug {
-		auto ret = MemHeader.cAlloc(size);
-		auto mem = MemHeader.fromData(ret);
-		mem.file = file;
-		mem.line = line;
-		return ret;
-	} else {
-		return std.c.stdlib.malloc(size);
+	auto ret = MemHeader.cAlloc(size);
+	auto mem = MemHeader.fromData(ret);
+	mem.file = file;
+	mem.line = line;
+
+	version(MemDump) {
+		writefln(" malloc %s:%s %s (%s)", toString(file), line, ret, size);
 	}
+
+	return ret;
 }
 
 static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, char* file, uint line)
@@ -96,25 +101,39 @@ static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, char* file, ui
 	auto mem = MemHeader.fromData(ret);
 	mem.file = file;
 	mem.line = line;
+
+	version(MemDump) {
+		writefln("realloc %s:%s %s (%s)", toString(file), line, ret, size);
+	}
+
 	return ret;
 }
 
 static extern(C) void charge_free_dbg(void *ptr)
 {
+	auto mem = MemHeader.fromData(ptr);
+
+	version(MemDump) {
+		if (ptr != null)
+			writefln("   free %s:%s %s (%s)", toString(mem.file), mem.line, ptr, mem.size);
+		else
+			writefln("   free %s:%s %s (%s)", "<int>", 0, ptr, 0);
+	}
+
 	MemHeader.cFree(ptr);
 }
 
 static extern(C) void* charge_malloc(size_t size)
 {
-	return MemHeader.cAlloc(size);
+	return charge_malloc_dbg(size, "<D>", 0);
 }
 
 static extern(C) void* charge_realloc(void *ptr, size_t size)
 {
-	return MemHeader.cRealloc(ptr, size);
+	return charge_realloc_dbg(ptr, size, "<D>", 0);
 }
 
 static extern(C) void charge_free(void *ptr)
 {
-	MemHeader.cFree(ptr);
+	return charge_free_dbg(ptr);
 }
