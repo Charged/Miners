@@ -45,7 +45,7 @@ LDFLAGS ?= $(DEBUG_DFLAGS)
 DDEFINES = $(ODE_DDEFINES) $(SDL_DDEFINES)
 LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
-CCOMP_FLAGS = $(CARCH) -c $(CFLAGS)
+CCOMP_FLAGS = $(CARCH) -c $(CFLAGS) -o $@
 MCOMP_FLAGS = $(CARCH) -c $(CFLAGS)
 DCOMP_FLAGS = -c -w -Isrc -Jres/builtins -Jres/miners $(DDEFINES) $(DFLAGS)
 LINK_FLAGS = -quiet -L-ldl $(LDFLAGS_)
@@ -84,6 +84,7 @@ else
 	PLATFORM=windows
 	TARGET = Charge.exe
 
+	CCOMP_FLAGS = $(CARCH) -c $(CFLAGS) -o"$@"
 	# Change the link flags
 	LINK_FLAGS = -quiet $(LDFLAGS_)
 endif
@@ -108,7 +109,7 @@ $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.m Makefile
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c Makefile
 	@echo "  CC     src/$*.c"
 	@mkdir -p $(dir $@)
-	@$(CC) $(CCOMP_FLAGS) -o"$@" src/$*.c
+	@$(CC) $(CCOMP_FLAGS) src/$*.c
 
 $(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.d Makefile
 	@echo "  DMD    src/$*.d"
