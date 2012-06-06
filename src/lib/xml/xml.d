@@ -346,6 +346,7 @@ extern(C) {
 		XML_STATUS_SUSPENDED = 2
 	}
 
+	XML_Parser* XML_ParserCreate(char *encoding);
 	XML_Parser* XML_ParserCreate_MM(char *encoding,
 					XML_Memory_Handling_Suite *memsuite,
 					char *namespaceSeparator);
@@ -366,17 +367,37 @@ class SaxParser
 private:
 	Parser p;
 	XML_Parser *parser;
+
+	static extern(C) void* xmlMalloc(size_t size)
+	{
+		return charge_malloc_dbg(size, __FILE__, __LINE__);
+	}
+
+	static extern(C) void* xmlRealloc(void *ptr, size_t size)
+	{
+		return charge_realloc_dbg(ptr, size, __FILE__, __LINE__);
+	}
+
+	static extern(C) void xmlFree(void *ptr)
+	{
+		charge_free_dbg(ptr);
+	}
+
 	static XML_Memory_Handling_Suite mem = {
-		&cMalloc,
-		&cRealloc,
-		&cFree,
+		&xmlMalloc,
+		&xmlRealloc,
+		&xmlFree,
 	};
 
 
 public:
 	this()
 	{
-		parser = XML_ParserCreate_MM(null, &mem, null);
+		debug {
+			parser = XML_ParserCreate_MM(null, &mem, null);
+		} else {
+			parser = XML_ParserCreate(null);
+		}
 		XML_SetUserData(parser, cast(void*)this);
 		XML_SetElementHandler(parser, &startElement, &endElement);
 		XML_SetCharacterDataHandler(parser, &charData);
