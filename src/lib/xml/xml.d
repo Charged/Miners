@@ -211,6 +211,17 @@ private:
 	bool removeEmpty;
 
 public:
+	this()
+	{
+		xp = new SaxParser();
+		mangleWhiteSpace = false;
+		removeEmpty = true;
+	}
+
+	~this()
+	{
+		delete xp;
+	}
 
 	static Element opCall(char[] filename)
 	{
@@ -232,12 +243,6 @@ public:
 		root = null;
 		xp.parseData(data, this);
 		return root;
-	}
-
-	this() {
-		xp = new SaxParser();
-		mangleWhiteSpace = false;
-		removeEmpty = true;
 	}
 
 protected:
