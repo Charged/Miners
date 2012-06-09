@@ -20,6 +20,17 @@ public:
 		return res;
 	}
 
+	static Color4b opCall(uint value)
+	{
+		Color4b res = {
+			cast(ubyte)((value >> 24) & 0xff),
+			cast(ubyte)((value >> 16) & 0xff),
+			cast(ubyte)((value >>  8) & 0xff),
+			cast(ubyte)((value >>  0) & 0xff),
+		};
+		return res;
+	}
+
 	ubyte* ptr() { return &r; }
 
 	void modulate(Color4b c)
