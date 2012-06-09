@@ -3,6 +3,7 @@
 module charge.game.gui.container;
 
 import charge.math.ints;
+import charge.math.color;
 import charge.util.vector;
 import charge.gfx.draw;
 import charge.gfx.texture;
@@ -172,11 +173,13 @@ protected:
 	}
 }
 
-class TextureContainer : public Container
+class TextureTargetContainer : public Container
 {
 public:
-	TextureTarget tt;
 	void delegate() repaintDg;
+
+protected:
+	TextureTarget tt;
 
 public:
 	this(Container c, int x, int y, uint w, uint h)
@@ -189,8 +192,17 @@ public:
 		assert(tt is null);
 	}
 
+	void releaseResources()
+	{
+		super.releaseResources();
+
+		tt.reference(&tt, null);
+	}
+
 	void repaint(int x, int y, uint w, uint h)
 	{
+		super.repaint(x, y, w, h);
+
 		if (repaintDg is null)
 			return;
 
@@ -198,19 +210,11 @@ public:
 	}
 
 	/**
-	 * Return the current texture target, referenced.
-	 */
-	Texture texture()
-	{
-		return tt;
-	}
-
-	/**
 	 * Paint this container to the current texture target.
 	 *
 	 * Create a new one if size differs or if none is attached.
 	 */
-	void paint()
+	void paintTexture()
 	{
 		if (tt is null || (tt.width != w || tt.height != h)) {
 			tt.reference(&tt, null);
@@ -228,10 +232,87 @@ public:
 		delete d;
 	}
 
-	void releaseResources()
+	void paint(Draw d)
 	{
-		super.releaseResources();
+		assert(false);
+	}
+}
 
-		tt.reference(&tt, null);
+class TextureContainer : public TextureTargetContainer
+{
+public:
+	this(Container c, int x, int y, uint w, uint h)
+	{
+		super(c, x, y, w, h);
+	}
+
+	/**
+	 * Return the current texture target, receiver must reference.
+	 */
+	Texture texture()
+	{
+		return tt;
+	}
+}
+
+class CacheContainer : public TextureTargetContainer
+{
+public:
+	this(Container c, int x, int y, uint w, uint h)
+	{
+		super(c, x, y, w, h);
+	}
+
+	void paint(Draw d)
+	{
+		d.blit(tt, Color4f.White, true,
+		       0, 0, w, h,  // srcX, srcY, srcW, srcH
+		       0, 0, w, h); // dstX, dstY, dstW, dstH
+	}
+}
+
+class AntiAliasingContainer : public TextureTargetContainer
+{
+public:
+	this(Container c, int x, int y, uint w, uint h)
+	{
+		super(c, x, y, w, h);
+	}
+
+	/**
+	 * Paint this container to the current texture target while
+	 * also appling a anti-aliasing effect.
+	 *
+	 * Create a new one if size differs or if none is attached.
+	 */
+	void paintTexture()
+	{
+		auto dW = w * 2;
+		auto dH = h * 2;
+
+		if (tt is null || (tt.width != dW || tt.height != dH)) {
+			tt.reference(&tt, null);
+			tt = TextureTarget(null, dW, dH);
+			tt.filter = Texture.Filter.LinearNone;
+		}
+
+		auto d = new Draw();
+		d.target = tt;
+		d.start();
+
+		d.scale(2, 2);
+
+		Container.paint(d);
+
+		d.stop();
+
+		delete d;
+	}
+
+	void paint(Draw d)
+	{
+		d.blit(tt, Color4f.White, true,
+		       0, 0, w*2, h*2,  // srcX, srcY, srcW, srcH
+		       0, 0, w,   h  ); // dstX, dstY, dstW, dstH
 	}
 }

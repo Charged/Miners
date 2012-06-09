@@ -52,7 +52,7 @@ public:
 		for (int i; i < height; i++)
 			for (int j; j < width; j++)
 				text[i][j] = cast(char)(vram[j + i * width] & 0x007f);
-		container.paint();
+		container.paintTexture();
 	}
 
 protected:

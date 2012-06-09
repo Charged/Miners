@@ -103,7 +103,7 @@ public:
 			return;
 
 		if (repaint) {
-			menu.paint();
+			menu.paintTexture();
 
 			sysReference(&menuTexture, menu.texture);
 			repaint = false;
@@ -275,7 +275,7 @@ private:
 			router.backgroundCurrent();
 		}
 
-		menu.paint();
+		menu.paintTexture();
 		menu.repaintDg = &triggerRepaint;
 		sysReference(&menuTexture, menu.texture);
 	}

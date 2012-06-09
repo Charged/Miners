@@ -255,7 +255,7 @@ public:
 		}
 
 		if (chatDirty) {
-			tmpChatGui.paint();
+			tmpChatGui.paintTexture();
 			chatDirty = false;
 		}
 
