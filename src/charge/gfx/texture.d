@@ -23,6 +23,7 @@ public:
 		Nearest,
 		NearestLinear,
 		Linear,
+		LinearNone,
 	}
 	const char[] uri = "tex://";
 
@@ -121,6 +122,12 @@ public:
 			min = GL_LINEAR_MIPMAP_LINEAR;
 			clamp = GL_REPEAT;
 			glGetFloatv(0x84FF, &aniso);
+		break;
+		case Filter.LinearNone:
+			mag = GL_LINEAR;
+			min = GL_LINEAR;
+			clamp = GL_REPEAT;
+			aniso = 1.0f;
 		break;
 		default:
 			mag = GL_LINEAR;
