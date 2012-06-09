@@ -74,7 +74,13 @@ public:
 	void translate(int x, int y)
 	{
 		glMatrixMode(GL_MODELVIEW);
-		glTranslated(x, y, 0);
+		glTranslatef(x, y, 0);
+	}
+
+	void scale(double x, double y)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glScaled(x, y, 1);
 	}
 
 	void restore()
