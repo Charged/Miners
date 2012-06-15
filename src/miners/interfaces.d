@@ -153,6 +153,18 @@ interface MenuManager
 	void displayClassicMenu();
 
 	/**
+	 * Display a list of classic servers that the user can connect to.
+	 */
+	void displayClassicList(ClassicServerInfo[] csi);
+
+	/**
+	 * Connect to a classic server by first connecting to the
+	 * minecraft.net server looking up mppass and other details
+	 * with the serverId given in ClassicServerInfo.
+	 */
+	void getClassicServerInfoAndConnect(ClassicServerInfo csi);
+
+	/**
 	 * Connect to a classic server using the server address,
 	 * port, mppass & username in the given ClassicServerInfo.
 	 */
@@ -162,6 +174,8 @@ interface MenuManager
 	 * Connect to a classic server by first connecting to the
 	 * minecraft.net server looking up mppass and other details
 	 * with the serverId given in ClassicServerInfo.
+	 *
+	 * This function is unsecure and should only be used for debugging.
 	 */
 	void connectToClassic(char[] user, char[] pass, ClassicServerInfo csi);
 

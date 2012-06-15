@@ -186,6 +186,22 @@ public:
 		changeWindow(new ClassicServerListMenu(r, psc));
 	}
 
+	void displayClassicList(ClassicServerInfo[] csis)
+	{
+		auto r = this.router;
+		auto psc = opts.playSessionCookie();
+
+		changeWindow(new ClassicServerListMenu(r, psc, csis));
+	}
+
+	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
+	{
+		auto r = this.router;
+		auto psc = opts.playSessionCookie();
+
+		changeWindow(new WebpageInfoMenu(r, psc, csi));
+	}
+
 	void connectToClassic(char[] usr, char[] pwd, ClassicServerInfo csi)
 	{
 		changeWindow(new WebpageInfoMenu(this.router, usr, pwd, csi));

@@ -45,6 +45,18 @@ public:
 		r.menu.setTicker(&logic);
 	}
 
+	this(Router r, char[] playCookie, ClassicServerInfo[] csi)
+	{
+		super(r, header, Buttons.QUIT);
+
+		c = new Connector(this, 0, 0, playCookie, csi);
+		replacePlane(c);
+
+		repack();
+
+		r.menu.setTicker(&logic);
+	}
+
 	void breakApart()
 	{
 		auto m = r.menu();
@@ -77,18 +89,33 @@ private:
 	char[] username;
 	char[] password;
 
-public:
-	this(ClassicServerListMenu cm, int x, int y, char[] playCookie)
+private:
+	this(Router r, int x, int y, char[] playCookie)
 	{
 		// Parent needs to be null
 		super(null, x, y, 424, 9*16);
-		this.r = cm.r;
+		this.r = r;
 		this.playCookie = playCookie;
+		this.text = new Text(this, 0, 0, "");
+	}
 
-		text = new Text(this, 0, 0, "Connecting");
+public:
+	this(ClassicServerListMenu cm, int x, int y, char[] playCookie)
+	{
+		this(cm.r, x, y, playCookie);
+
 		wc = new WebpageConnection(this, playCookie);
+		text.setText("Connecting");
 
 		repack();
+	}
+
+	this(ClassicServerListMenu cm, int x, int y,
+	     char[] playCookie, ClassicServerInfo[] csis)
+	{
+		this(cm.r, x, y, playCookie);
+
+		serverList(csis);
 	}
 
 	~this()
@@ -169,6 +196,7 @@ protected:
 
 	void serverList(ClassicServerInfo[] csis)
 	{
+		shutdownConnection();
 		this.csis = csis;
 
 		//foreach(int i, c; csis) {
@@ -180,7 +208,7 @@ protected:
 		//	if (c.webName != string)
 		//		continue;
 		//
-		//	return getServerInfo(c);
+		//	r.menu.getClassicServerInfoAndConnect(c);
 		//}
 
 		string t;

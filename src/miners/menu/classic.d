@@ -201,6 +201,8 @@ private:
 	WebpageConnection wc;
 	Text text;
 
+	/// Cookie used for authentication.
+	char[] playSession;
 	/// Username used for authentication
 	char[] username;
 	/// Password used for authentication
@@ -219,6 +221,20 @@ public:
 	/**
 	 * Retrive information about a server, using a new connection
 	 * authenticating with the given credentials.
+	 */
+	this(Router r, char[] playSession, ClassicServerInfo csi)
+	{
+		auto wc = new WebpageConnection(this, playSession);
+
+		this.playSession = playSession;
+		this(r, wc, csi, false);
+	}
+
+	/**
+	 * Retrive information about a server, using a new connection
+	 * authenticating with the given credentials.
+	 *
+	 * Should not use this versions.
 	 */
 	this(Router r, char[] username, char[] password, ClassicServerInfo csi)
 	{
@@ -284,6 +300,23 @@ private:
 		}
 	}
 
+protected:
+	void authenticate()
+	{
+		wc.postLogin(username, password);
+
+		text.setText("Authenticating");
+		repack();
+	}
+
+	void getServerInfo(ClassicServerInfo csi)
+	{
+		wc.getServerInfo(csi);
+
+		text.setText("Retriving server info");
+		repack();
+	}
+
 
 	/*
 	 *
@@ -292,24 +325,17 @@ private:
 	 */
 
 
-protected:
 	void connected()
 	{
-		text.setText("Authenticating");
-		wc.postLogin(username, password);
-		repack();
+		if (playSession is null)
+			authenticate();
+		else
+			getServerInfo(csi);
 	}
 
 	void authenticated()
 	{
-		text.setText("Retriving server info");
-		repack();
-
-		try {
-			wc.getServerInfo(csi);
-		} catch (Exception e) {
-			r.menu.displayError(e, false);
-		}
+		getServerInfo(csi);
 	}
 
 	void serverList(ClassicServerInfo[] csis)
