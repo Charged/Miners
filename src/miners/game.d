@@ -28,6 +28,7 @@ import miners.runner;
 import miners.viewer;
 import miners.options;
 import miners.interfaces;
+import miners.background;
 import miners.ion.runner;
 import miners.lua.runner;
 import miners.lua.builtin;
@@ -82,9 +83,10 @@ private:
 	RenderManager rm;
 	GfxDefaultTarget defaultTarget;
 
+	Runner runner;
 	MenuRunner mr;
 	ScriptRunner sr;
-	Runner runner;
+	BackgroundRunner br;
 
 	Runner[] deleteRunner;
 	Runner nextRunner;
@@ -165,6 +167,8 @@ public:
 			deleteMe(sr);
 		if (mr !is null)
 			deleteMe(mr);
+		if (br !is null)
+			deleteMe(br);
 
 		manageRunners();
 
@@ -204,6 +208,10 @@ protected:
 	 */
 	void doInit()
 	{
+		// This needs to be done first,
+		// so errors messages can be displayed.
+		br = new SafeBackgroundRunner(this);
+
 		GfxTexture dirt;
 
 		// For options
@@ -300,6 +308,10 @@ protected:
 
 		// Not needed anymore.
 		sysReference(&pic, null);
+
+		// Install a new background runner
+		deleteMe(br);
+		br = new DirtBackgroundRunner(this, opts);
 
 		// Should we use classic
 		if (classicNetwork) {
@@ -670,18 +682,11 @@ protected:
 
 		auto rt = defaultTarget;
 
-		// Draw dirt background if no runner is running.
-		if (runner is null) {
-			auto t = opts.dirt();
-			d.target = rt;
-			d.start();
-			d.blit(t, Color4f(1, 1, 1, 1), false,
-				0, 0, rt.width / 2, rt.height / 2,
-				0, 0, rt.width, rt.height);
-			d.stop();
-		} else {
-			runner.render(rt);
-		}
+		auto drawRunner = runner;
+		// Draw background runner if no runner is running.
+		if (drawRunner is null)
+			drawRunner = br;
+		drawRunner.render(rt);
 
 		if (mr !is null && mr.active)
 			mr.render(rt);
@@ -931,6 +936,8 @@ protected:
 					sr = null;
 				if (r is mr)
 					mr = null;
+				if (r is br)
+					br = null;
 
 				// To avoid nasty deadlocks with GC.
 				r.close();
