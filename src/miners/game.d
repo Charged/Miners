@@ -719,7 +719,7 @@ protected:
 	{
 		// If we have built at least one chunk this frame and have very little
 		// time left don't build again. But we always build one each frame.
-		if (built && time < 10 || runner is null)
+		if (built && time < 5 || runner is null)
 			return super.idle(time);
 
 		// Account this time for build instead of idle
