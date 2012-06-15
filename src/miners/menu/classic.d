@@ -210,6 +210,18 @@ private:
 
 public:
 	/**
+	 * Retrive the server list, using a new connection
+	 * authenticating with the given credentials.
+	 */
+	this(Router r, char[] playSession)
+	{
+		auto wc = new WebpageConnection(this, playSession);
+
+		this.playSession = playSession;
+		this(r, wc, null, false);
+	}
+
+	/**
 	 * Retrive information about a server,
 	 * the connection has allready be authenticated.
 	 */
@@ -309,6 +321,14 @@ protected:
 		repack();
 	}
 
+	void getServerList()
+	{
+		wc.getServerList();
+
+		text.setText("Retriving server list");
+		repack();
+	}
+
 	void getServerInfo(ClassicServerInfo csi)
 	{
 		wc.getServerInfo(csi);
@@ -329,8 +349,10 @@ protected:
 	{
 		if (playSession is null)
 			authenticate();
-		else
+		else if (csi !is null)
 			getServerInfo(csi);
+		else
+			getServerList();
 	}
 
 	void authenticated()
@@ -340,7 +362,9 @@ protected:
 
 	void serverList(ClassicServerInfo[] csis)
 	{
-		throw new Exception("Not interested in server list");
+		shutdownConnection();
+
+		r.menu.displayClassicList(csis);
 	}
 
 	void serverInfo(ClassicServerInfo csi)

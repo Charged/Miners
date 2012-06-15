@@ -183,7 +183,7 @@ public:
 		auto r = this.router;
 		auto psc = opts.playSessionCookie();
 
-		changeWindow(new ClassicServerListMenu(r, psc));
+		changeWindow(new WebpageInfoMenu(r, psc));
 	}
 
 	void displayClassicList(ClassicServerInfo[] csis)
