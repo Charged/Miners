@@ -189,9 +189,8 @@ public:
 	void displayClassicList(ClassicServerInfo[] csis)
 	{
 		auto r = this.router;
-		auto psc = opts.playSessionCookie();
 
-		changeWindow(new ClassicServerListMenu(r, psc, csis));
+		changeWindow(new ClassicServerListMenu(r, csis));
 	}
 
 	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
