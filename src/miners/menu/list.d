@@ -104,17 +104,24 @@ public:
 
 	void breakApart()
 	{
-		if (wc !is null) {
-			wc.shutdown();
-			wc.close();
-			wc.wait();
-			delete wc;
-			wc = null;
-		}
+		shutdownConnection();
 		super.breakApart();
 	}
 
 protected:
+	void shutdownConnection()
+	{
+		if (wc !is null) {
+			if (wc.connected()) {
+				wc.shutdown();
+				wc.close();
+			}
+			wc.wait();
+			delete wc;
+			wc = null;
+		}
+	}
+
 	void authenticate()
 	{
 		wc.postLogin(username, password);
@@ -190,22 +197,14 @@ protected:
 
 	void serverInfo(ClassicServerInfo csi)
 	{
-		wc.shutdown();
-		wc.close();
-		wc.wait();
-		delete wc;
-		wc = null;
+		shutdownConnection();
 
 		r.menu.connectToClassic(csi);
 	}
 
 	void error(Exception e)
 	{
-		wc.shutdown();
-		wc.close();
-		wc.wait();
-		delete wc;
-		wc = null;
+		shutdownConnection();
 
 		auto t = format("Connection error!\n%s", e);
 		text.setText(t);
@@ -214,9 +213,8 @@ protected:
 
 	void disconnected()
 	{
-		// The server closed the connection peacefully.
-		delete wc;
-		wc = null;
+		shutdownConnection();
+
 		auto t = format("Disconnected");
 		text.setText(t);
 		repack();
