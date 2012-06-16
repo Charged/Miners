@@ -50,7 +50,7 @@ public:
 		// Parent needs to be null
 		super(null, x, y, 424, 9*16);
 
-		this.r = r;
+		this.r = cm.r;
 		this.csis = csis;
 		this.text = new Text(this, 0, 0, "");
 

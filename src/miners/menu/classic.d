@@ -267,7 +267,6 @@ public:
 		super.breakApart();
 
 		shutdownConnection();
-
 	}
 
 
