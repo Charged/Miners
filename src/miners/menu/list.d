@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.list;
 
+import lib.gl.gl;
+
 import charge.charge;
 import charge.game.gui.textbased;
 import charge.game.gui.input;
@@ -29,65 +31,154 @@ public:
 		super(r, header, Buttons.QUIT);
 
 		lv = new ListView(this, 0, 0, csis);
-		replacePlane(lv);
 
 		repack();
 	}
 }
 
-class ListView : public Container
+class ListView : public Component
 {
 private:
 	Router r;
-	Text text;
 
+	const uint colums = 160;
 	int start;
 	ClassicServerInfo[] csis;
+
+	GfxDynamicTexture glyphs;
 
 public:
 	this(ClassicServerListMenu cm, int x, int y, ClassicServerInfo[] csis)
 	{
-		// Parent needs to be null
-		super(null, x, y, 424, 9*16);
+		super(cm, x, y, 424, 9*16);
 
 		this.r = cm.r;
 		this.csis = csis;
-		this.text = new Text(this, 0, 0, "");
-
-		serverList(csis);
 	}
 
-	void repack()
+	~this()
 	{
-		text.x = (w - text.w) / 2;
-		text.y = (h - text.h) / 2;
+		assert(glyphs is null);
 	}
+
+	void repack() {}
 
 protected:
-	void serverList(ClassicServerInfo[] csis)
+	void paint(GfxDraw d)
 	{
+		if (glyphs is null)
+			makeResources();
 
-		//foreach(int i, c; csis) {
-		//	const string = "fCraft.net Freebuild [ENG]";
-		//
-		//	if (c.webName.length != string.length)
-		//		continue;
-		//
-		//	if (c.webName != string)
-		//		continue;
-		//
-		//	r.menu.getClassicServerInfoAndConnect(c);
-		//}
+		glDisable(GL_BLEND);
+		glColor4fv(Color4f(0.05, 0.05, 0.05, 0.8).ptr);
 
-		string t;
-		foreach(int i, c; csis[start .. $]) {
-			if (i > 7)
+		glBegin(GL_QUADS);
+		for (int i; i < 16; i++) {
+			if (((i + start) % 4) >= 2)
+				continue;
+
+			int y1 = i*9;
+			int y2 = y1 + 9;
+
+			glVertex2i( 0, y1 );
+			glVertex2f( 0, y2 );
+			glVertex2f( w, y2 );
+			glVertex2f( w, y1 );
+		}
+		glEnd();
+
+		glEnable(GL_BLEND);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, glyphs.id);
+
+		glColor4fv(Color4f.White.ptr);
+		glBegin(GL_QUADS);
+
+		foreach(uint i, csi; csis[start .. $]) {
+			if (i >= 16)
 				break;
 
-			t ~= c.webName ~ "\n\n";
+			int y = i*9+1;
+
+			foreach(uint k, c; csi.webName) {
+				if (k >= colums)
+					break;
+
+				int x =  k * 8 + 8;
+
+				draw(x, y, c);
+			}
 		}
 
-		text.setText(t.dup);
-		repack();
+		draw(w-8,   0, 30);
+		draw(w-8, h-8, 31);
+
+		glEnd();
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
+	}
+
+	void mouseDown(Mouse m, int x, int y, uint b)
+	{
+		if (b != 1)
+			return;
+
+		if (x < w - 8) {
+			int which = (y / 9) + start;
+
+			if (which >= csis.length)
+				return;
+
+			r.menu.getClassicServerInfoAndConnect(csis[which]);
+		} else {
+			if (y < h / 2)
+				start--;
+			else
+				start++;
+
+			if (start + 16 >= csis.length)
+				start = cast(int)csis.length - 16;
+
+			if (start < 0)
+				start = 0;
+
+			repaint();
+		}
+	}
+
+	void makeResources()
+	{
+		glyphs = new GfxDynamicTexture(null);
+
+		char[256] text;
+		foreach(int i, t; text)
+			text[i] = cast(ubyte)i;
+
+		text['\0'] = text['\r'] = text['\t'] = text['\n'] = ' ';
+
+		GfxFont.render(glyphs, text);
+	}
+
+	void releaseResources()
+	{
+		sysReference(&glyphs, null);
+	}
+
+	static void draw(int x1, int y1, char c) {
+		float t1 = (c  ) / 256f;
+		float t2 = (c+1) / 256f;
+
+		int x2 = x1 + 8;
+		int y2 = y1 + 8;
+
+		glTexCoord2f( t1,  0 );
+		glVertex2i  ( x1, y1 );
+		glTexCoord2f( t1,  1 );
+		glVertex2f  ( x1, y2 );
+		glTexCoord2f( t2,  1 );
+		glVertex2f  ( x2, y2 );
+		glTexCoord2f( t2,  0 );
+		glVertex2f  ( x2, y1 );
 	}
 }
