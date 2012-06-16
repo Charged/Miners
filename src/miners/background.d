@@ -74,19 +74,27 @@ class DirtBackgroundRunner : public BackgroundRunner
 private:
 	Options opts;
 
-	GfxTexture dirt;
+	GfxTexture background;
 
 public:
 	this(Router r, Options opts)
 	{
 		this.opts = opts;
 		super(r);
-		sysReference(&dirt, opts.dirt());
+
+		opts.background ~= &newBackground;
+		newBackground(opts.background());
 	}
 
 	void close()
 	{
-		sysReference(&dirt, null);
+		opts.background -= &newBackground;
+		sysReference(&background, null);
+	}
+
+	void newBackground(GfxTexture background)
+	{
+		sysReference(&this.background, background);
 	}
 
 	void render(GfxRenderTarget rt)
@@ -94,9 +102,21 @@ public:
 		d.target = rt;
 		d.start();
 
-		d.blit(dirt, Color4f.White, false,
-		       0, 0, rt.width / 2, rt.height / 2,
-		       0, 0, rt.width, rt.height);
+		if (opts.backgroundDoubled()) {
+			d.blit(background, Color4f.White, false,
+			       0, 0, rt.width / 2, rt.height / 2,
+			       0, 0, rt.width, rt.height);
+		} else {
+			uint bW = background.width * 100;
+			uint bH = background.height * 100;
+
+			int offX = (bW - rt.width) / 2;
+			int offY = (bH - rt.height) / 2;
+
+			d.blit(background, Color4f.White, false,
+			       0, 0, bW, bH,
+			       -offX, -offY, bW, bH);
+		}
 
 		d.stop();
 	}

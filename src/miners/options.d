@@ -160,7 +160,10 @@ public:
 	GfxSimpleSkeleton.VBO playerSkeleton;
 	alias PlayerModelData.bones playerBones;
 
+	Option!(bool) backgroundDoubled; /**< should the background be doubled in size */
+
 	Option!(GfxTexture) dirt;
+	Option!(GfxTexture) background;
 	Option!(GfxTexture) terrain;
 	Option!(GfxTextureArray) terrainArray;
 	Option!(GfxTexture) classicTerrain;
@@ -222,8 +225,11 @@ public:
 		viewDistance.destruct();
 		useCmdPrefix.destruct();
 
+		backgroundDoubled.destruct();
+
 		dirt.destruct();
 		terrain.destruct();
+		background.destruct();
 		terrainArray.destruct();
 		classicTerrain.destruct();
 		classicTerrainArray.destruct();
