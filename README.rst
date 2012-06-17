@@ -2,7 +2,8 @@
 Charge
 ======
 
-Charge game engine, but better know as Charge Miners a Minecraft Viewer.
+Charge game engine, but better know as Charged Miners a Classic Minecraft
+Client.
 
 .. image:: https://github.com/Wallbraker/Charged-Miners/wiki/shot-1.jpg
 
@@ -14,11 +15,12 @@ Dependencies
 ------------
 
 In order to run Charge you need to install the following libraries: SDL,
-OpenAL and OpenGL. A D compiler is needed to build Charge but should you have
+OpenAL and OpenGL. A D1 compiler is needed to build Charge but should you have
 have downloaded prebuilt binaries this is not needed (see below on which). It
 is not needed to install the development version of the libraries (other then
 libphobos if you are building Charge of course, but this should come with the
-D compiler).
+D1 compiler). Note again a D1 compiler is needed, for Ubuntu this package is
+called gdc-v1.
 
 Linux
 *****
