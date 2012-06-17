@@ -34,6 +34,14 @@ const playSessionCookieStr = "PLAY_SESSION=([^;]+)";
 
 
 /**
+ * String to parse a LAUNCHER_PATH= info string.
+ *
+ * launcherPath = r[1]
+ */
+const launcherPathStr = "LAUNCHER_PATH=([^:]+)";
+
+
+/**
  * Remove any trailing spaces from a string.
  *
  * Used to deal with strings from classic servers.

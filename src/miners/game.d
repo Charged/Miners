@@ -64,6 +64,7 @@ private:
 	char[] username; /**< webpage username */
 	char[] password; /**< webpage password */
 	char[] playSessionCookie; /**< webpage cookie */
+	char[] launcherPath; /**< Launch this on logout */
 
 	/* Classic server information */
 	ClassicServerInfo csi;
@@ -74,6 +75,9 @@ private:
 	RegExp httpUrl;
 	/** Regexp for extracting the play session cookie */
 	RegExp playSessionCookieExp;
+	/** Regexp for extracting the launcher path */
+	RegExp launcherPathExp;
+
 
 	/* time keepers */
 	charge.game.app.TimeKeeper luaTime;
@@ -114,6 +118,7 @@ public:
 		mcUrl = RegExp(mcUrlStr);
 		httpUrl = RegExp(httpUrlStr);
 		playSessionCookieExp = RegExp(playSessionCookieStr);
+		launcherPathExp = RegExp(launcherPathStr);
 
 		// Some defaults
 		csi = new ClassicServerInfo();
@@ -371,7 +376,8 @@ protected:
 	bool tryArgs(char[] arg)
 	{
 		return tryArgHttpUrl(arg) || tryArgMcUrl(arg) ||
-		       tryArgHtml(arg)    || tryArgCookie(arg);
+		       tryArgHtml(arg)    || tryArgCookie(arg) ||
+		       tryArgLauncherPath(arg);
 	}
 
 	/**
@@ -470,6 +476,22 @@ protected:
 		classicNetwork = true;
 
 		l.info("PLAY_SESSION=<redacted>");
+
+		return true;
+	}
+
+	/**
+	 * Is this argument a LAUNCHER_PATH info string?
+	 */
+	bool tryArgLauncherPath(char[] arg)
+	{
+		auto r = launcherPathExp.exec(arg);
+		if (r.length < 2)
+			return false;
+
+		launcherPath = r[1];
+
+		l.info("LAUNCHER_PATH=%s", launcherPath);
 
 		return true;
 	}
