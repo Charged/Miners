@@ -26,13 +26,6 @@ interface Runner
 	void logic();
 
 	/**
-	 * Build things like terrain meshes.
-	 *
-	 * Return true if want to be called again.
-	 */
-	bool build();
-
-	/**
 	 * Render view of this runner into target.
 	 */
 	void render(GfxRenderTarget rt);
@@ -76,6 +69,16 @@ interface Router
 	 *
 	 */
 
+
+	/**
+	 * Add a callback to be run on idle time.
+	 */
+	void addBuilder(bool delegate() dg);
+
+	/**
+	 * Remove a builder callback.
+	 */
+	void removeBuilder(bool delegate() dg);
 
 	/**
 	 * Switch control to this runner.

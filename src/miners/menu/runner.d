@@ -119,11 +119,6 @@ public:
 		d.stop();
 	}
 
-	bool build()
-	{
-		return false;
-	}
-
 	void assumeControl()
 	{
 		uint w, h;

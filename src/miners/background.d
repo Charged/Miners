@@ -30,11 +30,6 @@ public:
 		d = new GfxDraw();
 	}
 
-	bool build()
-	{
-		return false;
-	}
-
 	abstract void close();
 
 	abstract void render(GfxRenderTarget rt);

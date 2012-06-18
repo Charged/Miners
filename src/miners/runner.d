@@ -42,6 +42,7 @@ public:
 		keyboard = CtlInput().keyboard;
 		mouse = CtlInput().mouse;
 		grabbed = true;
+		r.addBuilder(&this.build);
 	}
 
 	~this()
@@ -50,6 +51,7 @@ public:
 
 	void close()
 	{
+		r.removeBuilder(&this.build);
 	}
 
 	abstract void render(GfxRenderTarget rt);
@@ -61,6 +63,11 @@ public:
 		centerMap();
 	}
 
+	/**
+	 * Build things like terrain meshes.
+	 *
+	 * Return true if want to be called again.
+	 */
 	bool build()
 	{
 		if (w !is null && w.t !is null)

@@ -110,6 +110,9 @@ private:
 	void[] terrainFile;
 	const terrainFilename = "%terrain.png";
 
+	alias bool delegate() BuilderDg;
+	Vector!(BuilderDg) builders;
+
 public:
 	mixin SysLogging;
 
@@ -164,6 +167,7 @@ public:
 
 	~this()
 	{
+		assert(builders.length == 0);
 	}
 
 	void close()
@@ -756,7 +760,8 @@ protected:
 		buildTime.start();
 
 		// Do the build
-		built = runner.build();
+		foreach(b; builders)
+			built = b() || built;
 
 		// Delete unused resources
 		charge.sys.resource.Pool().collect();
@@ -801,6 +806,16 @@ protected:
 	MenuManager menu()
 	{
 		return mr;
+	}
+
+	void addBuilder(bool delegate() dg)
+	{
+		builders ~= dg;
+	}
+
+	void removeBuilder(bool delegate() dg)
+	{
+		builders.remove(dg);
 	}
 
 	void switchTo(Runner r)

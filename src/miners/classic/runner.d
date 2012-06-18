@@ -167,6 +167,8 @@ public:
 
 	void close()
 	{
+		super.close();
+
 		chatGui.breakApart();
 		chatGuiSmall.breakApart();
 		delete sel;
