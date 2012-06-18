@@ -668,9 +668,9 @@ protected:
 				luaTime.calc(elapsed), buildTime.calc(elapsed),
 				idleTime.calc(elapsed));
 
-			GfxFont.render(debugText, info);
+			assert(tmp.ptr == info.ptr);
 
-			delete info;
+			GfxFont.render(debugText, info);
 
 			num_frames = 0;
 			start = elapsed + start;
