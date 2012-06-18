@@ -47,6 +47,8 @@ private:
 
 	GfxDynamicTexture glyphs;
 
+	const int buttonSize = 14; //< For scrollbar layout
+
 public:
 	this(ClassicServerListMenu cm, int x, int y, ClassicServerInfo[] csis)
 	{
@@ -66,6 +68,7 @@ public:
 protected:
 	void paint(GfxDraw d)
 	{
+
 		if (glyphs is null)
 			makeResources();
 
@@ -79,11 +82,46 @@ protected:
 
 			int y1 = i*9;
 			int y2 = y1 + 9;
+			int w = this.w - buttonSize;
 
 			glVertex2i( 0, y1 );
 			glVertex2f( 0, y2 );
 			glVertex2f( w, y2 );
 			glVertex2f( w, y1 );
+		}
+
+
+		{
+			int runnerLength = h - buttonSize * 2;
+			int l, offset;
+			if (csis.length < 17) {
+				l = runnerLength;
+			} else {
+				l = cast(int)(runnerLength * 16f / cast(float)csis.length);
+				offset = cast(int)((runnerLength - l) * (start / cast(float)(csis.length - 16)));
+			}
+
+			int x1 = w - buttonSize;
+			int x2 = x1 + buttonSize;
+
+			int y1 = buttonSize + offset;
+			int y2 = y1 + l;
+
+			glColor4fv(Color4f.White.ptr);
+			glVertex2i( x1,  0 );
+			glVertex2f( x1, buttonSize - 1);
+			glVertex2f( x2, buttonSize - 1);
+			glVertex2f( x2,  0 );
+
+			glVertex2i( x1, h - buttonSize + 1 );
+			glVertex2f( x1, h );
+			glVertex2f( x2, h );
+			glVertex2f( x2, h - buttonSize + 1);
+
+			glVertex2i( x1, y1 );
+			glVertex2f( x1, y2 );
+			glVertex2f( x2, y2 );
+			glVertex2f( x2, y1 );
 		}
 		glEnd();
 
@@ -100,6 +138,11 @@ protected:
 
 			int y = i*9+1;
 
+			if (csi.webName == "fCraft.net Freebuild [ENG]")
+				glColor4fv(Color4f(1, .3, .3, 1).ptr);
+			else
+				glColor4fv(Color4f.White.ptr);
+
 			foreach(uint k, c; csi.webName) {
 				if (k >= colums)
 					break;
@@ -110,8 +153,9 @@ protected:
 			}
 		}
 
-		draw(w-8,   0, 30);
-		draw(w-8, h-8, 31);
+		glColor4fv(Color4f.Black.ptr);
+		draw(w - buttonSize + (buttonSize - 8) / 2,    3, 30);
+		draw(w - buttonSize + (buttonSize - 8) / 2, h-10, 31);
 
 		glEnd();
 
@@ -124,7 +168,7 @@ protected:
 		if (b != 1)
 			return;
 
-		if (x < w - 8) {
+		if (x < w - buttonSize) {
 			int which = (y / 9) + start;
 
 			if (which >= csis.length)
@@ -132,10 +176,17 @@ protected:
 
 			r.menu.getClassicServerInfoAndConnect(csis[which]);
 		} else {
-			if (y < h / 2)
-				start--;
-			else
-				start++;
+			if (y < h / 2) {
+				if (y < buttonSize)
+					start--;
+				else
+					start -= 13;
+			} else {
+				if (y > (h - buttonSize))
+					start++;
+				else
+					start += 13;
+			}
 
 			if (start + 16 >= csis.length)
 				start = cast(int)csis.length - 16;
