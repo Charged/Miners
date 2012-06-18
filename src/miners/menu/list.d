@@ -2,11 +2,16 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.list;
 
+import std.string : ifind;
+
 import lib.gl.gl;
 
 import charge.charge;
-import charge.game.gui.textbased;
+import charge.math.ints : imax;
+import charge.game.gui.text;
 import charge.game.gui.input;
+import charge.game.gui.component;
+import charge.game.gui.container;
 
 import miners.types;
 import miners.interfaces;
@@ -17,6 +22,7 @@ class ClassicServerListMenu : public MenuBase
 {
 private:
 	ListView lv;
+	SearchField sf;
 
 	const char[] header = `Classic`;
 
@@ -26,11 +32,158 @@ public:
 		super(r, header, Buttons.QUIT);
 
 		lv = new ListView(this, 0, 0, csis);
+		sf = new SearchField(this, 0, 0, lv);
+
+		lv.y = sf.h;
 
 		repack();
 	}
 }
 
+
+/**
+ * Field that users can input a search term, to search for servers.
+ */
+class SearchField : public BaseText
+{
+private:
+	bool inFocus; //< XXX Hack
+	ListView lv;
+
+	const typingCursor = 219;
+	const numLetters = 20;
+	const uint charSize = 8;
+
+	char[] typed; /**< Typed text. */
+	char[] showing; /**< Text including the cursor. */
+	char[] typedBuffer; /**< Cache for stuff */
+
+public:
+	this(Container p, int x, int y, ListView lv)
+	{
+		super(p, x, y, "Search: ");
+		this.lv = lv;
+
+		typedBuffer.length = numLetters;
+		incArrays();
+	}
+
+	void repack()
+	{
+		w = 424; h = 20;
+	}
+
+	void setListView(ListView lv)
+	{
+		this.lv = lv;
+	}
+
+	void breakApart()
+	{
+		super.breakApart();
+
+		auto input = getInput();
+		if (input !is null) {
+			input.focus(null);
+			inFocus = false;
+		}
+
+		lv = null;
+	}
+
+	void paint(GfxDraw d)
+	{
+		// XXX Mega hack
+		if (!inFocus) {
+			auto input = getInput();
+			if (input !is null) {
+				input.focus(this);
+				inFocus = true;
+			}
+		}
+
+		if (gfx is null || dirty)
+			makeGfx();
+
+		int x = w - (7 + numLetters) * charSize - 4;
+		int y = 0;
+		int w = this.w - x;
+		int h = charSize + 4;
+
+		d.fill(Color4f.White, false, x, y, w, h);
+		d.fill(Color4f(0, 0, 0, .8), false, x + 1, y + 1, w - 2, h - 2);
+		d.blit(gfx, x + 2, y + 2);
+	}
+
+	void keyDown(CtlKeyboard k, int sym, dchar unicode, char[] str)
+	{
+		// Backspace, remove one character.
+		if (sym == 0x08) {
+			if (typed.length == 0)
+				return;
+
+			return decArrays();
+		}
+
+		// New line
+		if (sym == 0x0D)
+			return;
+
+		// Some chars don't display that well,
+		if (!validateChar(unicode))
+			return;
+
+		// Don't add any more once the buffer is full.
+		if (showing.length >= typedBuffer.length)
+			return;
+
+		typedBuffer[typed.length] = cast(char)unicode;
+		incArrays();
+	}
+
+protected:
+	void update(char[] showing)
+	{
+		setText("Search " ~ showing);
+
+		lv.newSearch(typed.dup);
+
+		repaint();
+	}
+
+	bool validateChar(dchar unicode)
+	{
+		if (unicode == '\t' ||
+		    unicode == '\n' ||
+		    unicode > 0x7F ||
+		    unicode == 0)
+			return false;
+		return true;
+	}
+
+	void incArrays()
+	{
+		showing = typedBuffer[0 .. showing.length + 1];
+		showing[$-1] = typingCursor;
+		typed = showing[0 .. $-1];
+
+		update(showing);
+	}
+
+	void decArrays()
+	{
+		showing = typedBuffer[0 .. showing.length - 1];
+		showing[$-1] = typingCursor;
+		typed = showing[0 .. $-1];
+
+		update(showing);
+	}
+}
+
+
+/**
+ * Shows a list of servers.
+ */
 class ListView : public Component
 {
 private:
@@ -51,6 +204,9 @@ private:
 
 	int start;
 	ClassicServerInfo[] csis;
+	ClassicServerInfo[] fullList;
+
+	char[] oldSearch;
 
 	GfxDynamicTexture glyphs;
 
@@ -63,6 +219,7 @@ public:
 
 		this.r = cm.r;
 		this.csis = csis;
+		this.fullList = csis;
 	}
 
 	~this()
@@ -71,6 +228,35 @@ public:
 	}
 
 	void repack() {}
+
+	void newSearch(char[] search)
+	{
+		if (search is null) {
+			csis = fullList;
+			return;
+		}
+
+		// Reuse old list, for faster search?
+		auto s = ifind(search, oldSearch) < 0 ? fullList : csis;
+
+		// Create a new list to populate with matching servers.
+		csis = new ClassicServerInfo[fullList.length];
+
+		int i;
+		foreach(c; s) {
+			if (ifind(c.webName, search) < 0)
+				continue;
+			csis[i++] = c;
+		}
+
+		oldSearch = search;
+		csis.length = i;
+
+		if (start > i - rows)
+			start = imax(i - rows, 0);
+
+		repaint();
+	}
 
 
 	/*
@@ -194,10 +380,7 @@ protected:
 
 			int y = i * rowSize + charOffsetFromTop;
 
-			if (csi.webName == "fCraft.net Freebuild [ENG]")
-				glColor4fv(Color4f(1, .3, .3, 1).ptr);
-			else
-				glColor4fv(lightGrey.ptr);
+			glColor4fv(lightGrey.ptr);
 
 			foreach(uint k, c; csi.webName) {
 				if (k >= colums)
