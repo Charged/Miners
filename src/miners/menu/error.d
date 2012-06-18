@@ -12,6 +12,42 @@ import miners.interfaces;
 import miners.menu.base;
 
 
+class InfoMenu : public MenuBase
+{
+private:
+	Button b;
+	Text te[];
+	void delegate() dg;
+
+public:
+	this(Router r, char[] header, char[][] texts, char[] buttonText, void delegate() dg)
+	{
+		super(r, header, Buttons.NONE);
+		this.dg = dg;
+
+		auto vc = new VerticalContainer(this, 0, 0, 300, 0, 8);
+		foreach(uint i, t; texts)
+			new Text(vc, 0, 0, t);
+		vc.repack();
+
+		b = new Button(this, 0, 0, buttonText, 8);
+		b.pressed ~= &pressed;
+		b.x = (vc.w - b.w) / 2;
+		b.y = vc.y + vc.h + 16;
+
+		repack();
+	}
+
+	void pressed(Button b)
+	{
+		if (dg !is null)
+			dg();
+		else
+			r.menu.closeMenu();
+	}
+}
+
+
 class ErrorMenu : public MenuBase
 {
 private:

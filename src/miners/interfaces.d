@@ -146,6 +146,15 @@ interface MenuManager
 	void displayLevelSelector();
 
 	/**
+	 * Display a generic info menu.
+	 * Dg is called on button pressed, if null the menu will be closed.
+	 *
+	 * Also see above.
+	 */
+	void displayInfo(char[] header, char[][] texts,
+	                 char[] buttonText, void delegate() dg);
+
+	/**
 	 * Display the classic block selector.
 	 */
 	void displayClassicBlockSelector(void delegate(ubyte) selectedDg);
