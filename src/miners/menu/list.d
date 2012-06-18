@@ -105,14 +105,14 @@ public:
 		if (gfx is null || dirty)
 			makeGfx();
 
-		int x = w - (7 + numLetters) * charSize - 4;
+		int x = w - numLetters * charSize - 4;
 		int y = 0;
 		int w = this.w - x;
 		int h = charSize + 4;
 
 		d.fill(Color4f.White, false, x, y, w, h);
 		d.fill(Color4f(0, 0, 0, .8), false, x + 1, y + 1, w - 2, h - 2);
-		d.blit(gfx, x + 2, y + 2);
+		d.blit(gfx, x + 2 - 7 * charSize, y + 2);
 	}
 
 	void keyDown(CtlKeyboard k, int sym, dchar unicode, char[] str)
