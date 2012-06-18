@@ -217,6 +217,12 @@ public:
 		changeWindow(new ClassicConnectingMenu(this.router, cc));
 	}
 
+	void displayInfo(char[] header, char[][] texts,
+	                 char[] buttonText, void delegate() dg)
+	{
+		changeWindow(new InfoMenu(this.router, header, texts, buttonText, dg));
+	}
+
 	void displayError(Exception e, bool panic)
 	{
 		// Always handle exception via the game exception.

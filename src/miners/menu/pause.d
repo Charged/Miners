@@ -26,6 +26,13 @@ private:
 	const shadowOnText = "Shadow: on";
 	const shadowOffText = "Shadow: off";
 
+	const fullscreenOnText = "Fullscreen: on";
+	const fullscreenOffText = "Fullscreen: off";
+
+	const fullscreenInfoText = `
+In order for the fullscreen option to take
+effect you need to restart Charged-Miners.`;
+
 	Options opts;
 
 	const spacerStr = "                                               ";
@@ -41,19 +48,21 @@ public:
 		auto b2 = new Button(this, 0, b1.y + b1.h, "", minButtonWidth);
 		auto b3 = new Button(this, 0, b2.y + b2.h, "", minButtonWidth);
 		auto b4 = new Button(this, 0, b3.y + b3.h, "", minButtonWidth);
+		auto b5 = new Button(this, 0, b4.y + b4.h, "", minButtonWidth);
 
-		int bY = b4.y + b4.h + 16;
+		int bY = b5.y + b5.h + 16;
 
-		auto b5 = new Button(this, 0, bY, "Quit", 8);
-		auto b6 = new Button(this, bY, bY, "Close", 8);
+		auto b6 = new Button(this, 0, bY, "Quit", 8);
+		auto b7 = new Button(this, bY, bY, "Close", 8);
 
 		setAaText(b1); b1.pressed ~= &aa;
 		setFogText(b2); b2.pressed ~= &fog;
 		setShadowText(b3); b3.pressed ~= &shadow;
 		setViewText(b4); b4.pressed ~= &view;
+		setFullscreenText(b5); b5.pressed ~= &fullscreen;
 
-		b5.pressed ~= &quit;
-		b6.pressed ~= &close;
+		b6.pressed ~= &quit;
+		b7.pressed ~= &close;
 
 		repack();
 
@@ -65,8 +74,8 @@ public:
 		}
 
 		// Place the buttons next to each other.
-		b5.x = center - 8 - b5.w;
-		b6.x = center + 8;
+		b6.x = center - 8 - b6.w;
+		b7.x = center + 8;
 	}
 
 	void quit(Button b) { r.quit(); }
@@ -129,5 +138,23 @@ public:
 	void setShadowText(Button b)
 	{
 		b.setText(opts.shadow() ? shadowOnText : shadowOffText, minButtonWidth);
+	}
+
+	void fullscreen(Button b)
+	{
+		auto p = Core().properties;
+		auto res = p.getBool("fullscreen", Core.defaultFullscreen);
+
+		res = !res;
+		p.add("fullscreen", res);
+
+		r.menu.displayInfo("Info", [fullscreenInfoText], "Ok", &r.menu.displayPauseMenu);
+	}
+
+	void setFullscreenText(Button b)
+	{
+		auto p = Core().properties;
+		auto r = p.getBool("fullscreen", Core.defaultFullscreen);
+		b.setText(r ? fullscreenOnText : fullscreenOffText, minButtonWidth);
 	}
 }
