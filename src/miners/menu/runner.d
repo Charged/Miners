@@ -17,6 +17,7 @@ import miners.menu.main;
 import miners.menu.beta;
 import miners.menu.list;
 import miners.menu.error;
+import miners.menu.pause;
 import miners.menu.classic;
 import miners.menu.blockselector;
 
@@ -156,6 +157,11 @@ public:
 	void displayMainMenu()
 	{
 		changeWindow(new MainMenu(this.router));
+	}
+
+	void displayPauseMenu()
+	{
+		changeWindow(new PauseMenu(this.router, opts));
 	}
 
 	void displayLevelSelector()

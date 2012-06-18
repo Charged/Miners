@@ -482,7 +482,7 @@ public:
 			if (console.typing)
 				return console.stopTyping();
 			else
-				return r.menu.displayMainMenu();
+				return r.menu.displayPauseMenu();
 		}
 
 		if (console.typing)

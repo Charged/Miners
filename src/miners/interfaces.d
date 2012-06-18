@@ -143,6 +143,11 @@ interface MenuManager
 	/**
 	 * See above.
 	 */
+	void displayPauseMenu();
+
+	/**
+	 * See above.
+	 */
 	void displayLevelSelector();
 
 	/**
