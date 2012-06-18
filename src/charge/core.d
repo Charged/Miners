@@ -34,6 +34,7 @@ public:
 	const int defaultWidth = 800;
 	const int defaultHeight = 600;
 	const bool defaultFullscreen = false;
+	const bool defaultFullscreenAutoSize = true;
 	const char[] defaultTitle = "Charged Miners";
 	const bool defaultForceResizeEnable = false;
 

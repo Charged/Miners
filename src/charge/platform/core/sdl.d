@@ -43,8 +43,9 @@ private:
 	mixin Logging;
 
 	int screenshotNum;
-	uint width, height;
-	bool fullscreen;
+	uint width, height; //< Current size of the main window
+	bool fullscreen; //< Should we be fullscreen
+	bool fullscreenAutoSize; //< Only used at start
 
 	coreFlag flags;
 
@@ -218,9 +219,8 @@ private:
 		width = p.getUint("w", defaultWidth);
 		height = p.getUint("h", defaultHeight);
 		fullscreen = p.getBool("fullscreen", defaultFullscreen);
+		fullscreenAutoSize = p.getBool("fullscreenAutoSize", defaultFullscreenAutoSize);
 		char* title = p.getStringz("title", defaultTitle);
-
-		l.bug("w: ", width, " h: ", height);
 
 		SDL_WM_SetCaption(title, title);
 
@@ -231,6 +231,10 @@ private:
  			bits |= SDL_RESIZABLE;
 		if (fullscreen)
 			bits |= SDL_FULLSCREEN;
+		if (fullscreen && fullscreenAutoSize)
+			width = height = 0;
+
+		l.bug("w: ", width, " h: ", height);
 
 		s = SDL_SetVideoMode(
 				width,

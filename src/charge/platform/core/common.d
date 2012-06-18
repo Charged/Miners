@@ -163,12 +163,14 @@ protected:
 			l.warn("Failed to load settings useing defaults");
 
 			p = new Properties;
-			p.add("w", defaultWidth);
-			p.add("h", defaultHeight);
-			p.add("fullscreen", defaultFullscreen);
-			p.add("title", defaultTitle);
-			p.add("forceResizeEnable", defaultForceResizeEnable);
 		}
+
+		p.addIfNotSet("w", defaultWidth);
+		p.addIfNotSet("h", defaultHeight);
+		p.addIfNotSet("fullscreen", defaultFullscreen);
+		p.addIfNotSet("fullscreenAutoSize", defaultFullscreenAutoSize);
+		p.addIfNotSet("title", defaultTitle);
+		p.addIfNotSet("forceResizeEnable", defaultForceResizeEnable);
 	}
 
 	void saveSettings()
