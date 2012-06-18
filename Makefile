@@ -37,7 +37,11 @@ endif
 ifeq ($(notdir $(DMD)),gdmd)
 	DEBUG_DFLAGS = -g -debug
 else
+ifeq ($(notdir $(DMD)),gdmd-v1)
+	DEBUG_DFLAGS = -g -debug
+else
 	DEBUG_DFLAGS = -gc -debug
+endif
 endif
 
 
