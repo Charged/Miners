@@ -73,6 +73,16 @@ struct AddressKey
 		}
 	}
 
+	char[] toString()
+	{
+		auto a = *cast(ubyte[4]*)&addr;
+		// XXX Byte order
+		return std.string.format(
+			"(%s.%s.%s.%s:%s)",
+			a[3], a[2], a[1], a[0],
+			port);
+	}
+
 	uint addr;
 	ushort port;
 }
