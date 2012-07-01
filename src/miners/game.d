@@ -192,6 +192,7 @@ public:
 		p.add(opts.shadowName, opts.shadow());
 		p.add(opts.useCmdPrefixName, opts.useCmdPrefix());
 		p.add(opts.viewDistanceName, opts.viewDistance());
+		p.add(opts.lastClassicServerName, opts.lastClassicServer());
 
 		delete opts;
 		delete rm;
@@ -238,6 +239,7 @@ protected:
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
 		opts.useCmdPrefix = p.getIfNotFoundSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
+		opts.lastClassicServer = p.getIfNotFoundSet(opts.lastClassicServerName, opts.lastClassicServerDefault);
 		opts.viewDistance = viewDistance;
 		debug { opts.showDebug = true; }
 		for (int i; i < opts.keyNames.length; i++)

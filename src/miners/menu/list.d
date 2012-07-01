@@ -14,6 +14,7 @@ import charge.game.gui.component;
 import charge.game.gui.container;
 
 import miners.types;
+import miners.options;
 import miners.interfaces;
 import miners.menu.base;
 
@@ -27,11 +28,11 @@ private:
 	const char[] header = `Classic`;
 
 public:
-	this(Router r, ClassicServerInfo[] csis)
+	this(Router r, Options opts, ClassicServerInfo[] csis)
 	{
 		super(r, header, Buttons.QUIT);
 
-		lv = new ListView(this, 0, 0, csis);
+		lv = new ListView(this, 0, 0, opts, csis);
 		sf = new SearchField(this, 0, 0, lv);
 
 		lv.y = sf.h;
@@ -212,12 +213,16 @@ private:
 
 	const int buttonSize = 14; //< For scrollbar layout
 
+	Options opts;
+
 public:
-	this(ClassicServerListMenu cm, int x, int y, ClassicServerInfo[] csis)
+	this(ClassicServerListMenu cm, int x, int y,
+	     Options opts, ClassicServerInfo[] csis)
 	{
 		super(cm, x, y, 424, rowSize*rows);
 
 		this.r = cm.r;
+		this.opts = opts;
 		this.csis = csis;
 		this.fullList = csis;
 	}
@@ -278,7 +283,10 @@ protected:
 			if (which >= csis.length)
 				return;
 
-			r.menu.getClassicServerInfoAndConnect(csis[which]);
+			auto csi = csis[which];
+
+			opts.lastClassicServer = csi.webName;
+			r.menu.getClassicServerInfoAndConnect(csi);
 		} else {
 			if (y < h / 2) {
 				if (y < buttonSize)
@@ -374,13 +382,22 @@ protected:
 
 		glBegin(GL_QUADS);
 
+		auto lastPlayed = opts.lastClassicServer();
+
+		void setDefault(ClassicServerInfo csi) {
+			if (csi.webName == lastPlayed)
+				glColor4fv(red.ptr);
+			else
+				glColor4fv(lightGrey.ptr);
+		}
+
 		foreach(uint i, csi; csis[start .. $]) {
 			if (i >= rows)
 				break;
 
 			int y = i * rowSize + charOffsetFromTop;
 
-			glColor4fv(lightGrey.ptr);
+			setDefault(csi);
 
 			foreach(uint k, c; csi.webName) {
 				if (k >= colums)
@@ -394,7 +411,7 @@ protected:
 				draw(x, y, c);
 
 				if (c == ']')
-					glColor4fv(lightGrey.ptr);
+					setDefault(csi);
 			}
 		}
 

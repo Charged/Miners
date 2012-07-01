@@ -191,7 +191,7 @@ public:
 	{
 		auto r = this.router;
 
-		changeWindow(new ClassicServerListMenu(r, csis));
+		changeWindow(new ClassicServerListMenu(r, opts, csis));
 	}
 
 	void getClassicServerInfoAndConnect(ClassicServerInfo csi)

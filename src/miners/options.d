@@ -31,6 +31,13 @@ public:
 	 */
 	Option!(char[]) playSessionCookie;
 
+	/**
+	 * Last connected classic server name.
+	 */
+	Option!(char[]) lastClassicServer;
+	const string lastClassicServerName = "mc.lastClassicServer";
+	const string lastClassicServerDefault = "s";
+
 
 	/*
 	 *
