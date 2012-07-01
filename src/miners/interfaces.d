@@ -5,46 +5,10 @@ module miners.interfaces;
 import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
+import charge.game.runner : Runner;
 
 import miners.types;
 public import miners.classic.interfaces : ClassicConnection = Connection;
-
-
-/**
- * Specialized runner for Miners.
- */
-interface Runner
-{
-	/**
-	 * Called to notify that the screen has changed resolution.
-	 */
-	void resize(uint w, uint h);
-
-	/**
-	 * Step the game logic one step.
-	 */
-	void logic();
-
-	/**
-	 * Render view of this runner into target.
-	 */
-	void render(GfxRenderTarget rt);
-
-	/**
-	 * Install all input listeners.
-	 */
-	void assumeControl();
-
-	/**
-	 * Uninstall all input listeners.
-	 */
-	void dropControl();
-
-	/**
-	 * Shutdown this runner.
-	 */
-	void close();
-}
 
 
 /**
