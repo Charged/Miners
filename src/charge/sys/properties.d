@@ -35,7 +35,7 @@ public:
 	void addIfNotSet(char[] key, bool value) { addIfNotSet(key, .toString(value)); }
 	void addIfNotSet(char[] key, double value) { addIfNotSet(key, .toString(value)); }
 
-	char[] getNotFoundSet(char[] key, char[] value)
+	char[] getIfNotFoundSet(char[] key, char[] value)
 	{
 		if (key in this)
 			return map[key];
