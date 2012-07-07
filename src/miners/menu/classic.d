@@ -114,10 +114,7 @@ public:
 
 		if (cc !is null) {
 			r.menu.unsetTicker(&cc.doPackets);
-			cc.shutdown();
 			cc.close();
-			cc.wait();
-			delete cc;
 			cc = null;
 		}
 	}

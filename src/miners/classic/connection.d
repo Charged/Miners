@@ -21,7 +21,7 @@ alias charge.net.util.ntoh ntoh;
 /**
  * A threaded TCP connection to a server that handles protocol parsing. 
  */
-class ClientConnection : public NetThreadedPacketQueue, public Connection
+class ClientConnection : public Connection
 {
 private:
 	// Server details
@@ -43,6 +43,14 @@ private:
 	/// Receiver of messages.
 	ClientMessageListener ml;
 
+	// For packet processing.
+	size_t packetLength;
+	size_t packetPos;
+	ServerPacketUnion packets;
+
+	/// The important stuff
+	TcpSocket s;
+
 public:
 	this(ClientListener l, ClientMessageListener ml, ClassicServerInfo csi)
 	{
@@ -55,12 +63,11 @@ public:
 		this.username = csi.username;
 		this.verificationKey = csi.verificationKey;
 
-		super();
+		this.packetLength = size_t.max;
 	}
 
 	~this()
 	{
-		freePacketsUnsafe();
 	}
 
 	void setListener(ClientListener l)
@@ -83,7 +90,21 @@ public:
 	 */
 	void doPackets()
 	{
-		popPackets(&packet);
+		if (s is null)
+			if (!doConnect())
+				return;
+
+		while(eatPacket()) {}
+	}
+
+	void close()
+	{
+		if (s is null)
+			return;
+
+		s.shutdown(SocketShutdown.BOTH);
+		s.close();
+		s = null;
 	}
 
 
@@ -383,7 +404,7 @@ protected:
 	/**
 	 * 0x0f
 	 */
-	void playerType(ServerUpdateType *sut)
+	void updateType(ServerUpdateType *sut)
 	{
 		ubyte type = sut.type;
 
@@ -394,8 +415,7 @@ protected:
 	{
 		switch(*pkg) {
 		case 0x00:
-			auto p = cast(ServerIdentification*)pkg;
-			serverIdentification(p);
+			serverIdentification(&packets.identification);
 			break;
 		case 0x01:
 			if (l !is null)
@@ -408,59 +428,47 @@ protected:
 				ml.removeAllPlayers();
 			break;
 		case 0x03:
-			auto p = cast(ServerLevelDataChunk*)pkg;
-			levelDataChunk(p);
+			levelDataChunk(&packets.levelDataChunk);
 			break;
 		case 0x04:
-			auto p = cast(ServerLevelFinalize*)pkg;
-			levelFinalize(p);
+			levelFinalize(&packets.levelFinalize);
 			break;
-		case 0x05: // Ignore
-			break;
+		//se 0x05: // Ignore
 		case 0x06:
-			auto p = cast(ServerSetBlock*)pkg;
-			setBlock(p);
+			setBlock(&packets.setBlock);
 			break;
 		case 0x07:
-			auto p = cast(ServerPlayerSpawn*)pkg;
-			playerSpawn(p);
+			playerSpawn(&packets.playerSpawn);
 			break;
 		case 0x08:
-			auto p = cast(ServerPlayerTeleport*)pkg;
-			playerTeleport(p);
+			playerTeleport(&packets.playerTeleport);
 			break;
 		case 0x09:
-			auto p = cast(ServerPlayerUpdatePosOri*)pkg;
-			playerUpdatePosOri(p);
+			playerUpdatePosOri(&packets.playerUpdatePosOri);
 			break;
 		case 0x0a:
-			auto p = cast(ServerPlayerUpdatePos*)pkg;
-			playerUpdatePos(p);
+			playerUpdatePos(&packets.playerUpdatePos);
 			break;
 		case 0x0b:
-			auto p = cast(ServerPlayerUpdateOri*)pkg;
-			playerUpdateOri(p);
+			playerUpdateOri(&packets.playerUpdateOri);
 			break;
 		case 0x0c:
-			auto p = cast(ServerPlayerDespawn*)pkg;
-			playerDespawn(p);
+			playerDespawn(&packets.playerDespawn);
 			break;
 		case 0x0d:
-			auto p = cast(ServerMessage*)pkg;
-			message(p);
+			message(&packets.message);
 			break;
 		case 0x0e:
-			auto p = cast(ServerDisconnect*)pkg;
-			disconnect(p);
+			disconnect(&packets.disconnect);
 			break;
 		case 0x0f:
-			auto p = cast(ServerUpdateType*)pkg;
-			playerType(p);
+			updateType(&packets.updateType);
 			break;
 		default: // Error 
 			assert(false);
 		}
 	}
+
 
 	/*
 	 *
@@ -470,56 +478,71 @@ protected:
 
 
 	/**
-	 * Called at start.
+	 * Consume a single packet from the socket.
+	 *
+	 * Returns true if more data is available.
 	 */
-	int run()
+	bool eatPacket()
 	{
-		try {
-			connect(hostname, port);
-			sendClientIdentification(username, verificationKey);
-
-			while(true)
-				loop();
-
-		} catch (Exception e) {
-			/// XXX: Do something better here.
-		}
-
-		return 0;
-	}
-
-	/**
-	 * Main loop for receiving packages.
-	 */
-	void loop()
-	{
-		ubyte[] data;
 		ubyte peek;
 		int n;
 
-		// Peek to see which packet it is
-		n = receive((&peek)[0 .. 1], true);
-		if (n <= 0)
-			throw new ConnectionException("peek");
-		if (peek >= serverPacketSizes.length)
-			throw new InvalidPacketException(peek);
+		if (packetLength == size_t.max) {
+			// Peek to see which packet it is
+			n = s.receive((&peek)[0 .. 1], SocketFlags.PEEK);
+			if (n <= 0) {
+				if (s.isAlive)
+					return false;
+				else
+					throw new Exception("connection failed");
+			} else if (peek >= serverPacketSizes.length) {
+				throw new InvalidPacketException(peek);
+			}
 
-		// Get the length of this packet type
-		auto len = serverPacketSizes[peek];
-		if (len == 0)
-			throw new InvalidPacketException();
+			// Get the length of this packet type
+			auto len = serverPacketSizes[peek];
+			if (len == 0)
+				throw new InvalidPacketException();
 
-		// Allocate a receiving packet from the C heap
-		auto pkg = allocPacket(len, data);
-
-		// Get the data from the socket into the packet
-		for (int i; i < len; i += n) {
-			n = receive(data[i .. len]);
-			if (n <= 0)
-				throw new ConnectionException("read");
+			packetLength = len;
+			packetPos = 0;
 		}
 
-		pushPacket(pkg);
+		// We should never get here without know the packet size.
+		assert(packetLength != size_t.max);
+
+		n = s.receive(packets.data[packetPos .. packetLength]);
+
+		if (n <= 0) {
+			if (s.isAlive)
+				return false;
+			else
+				throw new Exception("connection failed");
+		} else {
+			packetPos += cast(size_t)n;
+			if (packetPos != packetLength)
+				return false;
+
+			packet(packets.data.ptr);
+			packetLength = size_t.max;
+			packetPos = 0;
+			return true;
+		}
+	}
+
+	bool doConnect()
+	{
+		auto a = new InternetAddress(hostname, port);
+
+		try {
+			s = new TcpSocket(a);
+			s.blocking = false;
+			sendClientIdentification(username, verificationKey);
+			return true;
+		} catch (Exception e) {
+			l.disconnect(e.toString);
+			return false;
+		}
 	}
 }
 

@@ -185,10 +185,7 @@ public:
 		if (c is null)
 			return;
 
-		c.shutdown();
 		c.close();
-		c.wait();
-		delete c;
 		c = null;
 	}
 
