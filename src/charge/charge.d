@@ -105,6 +105,7 @@ alias charge.net.client.Client NetClient;
 alias charge.net.server.Server NetServer;
 alias charge.net.threaded.ThreadedPacketQueue NetThreadedPacketQueue;
 alias charge.net.threaded.ThreadedTcpConnection NetThreadedTcpConnection;
+alias charge.net.http.HttpConnection NetHttpConnection;
 alias charge.net.http.ThreadedHttpConnection NetThreadedHttpConnection;
 alias charge.net.connection.Connection NetConnection;
 alias charge.net.connection.ConnectionListener NetConnectionListener;

@@ -6,7 +6,176 @@ import charge.net.threaded;
 
 import std.string;
 import std.conv;
+import std.socket;
 import uri = std.uri;
+
+
+class HttpConnection
+{
+protected:
+	TcpSocket s;
+
+
+private:
+	// Server details
+	char[] hostname;
+	ushort port;
+
+	// Collected data from server
+	char[] saved;
+	ptrdiff_t contentLength;
+	char[] pageBody;
+	char[] pageHeader;
+	size_t pageBodyPos;
+
+
+public:
+	this(char[] hostname, ushort port)
+	{
+		this.contentLength = -1;
+		this.hostname = hostname;
+		this.port = port;
+	}
+
+
+	/*
+	 *
+	 * Socket functions.
+	 *
+	 */
+
+
+	void close()
+	{
+		if (s is null)
+			return;
+
+		s.shutdown(SocketShutdown.BOTH);
+		s.close();
+		s = null;
+	}
+
+	void doTick()
+	{
+		if (s is null)
+			if (!doConnect())
+				return;
+
+		try {
+			if (contentLength < 0) {
+				getHeader();
+			} else {
+				getBody();
+			}
+		} catch (DisconnectedException de) {
+			handleDisconnect();
+		} catch(Exception e) {
+			handleError(e);
+		}
+	}
+
+
+protected:
+	/*
+	 *
+	 * Abstract functions.
+	 *
+	 */
+
+
+	abstract void handleError(Exception e);
+	abstract void handleResponse(char[] header, char[] res);
+	abstract void handleConnected();
+	abstract void handleDisconnect();
+
+
+private:
+	/*
+	 *
+	 * Internal functions.
+	 *
+	 */
+
+
+	bool doConnect()
+	{
+		try {
+			auto a = new InternetAddress(hostname, port);
+
+			s = new TcpSocket(a);
+			s.blocking = false;
+
+			handleConnected();
+
+			return true;
+		} catch (Exception e) {
+			handleError(e);
+			return false;
+		}
+	}
+
+	int receive(void[] data)
+	{
+		int n = s.receive(data);
+		if (n < 0) {
+			if (s.isAlive())
+				return 0;
+			else
+				throw new ReceiveException(n);
+		} else if (n == 0) {
+			throw new DisconnectedException();
+		}
+		return n;
+	}
+
+	void getHeader()
+	{
+		char[4096] data;
+		int n;
+
+		// Wait for any data.
+		n = receive(data);
+		assert(n >= 0);
+		if (n == 0)
+			return;
+
+		if (saved.length == 0)
+			saved = data[0 .. n].dup;
+		else
+			saved ~= data[0 .. n];
+
+		auto pos = cast(size_t)find(saved, "\r\n\r\n");
+		// HTTP header end not found, need more data.
+		if (pos == size_t.max)
+			return;
+
+		pageHeader = saved[0 .. pos + 4].dup;
+		saved = saved[pos + 4 .. $];
+
+		contentLength = getContentLength(pageHeader);
+		pageBody = new char[cast(size_t)contentLength];
+		pageBody[0 .. saved.length] = saved;
+		pageBodyPos = saved.length;
+	}
+
+	void getBody()
+	{
+		int n = receive(pageBody[pageBodyPos .. $]);
+		assert(n >= 0);
+		if (n == 0)
+			return;
+
+		pageBodyPos += n;
+
+		if (pageBodyPos < pageBody.length) {
+			return;
+		} else if (pageBodyPos == pageBody.length) {
+			handleResponse(pageHeader, pageBody);
+		} else {
+			throw new Exception("Read too much data!");
+		}
+	}
+}
 
 
 /**
@@ -121,30 +290,35 @@ protected:
 		// Reset to wait for another page.
 		contentLength = -1;
 	}
+}
 
-	static ptrdiff_t getContentLength(char[] header)
+class DisconnectedException : public Exception
+{
+	this() { super("Disconnected"); }
+}
+
+class ReceiveException : public Exception
+{
+	int status;
+
+	this(int status)
 	{
-		const tag = "Content-Length: ";
-		auto start = cast(size_t)find(header, tag);
-		if (start == size_t.max)
-			throw new Exception("Can't handle http with no Content-Length.");
-
-		start += tag.length;
-		auto stop = cast(size_t)find(header[start .. $], "\r\n");
-		if (stop == size_t.max)
-			throw new Exception("Invalid Content-Length entry in header.");
-
-		return toInt(header[start .. start + stop]);
+		this.status = status;
+		super(format("ReceiveException (%s)", status));
 	}
+}
 
-	static class ReceiveException : public Exception
-	{
-		int status;
+static ptrdiff_t getContentLength(char[] header)
+{
+	const tag = "Content-Length: ";
+	auto start = cast(size_t)find(header, tag);
+	if (start == size_t.max)
+		throw new Exception("Can't handle http with no Content-Length.");
 
-		this(int status)
-		{
-			this.status = status;
-			super(format("ReceiveException (%s)", status));
-		}
-	}
+	start += tag.length;
+	auto stop = cast(size_t)find(header[start .. $], "\r\n");
+	if (stop == size_t.max)
+		throw new Exception("Invalid Content-Length entry in header.");
+
+	return toInt(header[start .. start + stop]);
 }
