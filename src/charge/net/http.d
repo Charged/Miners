@@ -140,9 +140,9 @@ private:
 			return;
 
 		if (saved.length == 0)
-			saved = data[0 .. n].dup;
+			saved = data[0 .. cast(size_t)n].dup;
 		else
-			saved ~= data[0 .. n];
+			saved ~= data[0 .. cast(size_t)n];
 
 		auto pos = cast(size_t)find(saved, "\r\n\r\n");
 		// HTTP header end not found, need more data.
