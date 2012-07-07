@@ -55,7 +55,7 @@ interface ClassicWebpageListener
 /**
  * A threaded TCP connection to the minecraft.net servers. 
  */
-class WebpageConnection : public NetThreadedHttpConnection
+class WebpageConnection : public NetHttpConnection
 {
 private:
 	// Server details
@@ -74,8 +74,6 @@ private:
 
 	/// What is this connection currently doing
 	Op curOp;
-	/// List of completed operations, protected by this
-	Op[] opList;
 
 	/// Receiver of packages
 	ClassicWebpageListener l;
@@ -86,8 +84,6 @@ private:
 	ClassicServerInfo[] csis;
 	/// Info to retrive and return
 	ClassicServerInfo csi;
-	/// Error exception raised
-	Exception e;
 
 
 public:
@@ -206,65 +202,43 @@ public:
 
 	void doEvents()
 	{
-		auto ops = getOps();
-		foreach(op; ops) {
-			// Which op was done.
-			switch(op) {
-			case Op.CONNECTING:
-				l.connected();
-				break;
-			case Op.POST_LOGIN:
-				l.authenticated();
-				break;
-			case Op.GET_SERVER_LIST:
-				l.serverList(csis);
-				break;
-			case Op.GET_SERVER_INFO:
-				l.serverInfo(csi);
-				break;
-			case Op.ERROR:
-				l.error(e);
-				break;
-			case Op.DISCONNECTED:
-				l.disconnected();
-				break;
-			default:
-				assert(false);
-			}
-		}
+		doTick();
 	}
 
 protected:
 	void handleError(Exception e)
 	{
-		this.e = e;
-		pushOp(Op.ERROR, Op.ERROR);
+		l.error(e);
 	}
 
 	void handleResponse(char[] header, char[] res)
 	{
-		switch(curOp) {
+		auto tmp = curOp;
+		curOp = Op.NO_OP;
+
+		switch(tmp) {
 		case Op.POST_LOGIN:
 			playSession = getPlaySession(header);
+			l.authenticated();
 			break;
 		case Op.GET_SERVER_LIST:
-			csis = getClassicServerList(res);
+			auto csis = getClassicServerList(res);
+			l.serverList(csis);
 			break;
 		case Op.GET_SERVER_INFO:
 			getClassicServerInfo(csi, res);
+			l.serverInfo(csi);
 			break;
-		case Op.NO_OP:
-			writefln("GAH");
 		default:
-			throw new Exception("Unhandled operation");
+			auto str = format("Unhandled operation %s", curOp);
+			throw new Exception(str);
 		}
-
-		pushOp(curOp, Op.NO_OP);
 	}
 
 	void handleConnected()
 	{
-		pushOp(curOp, Op.NO_OP);
+		curOp = Op.NO_OP;
+		l.connected();
 	}
 
 	void handleDisconnect()
@@ -273,12 +247,11 @@ protected:
 
 		// This becomes an error if we are trying to do something.
 		if (curOp == Op.NO_OP) {
-			set = Op.DISCONNECTED;
+			l.disconnected();
 		} else {
-			e = new Exception("Connection lost!");
-			set = Op.ERROR;
+			auto e = new Exception("Connection lost!");
+			handleError(e);
 		}
-		pushOp(set, set);
 	}
 
 
@@ -288,19 +261,6 @@ protected:
 	 *
 	 */
 
-
-	synchronized void pushOp(Op op, Op set)
-	{
-		curOp = set;
-		opList ~= op;
-	}
-
-	synchronized Op[] getOps()
-	{
-		auto ret = opList;
-		opList = null;
-		return ret;
-	}
 
 	char[] getPlaySession(char[] header)
 	{

@@ -299,14 +299,11 @@ private:
 			r.menu.unsetTicker(&wc.doEvents);
 
 			try {
-				wc.shutdown();
 				wc.close();
-				wc.wait();
 			} catch (Exception e) {
 				cast(void)e;
 			}
 
-			delete wc;
 			wc = null;
 		}
 	}
