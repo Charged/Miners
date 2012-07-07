@@ -114,9 +114,9 @@ private:
 		}
 	}
 
-	int receive(void[] data)
+	ptrdiff_t receive(void[] data)
 	{
-		int n = s.receive(data);
+		auto n = s.receive(data);
 		if (n < 0) {
 			if (s.isAlive())
 				return 0;
@@ -131,7 +131,7 @@ private:
 	void getHeader()
 	{
 		char[4096] data;
-		int n;
+		ptrdiff_t n;
 
 		// Wait for any data.
 		n = receive(data);
@@ -160,7 +160,7 @@ private:
 
 	void getBody()
 	{
-		int n = receive(pageBody[pageBodyPos .. $]);
+		auto n = receive(pageBody[pageBodyPos .. $]);
 		assert(n >= 0);
 		if (n == 0)
 			return;
@@ -299,9 +299,9 @@ class DisconnectedException : public Exception
 
 class ReceiveException : public Exception
 {
-	int status;
+	ptrdiff_t status;
 
-	this(int status)
+	this(ptrdiff_t status)
 	{
 		this.status = status;
 		super(format("ReceiveException (%s)", status));

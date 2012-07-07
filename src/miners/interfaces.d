@@ -5,7 +5,7 @@ module miners.interfaces;
 import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
-import charge.game.runner : Runner;
+public import charge.game.runner : Runner;
 
 import miners.types;
 public import miners.classic.interfaces : ClassicConnection = Connection;

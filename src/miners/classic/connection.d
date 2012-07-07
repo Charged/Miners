@@ -485,7 +485,7 @@ protected:
 	bool eatPacket()
 	{
 		ubyte peek;
-		int n;
+		ptrdiff_t n;
 
 		if (packetLength == size_t.max) {
 			// Peek to see which packet it is

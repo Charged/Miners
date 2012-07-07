@@ -3,7 +3,7 @@
 module charge.math.point3d;
 
 import std.math : floor;
-import std.string : string;
+import std.string : string, format;
 
 import charge.math.vector3d;
 
