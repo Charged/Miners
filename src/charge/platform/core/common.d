@@ -163,6 +163,8 @@ protected:
 			l.warn("Failed to load settings useing defaults");
 
 			p = new Properties;
+		} else {
+			l.info("Settings loaded: %s", settingsFile);
 		}
 
 		p.addIfNotSet("w", defaultWidth);
@@ -175,7 +177,11 @@ protected:
 
 	void saveSettings()
 	{
-		p.save(settingsFile);
+		auto ret = p.save(settingsFile);
+		if (ret)
+			l.info("Settings saved: %s", settingsFile);
+		else
+			l.error("Failed to save settings file %s", settingsFile);
 	}
 
 
