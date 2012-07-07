@@ -44,6 +44,33 @@ uint serverPacketSizes[16] = [
 align(1): // setup correct alignment for packets
 
 
+/**
+ * All server packets in easy to access union.
+ */
+union ServerPacketUnion {
+	ServerIdentification     identification;     // 0x00
+	ServerPing               ping;               // 0x01
+	ServerLevelInitialize    levelInitialize;    // 0x02
+	ServerLevelDataChunk     levelDataChunk;     // 0x03
+	ServerLevelFinalize      levelFinalize;      // 0x04
+	//                                           // 0x05
+	ServerSetBlock           setBlock;           // 0x06
+	ServerPlayerSpawn        playerSpawn;        // 0x07
+	ServerPlayerTeleport     playerTeleport;     // 0x08
+	ServerPlayerUpdatePosOri playerUpdatePosOri; // 0x09
+	ServerPlayerUpdatePos    playerUpdatePos;    // 0x0a
+	ServerPlayerUpdateOri    playerUpdateOri;    // 0x0b
+	ServerPlayerDespawn      playerDespawn;      // 0x0c
+	ServerMessage            message;            // 0x0d
+	ServerDisconnect         disconnect;         // 0x0e
+	ServerUpdateType         updateType;         // 0x0f
+	ubyte[ServerLevelDataChunk.sizeof] data;
+}
+
+static assert(ServerPacketUnion.sizeof == ServerPacketUnion.data.length);
+
+
+
 /*
  *
  * Client to server packets
