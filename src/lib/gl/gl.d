@@ -47,6 +47,7 @@ void loadGL(Loader l)
 	loadGL11(l);
 	loadGL12(l);
 	loadGL13(l);
+	loadGL14(l);
 	loadGL15(l);
 	loadGL20(l);
 	loadGL21(l);
@@ -88,6 +89,7 @@ void findCore()
 	GL_VERSION_1_1 = glVersion.major == 1 && glVersion.minor >= 1 || glVersion.major > 1;
 	GL_VERSION_1_2 = glVersion.major == 1 && glVersion.minor >= 2 || glVersion.major > 1;
 	GL_VERSION_1_3 = glVersion.major == 1 && glVersion.minor >= 3 || glVersion.major > 1;
+	GL_VERSION_1_4 = glVersion.major == 1 && glVersion.minor >= 4 || glVersion.major > 1;
 	GL_VERSION_1_5 = glVersion.major == 1 && glVersion.minor >= 5 || glVersion.major > 1;
 	GL_VERSION_2_0 = glVersion.major == 2 && glVersion.minor >= 0 || glVersion.major > 2;
 	GL_VERSION_2_1 = glVersion.major == 2 && glVersion.minor >= 1 || glVersion.major > 2;
