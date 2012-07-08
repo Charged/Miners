@@ -103,7 +103,6 @@ private:
 
 	GfxDraw d;
 	GfxDynamicTexture debugText;
-	GfxDynamicTexture cameraText;
 	GfxTextureTarget infoTexture;
 
 	// Extracted files from minecraft
@@ -162,7 +161,6 @@ public:
 
  		d = new GfxDraw();
 		debugText = new GfxDynamicTexture("mc/debugText");
-		cameraText = new GfxDynamicTexture("mc/cameraText");
 	}
 
 	~this()
@@ -199,7 +197,6 @@ public:
 		delete d;
 
 		sysReference(&debugText, null);
-		sysReference(&cameraText, null);
 
 		if (terrainFile !is null) {
 			auto fm = FileManager();
@@ -672,7 +669,7 @@ protected:
 
 			assert(tmp.ptr == info.ptr);
 
-			GfxFont.render(debugText, info);
+			gfxDefaultFont.render(debugText, info);
 
 			num_frames = 0;
 			start = elapsed + start;
@@ -736,12 +733,12 @@ protected:
 				auto p = grd.centerer.position;
 				char[256] tmp;
 				char[] info = sformat(tmp, "Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
-				GfxFont.render(cameraText, info);
 
-				w = cameraText.width + 16;
-				h = cameraText.height + 16;
+				gfxDefaultFont.buildSize(info, w, h);
+				w += 16;
+				h += 16;
 				d.fill(Color4f(0, 0, 0, .8), true, 8, 8, w, h);
-				d.blit(cameraText, 16, 16);
+				gfxDefaultFont.draw(d, 16, 16, info);
 			}
 
 			d.stop();
