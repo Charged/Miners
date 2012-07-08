@@ -108,7 +108,7 @@ public:
 		sb_header = new GfxDynamicTexture("sb_header");
 		sb_dyn = new GfxDynamicTexture("sb_speed");
 
-		GfxFont.render(sb_header, "Information");
+		gfxDefaultFont.render(sb_header, "Information");
 
 		CtlInput().quit ~= &quit;
 		CtlKeyboard keyboard = CtlInput().keyboards[0];
@@ -453,7 +453,7 @@ private:
 		y += 11;
 */
 
-		GfxFont.render(sb_dyn, format("Usage GFX: %s", usage_gfx));
+		gfxDefaultFont.render(sb_dyn, format("Usage GFX: %s", usage_gfx));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 /*
@@ -465,7 +465,7 @@ private:
 		d.blit(sb_dyn, x, y);
 		y += 11;
 */
-		GfxFont.render(sb_dyn, format("Generation: %s", w.gen));
+		gfxDefaultFont.render(sb_dyn, format("Generation: %s", w.gen));
 		d.blit(sb_dyn, x, y);
 		y += 11;
 /*
