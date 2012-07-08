@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.gui.messagelog;
 
-
 import charge.math.color;
 import charge.gfx.font;
 import charge.gfx.draw;
@@ -17,6 +16,7 @@ protected:
 	uint colums;
 	uint rows;
 	uint rowHeight;
+	uint spacing;
 
 	uint current;
 	DynamicTexture glyphs;
@@ -24,9 +24,12 @@ protected:
 	char[][] text;
 	size_t cur;
 
+	BitmapFont bf;
+
 public:
 	this(Container p, int x, int y, uint colums, uint rows, uint spacing)
 	{
+		this.spacing = spacing;
 		this.colums = colums;
 		this.rows = rows;
 
@@ -34,25 +37,22 @@ public:
 
 		repack();
 
-		rowHeight = 8 + spacing;
-
 		super(p, x, y, colums * 8, rows * rowHeight);
-
 	}
 
 	void repack()
 	{
-		w = colums * 8;
+		makeResources();
+
+		rowHeight = bf.height + spacing;
+		w = colums * bf.width;
 		h = rows * rowHeight;
 	}
 
 	void releaseResources()
 	{
-		if (glyphs is null)
-			return;
-
+		bf.reference(&bf, null);
 		glyphs.reference(&glyphs, null);
-		glyphs = null;
 	}
 
 	void message(char[] msg)
@@ -78,18 +78,25 @@ public:
 protected:
 	void drawRow(Draw d, int y, char[] row)
 	{
+		uint w = bf.width;
+		uint h = bf.height;
+
 		foreach(uint k, c; row) {
 			if (k >= colums)
 				break;
 
 			d.blit(glyphs, Color4f.White, true,
-				c*8, 0, 8, 8,
-				k*8, y, 8, 8);
+				c*w, 0, w, h,
+				k*w, y, w, h);
 		}
 	}
 
 	void makeResources()
 	{
+		bf.reference(&bf, BitmapFont.defaultFont);
+		if (glyphs !is null)
+			return;
+
 		glyphs = new DynamicTexture(null);
 
 		char[256] text;
@@ -98,6 +105,6 @@ protected:
 
 		text['\0'] = text['\r'] = text['\t'] = text['\n'] = ' ';
 
-		Font.render(glyphs, text);
+		bf.render(glyphs, text);
 	}
 }

@@ -14,14 +14,19 @@ import charge.game.gui.container;
 /**
  * Baseclass for managing text.
  */
-class BaseText : public Component
+class Text : public Component
 {
 protected:
 	char[] t;
-	bool dirty;
-	DynamicTexture gfx;
+	bool shaded;
 
 public:
+	this(Container c, int x, int y, char[] text, bool shaded)
+	{
+		this.shaded = shaded;
+		this(c, x, y, text);
+	}
+
 	this(Container c, int x, int y, char[] text)
 	{
 		super(c, x, y, 0, 0);
@@ -30,65 +35,26 @@ public:
 		repack();
 	}
 
-	~this()
-	{
-		assert(gfx is null);
-	}
-
-	void repack()
-	{
-		Font.buildSize(t, w, h);
-	}
-
-	void paint(Draw d)
-	{
-		if (gfx is null || dirty)
-			makeGfx();
-		d.blit(gfx, 0, 0);
-	}
-
-	void releaseResources()
-	{
-		gfx.reference(&gfx, null);
-	}
-
-protected:
 	void setText(char[] text)
 	{
-		dirty = true;
 		this.t = text;
 		repack();
 		repaint();
 	}
 
-	void makeGfx()
+	void repack()
 	{
-		if (gfx is null)
-			gfx = new DynamicTexture(null);
-		Font.render(gfx, t);
-		dirty = false;
-	}
-}
-
-/**
- * Just plain text.
- */
-class Text : public BaseText
-{
-public:
-	char[] text;
-
-public:
-	this(Container c, int x, int y, char[] text)
-	{
-		super(c, x, y, text);
-		this.text = text;
+		BitmapFont.defaultFont.buildSize(t, w, h);
 	}
 
-	void setText(char[] text)
+	void paint(Draw d)
 	{
-		this.text = text;
-		super.setText(text);
+		BitmapFont.defaultFont.draw(d, 0, 0, t, shaded);
+	}
+
+	void releaseResources()
+	{
+
 	}
 }
 
@@ -98,6 +64,11 @@ public:
 class DoubleText : public Text
 {
 public:
+	this(Container c, int x, int y, char[] text, bool shaded)
+	{
+		super(c, x, y, text, shaded);
+	}
+
 	this(Container c, int x, int y, char[] text)
 	{
 		super(c, x, y, text);
@@ -105,18 +76,14 @@ public:
 
 	void repack()
 	{
-		Font.buildSize(t, w, h);
+		super.repack();
 		w *= 2;
 		h *= 2;
 	}
 
 	void paint(Draw d)
 	{
-		if (gfx is null || dirty)
-			makeGfx();
-
-		d.blit(gfx, Color4f.White, true,
-		       0, 0, w/2, h/2,  // srcX, srcY, srcW, srcH
-		       0, 0,   w,   h); // dstX, dstY, dstW, dstH
+		d.scale(2, 2);
+		super.paint(d);
 	}
 }

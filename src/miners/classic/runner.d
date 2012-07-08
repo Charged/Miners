@@ -1048,6 +1048,8 @@ class ClassicMessageLog : public MessageLog
 protected:
 	void drawRow(GfxDraw d, int y, char[] row)
 	{
+		uint w = bf.width;
+		uint h = bf.height;
 		auto color = &colors[15];
 		bool colorSelect;
 		int k;
@@ -1066,8 +1068,8 @@ protected:
 			}
 
 			d.blit(glyphs, *color, true,
-				c*8, 0, 8, 8,
-				k*8, y, 8, 8);
+				c*w, 0, w, h,
+				k*w, y, w, h);
 			k++;
 		}
 	}

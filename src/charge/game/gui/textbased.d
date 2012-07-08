@@ -101,7 +101,7 @@ char[] makeTextGuiButton(char[] text, uint minwidth = 0)
 /**
  * A simple button.
  */
-class Button : public BaseText
+class Button : public Text
 {
 public:
 	char[] text;
@@ -185,7 +185,7 @@ public:
 	{
 		super(bg, 0, 0);
 		this.plane = new Container(null, 0, 0, 1, 1);
-		this.headerText = new DoubleText(null, 0, 0, headerText);
+		this.headerText = new DoubleText(null, 0, 0, headerText, true);
 		Container.add(this.plane);
 		Container.add(this.headerText);
 		this.headerBG = headerBG;

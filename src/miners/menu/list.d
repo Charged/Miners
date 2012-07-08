@@ -45,7 +45,7 @@ public:
 /**
  * Field that users can input a search term, to search for servers.
  */
-class SearchField : public BaseText
+class SearchField : public Text
 {
 private:
 	bool inFocus; //< XXX Hack
@@ -53,7 +53,6 @@ private:
 
 	const typingCursor = 219;
 	const numLetters = 20;
-	const uint charSize = 8;
 
 	char[] typed; /**< Typed text. */
 	char[] showing; /**< Text including the cursor. */
@@ -71,7 +70,7 @@ public:
 
 	void repack()
 	{
-		w = 424; h = 20;
+		w = 424; h = gfxDefaultFont.height + 4 + 4;
 	}
 
 	void setListView(ListView lv)
@@ -103,17 +102,15 @@ public:
 			}
 		}
 
-		if (gfx is null || dirty)
-			makeGfx();
-
-		int x = w - numLetters * charSize - 4;
+		int x = w - numLetters * gfxDefaultFont.width - 4;
 		int y = 0;
 		int w = this.w - x;
-		int h = charSize + 4;
+		int h = gfxDefaultFont.height + 4;
 
 		d.fill(Color4f.White, false, x, y, w, h);
 		d.fill(Color4f(0, 0, 0, .8), false, x + 1, y + 1, w - 2, h - 2);
-		d.blit(gfx, x + 2 - 7 * charSize, y + 2);
+		d.translate(x + 2 - 7 * gfxDefaultFont.width, y + 2);
+		super.paint(d);
 	}
 
 	void keyDown(CtlKeyboard k, int sym, dchar unicode, char[] str)
@@ -198,10 +195,12 @@ private:
 	alias Color4f.Black black;
 
 	const uint rows = 32;
-	const uint rowSize = 11;
+	uint rowSize = 11;
 	const uint colums = 160;
-	const uint charSize = 8;
 	const uint charOffsetFromTop = 2;
+
+	uint charWidth;
+	uint charHeight;
 
 	int start;
 	ClassicServerInfo[] csis;
@@ -219,6 +218,7 @@ public:
 	this(ClassicServerListMenu cm, int x, int y,
 	     Options opts, ClassicServerInfo[] csis)
 	{
+		rowSize = gfxDefaultFont.height + 3;
 		super(cm, x, y, 424, rowSize*rows);
 
 		this.r = cm.r;
@@ -320,8 +320,7 @@ protected:
 
 	void paint(GfxDraw d)
 	{
-		if (glyphs is null)
-			makeResources();
+		makeResources();
 
 		glDisable(GL_BLEND);
 		glColor4fv(darkGrey.ptr);
@@ -403,7 +402,7 @@ protected:
 				if (k >= colums)
 					break;
 
-				int x =  k * charSize + charSize;
+				int x =  (k + 1) * gfxDefaultFont.width;
 
 				if (c == '[')
 					glColor4fv(green.ptr);
@@ -416,8 +415,8 @@ protected:
 		}
 
 		glColor4fv(black.ptr);
-		draw(w - buttonSize + (buttonSize - charSize) / 2,      3, 30);
-		draw(w - buttonSize + (buttonSize - charSize) / 2, h - 10, 31);
+		draw(w - buttonSize + (buttonSize - gfxDefaultFont.width) / 2,      3, 30);
+		draw(w - buttonSize + (buttonSize - gfxDefaultFont.width) / 2, h - 10, 31);
 
 		glEnd();
 
@@ -427,6 +426,9 @@ protected:
 
 	void makeResources()
 	{
+		if (glyphs !is null)
+			return;
+
 		glyphs = new GfxDynamicTexture(null);
 
 		char[256] text;
@@ -435,7 +437,7 @@ protected:
 
 		text['\0'] = text['\r'] = text['\t'] = text['\n'] = ' ';
 
-		GfxFont.render(glyphs, text);
+		gfxDefaultFont.render(glyphs, text);
 	}
 
 	void releaseResources()
@@ -443,13 +445,13 @@ protected:
 		sysReference(&glyphs, null);
 	}
 
-	static void draw(int x1, int y1, char c)
+	final void draw(int x1, int y1, char c)
 	{
 		float t1 = (c  ) / 256f;
 		float t2 = (c+1) / 256f;
 
-		int x2 = x1 + charSize;
-		int y2 = y1 + charSize;
+		int x2 = x1 + gfxDefaultFont.width;
+		int y2 = y1 + gfxDefaultFont.height;
 
 
 		glTexCoord2f( t1,  0 );
