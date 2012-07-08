@@ -104,6 +104,18 @@ struct WorkspaceData
 		return t == t1 || t == t2 || tile[t].filled != 0;
 	}
 
+	bool isType(ubyte t1, int x, int y, int z)
+	{
+		auto t = (*this)[x, y, z];
+		return t == t1;
+	}
+
+	bool isTypes(ubyte t1, ubyte t2, int x, int y, int z)
+	{
+		auto t = (*this)[x, y, z];
+		return t == t1 || t == t2;
+	}
+
 	int getSolidSet(int x, int y, int z)
 	{
 		auto ptr = getPointer(x, y, z);
