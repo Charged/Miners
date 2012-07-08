@@ -127,7 +127,7 @@ void grass(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data)
 
 void water(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data)
 {
-	int set = data.getSolidOrTypesSet(8, 9, x, y, z);
+	int set = data.getSolidSet(x, y, z);
 	auto dec = &tile[8];
 	ubyte tex = calcTextureXZ(dec);
 
@@ -145,25 +145,72 @@ void water(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data)
 	y2 <<= shift;
 
 	auto aboveType = data.get(x, y+1, z);
-	if (aboveType != 8 && aboveType != 9) {
-		set |= sideMask.YP;
+	if (data.isTypes(8, 9, x, y+1, z)) {
+		int y3 = y1+14;
+
+		if (set & sideMask.XN) {
+			if (data.isTypes(8, 9, x-1, y, z)) {
+				if (!data.isTypes(8, 9, x-1, y+1, z))
+					emitQuadMappedUVXZN(p, x1, x1, y3, y2, z1, z2, tex, sideNormal.XN);
+			} else {
+				emitQuadXZN(p, x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+			}
+		}
+
+		if (set & sideMask.XP) {
+			if (data.isTypes(8, 9, x+1, y, z)) {
+				if (!data.isTypes(8, 9, x+1, y+1, z))
+					emitQuadMappedUVXZP(p, x2, x2, y3, y2, z1, z2, tex, sideNormal.XP);
+			} else {
+				emitQuadXZP(p, x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+			}
+		}
+
+		if (set & sideMask.ZN) {
+			if (data.isTypes(8, 9, x, y, z-1)) {
+				if (!data.isTypes(8, 9, x, y+1, z-1))
+					emitQuadMappedUVXZN(p, x1, x2, y3, y2, z1, z1, tex, sideNormal.ZN);
+			} else {
+				emitQuadXZN(p, x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+			}
+		}
+
+		if (set & sideMask.ZP) {
+			if (data.isTypes(8, 9, x, y, z+1)) {
+				if (!data.isTypes(8, 9, x, y+1, z+1))
+					emitQuadMappedUVXZP(p, x1, x2, y3, y2, z2, z2, tex, sideNormal.ZP);
+			} else {
+				emitQuadXZP(p, x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+			}
+		}
+
+		if (set & sideMask.YN && !data.isTypes(8, 9, x, y-1, z))
+			emitQuadYN(p, x1, x2, y1, z1, z2, tex, sideNormal.YN);
+	} else {
 		y2 -= 2;
-	}
 
-	if (set & sideMask.XN)
-		emitQuadXZN(p, x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
-	if (set & sideMask.XP)
-		emitQuadXZP(p, x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
-
-	if (set & sideMask.YN)
-		emitQuadYN(p, x1, x2, y1, z1, z2, tex, sideNormal.YN);
-	if (set & sideMask.YP)
 		emitQuadYP(p, x1, x2, y2, z1, z2, tex, sideNormal.YP);
 
-	if (set & sideMask.ZN)
-		emitQuadXZN(p, x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
-	if (set & sideMask.ZP)
-		emitQuadXZP(p, x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+		set = data.getSolidOrTypesSet(8, 9, x, y, z);
+
+		if (set & sideMask.XN)
+			emitQuadMappedUVXZN(p, x1, x1, y1, y2, z1, z2, tex, sideNormal.XN);
+
+		if (set & sideMask.XP)
+			emitQuadMappedUVXZP(p, x2, x2, y1, y2, z1, z2, tex, sideNormal.XP);
+
+		if (set & sideMask.ZN)
+			emitQuadMappedUVXZN(p, x1, x2, y1, y2, z1, z1, tex, sideNormal.ZN);
+
+		if (set & sideMask.ZP)
+			emitQuadMappedUVXZP(p, x1, x2, y1, y2, z2, z2, tex, sideNormal.ZP);
+
+		if (set & sideMask.YN)
+			emitQuadMappedUVYN(p, x1, x2, y1, z1, z2, tex, sideNormal.YN);
+	}
+
+
+
 }
 
 
