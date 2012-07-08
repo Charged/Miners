@@ -120,6 +120,8 @@ alias charge.gfx.gfx.gfxLoaded gfxLoaded;
 alias charge.gfx.cube.Cube GfxCube;
 alias charge.gfx.draw.Draw GfxDraw;
 alias charge.gfx.font.Font GfxFont;
+alias charge.gfx.font.BitmapFont GfxBitmapFont;
+alias charge.gfx.font.BitmapFont.defaultFont gfxDefaultFont;
 alias charge.gfx.rigidmodel.RigidModel GfxRigidModel;
 alias charge.gfx.skeleton.Bone GfxSkeletonBone;
 alias charge.gfx.skeleton.SimpleSkeleton GfxSimpleSkeleton;
