@@ -149,9 +149,11 @@ protected:
 		auto fm = FileManager();
 
 		void[] defaultPicture = import("default.png");
+		void[] fontPicture = import("font.png");
 
 		fm.addBuiltin("res/default.png", defaultPicture);
 		fm.addBuiltin("res/spotlight.png", defaultPicture);
+		fm.addBuiltin("res/font.png", fontPicture);
 	}
 
 	void initSettings()
