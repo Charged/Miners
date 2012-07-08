@@ -61,6 +61,7 @@ protected:
 	const int chatBacklog = 40;
 	const int chatBacklogSmall = 4;
 
+	Text spacer;
 	ColorContainer chatGui;
 	ClassicMessageLog mlGui;
 	Text typedText;
@@ -104,22 +105,27 @@ public:
 		d = new GfxDraw();
 
 		chatDirty = true;
+		mlGui = new ClassicMessageLog(null, chatBorder, chatBorder, chatBacklog);
+		spacer = new Text(null, chatBorder, mlGui.y+mlGui.h, chatSep);
+		typedText = new Text(null, chatBorder, spacer.y+spacer.h, "", true);
+
 		chatGui = new ColorContainer(
 			Color4f(0, 0, 0, 0.8),
-			8 * 64 + 1 * 2,
-			9 * chatBacklog + 8 * 2 + chatBorder * 2);
+			mlGui.w + 1 * 2,
+			mlGui.h +  spacer.h + typedText.h + chatBorder * 2);
+		chatGui.add(mlGui);
+		chatGui.add(spacer);
+		chatGui.add(typedText);
 		chatGui.repaintDg = &handleRepaint;
-		mlGui = new ClassicMessageLog(chatGui, chatBorder, chatBorder, chatBacklog);
-		auto spacer = new Text(chatGui, chatBorder, mlGui.y+mlGui.h, chatSep);
-		typedText = new Text(chatGui, chatBorder, spacer.y+spacer.h, "");
 
 
+		mlGuiSmall = new ClassicMessageLog(null, chatBorder, chatBorder, chatBacklogSmall);
 		chatGuiSmall = new ColorContainer(
 			Color4f(0, 0, 0, 0.0),
-			8 * 64 + 1 * 2,
-			9 * chatBacklogSmall + chatBorder * 2);
+			mlGuiSmall.w + 1 * 2,
+			mlGuiSmall.h + chatBorder * 2);
+		chatGuiSmall.add(mlGuiSmall);
 		chatGuiSmall.repaintDg = &handleRepaint;
-		mlGuiSmall = new ClassicMessageLog(chatGuiSmall, chatBorder, chatBorder, chatBacklogSmall);
 
 		console = new ClassicConsole(opts, &typedText.setText);
 
@@ -278,7 +284,9 @@ public:
 		int x;
 		int y;
 
-		uint offset = 32 + 8 + 8 + (console.typing ? 0 : 8 * 2);
+		// Hmm where does 32 + 8 + 8 come from?
+		uint offset = 32 + 8 + 8 +
+			(console.typing ? 0 : spacer.h + typedText.h);
 		t = tmpChatGui.texture;
 		d.blit(t, 8, rt.height - t.height - offset);
 
@@ -393,7 +401,7 @@ public:
 
 			auto t = p.text;
 			uint width = t.width + borderSize * 2;
-			uint height = 8 + borderSize * 2;
+			uint height = gfxDefaultFont.height + borderSize * 2;
 
 			int tX = x - width / 2;
 			int tY = y - height - arrowSize;
