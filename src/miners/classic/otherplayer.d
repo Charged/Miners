@@ -23,7 +23,7 @@ public:
 
 		if (text is null)
 			text = new GfxDynamicTexture(null);
-		GfxFont.render(text, name);
+		gfxDefaultFont.render(text, name);
 	}
 
 	~this()
