@@ -26,11 +26,12 @@ public:
 	uint width;
 	uint height;
 
-private:
+protected:
 	Texture tex;
-	GLuint fbo;
-
 	const float offset = (1.0 / 16.0);
+
+private:
+	GLuint fbo;
 
 	mixin Logging;
 
@@ -81,15 +82,16 @@ public:
 		glPushMatrix();
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
+		// XXX optimize
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &oldFbo);
 		scope(exit) {
+			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, oldFbo);
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 			glMatrixMode(GL_PROJECTION);
 			glPopMatrix();
 			glPopAttrib();
-			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, oldFbo);
 		}
 
 		uint w, h;
@@ -162,6 +164,11 @@ public:
 
 protected:
 	this(Pool p, char[] name, Texture tex)
+	{
+		this(p, uri, name, tex);
+	}
+
+	this(Pool p, char[] uri, char[] name, Texture tex)
 	{
 		glGenFramebuffersEXT(1, &fbo);
 
