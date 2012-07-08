@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.font;
 
-import lib.picofont.pico;
-
 import charge.core;
 import charge.sys.file;
 import charge.sys.logger;
@@ -95,7 +93,7 @@ public:
 		}
 
 		uint w, h;
-		Font.buildSize(text, w, h);
+		buildSize(text, w, h);
 
 		remakeDynamicTexture(dt, w, h);
 
@@ -145,12 +143,8 @@ public:
 
 		auto tex = Texture(filename);
 		// Error reporting already taken care of.
-		if (tex is null) {
-			if (filename is "res/font.png")
-				tex = loadBackupFont();
-			else
-				return null;
-		}
+		if (tex is null)
+			return null;
 		scope(failure)
 			reference(&tex, null);
 
@@ -281,78 +275,5 @@ private:
 	static void closeFunc()
 	{
 		reference(&defaultFont, null);
-	}
-
-	static Texture loadBackupFont()
-	{
-		int glTarget = GL_TEXTURE_2D;
-		int glFormat = GL_ALPHA;
-		int glInternalFormat = GL_ALPHA;
-		ubyte *pixels;
-		uint w;
-		uint h;
-
-		char[17*16-1] arr;
-		for (int i; i < 16; i++) {
-			int start = i * 17;
-			for (int k; k < 16; k++) {
-				char c = cast(char)(i * 16 + k);
-				if (c == '\t' || c == '\r' || c == '\n' || c == '\0')
-					c = ' ';
-				arr[start+k] = c;
-			}
-			if (i < 15)
-				arr[start+16] = '\n';
-		}
-
-		pixels = FNT_RenderMax(arr.ptr, cast(uint)arr.length, &w, &h);
-		// This should be stdlib.free.
-		scope(exit) std.c.stdlib.free(pixels);
-
-		assert(pixels !is null);
-
-		auto dt = new DynamicTexture(null);
-
-		GLint id = dt.id;
-
-		if (!glIsTexture(id))
-			glGenTextures(1, cast(GLuint*)&id);
-
-		glBindTexture(glTarget, id);
-		glTexImage2D(
-			glTarget,         //target
-			0,                //level
-			glInternalFormat, //internalformat
-			w,                //width
-			h,                //height
-			0,                //border
-			glFormat,         //format
-			GL_UNSIGNED_BYTE, //type
-			pixels);          //pixels
-		glTexParameteri(glTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(glTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameterf(glTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameterf(glTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-		dt.update(id, w, h);
-
-		return dt;
-	}
-}
-
-/**
- * XXX Legacy, for backwards compat.
- */
-class Font
-{
-public:
-	static void render(DynamicTexture dt, char[] text)
-	{
-		BitmapFont.defaultFont.render(dt, text);
-	}
-
-	static void buildSize(char[] text, out uint width, out uint height)
-	{
-		BitmapFont.defaultFont.buildSize(text, width, height);
 	}
 }
