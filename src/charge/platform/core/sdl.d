@@ -82,10 +82,16 @@ public:
 		loadLibraries();
 
 		initGfx(p);
+
+		foreach(init; initFuncs)
+			init();
 	}
 
 	void close()
 	{
+		foreach_reverse(close; closeFuncs)
+			close();
+
 		saveSettings();
 
 		Pool().clean();

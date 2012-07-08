@@ -41,6 +41,12 @@ public:
 	coreFlag flags;
 	bool resizeSupported;
 
+
+protected:
+	static void function()[] initFuncs;
+	static void function()[] closeFuncs;
+
+
 public:
 	static Core opCall()
 	{
@@ -57,6 +63,19 @@ public:
 	}
 
 	abstract void close();
+
+	/**
+	 * These functions are run just after Core is initialize and
+	 * right before Core is closed.
+	 */
+	static void addInitAndCloseRunners(void function() init, void function() close)
+	{
+		if (init !is null)
+			initFuncs ~= init;
+
+		if (close !is null)
+			closeFuncs ~= close;
+	}
 
 
 	/*
