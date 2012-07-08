@@ -105,12 +105,12 @@ public:
 		d = new GfxDraw();
 
 		chatDirty = true;
-		mlGui = new ClassicMessageLog(null, chatBorder, chatBorder, chatBacklog);
+		mlGui = new ClassicMessageLog(null, opts, chatBorder, chatBorder, chatBacklog);
 		spacer = new Text(null, chatBorder, mlGui.y+mlGui.h, chatSep);
 		typedText = new Text(null, chatBorder, spacer.y+spacer.h, "", true);
 
 		chatGui = new ColorContainer(
-			Color4f(0, 0, 0, 0.8),
+			Color4f(0, 0, 0, 0.2),
 			mlGui.w + 1 * 2,
 			mlGui.h +  spacer.h + typedText.h + chatBorder * 2);
 		chatGui.add(mlGui);
@@ -119,7 +119,7 @@ public:
 		chatGui.repaintDg = &handleRepaint;
 
 
-		mlGuiSmall = new ClassicMessageLog(null, chatBorder, chatBorder, chatBacklogSmall);
+		mlGuiSmall = new ClassicMessageLog(null, opts, chatBorder, chatBorder, chatBacklogSmall);
 		chatGuiSmall = new ColorContainer(
 			Color4f(0, 0, 0, 0.0),
 			mlGuiSmall.w + 1 * 2,
@@ -134,7 +134,7 @@ public:
 			console.message = &ml.archive;
 			console.tabCompletePlayer = &ml.tabCompletePlayer;
 		} else {
-			players[0] = new OtherPlayer(w, 0, "Herobrine", w.spawn, 0, 0);
+			players[0] = new OtherPlayer(w, 0, "&4Hero&9brine", w.spawn, 0, 0);
 
 			ml = new MessageLogger();
 			console.chat = &ml.archive;
@@ -411,7 +411,7 @@ public:
 			tX = imin(imax(0, tX), rt.width - width);
 			tY = imax(0, tY);
 
-			d.fill(Color4f(0, 0, 0, 0.8), true, tX, tY, width, height);
+			d.fill(Color4f(0, 0, 0, 0.2), true, tX, tY, width, height);
 
 			glBegin(GL_TRIANGLES);
 			glVertex2d(x + .5, y);
@@ -763,8 +763,6 @@ public:
 			 double x, double y, double z,
 			 double heading, double pitch)
 	{
-		name = removeColorTags(name);
-
 		auto index = cast(ubyte)id;
 
 		// Skip this player.
@@ -1048,65 +1046,26 @@ protected:
 
 class ClassicMessageLog : public MessageLog
 {
-	this(Container c, int x, int y, uint rows)
+public:
+	Options opts;
+
+
+public:
+	this(Container c, Options opts, int x, int y, uint rows)
 	{
+		this.opts = opts;
 		super(c, x, y, 64, rows, 1);
 	}
+
+	void makeResources()
+	{
+		sysReference(&bf, opts.classicFont());
+	}
+
 
 protected:
 	void drawRow(GfxDraw d, int y, char[] row)
 	{
-		uint w = bf.width;
-		uint h = bf.height;
-		auto color = &colors[15];
-		bool colorSelect;
-		int k;
-
-		foreach(c; row) {
-			if (colorSelect) {
-				colorSelect = false;
-				int index = charToIndex(c);
-				if (index >= 0) {
-					color = &colors[index];
-					continue;
-				}
-			} else if (c == '&') {
-				colorSelect = true;
-				continue;
-			}
-
-			d.blit(glyphs, *color, true,
-				c*w, 0, w, h,
-				k*w, y, w, h);
-			k++;
-		}
+		bf.draw(d, 0, y, row);
 	}
-
-	int charToIndex(char c)
-	{
-		if (c >= 'a' && c <= 'f')
-			return c - 'a' + 10;
-		if (c >= '0' && c <= '9')
-			return c - '0';
-		return -1;
-	}
-
-	const Color4f colors[16] = [
-		Color4f( 32/255f,  32/255f,  32/255f, 1),
-		Color4f( 45/255f, 100/255f, 200/255f, 1),
-		Color4f( 50/255f, 126/255f,  54/255f, 1),
-		Color4f(  0/255f, 170/255f, 170/255f, 1),
-		Color4f(188/255f,  75/255f,  45/255f, 1),
-		Color4f(172/255f,  56/255f, 172/255f, 1),
-		Color4f(200/255f, 175/255f,  45/255f, 1),
-		Color4f(180/255f, 180/255f, 200/255f, 1),
-		Color4f(100/255f, 100/255f, 100/255f, 1),
-		Color4f( 72/255f, 125/255f, 247/255f, 1),
-		Color4f( 85/255f, 255/255f,  85/255f, 1),
-		Color4f( 85/255f, 255/255f, 255/255f, 1),
-		Color4f(255/255f,  85/255f,  85/255f, 1),
-		Color4f(255/255f,  85/255f, 255/255f, 1),
-		Color4f(255/255f, 255/255f,  85/255f, 1),
-		Color4f.White,
-	];
 }

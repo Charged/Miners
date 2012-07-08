@@ -21,9 +21,10 @@ public:
 		this.name = name;
 		super(w, id, pos, heading, pitch);
 
-		if (text is null)
+		if (text is null) {
 			text = new GfxDynamicTexture(null);
-		gfxDefaultFont.render(text, name);
+			w.opts.classicFont().render(text, name);
+		}
 	}
 
 	~this()
