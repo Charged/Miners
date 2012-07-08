@@ -32,6 +32,7 @@ import miners.background;
 import miners.ion.runner;
 import miners.lua.runner;
 import miners.lua.builtin;
+import miners.gfx.font;
 import miners.gfx.manager;
 import miners.beta.world;
 import miners.isle.world;
@@ -318,6 +319,11 @@ protected:
 
 		// Not needed anymore.
 		sysReference(&pic, null);
+
+		// Install the classic font handler.
+		auto cf = ClassicFont("res/font.png");
+		opts.classicFont = cf;
+		sysReference(&cf, null);
 
 		// Install a new background runner
 		deleteMe(br);

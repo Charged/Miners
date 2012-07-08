@@ -173,6 +173,7 @@ public:
 	Option!(GfxTexture) background;
 	Option!(GfxTexture) terrain;
 	Option!(GfxTextureArray) terrainArray;
+	Option!(GfxBitmapFont) classicFont;
 	Option!(GfxTexture) classicTerrain;
 	Option!(GfxTextureArray) classicTerrainArray;
 
@@ -238,6 +239,7 @@ public:
 		terrain.destruct();
 		background.destruct();
 		terrainArray.destruct();
+		classicFont.destruct();
 		classicTerrain.destruct();
 		classicTerrainArray.destruct();
 
@@ -275,7 +277,9 @@ private struct Option(T)
 
 	void opAssign(T t)
 	{
-		static if (is(T : GfxTexture) || is(T : GfxTextureArray))
+		static if (is(T : GfxTexture) ||
+		           is(T : GfxTextureArray) ||
+		           is(T : GfxBitmapFont))
 			sysReference(&value, t);
 		else
 			value = t;
@@ -304,7 +308,9 @@ private struct Option(T)
 	{
 		signal.destruct();
 
-		static if (is(T : GfxTexture) || is(T : GfxTextureArray))
+		static if (is(T : GfxTexture) ||
+		           is(T : GfxTextureArray) ||
+		           is(T : GfxBitmapFont))
 			sysReference(&value, null);
 	}
 }
