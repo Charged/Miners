@@ -61,6 +61,7 @@ private:
 	bool build_all;
 	bool classicNetwork;
 	bool classicHttp;
+	bool classicMc;
 
 	char[] username; /**< webpage username */
 	char[] password; /**< webpage password */
@@ -74,6 +75,11 @@ private:
 	RegExp mcUrl;
 	/** Regexp for extracting information out of a http url */
 	RegExp httpUrl;
+	/**
+	 * Regexp for extracting information out of a http url,
+	 * with username and password.
+	 */
+	RegExp httpUserPassUrl;
 	/** Regexp for extracting the play session cookie */
 	RegExp playSessionCookieExp;
 	/** Regexp for extracting the launcher path */
@@ -120,6 +126,7 @@ public:
 	{
 		mcUrl = RegExp(mcUrlStr);
 		httpUrl = RegExp(httpUrlStr);
+		httpUserPassUrl = RegExp(httpUserPassUrlStr);
 		playSessionCookieExp = RegExp(playSessionCookieStr);
 		launcherPathExp = RegExp(launcherPathStr);
 
@@ -331,12 +338,16 @@ protected:
 
 		// Should we use classic
 		if (classicNetwork) {
-			if (playSessionCookie !is null)
-				mr.displayClassicMenu();
-			else if (!classicHttp)
+			if (classicMc) {
 				mr.connectToClassic(csi);
-			else
-				mr.connectToClassic(username, password, csi);
+			} else if (classicHttp) {
+				if (playSessionCookie !is null)
+					mr.getClassicServerInfoAndConnect(csi);
+				else
+					mr.connectToClassic(username, password, csi);
+			} else if (playSessionCookie !is null) {
+				mr.displayClassicMenu();
+			}
 		}
 
 		if (level !is null)
@@ -389,6 +400,15 @@ protected:
 		       tryArgLauncherPath(arg);
 	}
 
+	void checkHttpMc()
+	{
+		if (classicHttp || classicMc) {
+			l.warn("Error: multiple url/mc/html-page arguemnts");
+			writefln("Error: multiple url/mc/html-page arguemnts");
+			running = false;
+		}
+	}
+
 	/**
 	 * Is this argument a Minecraft http Url?
 	 * If so set all the game arguments and switch to classic.
@@ -396,12 +416,34 @@ protected:
 	bool tryArgHttpUrl(char[] arg)
 	{
 		auto r = httpUrl.exec(arg);
+		if (r.length < 2)
+			return false;
+
+		csi.webId = r[2];
+
+		classicNetwork = true;
+		classicHttp = true;
+
+		l.info("Url http://minecraft.net/classic/play/%s", csi.webId);
+
+		return true;
+	}
+
+	/**
+	 * Is this argument a Minecraft http Url?
+	 * If so set all the game arguments and switch to classic.
+	 */
+	bool tryArgHttpUserPassUrl(char[] arg)
+	{
+		auto r = httpUserPassUrl.exec(arg);
 		if (r.length < 5)
 			return false;
 
 		username = r[1];
 		password = r[3];
 		csi.webId = r[5];
+
+		checkHttpMc();
 
 		classicNetwork = true;
 		classicHttp = true;
@@ -435,7 +477,10 @@ protected:
 		} catch (Exception e) {
 		}
 
+		checkHttpMc();
+
 		classicNetwork = true;
+		classicMc = true;
 
 		l.info("Url mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);
@@ -461,10 +506,13 @@ protected:
 
 			getClassicServerInfo(csi, txt);
 		} catch (Exception e) {
-			return true;
+			return false;
 		}
 
+		checkHttpMc();
+
 		classicNetwork = true;
+		classicMc = true;
 
 		l.info("Html mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);
@@ -482,6 +530,7 @@ protected:
 			return false;
 
 		playSessionCookie = r[1];
+
 		classicNetwork = true;
 
 		l.info("PLAY_SESSION=<redacted>");

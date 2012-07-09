@@ -18,12 +18,19 @@ const mcUrlStr = "mc://([^/:]+)" "(:([^/]+))?" "(/([^/]+))?" "(/([^/]+))?";
 /**
  * String to parse a minecraft play string.
  *
+ * id = r[2]
+ */
+const httpUrlStr = "http://(www\\.)?" "minecraft.net/classic/play/" "(.+)";
+
+/**
+ * String to parse a minecraft play string with username and password.
+ *
  * username = r[1]
  * password = r[3]
  * id = r[5]
  */
-const httpUrlStr = "http://([^/:]+)" "(:([^@]+))?" "@" "(www\\.)?"
-		   "minecraft.net/classic/play/" "(.+)";
+const httpUserPassUrlStr = "http://([^/:]+)" "(:([^@]+))?" "@" "(www\\.)?"
+                           "minecraft.net/classic/play/" "(.+)";
 
 /**
  * String to parse a PLAY_SESSION cookie string.
