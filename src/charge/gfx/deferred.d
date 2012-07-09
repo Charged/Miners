@@ -511,7 +511,7 @@ protected:
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(-radius, radius, -radius, radius, -6*radius, radius);
+		glOrtho(-radius, radius, -radius, radius, -fmax(6*radius, 2048), radius);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -558,7 +558,8 @@ protected:
 		gluTexUnitDisable(GL_TEXTURE_2D, 1);
 		gluTexUnitDisable(GL_TEXTURE_2D, 0);
 
-		glPolygonOffset(1.0f, 4096.0f);
+		// Need to be tweeked depending on distance.
+		glPolygonOffset(1.0f, 768.0f);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 
 		for (int i; i < num_splits; i++) {
