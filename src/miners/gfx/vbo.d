@@ -112,8 +112,8 @@ public:
 
 	Entry[] array;
 	GfxMaterial m;
-	ABox[] resultAABB;
-	GfxVBO[] resultVBO;
+	GfxVBO[] resultVbo;
+	GfxVBO[] resultWaterVbo;
 	int result_num;
 
 	static struct Entry {
@@ -133,8 +133,7 @@ public:
 		delete m;
 		m = null;
 		delete array;
-		delete resultVBO;
-		delete resultAABB;
+		delete resultVbo;
 	}
 
 	GfxMaterial getMaterial()
@@ -171,13 +170,11 @@ public:
 
 	void cullAndPush(GfxCull cull, GfxRenderQueue rq)
 	{
-		resultVBO.length = array.length;
-		resultAABB.length = array.length;
+		resultVbo.length = array.length;
 		int i;
 		foreach(vbo; array) {
 			if (cull.f.check(vbo.aabb)) {
-				resultVBO[i] = vbo.vbo;
-				resultAABB[i++] = vbo.aabb;
+				resultVbo[i++] = vbo.vbo;
 			}
 		}
 
@@ -206,7 +203,7 @@ public:
 		gluPushAndTransform(pos, rot);
 
 		ChunkVBORigidMesh.drawArrayFixed(
-			cast(ChunkVBORigidMesh[])resultVBO[0 .. result_num]);
+			cast(ChunkVBORigidMesh[])resultVbo[0 .. result_num]);
 
 		glPopMatrix();
 	}
@@ -216,7 +213,7 @@ public:
 		gluPushAndTransform(pos, rot);
 
 		ChunkVBORigidMesh.drawArrayAttrib(
-			cast(ChunkVBORigidMesh[])resultVBO[0 .. result_num]);
+			cast(ChunkVBORigidMesh[])resultVbo[0 .. result_num]);
 
 		glPopMatrix();
 	}
@@ -248,7 +245,7 @@ public:
 
 		gluPushAndTransform(pos, rot);
 
-		auto vbos = cast(ChunkVBOCompactMesh[])resultVBO[0 .. result_num];
+		auto vbos = cast(ChunkVBOCompactMesh[])resultVbo[0 .. result_num];
 
 		foreach(vbo; vbos) {
 			glBindVertexArrayCHARGE(vbo.vao);
