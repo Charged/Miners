@@ -2,12 +2,17 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.http;
 
-import charge.net.threaded;
-
 import std.string;
 import std.conv;
 import std.socket;
 import uri = std.uri;
+
+import lib.sdl.sdl;
+import std.c.string;
+
+import charge.sys.logger;
+import charge.net.threaded;
+import charge.util.memory;
 
 
 class HttpConnection
@@ -21,12 +26,25 @@ private:
 	char[] hostname;
 	ushort port;
 
-	// Collected data from server
-	char[] saved;
+	// For async
+	SocketSet sSetRead;
+	SocketSet sSetWrite;
+	SocketSet sSetError;
+	bool connecting;
+
+	/// Collected data from server
+	cMemoryArray!(char) data;
+	/// Amount of data read
+	size_t dataRead;
+	/// Start of body in data, also where header stops.
+	size_t pageBodyStart;
+
+	/// Length of body to be recieved
 	ptrdiff_t contentLength;
-	char[] pageBody;
-	char[] pageHeader;
-	size_t pageBodyPos;
+
+	InternetAddress addr;
+
+	mixin Logging;
 
 
 public:
@@ -35,6 +53,11 @@ public:
 		this.contentLength = -1;
 		this.hostname = hostname;
 		this.port = port;
+	}
+
+	~this()
+	{
+		data.free();
 	}
 
 
@@ -53,6 +76,9 @@ public:
 		s.shutdown(SocketShutdown.BOTH);
 		s.close();
 		s = null;
+		sSetRead = null;
+		sSetWrite = null;
+		sSetError = null;
 	}
 
 	void doTick()
@@ -61,12 +87,48 @@ public:
 			if (!doConnect())
 				return;
 
+		sSetRead.reset();
+		sSetRead.add(s);
+		sSetWrite.reset();
+		sSetWrite.add(s);
+		sSetError.reset();
+		sSetError.add(s);
+
+		auto outerThen = SDL_GetTicks();
 		try {
-			if (contentLength < 0) {
-				getHeader();
+			// Ugh work around silly Phobos bug
+			version (Posix) {
+				struct TimeVal {
+					size_t sec;
+					size_t micro;
+				}
+				TimeVal tv;
 			} else {
-				getBody();
+				timeval tv;
 			}
+			auto tvPtr = cast(timeval*)&tv;
+			memset(tvPtr, 0, tv.sizeof);
+
+			int ret = s.select(sSetRead, sSetWrite, sSetError, tvPtr);
+			if (ret < 0)
+				throw new Exception("Error on select");
+			if (ret == 0)
+				return;
+
+			// Have we connected to a server
+			if (connecting && sSetWrite.isSet(s)) {
+				connecting = false;
+				handleConnected();
+			}
+
+			// Let the receive function deal with errors
+			if (sSetRead.isSet(s) || sSetError.isSet(s)) {
+				if (contentLength < 0)
+					getHeader();
+				else
+					getBody();
+			}
+
 		} catch (DisconnectedException de) {
 			handleDisconnect();
 		} catch(Exception e) {
@@ -84,8 +146,8 @@ protected:
 
 
 	abstract void handleError(Exception e);
-	abstract void handleResponse(char[] header, char[] res);
 	abstract void handleConnected();
+	abstract void handleResponse(char[] header, char[] res);
 	abstract void handleDisconnect();
 
 
@@ -100,12 +162,20 @@ private:
 	bool doConnect()
 	{
 		try {
-			auto a = new InternetAddress(hostname, port);
+			if (addr is null)
+				addr = new InternetAddress(hostname, port);
 
-			s = new TcpSocket(a);
+			connecting = true;
+
+			s = new TcpSocket();
+			s.setOption(SocketOptionLevel.TCP, SocketOption.TCP_NODELAY, 1);
 			s.blocking = false;
 
-			handleConnected();
+			s.connect(addr);
+
+			sSetRead = new SocketSet();
+			sSetWrite = new SocketSet();
+			sSetError = new SocketSet();
 
 			return true;
 		} catch (Exception e) {
@@ -114,9 +184,11 @@ private:
 		}
 	}
 
-	ptrdiff_t receive(void[] data)
+	final int receive()
 	{
-		auto n = s.receive(data);
+		data.ensure(dataRead + 4096);
+
+		auto n = s.receive(data[dataRead .. data.length]);
 		if (n < 0) {
 			if (s.isAlive())
 				return 0;
@@ -125,55 +197,71 @@ private:
 		} else if (n == 0) {
 			throw new DisconnectedException();
 		}
+
+		dataRead += cast(size_t)n;
+
 		return n;
 	}
 
 	void getHeader()
 	{
-		char[4096] data;
-		ptrdiff_t n;
-
-		// Wait for any data.
-		n = receive(data);
+		// Read data.
+		int n = receive();
 		assert(n >= 0);
 		if (n == 0)
 			return;
 
-		if (saved.length == 0)
-			saved = data[0 .. cast(size_t)n].dup;
-		else
-			saved ~= data[0 .. cast(size_t)n];
-
-		auto pos = cast(size_t)find(saved, "\r\n\r\n");
+		auto pos = cast(size_t)find(data[0 .. dataRead], "\r\n\r\n");
 		// HTTP header end not found, need more data.
 		if (pos == size_t.max)
 			return;
 
-		pageHeader = saved[0 .. pos + 4].dup;
-		saved = saved[pos + 4 .. $];
+		pageBodyStart = pos + 4;
+		scope(failure)
+			resetOffsets();
 
-		contentLength = getContentLength(pageHeader);
-		pageBody = new char[cast(size_t)contentLength];
-		pageBody[0 .. saved.length] = saved;
-		pageBodyPos = saved.length;
+		contentLength = getContentLength(data[0 .. pageBodyStart]);
+
+		size_t end = pageBodyStart + contentLength;
+		if (dataRead == end)
+			doHandleResponse();
 	}
 
 	void getBody()
 	{
-		auto n = receive(pageBody[pageBodyPos .. $]);
+		auto n = receive();
 		assert(n >= 0);
 		if (n == 0)
 			return;
 
-		pageBodyPos += n;
-
-		if (pageBodyPos < pageBody.length) {
+		size_t end = pageBodyStart + contentLength;
+		if (dataRead < end)
 			return;
-		} else if (pageBodyPos == pageBody.length) {
-			handleResponse(pageHeader, pageBody);
-		} else {
+		else if (dataRead == end)
+			doHandleResponse();
+		else {
+			resetOffsets();
 			throw new Exception("Read too much data!");
 		}
+	}
+
+
+private:
+	void resetOffsets()
+	{
+		dataRead = 0;
+		pageBodyStart = 0;
+		contentLength = -1;
+	}
+
+	void doHandleResponse()
+	{
+		auto pageHeader = data[0 .. pageBodyStart - 2];
+		auto pageBody = data[pageBodyStart .. dataRead];
+
+		resetOffsets();
+
+		handleResponse(pageHeader, pageBody);
 	}
 }
 
