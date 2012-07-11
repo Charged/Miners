@@ -229,13 +229,15 @@ public:
 			copyToWorkspace(ws, i);
 
 			if (bt.cvgrm !is null) {
-				v = bt.builder.update(null, ws, xPos, yPos+i, zPos);
+				ChunkVBORigidMesh vbo = null;
+				v = bt.builder.update(vbo, ws, xPos, yPos+i, zPos);
 				if (v !is null)
 					bt.cvgrm.add(v, xPos, yPos+i, zPos);
 			}
 
 			if (bt.cvgcm !is null) {
-				v = bt.builder.update(null, bt.buildIndexed, ws, xPos, yPos+i, zPos);
+				ChunkVBOCompactMesh vbo = null;
+				v = bt.builder.update(vbo, bt.buildIndexed, ws, xPos, yPos+i, zPos);
 				if (v !is null)
 					bt.cvgcm.add(v, xPos, yPos+i, zPos);
 			}

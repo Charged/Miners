@@ -202,6 +202,14 @@ alias void function(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data) 
  */
 struct Packer
 {
+	/**
+	 * Packers are in a single linked list.
+	 */
+	Packer *next;
+
+	/**
+	 * Pack a single vertex into the mesh.
+	 */
 	void function(Packer *p, int x, int y, int z,
 		      ubyte texture, ubyte light, sideNormal normal,
 		      ushort u, ushort v) pack;

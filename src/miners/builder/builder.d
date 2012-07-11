@@ -23,14 +23,17 @@ public:
 	BuildFunction *buildArray;
 	BuildBlockDescriptor *tile;
 	WorkspaceData *ws;
-	PackerCompact *packer;
+	PackerCompact*[2] packers;
 
 public:
 	this(BuildFunction *buildArray, BuildBlockDescriptor *tile)
 	{
 		this.buildArray = buildArray;
 		this.tile = tile;
-		this.packer = PackerCompact.cAlloc(128 * 1024);
+		this.packers[0] = PackerCompact.cAlloc(128 * 1024);
+		this.packers[1] = PackerCompact.cAlloc(128 * 1024);
+		foreach(int i, p; packers[0 .. $-1])
+			p.base.next = &packers[i+1].base;
 	}
 
 	~this()
@@ -86,6 +89,17 @@ public:
 		return update(vbo, indexed, data, xPos, yPos, zPos, xOff, yOff, zOff);
 	}
 
+	void update(ChunkVBOCompactMesh vbos[], bool indexed,
+	            WorkspaceData *data,
+	            int xPos, int yPos, int zPos)
+	{
+		int xOff = xPos * BuildWidth;
+		int yOff = yPos * BuildHeight;
+		int zOff = zPos * BuildDepth;
+
+		return update(vbos, indexed, data, xPos, yPos, zPos, xOff, yOff, zOff);
+	}
+
 
 	/*
 	 *
@@ -101,9 +115,11 @@ public:
 			ws = null;
 		}
 
-		if (packer !is null) {
-			packer.cFree();
-			packer = null;
+		foreach(ref p; packers) {
+			if (p is null)
+				continue;
+			p.cFree();
+			p = null;
 		}
 	}
 
@@ -127,8 +143,10 @@ public:
 	                           int xPos, int yPos, int zPos,
 	                           int xOffArg, int yOffArg, int zOffArg)
 	{
-		packer.ctor(xOffArg, yOffArg, zOffArg, indexed);
+		packers[0].ctor(xOffArg, yOffArg, zOffArg, indexed);
+		packers[1].ctor(xOffArg, yOffArg, zOffArg, indexed);
 
+		auto packer = packers[0];
 		doBuildMesh(&packer.base, buildArray, data);
 
 		auto verts = packer.getVerts();
@@ -140,6 +158,32 @@ public:
 
 		vbo.update(verts);
 		return vbo;
+	}
+
+	void update(ChunkVBOCompactMesh[] vbos, bool indexed,
+	            WorkspaceData *data,
+	            int xPos, int yPos, int zPos,
+	            int xOffArg, int yOffArg, int zOffArg)
+	{
+		packers[0].ctor(xOffArg, yOffArg, zOffArg, indexed);
+		packers[1].ctor(xOffArg, yOffArg, zOffArg, indexed);
+
+		auto packer = packers[0];
+		doBuildMesh(&packer.base, buildArray, data);
+
+		assert(vbos.length <= packers.length);
+		foreach(int i, ref v; vbos) {
+			auto verts = packers[i].getVerts();
+			if (verts.length == 0) {
+				v = null;
+				continue;
+			}
+
+			if (v is null)
+				v = ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
+
+			v.update(verts);
+		}
 	}
 
 	/**
