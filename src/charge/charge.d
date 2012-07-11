@@ -37,6 +37,7 @@ public
 	static import charge.sfx.source;
 
 	static import charge.gfx.gfx;
+	static import charge.gfx.vbo;
 	static import charge.gfx.cube;
 	static import charge.gfx.draw;
 	static import charge.gfx.font;
@@ -117,6 +118,8 @@ alias charge.sfx.listener.Listener SfxListener;
 alias charge.sfx.source.Source SfxSource;
 
 alias charge.gfx.gfx.gfxLoaded gfxLoaded;
+alias charge.gfx.vbo.VBO GfxVBO;
+alias charge.gfx.vbo.RigidMeshVBO GfxRigidMeshVBO;
 alias charge.gfx.cube.Cube GfxCube;
 alias charge.gfx.draw.Draw GfxDraw;
 alias charge.gfx.font.BitmapFont GfxBitmapFont;
