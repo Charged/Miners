@@ -116,6 +116,23 @@ public:
 		return num;
 	}
 
+	size_t length(size_t len)
+	{
+		if (len < num)
+			foreach(ref d; data[len .. num])
+				d = null;
+
+		num = len;
+
+		if (num < data.length)
+			return num;
+
+		while (data.length < num)
+			data.length = data.length * 2 + 3;
+
+		return num;
+	}
+
 	void removeAll()
 	{
 		data = null;
