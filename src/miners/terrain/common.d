@@ -95,6 +95,8 @@ protected:
 				auto m = g.getMaterial();
 				m["tex"] = buildIndexed ? ta : t;
 				m["fake"] = true;
+				if (i == 1)
+					m["stipple"] = true;
 			}
 			break;
 		default:

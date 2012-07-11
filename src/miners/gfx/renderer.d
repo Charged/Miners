@@ -164,7 +164,19 @@ protected:
 			glBindTexture(GL_TEXTURE_2D, m.texSafe.id);
 		}
 
-		cvgcm.drawAttrib(s);
+		if (m.stipple) {
+			uint[32] pattern;
+			foreach(int i, ref p; pattern)
+				p = 0x55_55_55_55 << (i % 2);
+			glPolygonStipple(cast(GLubyte*)pattern.ptr);
+
+			glEnable(GL_POLYGON_STIPPLE);
+			cvgcm.drawAttrib(s);
+			glDisable(GL_POLYGON_STIPPLE);
+
+		} else {
+			cvgcm.drawAttrib(s);
+		}
 
 		glUseProgram(0);
 	}
@@ -259,12 +271,24 @@ public:
 	}
 
 protected:
-	void renderGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m)
+	void renderGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m, bool shadow)
 	{
 		glUseProgram(material_shader.id);
 		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, m.texSafe.id);
 
-		cvgcm.drawAttrib(material_shader);
+		if (m.stipple && !shadow) {
+			uint[32] pattern;
+			foreach(int i, ref p; pattern)
+				p = 0x55_55_55_55 << (i % 2);
+			glPolygonStipple(cast(GLubyte*)pattern.ptr);
+
+			glEnable(GL_POLYGON_STIPPLE);
+			cvgcm.drawAttrib(material_shader);
+			glDisable(GL_POLYGON_STIPPLE);
+
+		} else {
+			cvgcm.drawAttrib(material_shader);
+		}
 
 		glUseProgram(0);
 	}
@@ -284,7 +308,7 @@ protected:
 
 			auto cvgmc = cast(ChunkVBOGroupCompactMesh)r;
 			if (cvgmc !is null) {
-				renderGroup(cvgmc, m);
+				renderGroup(cvgmc, m, true);
 				continue;
 			}
 
@@ -313,7 +337,7 @@ protected:
 
 			auto cvgmc = cast(ChunkVBOGroupCompactMesh)r;
 			if (cvgmc !is null) {
-				renderGroup(cvgmc, m);
+				renderGroup(cvgmc, m, false);
 				continue;
 			}
 

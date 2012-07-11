@@ -358,8 +358,10 @@ void grass(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data)
 }
 
 
-void water(Packer *p, int x, int y, int z, ubyte, WorkspaceData *data)
+void water(Packer *packerPrev, int x, int y, int z, ubyte, WorkspaceData *data)
 {
+	auto p = packerPrev.next;
+	assert(p !is null);
 	int set = data.getSolidOrTypesSet(8, 9, x, y, z);
 	auto dec = &tile[8];
 	ubyte tex = calcTextureXZ(dec);
