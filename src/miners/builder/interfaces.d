@@ -15,15 +15,7 @@ interface MeshBuilder
 
 	void putWorkspace(WorkspaceData *ws);
 
-	ChunkVBOCompactMesh update(ChunkVBOCompactMesh vbo, bool indexed,
-	                           WorkspaceData *data,
-	                           int xPos, int yPos, int zPos);
-
 	void update(ChunkVBOCompactMesh vbos[], bool indexed,
 	            WorkspaceData *data,
 	            int xPos, int yPos, int zPos);
-
-	ChunkVBORigidMesh update(ChunkVBORigidMesh vbo,
-	                         WorkspaceData *data,
-	                         int xPos, int yPos, int zPos);
 }

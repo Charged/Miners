@@ -8,9 +8,6 @@ import charge.charge;
 import charge.math.ints;
 
 import miners.defines;
-import miners.gfx.vbo;
-import miners.gfx.imports;
-import miners.gfx.renderer;
 import miners.terrain.beta;
 import miners.builder.workspace;
 import miners.builder.interfaces;

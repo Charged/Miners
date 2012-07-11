@@ -10,7 +10,6 @@ static import charge.gfx.renderqueue;
 public import charge.charge;
 
 
-alias charge.gfx.vbo.VBO GfxVBO;
 alias charge.gfx.cull.Cull GfxCull;
 alias charge.gfx.cull.ABox ABox;
 alias charge.gfx.cull.Frustum Frustum;

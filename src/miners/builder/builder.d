@@ -67,28 +67,6 @@ public:
 			ws.free();
 	}
 
-	ChunkVBORigidMesh update(ChunkVBORigidMesh vbo,
-	                         WorkspaceData *data,
-	                         int xPos, int yPos, int zPos)
-	{
-		int xOff = xPos * BuildWidth;
-		int yOff = yPos * BuildHeight;
-		int zOff = zPos * BuildDepth;
-
-		return update(vbo, data, xPos, yPos, zPos, xOff, yOff, zOff);
-	}
-
-	ChunkVBOCompactMesh update(ChunkVBOCompactMesh vbo, bool indexed,
-	                           WorkspaceData *data,
-	                           int xPos, int yPos, int zPos)
-	{
-		int xOff = xPos * BuildWidth;
-		int yOff = yPos * BuildHeight;
-		int zOff = zPos * BuildDepth;
-
-		return update(vbo, indexed, data, xPos, yPos, zPos, xOff, yOff, zOff);
-	}
-
 	void update(ChunkVBOCompactMesh vbos[], bool indexed,
 	            WorkspaceData *data,
 	            int xPos, int yPos, int zPos)
