@@ -134,6 +134,7 @@ alias charge.gfx.texture.ColorTexture GfxColorTexture;
 alias charge.gfx.texture.TextureArray GfxTextureArray;
 alias charge.gfx.texture.TextureTarget GfxTextureTarget;
 alias charge.gfx.texture.DynamicTexture GfxDynamicTexture;
+alias charge.gfx.texture.WrappedTexture GfxWrappedTexture;
 alias charge.gfx.material.Material GfxMaterial;
 alias charge.gfx.material.SimpleMaterial GfxSimpleMaterial;
 alias charge.gfx.material.MaterialManager GfxMaterialManager;

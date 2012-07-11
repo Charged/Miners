@@ -361,6 +361,57 @@ package:
 
 }
 
+class WrappedTexture : public Texture
+{
+private:
+	Texture tex;
+
+public:
+	this(char[] name, Texture tex)
+	in {
+		assert(tex !is null);
+		assert(cast(WrappedTexture)tex is null);
+	}
+	body {
+		reference(&this.tex, tex);
+
+		super(Pool(), name, 0);
+	}
+
+	~this()
+	{
+		reference(&tex, null);
+	}
+
+	void update(Texture tex)
+	in {
+		assert(tex !is null);
+	}
+	body {
+		reference(&this.tex, tex);
+	}
+
+	uint width()
+	{
+		return tex.width;
+	}
+
+	uint height()
+	{
+		return tex.height;
+	}
+
+	uint id()
+	{
+		return tex.glId;
+	}
+
+	void filter(Filter)
+	{
+		assert(false, "filtering not supported");
+	}
+}
+
 class TextureTarget : public Texture, public RenderTarget
 {
 private:
