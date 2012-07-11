@@ -9,14 +9,14 @@ import charge.charge;
 import miners.types;
 import miners.options;
 import miners.gfx.vbo;
+import miners.builder.workspace;
 import miners.builder.interfaces;
 
 
 class Terrain : public GameActor
 {
 public:
-	ChunkVBOGroupRigidMesh cvgrm;
-	ChunkVBOGroupCompactMesh cvgcm;
+	ChunkVBOGroupCompactMesh[2] cvgcm;
 	bool buildIndexed; // The renderer supports array textures.
 	MeshBuilder builder;
 	bool useClassicTexture;
@@ -49,8 +49,8 @@ public:
 
 	~this()
 	{
-		delete cvgrm;
-		delete cvgcm;
+		foreach(g; cvgcm)
+			delete g;
 		delete builder;
 	}
 
@@ -74,10 +74,9 @@ protected:
 	void doBuildTypeChange(TerrainBuildTypes type)
 	{
 		this.currentBuildType = type;
-		delete cvgrm;
-		delete cvgcm;
+		foreach(g; cvgcm)
+			delete g;
 
-		cvgrm = null; cvgcm = null;
 		GfxTexture t = opts.terrain();
 		GfxTextureArray ta = opts.terrainArray();
 
@@ -88,20 +87,57 @@ protected:
 
 		switch(type) {
 		case TerrainBuildTypes.RigidMesh:
-			cvgrm = new ChunkVBOGroupRigidMesh(w.gfx);
-			auto m = cvgrm.getMaterial();
-			m["tex"] = t;
-			m["fake"] = true;
+			// XXX Disabled for now
 			break;
 		case TerrainBuildTypes.CompactMesh:
-			cvgcm = new ChunkVBOGroupCompactMesh(w.gfx);
-			auto m = cvgcm.getMaterial();
-			m["tex"] = buildIndexed ? ta : t;
-			m["fake"] = true;
+			foreach(int i, ref g; cvgcm) {
+				g = new ChunkVBOGroupCompactMesh(w.gfx);
+				auto m = g.getMaterial();
+				m["tex"] = buildIndexed ? ta : t;
+				m["fake"] = true;
+			}
 			break;
 		default:
 			assert(false);
 		}
+	}
+
+package:
+	void doUpdates(GfxVBO[] vbosIn, WorkspaceData *ws, int x, int y, int z)
+	{
+		if (currentBuildType != TerrainBuildTypes.CompactMesh)
+			return;
+
+		ChunkVBOCompactMesh[8] old;
+		auto vbos = cast(ChunkVBOCompactMesh[])vbosIn;
+		old[0 .. vbos.length] = vbos;
+
+		builder.update(vbos, buildIndexed, ws, x, y, z);
+
+		foreach(int i, v; vbos) {
+			auto o = old[i];
+			auto g = cvgcm[i];
+
+			if (o !is v) {
+				if (o !is null)
+					g.remove(o);
+				if (v !is null)
+					g.add(v, x, y, z);
+			}
+		}
+	}
+
+	void doUnbuild(GfxVBO[] vbos, int x, int y, int z)
+	{
+		if (currentBuildType != TerrainBuildTypes.CompactMesh)
+			return;
+
+		foreach(int i, vbo; vbos)
+			if (vbo !is null)
+				cvgcm[i].remove(vbo);
+
+		foreach(ref v; vbos)
+			v = null;
 	}
 
 private:

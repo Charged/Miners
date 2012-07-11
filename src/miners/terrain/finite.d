@@ -54,7 +54,7 @@ protected:
 
 	cMemoryArray!(ubyte) store;
 
-	GfxVBO vbos[];
+	GfxVBO[2][] vbos;
 	bool gfx[];
 	bool dirty[];
 
@@ -445,34 +445,13 @@ protected:
 		if (!shouldBuild(x, y, z))
 			return false;
 
-
 		auto ws = extractWorkspace(x, y, z);
 		scope(exit)
 			builder.putWorkspace(ws);
 
 		int i = calcVboIndex(x, y, z);
-		GfxVBO v, old = vbos[i];
-		ChunkVBOGroup g;
+		doUpdates(vbos[i], ws, x, y, z);
 
-		if (cvgcm !is null) {
-			auto cm = cast(ChunkVBOCompactMesh)old;
-			v = builder.update(cm, buildIndexed, ws, x, y, z);
-			g = cvgcm;
-
-		} else if (cvgrm !is null) {
-			auto rm = cast(ChunkVBORigidMesh)old;
-			v = builder.update(rm, ws, x, y, z);
-			g = cvgrm;
-		}
-
-		if (old !is v) {
-			if (old !is null)
-				g.remove(old);
-			if (v !is null)
-				g.add(v, x, y, z);
-		}
-
-		vbos[i] = v;
 		gfx[i] = true;
 		dirty[i] = false;
 
@@ -482,19 +461,10 @@ protected:
 	void unbuild(int x, int y, int z)
 	{
 		int i = calcVboIndex(x, y, z);
-		auto v = vbos[i];
+		doUnbuild(vbos[i], x, y, z);
 
-		vbos[i] = null;
 		gfx[i] = false;
 		dirty[i] = false;
-
-		if (v is null)
-			return;
-
-		if (cvgrm !is null)
-			cvgrm.remove(v);
-		if (cvgcm !is null)
-			cvgcm.remove(v);
 	}
 
 	final uint calcVboIndex(int x, int y, int z)

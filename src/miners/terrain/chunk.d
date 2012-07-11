@@ -43,7 +43,7 @@ protected:
 	BetaTerrain bt;
 
 	// VBO's.
-	GfxVBO vbos[height / BuildHeight];
+	GfxVBO[2][height / BuildHeight] vbos;
 
 	// Blocks and Data.
 	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */
@@ -225,24 +225,9 @@ public:
 		scope(exit)
 			bt.builder.putWorkspace(ws);
 
-		foreach(int i, v; vbos) {
+		foreach(int i, ref v; vbos) {
 			copyToWorkspace(ws, i);
-
-			if (bt.cvgrm !is null) {
-				ChunkVBORigidMesh vbo = null;
-				v = bt.builder.update(vbo, ws, xPos, yPos+i, zPos);
-				if (v !is null)
-					bt.cvgrm.add(v, xPos, yPos+i, zPos);
-			}
-
-			if (bt.cvgcm !is null) {
-				ChunkVBOCompactMesh vbo = null;
-				v = bt.builder.update(vbo, bt.buildIndexed, ws, xPos, yPos+i, zPos);
-				if (v !is null)
-					bt.cvgcm.add(v, xPos, yPos+i, zPos);
-			}
-
-			vbos[i] = v;
+			bt.doUpdates(v, ws, xPos, yPos+i, zPos);
 		}
 	}
 
@@ -259,16 +244,8 @@ public:
 			return;
 		}
 
-		foreach(int i, v; vbos) {
-			vbos[i] = null;
-
-			if (v is null)
-				continue;
-
-			if (bt.cvgrm !is null)
-				bt.cvgrm.remove(v);
-			if (bt.cvgcm !is null)
-				bt.cvgcm.remove(v);
+		foreach(int i, ref v; vbos) {
+			bt.doUnbuild(v, xPos, yPos+i, zPos);
 		}
 
 		gfx = false;
