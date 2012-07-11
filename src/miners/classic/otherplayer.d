@@ -5,6 +5,7 @@ module miners.classic.otherplayer;
 import charge.charge;
 
 import miners.world;
+import miners.importer.network;
 import actors = miners.actors.otherplayer;
 
 
@@ -24,6 +25,11 @@ public:
 		if (text is null) {
 			text = new GfxDynamicTexture(null);
 			w.opts.classicFont().render(text, name);
+		}
+
+		if (name !is null) {
+			auto t = w.opts.getSkin(removeColorTags(name));
+			skel.getMaterial().setTexture("tex", t);
 		}
 	}
 

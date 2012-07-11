@@ -212,6 +212,12 @@ public:
 	void delegate() changeRenderer;
 
 
+	/**
+	 * Not a trigger as such, but downloads a player skin.
+	 */
+	GfxTexture delegate(char[] name) getSkin;
+
+
 public:
 	this()
 	{

@@ -21,6 +21,7 @@ import charge.sys.memory;
 import charge.util.memory;
 import charge.platform.homefolder;
 
+import miners.skin;
 import miners.types;
 import miners.error;
 import miners.world;
@@ -93,6 +94,8 @@ private:
 	Options opts;
 	RenderManager rm;
 	GfxDefaultTarget defaultTarget;
+
+	SkinDownloader skin;
 
 	Runner runner;
 	MenuRunner mr;
@@ -192,6 +195,11 @@ public:
 
 		manageRunners();
 
+		if (skin !is null) {
+			skin.close();
+			delete skin;
+		}
+
 		auto p = Core().properties;
 		p.add(opts.aaName, opts.aa());
 		p.add(opts.fogName, opts.fog());
@@ -256,6 +264,11 @@ protected:
 
 		// Setup the inbuilt script files
 		initLuaBuiltins();
+
+		auto defSkin = GfxColorTexture(Color4f.White);
+		skin = new SkinDownloader(defSkin);
+		opts.getSkin = &skin.getSkin;
+		sysReference(&defSkin, null);
 
 		// Most common problem people have is missing terrain.png
 		Picture pic = getMinecraftTexture();
@@ -669,6 +682,9 @@ protected:
 	{
 		// Delete and switch runners.
 		manageRunners();
+
+		if (skin !is null)
+			skin.doTick();
 
 		// Run the menu.
 		if (mr !is null && mr.active)
