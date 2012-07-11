@@ -200,7 +200,7 @@ private:
 
 		dataRead += cast(size_t)n;
 
-		return n;
+		return cast(int)n;
 	}
 
 	void getHeader()
