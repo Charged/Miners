@@ -127,6 +127,7 @@ public:
 	Texture tex; /**< Does not hold a reference */
 	Texture texSafe; /**< Will always be valid */
 	bool fake;
+	bool stipple;
 	bool skel; /**< This is here temporary */
 
 	this()
@@ -150,7 +151,8 @@ public:
 		static MaterialProperty[] list = [
 			{"tex", MaterialProperty.TEXTURE},
 			{"color", MaterialProperty.COLOR3},
-			{"fake", MaterialProperty.OPTION}
+			{"fake", MaterialProperty.OPTION},
+			{"stipple", MaterialProperty.OPTION}
 		];
 		return list;
 	}
@@ -202,6 +204,9 @@ public:
 		switch(name) {
 			case "fake":
 				fake = option;
+				break;
+			case "stipple":
+				stipple = option;
 				break;
 			default:
 				return false;
