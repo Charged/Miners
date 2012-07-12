@@ -40,7 +40,7 @@ protected:
 	BetaTerrain bt;
 
 	// VBO's.
-	GfxVBO[2][height / BuildHeight] vbos;
+	GfxVBO[BuildMeshes][height / BuildHeight] vbos;
 
 	// Blocks and Data.
 	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */

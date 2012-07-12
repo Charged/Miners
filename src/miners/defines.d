@@ -10,3 +10,8 @@ module miners.defines;
 const int BuildWidth = 16;
 const int BuildHeight = 16;
 const int BuildDepth = 16;
+
+/**
+ * The number of meshes that are built.
+ */
+const int BuildMeshes = 2;

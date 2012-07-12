@@ -23,7 +23,7 @@ public:
 	BuildFunction *buildArray;
 	BuildBlockDescriptor *tile;
 	WorkspaceData *ws;
-	PackerCompact*[2] packers;
+	PackerCompact*[BuildMeshes] packers;
 
 public:
 	this(BuildFunction *buildArray, BuildBlockDescriptor *tile)
@@ -106,8 +106,8 @@ public:
 	            int xPos, int yPos, int zPos,
 	            int xOffArg, int yOffArg, int zOffArg)
 	{
-		packers[0].ctor(xOffArg, yOffArg, zOffArg, indexed);
-		packers[1].ctor(xOffArg, yOffArg, zOffArg, indexed);
+		foreach(p; packers)
+			p.ctor(xOffArg, yOffArg, zOffArg, indexed);
 
 		auto packer = packers[0];
 		doBuildMesh(&packer.base, buildArray, data);

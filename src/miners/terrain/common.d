@@ -7,6 +7,7 @@ import std.math;
 import charge.charge;
 
 import miners.types;
+import miners.defines;
 import miners.options;
 import miners.gfx.vbo;
 import miners.builder.workspace;
@@ -16,7 +17,7 @@ import miners.builder.interfaces;
 class Terrain : public GameActor
 {
 public:
-	ChunkVBOGroupCompactMesh[2] cvgcm;
+	ChunkVBOGroupCompactMesh[BuildMeshes] cvgcm;
 	bool buildIndexed; // The renderer supports array textures.
 	MeshBuilder builder;
 	bool useClassicTexture;
@@ -110,8 +111,7 @@ package:
 		if (currentBuildType != TerrainBuildTypes.CompactMesh)
 			return;
 
-		GfxVBO[2] old;
-		old[0 .. vbos.length] = vbos;
+		GfxVBO[BuildMeshes] old = vbos;
 
 		builder.updateCompactMesh(vbos, buildIndexed, ws, x, y, z);
 

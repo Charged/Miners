@@ -52,7 +52,7 @@ protected:
 
 	cMemoryArray!(ubyte) store;
 
-	GfxVBO[2][] vbos;
+	GfxVBO[BuildMeshes][] vbos;
 	bool gfx[];
 	bool dirty[];
 
