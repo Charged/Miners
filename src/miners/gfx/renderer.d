@@ -165,15 +165,10 @@ protected:
 		}
 
 		if (m.stipple) {
-			uint[32] pattern;
-			foreach(int i, ref p; pattern)
-				p = 0x55_55_55_55 << (i % 2);
-			glPolygonStipple(cast(GLubyte*)pattern.ptr);
-
+			glPolygonStipple(cast(GLubyte*)Helper.stipplePattern.ptr);
 			glEnable(GL_POLYGON_STIPPLE);
 			cvgcm.drawAttrib(s);
 			glDisable(GL_POLYGON_STIPPLE);
-
 		} else {
 			cvgcm.drawAttrib(s);
 		}
@@ -277,15 +272,10 @@ protected:
 		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, m.texSafe.id);
 
 		if (m.stipple && !shadow) {
-			uint[32] pattern;
-			foreach(int i, ref p; pattern)
-				p = 0x55_55_55_55 << (i % 2);
-			glPolygonStipple(cast(GLubyte*)pattern.ptr);
-
+			glPolygonStipple(cast(GLubyte*)Helper.stipplePattern.ptr);
 			glEnable(GL_POLYGON_STIPPLE);
 			cvgcm.drawAttrib(material_shader);
 			glDisable(GL_POLYGON_STIPPLE);
-
 		} else {
 			cvgcm.drawAttrib(material_shader);
 		}
@@ -382,6 +372,14 @@ public:
 		-1.0,  0.0,  0.0, -1.0, // XPZN
 		 1.0,  0.0,  0.0, -1.0, // XPZP
 	];
+
+	static uint[32] stipplePattern;
+
+	static this()
+	{
+		foreach(int i, ref p; stipplePattern)
+			p = 0x55_55_55_55 << (i % 2);
+	}
 
 	/*
 	 * Material Fragment shaders.
