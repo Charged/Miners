@@ -105,16 +105,15 @@ protected:
 	}
 
 package:
-	void doUpdates(GfxVBO[] vbosIn, WorkspaceData *ws, int x, int y, int z)
+	void doUpdates(GfxVBO[] vbos, WorkspaceData *ws, int x, int y, int z)
 	{
 		if (currentBuildType != TerrainBuildTypes.CompactMesh)
 			return;
 
-		ChunkVBOCompactMesh[8] old;
-		auto vbos = cast(ChunkVBOCompactMesh[])vbosIn;
+		GfxVBO[2] old;
 		old[0 .. vbos.length] = vbos;
 
-		builder.update(vbos, buildIndexed, ws, x, y, z);
+		builder.updateCompactMesh(vbos, buildIndexed, ws, x, y, z);
 
 		foreach(int i, v; vbos) {
 			auto o = old[i];

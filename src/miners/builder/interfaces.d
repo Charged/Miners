@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.interfaces;
 
-import miners.gfx.vbo;
+import charge.gfx.vbo : GfxVBO = VBO;
 import miners.builder.workspace;
 
 
@@ -15,7 +15,7 @@ interface MeshBuilder
 
 	void putWorkspace(WorkspaceData *ws);
 
-	void update(ChunkVBOCompactMesh vbos[], bool indexed,
-	            WorkspaceData *data,
-	            int xPos, int yPos, int zPos);
+	void updateCompactMesh(GfxVBO vbos[], bool indexed,
+	                       WorkspaceData *data,
+	                       int xPos, int yPos, int zPos);
 }

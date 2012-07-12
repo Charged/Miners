@@ -67,7 +67,7 @@ public:
 			ws.free();
 	}
 
-	void update(ChunkVBOCompactMesh vbos[], bool indexed,
+	void updateCompactMesh(GfxVBO[] vbos, bool indexed,
 	            WorkspaceData *data,
 	            int xPos, int yPos, int zPos)
 	{
@@ -75,7 +75,7 @@ public:
 		int yOff = yPos * BuildHeight;
 		int zOff = zPos * BuildDepth;
 
-		return update(vbos, indexed, data, xPos, yPos, zPos, xOff, yOff, zOff);
+		return updateCompactMesh(vbos, indexed, data, xPos, yPos, zPos, xOff, yOff, zOff);
 	}
 
 
@@ -101,44 +101,7 @@ public:
 		}
 	}
 
-	/**
-	 * Update a RigidMesh from a WorkspaceData.
-	 */
-	ChunkVBORigidMesh update(ChunkVBORigidMesh vbo,
-			WorkspaceData *data,
-			int xPos, int yPos, int zPos,
-			int xOffArg, int yOffArg, int zOffArg)
-	{
-		// XXX Disabled for now.
-		return null;
-	}
-
-	/**
-	 * Build and update a CompactMesh from a WorkspaceData.
-	 */
-	ChunkVBOCompactMesh update(ChunkVBOCompactMesh vbo, bool indexed,
-	                           WorkspaceData *data,
-	                           int xPos, int yPos, int zPos,
-	                           int xOffArg, int yOffArg, int zOffArg)
-	{
-		packers[0].ctor(xOffArg, yOffArg, zOffArg, indexed);
-		packers[1].ctor(xOffArg, yOffArg, zOffArg, indexed);
-
-		auto packer = packers[0];
-		doBuildMesh(&packer.base, buildArray, data);
-
-		auto verts = packer.getVerts();
-		if (verts.length == 0)
-			return null;
-
-		if (vbo is null)
-			return ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
-
-		vbo.update(verts);
-		return vbo;
-	}
-
-	void update(ChunkVBOCompactMesh[] vbos, bool indexed,
+	void updateCompactMesh(GfxVBO[] vbos, bool indexed,
 	            WorkspaceData *data,
 	            int xPos, int yPos, int zPos,
 	            int xOffArg, int yOffArg, int zOffArg)
@@ -157,10 +120,12 @@ public:
 				continue;
 			}
 
-			if (v is null)
-				v = ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
+			auto vbo = cast(ChunkVBOCompactMesh)v;
+			if (vbo is null)
+				vbo = ChunkVBOCompactMesh(verts, xPos, yPos, zPos);
 
-			v.update(verts);
+			vbo.update(verts);
+			v = vbo;
 		}
 	}
 
