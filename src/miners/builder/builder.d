@@ -2,8 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.builder.builder;
 
-import miners.defines;
+import charge.gfx.vbo : GfxVBO = VBO;
+
 import miners.gfx.vbo;
+import miners.defines;
 
 import miners.builder.types;
 import miners.builder.packers;
