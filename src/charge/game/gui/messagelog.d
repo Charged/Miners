@@ -37,7 +37,7 @@ public:
 
 		repack();
 
-		super(p, x, y, colums * 8, rows * rowHeight);
+		super(p, x, y, colums * bf.width, rows * rowHeight);
 	}
 
 	void repack()
