@@ -111,7 +111,7 @@ public:
 
 		chatGui = new ColorContainer(
 			Color4f(0, 0, 0, 0.2),
-			mlGui.w + 1 * 2,
+			mlGui.w + chatBorder * 2,
 			mlGui.h +  spacer.h + typedText.h + chatBorder * 2);
 		chatGui.add(mlGui);
 		chatGui.add(spacer);
@@ -122,7 +122,7 @@ public:
 		mlGuiSmall = new ClassicMessageLog(null, opts, chatBorder, chatBorder, chatBacklogSmall);
 		chatGuiSmall = new ColorContainer(
 			Color4f(0, 0, 0, 0.0),
-			mlGuiSmall.w + 1 * 2,
+			mlGuiSmall.w + chatBorder * 2,
 			mlGuiSmall.h + chatBorder * 2);
 		chatGuiSmall.add(mlGuiSmall);
 		chatGuiSmall.repaintDg = &handleRepaint;
