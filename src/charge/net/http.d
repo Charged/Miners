@@ -140,6 +140,37 @@ public:
 protected:
 	/*
 	 *
+	 * Http functions.
+	 *
+	 */
+
+
+	void httpGet(char[] url)
+	{
+		httpSend("GET", url, "");
+	}
+
+	void httpPost(char[] url, char[] bdy)
+	{
+		httpSend("POST", url, bdy);
+	}
+
+	void httpSend(char[] cmd, char[] url, char[] bdy)
+	{
+		const char[] http =
+		"%s %s HTTP/1.0\r\n"
+		"User-Agent: Charge Game Engine\r\n"
+		"Host: %s\r\n"
+		"\r\n"
+		"%s";
+
+		auto req = format(cmd, url, hostname, bdy);
+		s.send(req);
+	}
+
+
+	/*
+	 *
 	 * Abstract functions.
 	 *
 	 */
@@ -294,6 +325,37 @@ public:
 
 
 protected:
+	/*
+	 *
+	 * Http functions.
+	 *
+	 */
+
+
+	void httpGet(char[] url)
+	{
+		httpSend("GET", url, "");
+	}
+
+	void httpPost(char[] url, char[] bdy)
+	{
+		httpSend("POST", url, bdy);
+	}
+
+	void httpSend(char[] cmd, char[] url, char[] bdy)
+	{
+		const char[] http =
+		"%s %s HTTP/1.0\r\n"
+		"User-Agent: Charge Game Engine\r\n"
+		"Host: %s\r\n"
+		"\r\n"
+		"%s";
+
+		auto req = format(cmd, url, hostname, bdy);
+		s.send(req);
+	}
+
+
 	/*
 	 *
 	 * Abstract functions.

@@ -69,6 +69,7 @@ public:
 		if (test !is null)
 			return *test;
 
+
 		nextSkin ~= name;
 		auto str = format("playerSkin/%s.png", name);
 		auto ret = new GfxWrappedTexture(str, def);
@@ -78,16 +79,8 @@ public:
 
 	void httpGetSkin(char[] name)
 	{
-		const char[] http =
-		"GET %s HTTP/1.1\r\n"
-		"User-Agent: Charged-Miners\r\n"
-		"Host: %s\r\n"
-		"\r\n";
-
 		auto url = format(this.url, name);
-		auto req = format(http, url, hostname);
-
-		s.send(req);
+		httpGet(url);
 	}
 
 	void handleError(Exception e)
