@@ -73,11 +73,9 @@ public:
 
 	~this()
 	{
-		if (menu !is null)
-			menu.breakApart();
-		delete ih;
-
-		sysReference(&menuTexture, null);
+		assert(ih is null);
+		assert(menu is null);
+		assert(menuTexture is null);
 	}
 
 	void close()
@@ -88,6 +86,8 @@ public:
 		}
 
 		sysReference(&menuTexture, null);
+
+		delete ih;
 	}
 
 	void resize(uint w, uint h)

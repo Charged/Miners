@@ -164,6 +164,7 @@ public:
 
 	void close()
 	{
+		deleteMe(mr);
 		deleteAll();
 		mr = null;
 
