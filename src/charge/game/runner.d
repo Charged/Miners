@@ -76,9 +76,14 @@ interface Router
 {
 public:
 	/**
-	 * Switch control to this runner.
+	 * Push this runner to top of the stack.
 	 */
-	void switchTo(Runner r);
+	void push(Runner r);
+
+	/**
+	 * Remove this runner from the stack.
+	 */
+	void remove(Runner r);
 
 	/**
 	 * The given runner wants to be deleted.

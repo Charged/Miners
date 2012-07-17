@@ -188,6 +188,7 @@ alias charge.game.world.Actor GameActor;
 alias charge.game.world.World GameWorld;
 alias charge.game.app.App GameApp;
 alias charge.game.app.SimpleApp GameSimpleApp;
+alias charge.game.app.RouterApp GameRouterApp;
 alias charge.game.lua.LuaState GameLuaState;
 alias charge.game.runner.Runner GameRunner;
 alias charge.game.runner.Router GameRouter;

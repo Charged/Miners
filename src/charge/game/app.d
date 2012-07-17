@@ -4,9 +4,12 @@ module charge.game.app;
 
 import lib.sdl.sdl;
 
+import charge.util.vector;
 import charge.core;
 import charge.ctl.input;
+import charge.gfx.target;
 import charge.sys.resource;
+import charge.game.runner;
 
 
 struct TimeKeeper
@@ -163,4 +166,134 @@ private:
 	void do_logic() { logicTime.start(); logic(); logicTime.stop(); }
 	void do_input() { inputTime.start(); input(); inputTime.stop(); }
 	void do_idle(long time) { idleTime.start(); idle(time); idleTime.stop(); }
+}
+
+abstract class RouterApp : SimpleApp, Router
+{
+private:
+	Vector!(Runner) vec;
+	Vector!(Runner) del;
+	Runner currentInput;
+	bool dirty;
+
+public:
+	this(charge.core.coreFlag flags = charge.core.coreFlag.AUTO)
+	{
+		super(flags);
+	}
+
+	void render()
+	{
+		auto rt = DefaultTarget();
+
+		int i = cast(int)vec.length;
+		foreach_reverse(r; vec) {
+			i--;
+			if (r.flags & Runner.Flag.Blocker)
+				break;
+		}
+
+		for(; i < vec.length; i++)
+			vec[i].render(rt);
+
+		rt.swap();
+	}
+
+	void logic()
+	{
+		manageRunners();
+
+		foreach_reverse(r; vec) {
+			r.logic();
+
+			if (r.flags & Runner.Flag.Blocker)
+				break;
+		}
+	}
+
+	void push(Runner r)
+	{
+		assert(r !is null);
+
+		dirty = true;
+
+		if (r.flags & Runner.Flag.AlwaysOnTop)
+			return vec ~= r;
+
+		int i = cast(int)vec.length;
+		for(--i; (i >= 0) && (vec[i].flags & Runner.Flag.AlwaysOnTop); i--) { }
+		// should be placed after the first non AlwaysOnTop runner.
+		i++;
+
+		// Might be moved, but also covers the case where it is empty.
+		vec ~= r;
+		for (Runner o, n = r; i < vec.length; i++, n = o) {
+			o = vec[i];
+			vec[i] = n;
+		}
+	}
+
+	void remove(Runner r)
+	{
+		vec.remove(r);
+		dirty = true;
+	}
+
+	void deleteMe(Runner r)
+	{
+		if (r is null)
+			return;
+
+		remove(r);
+
+		// Don't delete a runner already on the list
+		foreach(ru; del)
+			if (ru is r)
+				return;
+		del ~= r;
+	}
+
+	void deleteAll()
+	{
+		foreach(r; vec.adup)
+			deleteMe(r);
+	}
+
+	final void manageRunners()
+	{
+		if (!dirty)
+			return;
+		dirty = false;
+
+		Runner newRunner;
+
+		foreach_reverse(r; vec) {
+			assert(r !is null);
+
+			if (!(r.flags & Runner.Flag.TakesInput))
+				continue;
+			newRunner = r;
+			break;
+		}
+
+		// If there is nobody to take the input we quit the game.
+		if (newRunner is null)
+			stop();
+
+		if (currentInput !is newRunner) {
+			if (currentInput !is null)
+				currentInput.dropControl;
+			currentInput = newRunner;
+			if (currentInput !is null)
+				currentInput.assumeControl;
+		}
+
+		auto tmp = del.adup;
+		del.removeAll();
+		foreach(r; tmp) {
+			r.close;
+			// XXX Change runners so this isn't needed.
+			delete r;
+		}
+	}
 }
