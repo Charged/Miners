@@ -12,6 +12,32 @@ import charge.gfx.target;
 class Runner
 {
 public:
+	enum Flag {
+		TakesInput    = 0x01,
+		Transparent   = 0x02,
+		Blocker       = 0x04,
+		AlwaysOnTop   = 0x08,
+	}
+
+	enum Type {
+		Background = 0,
+		Game = Flag.TakesInput | Flag.Blocker,
+		Menu = Flag.TakesInput | Flag.Transparent,
+		Overlay = Flag.AlwaysOnTop | Flag.Transparent,
+	}
+
+
+	union {
+		Flag flags;
+		Type type;
+	}
+
+public:
+	this(Type type)
+	{
+		this.type = type;
+	}
+
 	/**
 	 * Called to notify that the screen has changed resolution.
 	 */

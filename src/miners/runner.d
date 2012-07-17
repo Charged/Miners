@@ -36,6 +36,8 @@ private:
 public:
 	this(Router r, Options opts, World w)
 	{
+		super(Type.Game);
+
 		this.r = r;
 		this.opts = opts;
 		this.w = w;

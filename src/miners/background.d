@@ -25,6 +25,8 @@ protected:
 public:
 	this(Router r)
 	{
+		super(Type.Background);
+
 		this.router = r;
 
 		d = new GfxDraw();

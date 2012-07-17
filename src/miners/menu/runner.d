@@ -55,6 +55,8 @@ private:
 public:
 	this(Router r, Options opts)
 	{
+		super(Type.Menu);
+
 		this.router = r;
 		this.opts = opts;
 
