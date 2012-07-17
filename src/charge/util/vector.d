@@ -58,6 +58,15 @@ public:
 		return data[i];
 	}
 
+	T opIndexAssign(T t, size_t i)
+	{
+		if (i >= num)
+			throw new ArrayBoundsError(typeof(this).stringof, cast(int)i);
+
+		data[i] = t;
+		return t;
+	}
+
 	void opCatAssign(T t)
 	{
 		add(t);
