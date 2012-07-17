@@ -16,7 +16,9 @@ protected:
 	uint colums;
 	uint rows;
 	uint rowHeight;
-	uint spacing;
+	uint columWidth;
+	uint spacingX;
+	uint spacingY;
 
 	uint current;
 	DynamicTexture glyphs;
@@ -27,9 +29,10 @@ protected:
 	BitmapFont bf;
 
 public:
-	this(Container p, int x, int y, uint colums, uint rows, uint spacing)
+	this(Container p, int x, int y, uint colums, uint rows, uint spacingX, uint spacingY)
 	{
-		this.spacing = spacing;
+		this.spacingX = spacingX;
+		this.spacingY = spacingY;
 		this.colums = colums;
 		this.rows = rows;
 
@@ -37,15 +40,16 @@ public:
 
 		repack();
 
-		super(p, x, y, colums * bf.width, rows * rowHeight);
+		super(p, x, y, colums * columWidth, rows * rowHeight);
 	}
 
 	void repack()
 	{
 		makeResources();
 
-		rowHeight = bf.height + spacing;
-		w = colums * bf.width;
+		columWidth = bf.width + spacingX;
+		rowHeight = bf.height + spacingY;
+		w = colums * columWidth;
 		h = rows * rowHeight;
 	}
 

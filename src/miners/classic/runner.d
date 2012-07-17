@@ -1054,7 +1054,7 @@ public:
 	this(Container c, Options opts, int x, int y, uint rows)
 	{
 		this.opts = opts;
-		super(c, x, y, 64, rows, 1);
+		super(c, x, y, 64, rows, 0, 1);
 	}
 
 	void makeResources()

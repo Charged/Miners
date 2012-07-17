@@ -22,15 +22,10 @@ private:
 public:
 	this(ushort *mem)
 	{
-		container = new TextureContainer(
-			null, 0, 0, width * (8 + 1), height * (8 + 1));
-		super(container, 0, 0, width, height, 1);
+		super(null, 0, 0, width, height, 0, 1);
 
-		foreach(int i, t; text) {
-			text[i].length = width;
-			foreach(int j, g; text[i])
-				text[i][j] = cast(char)('a' + i + j);
-		}
+		container = new TextureContainer(null, 0, 0, w, h);
+		container.add(this);
 
 		vram = mem[0x8000 .. 0x8000 + 32 * 16];
 	}
@@ -49,9 +44,6 @@ public:
 	{
 		repaint();
 
-		for (int i; i < height; i++)
-			for (int j; j < width; j++)
-				text[i][j] = cast(char)(vram[j + i * width] & 0x007f);
 		container.paintTexture();
 	}
 
