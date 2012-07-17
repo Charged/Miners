@@ -331,14 +331,14 @@ protected:
 		// Should we use classic
 		if (classicNetwork) {
 			if (classicMc) {
-				mr.connectToClassic(csi);
+				return mr.connectToClassic(csi);
 			} else if (classicHttp) {
 				if (playSessionCookie !is null)
-					mr.getClassicServerInfoAndConnect(csi);
+					return mr.getClassicServerInfoAndConnect(csi);
 				else
-					mr.connectToClassic(username, password, csi);
+					return mr.connectToClassic(username, password, csi);
 			} else if (playSessionCookie !is null) {
-				mr.displayClassicMenu();
+				return mr.displayClassicMenu();
 			}
 		}
 
