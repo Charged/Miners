@@ -514,9 +514,6 @@ public:
 				break;
 			grab = !grab;
 			break;
-		case SDLK_o:
-			Core().screenShot();
-			break;
 		case SDLK_F2:
 			opts.hideUi.toggle;
 			break;
@@ -576,6 +573,10 @@ public:
 		} else if (sym == opts.keySelector) {
 			if (keyDown)
 				r.menu.displayClassicBlockSelector(&selectedBlock);
+
+		} else if (sym == opts.keyScreenshot) {
+			if (keyDown)
+				Core().screenShot();
 
 		} else if (sym == opts.keySlot0) {
 			currentSlot = 0;
