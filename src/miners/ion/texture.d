@@ -74,18 +74,18 @@ protected:
 				top += rowHeight;
 				bottom += rowHeight;
 				left = 0;
-				right = left + rowHeight;
+				right = left + columWidth;
 			} else {
-				left += rowHeight;
-				right = left + rowHeight;
+				left += 8;//columWidth;
+				right = left + columWidth;
 			}
 		}
 		glEnd();
 
-		top = 1;
-		bottom = top + 8;
-		left = 1;
-		right = left + 8;
+		top = 0;
+		bottom = top + bf.height;
+		left = 0;
+		right = left + bf.width;
 
 		glEnable(GL_BLEND);
 		glEnable(GL_TEXTURE_2D);
@@ -109,17 +109,16 @@ protected:
 				glVertex2i(  right, bottom);
 				glTexCoord2f(srcX2,      0);
 				glVertex2i(  right,    top);
-
-
 			}
+
 			if (i % 32 == 31) {
 				top += rowHeight;
-				bottom = top + 8;
-				left = 1;
-				right = left + 8;
+				bottom = top + bf.height;
+				left = 0;
+				right = left + bf.width;
 			} else {
-				left += rowHeight;
-				right = left + 8;
+				left += 8;//columWidth;
+				right = left + bf.width;
 			}
 		}
 		glEnd();
@@ -145,10 +144,4 @@ protected:
 		Color4f(0xFF/255f, 0xFF/255f, 0x55/255f, 1),
 		Color4f(0xFF/255f, 0xFF/255f, 0xFF/255f, 1),
 	];
-
-	void repack()
-	{
-		w = colums * 9;
-		h = rows * rowHeight;
-	}
 }
