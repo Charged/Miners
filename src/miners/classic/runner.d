@@ -510,9 +510,10 @@ public:
 
 		switch(sym) {
 		case SDLK_g:
-			if (!kb.ctrl)
-				break;
-			grab = !grab;
+			if (kb.ctrl)
+				grab = !grab;
+			else
+				keyBinding(kb, sym, false);
 			break;
 		case SDLK_F2:
 			opts.hideUi.toggle;
