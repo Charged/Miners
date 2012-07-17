@@ -10,9 +10,6 @@ import std.regexp;
 import std.string;
 import std.c.stdlib;
 
-static import std.gc;
-static import gcstats;
-
 import lib.sdl.sdl;
 
 import charge.charge;
@@ -54,7 +51,7 @@ static import miners.builder.classic;
 /**
  * Main hub of the minecraft game.
  */
-class Game : public GameSimpleApp, public Router
+class Game : public GameRouterApp, public Router
 {
 private:
 	/* program args */
@@ -88,7 +85,6 @@ private:
 
 
 	/* time keepers */
-	charge.game.app.TimeKeeper luaTime;
 	charge.game.app.TimeKeeper buildTime;
 
 	Options opts;
@@ -97,23 +93,13 @@ private:
 
 	SkinDownloader skin;
 
-	Runner runner;
 	MenuRunner mr;
-	ScriptRunner sr;
-	BackgroundRunner br;
-
-	Runner[] deleteRunner;
-	Runner nextRunner;
 
 	bool built; /**< Have we built a chunk */
 
 	int ticks;
-	int start;
-	int num_frames;
 
 	GfxDraw d;
-	GfxDynamicTexture debugText;
-	GfxTextureTarget infoTexture;
 
 	// Extracted files from minecraft
 	void[] terrainFile;
@@ -168,10 +154,7 @@ public:
 
 		manageRunners();
 
-		start = SDL_GetTicks();
-
  		d = new GfxDraw();
-		debugText = new GfxDynamicTexture("mc/debugText");
 	}
 
 	~this()
@@ -181,17 +164,12 @@ public:
 
 	void close()
 	{
-		if (sr !is null)
-			deleteMe(sr);
-		if (mr !is null)
-			deleteMe(mr);
-		if (br !is null)
-			deleteMe(br);
+		deleteAll();
+		mr = null;
 
 		manageRunners();
 
-		if (runner !is null)
-			deleteMe(runner);
+		deleteAll();
 
 		manageRunners();
 
@@ -212,8 +190,6 @@ public:
 		delete rm;
 		delete d;
 
-		sysReference(&debugText, null);
-
 		if (terrainFile !is null) {
 			auto fm = FileManager();
 			fm.remBuiltin(terrainFilename);
@@ -233,7 +209,8 @@ protected:
 	{
 		// This needs to be done first,
 		// so errors messages can be displayed.
-		br = new SafeBackgroundRunner(this);
+		Runner br = new SafeBackgroundRunner(this);
+		push(br);
 
 		GfxTexture dirt;
 
@@ -348,6 +325,7 @@ protected:
 		// Install a new background runner
 		deleteMe(br);
 		br = new DirtBackgroundRunner(this, opts);
+		push(br);
 
 		// Should we use classic
 		if (classicNetwork) {
@@ -364,7 +342,9 @@ protected:
 		}
 
 		if (level !is null)
-			loadLevel(level, false);
+			return loadLevel(level, false);
+
+		return mr.displayMainMenu();
 	}
 
 	void parseArgs(char[][] args)
@@ -674,100 +654,19 @@ protected:
 	{
 		super.resize(w, h);
 
-		if (runner !is null)
-			runner.resize(w, h);
+		//if (runner !is null)
+		//	runner.resize(w, h);
 	}
 
 	void logic()
 	{
-		// Delete and switch runners.
-		manageRunners();
-
-		if (skin !is null)
-			skin.doTick();
-
-		// Run the menu.
-		if (mr !is null && mr.active)
-			mr.logic();
-
 		ticks++;
-
-		auto elapsed = SDL_GetTicks() - start;
-		if (elapsed > 1000) {
-
-			gcstats.GCStats stats;
-			std.gc.getStats(stats);
-
-			const double MB = 1024 * 1024;
-			char[512] tmp;
-			char[] info = sformat(tmp,
-				"Charge%7.1fFPS\n"
-				"\n"
-				"Memory:\n"
-				"     C%7.1fMB\n"
-				"     D%7.1fMB\n"
-				"   Lua%7.1fMB\n"
-				"   VBO%7.1fMB\n"
-				" Chunk%7.1fMB\n"
-				"\n"
-				"GC:\n"
-				"  used%7.1fMB\n"
-				"  pool%7.1fMB\n"
-				"  free%7.1fMB\n"
-				" pages% 7s\n"
-				"  free% 7s\n"
-				"\n"
-				"Time:\n"
-				"\tgfx   %5.1f%%\n\tctl   %5.1f%%\n"
-				"\tnet   %5.1f%%\n\tgame  %5.1f%%\n"
-				"\tlua   %5.1f%%\n\tbuild %5.1f%%\n"
-				"\tidle  %5.1f%%",
-				cast(double)num_frames / (cast(double)elapsed / 1000.0),
-				charge.sys.memory.MemHeader.getMemory() / MB,
-				stats.usedsize / MB,
-				lib.lua.state.State.getMemory() / MB,
-				charge.gfx.vbo.VBO.used / MB,
-				Chunk.used_mem / MB,
-				stats.usedsize / MB,
-				stats.poolsize / MB,
-				stats.freelistsize / MB,
-				stats.pageblocks,
-				stats.freeblocks,
-				renderTime.calc(elapsed), inputTime.calc(elapsed),
-				networkTime.calc(elapsed), logicTime.calc(elapsed),
-				luaTime.calc(elapsed), buildTime.calc(elapsed),
-				idleTime.calc(elapsed));
-
-			assert(tmp.ptr == info.ptr);
-
-			gfxDefaultFont.render(debugText, info);
-
-			num_frames = 0;
-			start = elapsed + start;
-		}
-
-		// Do nothing if no runner is running.
-		if (runner is null)
-			return;
 
 		// This make sure we at least always
 		// builds at least one chunk per frame.
 		built = false;
 
-		// Special case lua runner.
-		if (sr !is null) {
-			logicTime.stop();
-			luaTime.start();
-			sr.logic();
-			luaTime.stop();
-			logicTime.start();
-		} else if (runner !is null) {
-			try {
-				runner.logic();
-			} catch (Exception e) {
-				mr.displayError(e, false);
-			}
-		}
+		GameRouterApp.logic();
 	}
 
 	void render()
@@ -776,53 +675,14 @@ protected:
 			return;
 		ticks = 0;
 
-		num_frames++;
-
-		auto rt = defaultTarget;
-
-		auto drawRunner = runner;
-		// Draw background runner if no runner is running.
-		if (drawRunner is null)
-			drawRunner = br;
-		drawRunner.render(rt);
-
-		if (mr !is null && mr.active)
-			mr.render(rt);
-
-		if (opts.showDebug()) {
-			auto w = debugText.width + 16;
-			auto h = debugText.height + 16;
-			auto x = rt.width - debugText.width - 16 - 8;
-
-			d.target = rt;
-			d.start();
-			d.fill(Color4f(0, 0, 0, .8), true, x, 8, w, h);
-			d.blit(debugText, x+8, 16);
-
-			auto grd = cast(GameRunnerBase)runner;
-			if (grd !is null && grd.centerer !is null) {
-				auto p = grd.centerer.position;
-				char[256] tmp;
-				char[] info = sformat(tmp, "Camera (%.1f, %.1f, %.1f)", p.x, p.y, p.z);
-
-				gfxDefaultFont.buildSize(info, w, h);
-				w += 16;
-				h += 16;
-				d.fill(Color4f(0, 0, 0, .8), true, 8, 8, w, h);
-				gfxDefaultFont.draw(d, 16, 16, info);
-			}
-
-			d.stop();
-		}
-
-		rt.swap();
+		GameRouterApp.render();
 	}
 
 	void idle(long time)
 	{
 		// If we have built at least one chunk this frame and have very little
 		// time left don't build again. But we always build one each frame.
-		if (built && time < 5 || runner is null)
+		if (built && time < 5 || builders.length == 0)
 			return super.idle(time);
 
 		// Account this time for build instead of idle
@@ -888,40 +748,14 @@ protected:
 		builders.remove(dg);
 	}
 
-	void switchTo(Runner r)
+	void backgroundMenu()
 	{
-		if (r is null)
-			return;
-		nextRunner = r;
+		remove(mr);
 	}
 
-	void deleteMe(Runner r)
+	void foregroundMenu()
 	{
-		if (r is null)
-			return;
-
-		foreach(dr; deleteRunner)
-			if (dr is r)
-				return;
-
-		deleteRunner ~= r;
-	}
-
-	void backgroundCurrent()
-	{
-		if (runner !is null)
-			runner.dropControl();
-		if (mr !is null)
-			mr.assumeControl();
-	}
-
-	void foregroundCurrent()
-	{
-		if (runner !is null) {
-			runner.assumeControl();
-			if (mr !is null)
-				mr.dropControl();
-		}
+		push(mr);
 	}
 
 	void chargeIon()
@@ -935,20 +769,15 @@ protected:
 			return;
 		}
 
-		// Close the menu and old runner.
 		menu.closeMenu();
-		deleteMe(runner);
-
-		switchTo(r);
+		push(r);
 	}
 
 	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
 	{
 		auto r = new ClassicRunner(this, opts, cc, x, y, z, data);
 		menu.closeMenu();
-		deleteMe(runner);
-
-		switchTo(r);
+		push(r);
 	}
 
 	void loadLevel(char[] level, bool classic = false)
@@ -957,9 +786,7 @@ protected:
 
 		// Close the menu and old runner.
 		menu.closeMenu();
-		deleteMe(runner);
-
-		switchTo(r);
+		push(r);
 	}
 
 	Runner doLoadLevel(char[] level, bool classic)
@@ -1028,61 +855,13 @@ protected:
 		return r;
 	}
 
-	void manageRunners()
-	{
-		// Delete any pending runners.
-		if (deleteRunner.length) {
-			foreach(r; deleteRunner) {
-				// Disable the current runner.
-				if (r is runner) {
-					runner.dropControl();
-					runner = null;
-				}
-
-				if (r is nextRunner)
-					nextRunner = null;
-				if (r is sr)
-					sr = null;
-				if (r is mr)
-					mr = null;
-				if (r is br)
-					br = null;
-
-				// To avoid nasty deadlocks with GC.
-				r.close();
-
-				// Finally delete it.
-				delete r;
-			}
-			deleteRunner = null;
-		}
-
-		// Default to the MenuRunner
-		if (runner is null && nextRunner is null &&
-		    mr !is null && !mr.active)
-			mr.displayMainMenu();
-
-		// Do the switch of runners.
-		if (nextRunner !is null) {
-			if (runner !is null)
-				runner.dropControl();
-			if (mr !is null)
-				mr.dropControl();
-
-			runner = nextRunner;
-			sr = cast(ScriptRunner)runner;
-
-			runner.assumeControl();
-
-			nextRunner = null;
-		}
-	}
 
 	/*
 	 *
 	 * Error messages.
 	 *
 	 */
+
 
 	const char[] terrainNotFoundText =
 `Could not find terrain.png! You have a couple of options, easiest is just to

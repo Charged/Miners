@@ -290,13 +290,13 @@ private:
 
 		if (menu is null) {
 			active = false;
-			router.foregroundCurrent();
+			router.backgroundMenu();
 			return;
 		}
 
 		if (!active) {
 			active = true;
-			router.backgroundCurrent();
+			router.foregroundMenu();
 		}
 
 		menu.paintTexture();

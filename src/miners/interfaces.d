@@ -5,7 +5,7 @@ module miners.interfaces;
 import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
-public import charge.game.runner : Runner;
+public import charge.game.runner : Runner, GameRouter = Router;
 
 import miners.types;
 public import miners.classic.interfaces : ClassicConnection = Connection;
@@ -14,7 +14,7 @@ public import miners.classic.interfaces : ClassicConnection = Connection;
 /**
  * Specialized router for Miners.
  */
-interface Router
+interface Router : GameRouter
 {
 	/**
 	 * Gracefully quit the game.
@@ -45,24 +45,15 @@ interface Router
 	void removeBuilder(bool delegate() dg);
 
 	/**
-	 * Switch control to this runner.
+	 * Background the menu, called from menu.
 	 */
-	void switchTo(Runner r);
+	void backgroundMenu();
 
 	/**
-	 * The given runner wants to be deleted.
+	 * Foreground the menu, called from menu.
 	 */
-	void deleteMe(Runner r);
+	void foregroundMenu();
 
-	/**
-	 * Background the current runner, called from menu.
-	 */
-	void backgroundCurrent();
-
-	/**
-	 * Foreground the current runner, called from menu.
-	 */
-	void foregroundCurrent();
 
 	/**
 	 * Render the world, from camera to rt.
