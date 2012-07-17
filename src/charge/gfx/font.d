@@ -78,19 +78,22 @@ public:
 	{
 		GLint oldFbo;
 
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &oldFbo);
+		glPushAttrib(GL_VIEWPORT_BIT);
+
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
-		// XXX optimize
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &oldFbo);
+
 		scope(exit) {
 			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, oldFbo);
+
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 			glMatrixMode(GL_PROJECTION);
 			glPopMatrix();
+
 			glPopAttrib();
 		}
 
@@ -110,6 +113,7 @@ public:
 		static GLenum buffers[1] = [
 			GL_COLOR_ATTACHMENT0_EXT,
 		];
+
 		gluFrameBufferBind(fbo, buffers, w, h);
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, dt.id, 0);
 
@@ -188,10 +192,9 @@ protected:
 	{
 		// This is all the state we need to setup,
 		// the rest is handled by draw or the render function.
+		glEnable(GL_BLEND);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, tex.id);
-
-		glEnable(GL_BLEND);
 
 		glBegin(GL_QUADS);
 
@@ -211,6 +214,8 @@ protected:
 		glEnd();
 
 		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
 	}
 
 	void doLayoutLoop(char[] text, void delegate(int x, int y, char c) dg)
