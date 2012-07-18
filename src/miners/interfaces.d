@@ -5,11 +5,13 @@ module miners.interfaces;
 import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
-public import charge.game.runner : Runner, GameRouter = Router;
+static import charge.game.runner;
 
 import miners.types;
 public import miners.classic.interfaces : ClassicConnection = Connection;
 
+alias charge.game.runner.Runner Runner;
+alias charge.game.runner.Router GameRouter;
 
 /**
  * Specialized router for Miners.
