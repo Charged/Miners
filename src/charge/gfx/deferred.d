@@ -36,7 +36,7 @@ private:
 	enum matShdr {
 		TEX,
 		FAKE,
-		COLOR,
+		SHADOW,
 		OFF,
 		NUM = OFF * 2
 	}
@@ -110,12 +110,12 @@ public:
 				    ["diffuseTex"]);
 		matShader[matShdr.FAKE] =
 			ShaderMaker(material_shader_mesh_vert,
-				    material_shader_tex_frag,
+				    material_shader_fake_frag,
 				    ["vs_position", "vs_uv", "vs_normal"],
 				    ["diffuseTex"]);
-		matShader[matShdr.COLOR] =
-			ShaderMaker(material_shader_mesh_vert,
-				    material_shader_tex_frag,
+		matShader[matShdr.SHADOW] =
+			ShaderMaker(material_shader_skel_vert,
+				    material_shader_shadow_frag,
 				    ["vs_position", "vs_uv", "vs_normal"],
 				    ["diffuseTex"]);
 
@@ -129,15 +129,14 @@ public:
 				    ["diffuseTex"]);
 		matShader[matShdr.FAKE + matShdr.OFF] =
 			ShaderMaker(material_shader_skel_vert,
-				    material_shader_tex_frag,
+				    material_shader_fake_frag,
 				    ["vs_position", "vs_uv", "vs_normal"],
 				    ["diffuseTex"]);
-		matShader[matShdr.COLOR + matShdr.OFF] =
+		matShader[matShdr.SHADOW + matShdr.OFF] =
 			ShaderMaker(material_shader_skel_vert,
-				    material_shader_tex_frag,
+				    material_shader_shadow_frag,
 				    ["vs_position", "vs_uv", "vs_normal"],
 				    ["diffuseTex"]);
-
 
 		pointlight_shader = ShaderMaker(pointlight_shader_vertex,
 		                                pointlight_shader_geom,
@@ -414,8 +413,9 @@ protected:
 			glUseProgram(s.id);
 			glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
 		} else {
-			s =  matShader[matShdr.COLOR + off];
+			s =  matShader[matShdr.SHADOW + off];
 			glUseProgram(s.id);
+			glBindTexture(GL_TEXTURE_2D, 0); // No texture
 		}
 
 		r.drawAttrib(s);
@@ -1156,17 +1156,11 @@ void main()
 }
 ";
 
-	const char[] material_shader_color_frag = "
+	const char[] material_shader_shadow_frag = "
 #version 120
-
-uniform vec4 color;
-
-varying vec3 normal;
 
 void main()
 {
-	gl_FragData[0] = vec4(color.xyz, 0);
-	gl_FragData[1] = vec4(normalize(normal) * 0.5 + 0.5 , 0.0);
 }
 ";
 
