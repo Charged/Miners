@@ -74,7 +74,7 @@ private:
 	void ion(Button b) { r.chargeIon(); r.deleteMe(this); }
 	void random(Button b) { r.loadLevel(null); r.deleteMe(this); }
 	void classic(Button b) { r.loadLevel(null, true); r.deleteMe(this); }
-	void selectLevel(Button b) { r.menu.displayLevelSelector(); r.deleteMe(this); }
+	void selectLevel(Button b) { r.displayLevelSelector(); r.deleteMe(this); }
 	void back(Button b) { r.deleteMe(this); }
 	void quit(Button b) { r.quit(); r.deleteMe(this); }
 }

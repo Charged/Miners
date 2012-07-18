@@ -50,7 +50,7 @@ public:
 
 	void back(Button b)
 	{
-		r.menu.displayMainMenu();
+		r.displayMainMenu();
 		r.deleteMe(this);
 	}
 }

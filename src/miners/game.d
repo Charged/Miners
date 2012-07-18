@@ -34,7 +34,14 @@ import miners.gfx.font;
 import miners.gfx.manager;
 import miners.beta.world;
 import miners.isle.world;
-import miners.menu.runner;
+import miners.menu.base;
+import miners.menu.main;
+import miners.menu.beta;
+import miners.menu.list;
+import miners.menu.error;
+import miners.menu.pause;
+import miners.menu.classic;
+import miners.menu.blockselector;
 import miners.terrain.beta;
 import miners.terrain.chunk;
 import miners.classic.data;
@@ -93,8 +100,6 @@ private:
 
 	SkinDownloader skin;
 
-	MenuRunner mr;
-
 	bool built; /**< Have we built a chunk */
 
 	int ticks;
@@ -140,16 +145,11 @@ public:
 		try {
 			doInit();
 		} catch (GameException ge) {
-			if (mr is null)
-				throw ge;
-
 			// Make sure we panic at init.
 			ge.panic = true;
-			mr.displayError(ge, true);
+			displayError(ge, true);
 		} catch (Exception e) {
-			if (mr is null)
-				throw e;
-			mr.displayError(e, true);
+			displayError(e, true);
 		}
 
 		manageRunners();
@@ -165,7 +165,6 @@ public:
 	void close()
 	{
 		deleteAll();
-		mr = null;
 
 		manageRunners();
 
@@ -234,10 +233,6 @@ protected:
 		debug { opts.showDebug = true; }
 		for (int i; i < opts.keyNames.length; i++)
 			opts.keyArray[i] =  p.getIfNotFoundSet(opts.keyNames[i], opts.keyDefaults[i]);
-
-
-		// The menu is used to display error messages
-		mr = new MenuRunner(this, opts);
 
 		// Setup the inbuilt script files
 		initLuaBuiltins();
@@ -330,21 +325,21 @@ protected:
 		// Should we use classic
 		if (classicNetwork) {
 			if (classicMc) {
-				return mr.connectToClassic(csi);
+				return connectToClassic(csi);
 			} else if (classicHttp) {
 				if (playSessionCookie !is null)
-					return mr.getClassicServerInfoAndConnect(csi);
+					return getClassicServerInfoAndConnect(csi);
 				else
-					return mr.connectToClassic(username, password, csi);
+					return connectToClassic(username, password, csi);
 			} else if (playSessionCookie !is null) {
-				return mr.displayClassicMenu();
+				return displayClassicMenu();
 			}
 		}
 
 		if (level !is null)
 			return loadLevel(level, false);
 
-		return mr.displayMainMenu();
+		return displayMainMenu();
 	}
 
 	void parseArgs(char[][] args)
@@ -733,11 +728,6 @@ protected:
 		running = false;
 	}
 
-	MenuManager menu()
-	{
-		return mr;
-	}
-
 	void addBuilder(bool delegate() dg)
 	{
 		builders ~= dg;
@@ -755,7 +745,7 @@ protected:
 		try {
 			r = new IonRunner(this, opts, null);
 		} catch (Exception e) {
-			menu.displayError(e, false);
+			displayError(e, false);
 			return;
 		}
 
@@ -857,4 +847,106 @@ to get one from a texture pack and place it in either the working directory of
 the executable. Or in the Charged Miners config folder located here:
 
 %s`;
+
+
+	/*
+	 *
+	 * MenuManager functions.
+	 *
+	 */
+
+
+	void displayMainMenu()
+	{
+		push(new MainMenu(this, opts));
+	}
+
+	void displayPauseMenu()
+	{
+		push(new PauseMenu(this, opts));
+	}
+
+	void displayLevelSelector()
+	{
+		try {
+			auto lm = new LevelMenu(this, opts);
+			push(lm);
+		} catch (Exception e) {
+			displayError(e, false);
+		}
+	}
+
+	void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
+	{
+		push(new ClassicBlockMenu(this, opts, selectedDg));
+	}
+
+	void displayClassicMenu()
+	{
+		auto psc = opts.playSessionCookie();
+
+		push(new WebpageInfoMenu(this, opts, psc));
+	}
+
+	void displayClassicList(ClassicServerInfo[] csis)
+	{
+		push(new ClassicServerListMenu(this, opts, csis));
+	}
+
+	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
+	{
+		auto psc = opts.playSessionCookie();
+
+		push(new WebpageInfoMenu(this, opts, psc, csi));
+	}
+
+	void connectToClassic(char[] usr, char[] pwd, ClassicServerInfo csi)
+	{
+		push(new WebpageInfoMenu(this, opts, usr, pwd, csi));
+	}
+
+	void connectToClassic(ClassicServerInfo csi)
+	{
+		push(new ClassicConnectingMenu(this, opts, csi));
+	}
+
+	void classicWorldChange(ClassicConnection cc)
+	{
+		push(new ClassicConnectingMenu(this, opts, cc));
+	}
+
+	void displayInfo(char[] header, char[][] texts,
+	                 char[] buttonText, void delegate() dg)
+	{
+		push(new InfoMenu(this, opts, header, texts, buttonText, dg));
+	}
+
+	void displayError(Exception e, bool panic)
+	{
+		// Always handle exception via the game exception.
+		auto ge = cast(GameException)e;
+		if (ge is null)
+			ge = new GameException(null, e, panic);
+
+
+		char[][] texts;
+		auto next = ge.next;
+
+		if (next is null) {
+			texts = [ge.toString()];
+		} else {
+			texts = [
+				ge.toString(),
+				next.classinfo.name,
+				next.toString()
+			];
+		}
+
+		displayError(texts, ge.panic);
+	}
+
+	void displayError(char[][] texts, bool panic)
+	{
+		push(new ErrorMenu(this, texts, panic));
+	}
 }

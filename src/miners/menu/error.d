@@ -65,7 +65,7 @@ public:
 	{
 		this.panic = panic;
 		auto txt = panic ? "Quit" : "Ok";
-		auto dg = panic ? &r.quit : &r.menu.displayMainMenu;
+		auto dg = panic ? &r.quit : &r.displayMainMenu;
 
 		super(r, opts, header, errorTexts, txt, dg);
 	}

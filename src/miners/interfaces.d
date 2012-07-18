@@ -23,11 +23,6 @@ interface Router : GameRouter
 	 */
 	void quit();
 
-	/**
-	 * Get the menu manager.
-	 */
-	MenuManager menu();
-
 
 	/*
 	 *
@@ -72,10 +67,15 @@ interface Router : GameRouter
 	void connectedTo(ClassicConnection cc,
 	                 uint x, uint y, uint z,
 	                 ubyte[] data);
-}
 
-interface MenuManager
-{
+
+	/*
+	 *
+	 * Menu related functions
+	 *
+	 */
+
+
 	/**
 	 * Shows the main menu, overlays the current runner.
 	 */

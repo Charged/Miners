@@ -138,7 +138,7 @@ public:
 protected:
 	void cancel(Button b)
 	{
-		r.menu.displayMainMenu();
+		r.displayMainMenu();
 		r.deleteMe(this);
 	}
 
@@ -200,7 +200,7 @@ protected:
 	void message(byte id, char[] message) {}
 	void disconnect(char[] reason)
 	{
-		r.menu.displayError(["Disconnected", reason], false);
+		r.displayError(["Disconnected", reason], false);
 		r.deleteMe(this);
 	}
 }
@@ -339,7 +339,7 @@ private:
 protected:
 	void cancel(Button b)
 	{
-		r.menu.displayMainMenu();
+		r.displayMainMenu();
 		r.deleteMe(this);
 	}
 
@@ -394,7 +394,7 @@ protected:
 	{
 		shutdownConnection();
 
-		r.menu.displayClassicList(csis);
+		r.displayClassicList(csis);
 		r.deleteMe(this);
 	}
 
@@ -402,7 +402,7 @@ protected:
 	{
 		shutdownConnection();
 
-		r.menu.connectToClassic(csi);
+		r.connectToClassic(csi);
 		r.deleteMe(this);
 	}
 
@@ -410,7 +410,7 @@ protected:
 	{
 		shutdownConnection();
 
-		r.menu.displayError(["Disconnected", e.toString()], false);
+		r.displayError(["Disconnected", e.toString()], false);
 		r.deleteMe(this);
 	}
 
@@ -419,7 +419,7 @@ protected:
 		// The server closed the connection peacefully.
 		shutdownConnection();
 
-		r.menu.displayError(["Disconnected"], false);
+		r.displayError(["Disconnected"], false);
 		r.deleteMe(this);
 	}
 }

@@ -51,7 +51,7 @@ public:
 
 	void connect(ClassicServerInfo csi)
 	{
-		r.menu.getClassicServerInfoAndConnect(csi);
+		r.getClassicServerInfoAndConnect(csi);
 		r.deleteMe(this);
 	}
 }

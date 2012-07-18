@@ -106,7 +106,7 @@ public:
 			m.up = true;
 			break;
 		case SDLK_ESCAPE:
-			r.menu.displayPauseMenu();
+			r.displayPauseMenu();
 			break;
 		default:
 		}

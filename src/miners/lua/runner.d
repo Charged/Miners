@@ -309,7 +309,7 @@ protected:
 	{
 		// XXX Hack
 		if (sym == 27)
-			return r.menu.displayPauseMenu();
+			return r.displayPauseMenu();
 
 		s.getGlobalz("keyDown");
 		s.pushNumber(sym);

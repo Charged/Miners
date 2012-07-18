@@ -487,7 +487,7 @@ public:
 			if (console.typing)
 				return console.stopTyping();
 			else
-				return r.menu.displayPauseMenu();
+				return r.displayPauseMenu();
 		}
 
 		if (console.typing)
@@ -573,7 +573,7 @@ public:
 
 		} else if (sym == opts.keySelector) {
 			if (keyDown)
-				r.menu.displayClassicBlockSelector(&selectedBlock);
+				r.displayClassicBlockSelector(&selectedBlock);
 
 		} else if (sym == opts.keyScreenshot) {
 			if (keyDown)
@@ -740,7 +740,7 @@ public:
 
 		r.deleteMe(this);
 
-		r.menu.classicWorldChange(tmp);
+		r.classicWorldChange(tmp);
 	}
 
 	void levelLoadUpdate(ubyte percent)
@@ -877,7 +877,7 @@ public:
 
 		l.info("Disconnected: \"%s\"", rs);
 
-		r.menu.displayError(["Disconencted", rs], false);
+		r.displayError(["Disconencted", rs], false);
 		r.deleteMe(this);
 	}
 }
