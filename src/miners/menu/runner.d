@@ -2,14 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.runner;
 
-import charge.charge;
-import charge.game.gui.input;
-import charge.game.gui.textbased;
-
-import miners.types;
 import miners.error;
-import miners.runner;
-import miners.viewer;
+import miners.types;
 import miners.options;
 import miners.interfaces;
 import miners.menu.base;
@@ -25,122 +19,17 @@ import miners.menu.blockselector;
 /**
  * Menu runner
  */
-class MenuRunner : public Runner, public MenuManager
+class MenuRunner : public MenuManager
 {
 public:
-	bool active;
 	Router r;
 	Options opts;
-
-protected:
-	GfxTextureTarget menuTexture;
-	GfxDraw d;
-
-	MenuBase menu;
-	InputHandler ih;
-	bool repaint;
-
-	CtlKeyboard keyboard;
-	CtlMouse mouse;
-	bool inControl;
-
-	bool errorMode;
-
-public:
-	void delegate() ticker;
-
-private:
-	mixin SysLogging;
 
 public:
 	this(Router r, Options opts)
 	{
-		super(Type.Menu);
-
 		this.r = r;
 		this.opts = opts;
-
-		ih = new InputHandler(null);
-
-		keyboard = CtlInput().keyboard;
-		mouse = CtlInput().mouse;
-
-		d = new GfxDraw();
-
-		//auto m = new MainMenu(this.router);
-		changeWindow(null);
-	}
-
-	~this()
-	{
-		assert(ih is null);
-		assert(menu is null);
-		assert(menuTexture is null);
-	}
-
-	void close()
-	{
-		if (menu !is null) {
-			menu.breakApart();
-			menu = null;
-		}
-
-		sysReference(&menuTexture, null);
-
-		delete ih;
-	}
-
-	void resize(uint w, uint h)
-	{
-	}
-
-	void logic()
-	{
-		if (ticker !is null)
-			ticker();
-	}
-
-	void render(GfxRenderTarget rt)
-	{
-		if (menuTexture is null)
-			return;
-
-		if (repaint) {
-			menu.paintTexture();
-
-			sysReference(&menuTexture, menu.texture);
-			repaint = false;
-		}
-
-		menu.x = (rt.width - menuTexture.width) / 2;
-		menu.y = (rt.height - menuTexture.height) / 2;
-
-		d.target = rt;
-		d.start();
-
-		d.blit(menuTexture, menu.x, menu.y);
-		d.stop();
-	}
-
-	void assumeControl()
-	{
-		uint w, h;
-		bool fullscreen;
-		Core().size(w, h, fullscreen);
-
-		keyboard.down ~= &this.keyDown;
-		ih.assumeControl();
-		mouse.grab = false;
-		mouse.show = true;
-		mouse.warp(w / 2, h / 2);
-		inControl = true;
-	}
-
-	void dropControl()
-	{
-		keyboard.down -= &this.keyDown;
-		ih.dropControl();
-		inControl = false;
 	}
 
 
@@ -151,14 +40,8 @@ public:
 	 */
 
 
-	void closeMenu()
-	{
-		changeWindow(null);
-	}
-
 	void displayMainMenu()
 	{
-		closeMenu();
 		r.push(new MainMenu(r, opts));
 	}
 
@@ -249,61 +132,5 @@ public:
 	void displayError(char[][] texts, bool panic)
 	{
 		r.push(new ErrorMenu(r, texts, panic));
-	}
-
-	void setTicker(void delegate() dg)
-	{
-		ticker = dg;
-	}
-
-	void unsetTicker(void delegate() dg)
-	{
-		if (ticker is dg)
-			ticker = null;
-	}
-
-private:
-	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
-	{
-		if (sym != 27) // Escape
-			return;
-
-		if (errorMode)
-			return r.quit();
-
-		if (inControl)
-			closeMenu();
-	}
-
-	void changeWindow(MenuBase mb)
-	{
-		// XXX this code is going to be killed
-		assert(mb is null);
-
-		sysReference(&menuTexture, null);
-		if (menu !is null)
-			menu.breakApart();
-		menu = mb;
-		ih.setRoot(menu);
-
-		if (menu is null) {
-			active = false;
-			r.backgroundMenu();
-			return;
-		}
-
-		if (!active) {
-			active = true;
-			r.foregroundMenu();
-		}
-
-		menu.paintTexture();
-		menu.repaintDg = &triggerRepaint;
-		sysReference(&menuTexture, menu.texture);
-	}
-
-	void triggerRepaint()
-	{
-		repaint = true;
 	}
 }

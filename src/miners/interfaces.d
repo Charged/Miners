@@ -47,17 +47,6 @@ interface Router : GameRouter
 	void removeBuilder(bool delegate() dg);
 
 	/**
-	 * Background the menu, called from menu.
-	 */
-	void backgroundMenu();
-
-	/**
-	 * Foreground the menu, called from menu.
-	 */
-	void foregroundMenu();
-
-
-	/**
 	 * Render the world, from camera to rt.
 	 */
 	void render(GfxWorld w, GfxCamera c, GfxRenderTarget rt);
@@ -88,12 +77,7 @@ interface Router : GameRouter
 interface MenuManager
 {
 	/**
-	 * Close the current menu hiding it.
-	 */
-	void closeMenu();
-
-	/**
-	 * Closes any other menu and overlays the current runner.
+	 * Shows the main menu, overlays the current runner.
 	 */
 	void displayMainMenu();
 
@@ -170,14 +154,4 @@ interface MenuManager
 	 * See above.
 	 */
 	void displayError(char[][] texts, bool panic);
-
-	/**
-	 * XXX These two are a bit of a hack.
-	 */
-	void setTicker(void delegate());
-
-	/**
-	 * XXX These two are a bit of a hack.
-	 */
-	void unsetTicker(void delegate());
 }

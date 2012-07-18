@@ -164,7 +164,6 @@ public:
 
 	void close()
 	{
-		deleteMe(mr);
 		deleteAll();
 		mr = null;
 
@@ -749,16 +748,6 @@ protected:
 		builders.remove(dg);
 	}
 
-	void backgroundMenu()
-	{
-		remove(mr);
-	}
-
-	void foregroundMenu()
-	{
-		push(mr);
-	}
-
 	void chargeIon()
 	{
 		Runner r;
@@ -770,14 +759,12 @@ protected:
 			return;
 		}
 
-		menu.closeMenu();
 		push(r);
 	}
 
 	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
 	{
 		auto r = new ClassicRunner(this, opts, cc, x, y, z, data);
-		menu.closeMenu();
 		push(r);
 	}
 
@@ -786,7 +773,6 @@ protected:
 		auto r = doLoadLevel(level, classic);
 
 		// Close the menu and old runner.
-		menu.closeMenu();
 		push(r);
 	}
 
