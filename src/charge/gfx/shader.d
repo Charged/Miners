@@ -2,21 +2,22 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.shader;
 
-
 import charge.math.color;
 import charge.math.point3d;
 import charge.math.vector3d;
 import charge.math.matrix4x4d;
 import charge.sys.logger;
 import charge.gfx.gl;
+import charge.gfx.uniform;
+
 
 class Shader
 {
-private:
-	uint glId;
-	
+protected:
+	GLint glId;
+
 public:
-	this(uint id)
+	this(GLuint id)
 	{
 		this.glId = id;
 	}
@@ -26,9 +27,20 @@ public:
 		glDeleteProgram(id);
 	}
 
+final:
 	uint id()
 	{
 		return glId;
+	}
+
+	void bind()
+	{
+		glUseProgram(glId);
+	}
+
+	void unbind()
+	{
+		glUseProgram(0);
 	}
 
 	void int4(char *name, int count, int *value)
@@ -158,7 +170,6 @@ public:
 		int loc = glGetUniformLocation(glId, name);
 		glUniform1i(loc, value);
 	}
-
 }
 
 class ShaderMaker
@@ -185,8 +196,8 @@ public:
 		return new Shader(makeShader(vertex, geom, fragment, in_type, out_type, num_out));
 	}
 
-	static int makeShader(char[] vertex, char[] geom, char[] fragment,
-	                      GLenum in_type, GLenum out_type, uint num_out)
+	static GLuint makeShader(char[] vertex, char[] geom, char[] fragment,
+	                         GLenum in_type, GLenum out_type, uint num_out)
 	{
 		int programShader = createAndCompileShader(vertex, geom, fragment);
 
@@ -203,7 +214,7 @@ public:
 		return programShader;
 	}
 
-	static int makeShader(char[] vertex, char[] fragment)
+	static GLuint makeShader(char[] vertex, char[] fragment)
 	{
 		// Compile the shaders
 		auto programShader = createAndCompileShader(vertex, fragment);
@@ -218,9 +229,9 @@ public:
 
 	}
 
-	static int makeShader(char[] vertex, char[] fragment,
-			      char[][] bind_attributes,
-			      char[][] bind_textures)
+	static GLuint makeShader(char[] vertex, char[] fragment,
+	                         char[][] bind_attributes,
+	                         char[][] bind_textures)
 	{
 		int status;
 
@@ -259,7 +270,7 @@ public:
 	}
 
 private:
-	static int createAndCompileShader(char[] vertex, char[] fragment)
+	static GLuint createAndCompileShader(char[] vertex, char[] fragment)
 	{
 		// Create the handels
 		uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -284,13 +295,13 @@ private:
 		return programShader;
 	}
 
-	static int createAndCompileShader(char[] vertex, char[] geometry, char[] fragment)
+	static GLuint createAndCompileShader(char[] vertex, char[] geometry, char[] fragment)
 	{
 		// Create the handels
-		uint geomShader = glCreateShader(GL_GEOMETRY_SHADER_EXT);
-		uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		uint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		uint programShader = glCreateProgram();
+		GLuint geomShader = glCreateShader(GL_GEOMETRY_SHADER_EXT);
+		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		GLuint programShader = glCreateProgram();
 
 		// Attach the shaders to a program handel.
 		glAttachShader(programShader, geomShader);
@@ -315,7 +326,7 @@ private:
 		return programShader;
 	}
 
-	static void compileShader(int shader, char[] source, char[] type)
+	static void compileShader(GLuint shader, char[] source, char[] type)
 	{
 		char* ptr;
 		int length;
@@ -329,7 +340,7 @@ private:
 		printDebug(shader, false, type);
 	}
 
-	private static bool printDebug(int shader, bool program, char[] type)
+	private static bool printDebug(GLuint shader, bool program, char[] type)
 	{
 		// Instead of pointers, realy bothersome.
 		int status;
