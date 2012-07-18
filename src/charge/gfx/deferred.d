@@ -19,11 +19,204 @@ import charge.gfx.renderqueue;
 import charge.gfx.renderer;
 import charge.gfx.target;
 import charge.gfx.shader;
+import charge.gfx.uniform;
 import charge.gfx.texture;
 import charge.gfx.material;
 import charge.gfx.world;
 import charge.gfx.zone;
 
+
+/**
+ * Base class for all materials.
+ */
+class MaterialShader : public Shader
+{
+public:
+	this(char[] vert, char[] frag)
+	{
+		GLuint id = ShaderMaker.makeShader(
+			vert, frag,
+			["vs_position", "vs_uv", "vs_normal"],
+			["diffuseTex"]);
+
+		this(id);
+	}
+
+	this(GLuint id)
+	{
+		super(id);
+	}
+}
+
+class LightShaderBase : public Shader
+{
+public:
+	UniformMatrix4x4d projectionMatrixInverse;
+	UniformFloat2 screen;
+
+
+protected:
+	this(char[] vert, char[] frag, char[][] texs)
+	{
+		GLuint id = ShaderMaker.makeShader(
+			vert, frag,
+			null, texs);
+
+		this(id);
+	}
+
+	this(GLuint id)
+	{
+		super(id);
+
+		bind();
+		projectionMatrixInverse.init("projectionMatrixInverse", id);
+		screen.init("screen", id);
+	}
+}
+
+final class SpotLightShader : public LightShaderBase
+{
+public:
+	UniformMatrix4x4d textureMatrix;
+	UniformVector3d direction;
+	UniformPoint3d position;
+	UniformColor4f diffuse;
+	UniformFloat length;
+
+public:
+	this()
+	{
+		super(DeferredRenderer.deferred_base_vert,
+		      DeferredRenderer.spotlight_shader_frag,
+		      ["colorTex", "normalTex", "depthTex", "spotTex"]);
+
+		textureMatrix.init("textureMatrix", glId);
+		direction.init("lightDirection", glId);
+		position.init("lightPosition", glId);
+		diffuse.init("lightDiffuse", glId);
+		length.init("lightLength", glId);
+		unbind();
+	}
+}
+
+class PointLightShader : public LightShaderBase
+{
+public:
+	UniformFloat nearClip;
+
+
+public:
+	this()
+	{
+		GLuint id = ShaderMaker.makeShader(
+			DeferredRenderer.pointlight_shader_vertex,
+			DeferredRenderer.pointlight_shader_geom,
+			DeferredRenderer.pointlight_shader_frag,
+			GL_POINTS, GL_TRIANGLE_STRIP, 4);
+		super(id);
+
+		nearClip.init("near_clip", id);
+
+		sampler("colorTex", 0);
+		sampler("normalTex", 1);
+		sampler("depthTex", 2);
+		unbind();
+	}
+}
+
+class DirectionalLightShaderBase : public LightShaderBase
+{
+public:
+	UniformVector3d direction;
+	UniformColor4f diffuse;
+	UniformColor4f ambient;
+
+
+protected:
+	this(char[] vert, char[] frag, char[][] texs)
+	{
+		GLuint id = ShaderMaker.makeShader(
+			vert, frag,
+			cast(char[][])null, texs);
+
+		this(id);
+	}
+
+	this(GLuint id)
+	{
+		super(id);
+
+		direction.init("lightDirection", id);
+		diffuse.init("lightDiffuse", id);
+		ambient.init("lightAmbient", id);
+	}
+}
+
+final class DirectionalLightShader : public DirectionalLightShaderBase
+{
+public:
+	this()
+	{
+		super(DeferredRenderer.deferred_base_vert,
+		      DeferredRenderer.directionlight_shader_frag,
+		      ["colorTex", "normalTex", "depthTex"]);
+		unbind();
+	}
+}
+
+final class DirectionalLightIsoShader : public DirectionalLightShaderBase
+{
+public:
+	this()
+	{
+		super(DeferredRenderer.deferred_base_vert,
+		      DeferredRenderer.directionlight_iso_shader_frag,
+		      ["colorTex", "normalTex", "depthTex", "shadowTex"]);
+		unbind();
+	}
+}
+
+final class DirectionalLightSplitShader : public DirectionalLightShaderBase
+{
+public:
+	UniformFloat4 slices;
+
+
+public:
+	this()
+	{
+		super(DeferredRenderer.deferred_base_vert,
+		      DeferredRenderer.directionlight_split_shader_frag,
+		      ["colorTex", "normalTex", "depthTex", "shadowTex"]);
+
+		slices.init("slices", glId);
+		unbind();
+	}
+}
+
+final class FogShader : public LightShaderBase
+{
+public:
+	UniformColor4f color;
+	UniformFloat start;
+	UniformFloat stop;
+
+
+public:
+	this()
+	{
+		super(DeferredRenderer.deferred_base_vert,
+		      DeferredRenderer.fog_shader_frag,
+		      null);
+
+		sampler("depthTex", 2);
+		color.init("color", glId);
+		start.init("start", glId);
+		stop.init("stop", glId);
+		unbind();
+	}
+}
 
 class DeferredRenderer : public Renderer
 {
@@ -43,12 +236,12 @@ private:
 
 	static Shader matShader[matShdr.NUM];
 
-	static Shader directionlight_shader;
-	static Shader directionlight_iso_shader;
-	static Shader directionlight_split_shader;
-	static Shader pointlight_shader;
-	static Shader spotlight_shader;
-	static Shader fog_shader;
+	static DirectionalLightSplitShader directionLightSplitShader;
+	static DirectionalLightIsoShader directionLightIsoShader;
+	static DirectionalLightShader directionLightShader;
+	static PointLightShader pointLightShader;
+	static SpotLightShader spotLightShader;
+	static FogShader fogShader;
 	Texture spotlight_texture;
 
 	static bool checked;
@@ -103,84 +296,32 @@ public:
 		/*
 		 * Mesh shaders.
 		 */
-		matShader[matShdr.TEX] =
-			ShaderMaker(material_shader_mesh_vert,
-				    material_shader_tex_frag,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
-		matShader[matShdr.FAKE] =
-			ShaderMaker(material_shader_mesh_vert,
-				    material_shader_fake_frag,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
-		matShader[matShdr.SHADOW] =
-			ShaderMaker(material_shader_skel_vert,
-				    material_shader_shadow_frag,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
+		matShader[matShdr.TEX] = new MaterialShader(
+			material_shader_mesh_vert, material_shader_tex_frag);
+		matShader[matShdr.FAKE] = new MaterialShader(
+			material_shader_mesh_vert, material_shader_fake_frag);
+		matShader[matShdr.SHADOW] = new MaterialShader(
+			material_shader_mesh_vert, material_shader_shadow_frag);
 
 		/*
 		 * Skeleton shaders.
 		 */
-		matShader[matShdr.TEX + matShdr.OFF] =
-			ShaderMaker(material_shader_skel_vert,
-				    material_shader_tex_frag,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
-		matShader[matShdr.FAKE + matShdr.OFF] =
-			ShaderMaker(material_shader_skel_vert,
-				    material_shader_fake_frag,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
-		matShader[matShdr.SHADOW + matShdr.OFF] =
-			ShaderMaker(material_shader_skel_vert,
-				    material_shader_shadow_frag,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
+		matShader[matShdr.TEX + matShdr.OFF] = new MaterialShader(
+			material_shader_skel_vert, material_shader_tex_frag);
+		matShader[matShdr.FAKE + matShdr.OFF] = new MaterialShader(
+			material_shader_skel_vert, material_shader_fake_frag);
+		matShader[matShdr.SHADOW + matShdr.OFF] = new MaterialShader(
+			material_shader_skel_vert, material_shader_shadow_frag);
 
-		pointlight_shader = ShaderMaker(pointlight_shader_vertex,
-		                                pointlight_shader_geom,
-		                                pointlight_shader_frag,
-		                                GL_POINTS, GL_TRIANGLE_STRIP, 4);
-
-		directionlight_split_shader = ShaderMaker(deferred_base_vert, directionlight_split_shader_frag);
-		directionlight_iso_shader = ShaderMaker(deferred_base_vert, directionlight_iso_shader_frag);
-		directionlight_shader = ShaderMaker(deferred_base_vert, directionlight_shader_frag);
-		spotlight_shader = ShaderMaker(deferred_base_vert, spotlight_shader_frag);
-		fog_shader = ShaderMaker(deferred_base_vert, fog_shader_frag);
-
-		glUseProgram(pointlight_shader.id);
-		pointlight_shader.sampler("colorTex", 0);
-		pointlight_shader.sampler("normalTex", 1);
-		pointlight_shader.sampler("depthTex", 2);
-
-		glUseProgram(directionlight_shader.id);
-		directionlight_shader.sampler("colorTex", 0);
-		directionlight_shader.sampler("normalTex", 1);
-		directionlight_shader.sampler("depthTex", 2);
-
-		glUseProgram(directionlight_iso_shader.id);
-		directionlight_iso_shader.sampler("colorTex", 0);
-		directionlight_iso_shader.sampler("normalTex", 1);
-		directionlight_iso_shader.sampler("depthTex", 2);
-		directionlight_iso_shader.sampler("shadowTex", 3);
-
-		glUseProgram(directionlight_split_shader.id);
-		directionlight_split_shader.sampler("colorTex", 0);
-		directionlight_split_shader.sampler("normalTex", 1);
-		directionlight_split_shader.sampler("depthTex", 2);
-		directionlight_split_shader.sampler("shadowTex", 3);
-
-		glUseProgram(spotlight_shader.id);
-		spotlight_shader.sampler("colorTex", 0);
-		spotlight_shader.sampler("normalTex", 1);
-		spotlight_shader.sampler("depthTex", 2);
-		spotlight_shader.sampler("spotTex", 3);
-
-		glUseProgram(fog_shader.id);
-		fog_shader.sampler("depthTex", 2);
-
-		glUseProgram(0);
+		/*
+		 * Light shaders.
+		 */
+		directionLightSplitShader = new DirectionalLightSplitShader();
+		directionLightIsoShader = new DirectionalLightIsoShader();
+		directionLightShader = new DirectionalLightShader();
+		pointLightShader = new PointLightShader();
+		spotLightShader = new SpotLightShader();
+		fogShader = new FogShader();
 
 		initialized = true;
 		return true;
@@ -292,25 +433,30 @@ protected:
 		vec[0] = 1.0f / renderTarget.width;
 		vec[1] = 1.0f / renderTarget.height;
 
-		glUseProgram(directionlight_split_shader.id);
-		directionlight_split_shader.matrix4("projectionMatrixInverse", false, projITS);
-		directionlight_split_shader.float2("screen", 1, vec.ptr);
-		glUseProgram(directionlight_iso_shader.id);
-		directionlight_iso_shader.matrix4("projectionMatrixInverse", false, projITS);
-		directionlight_iso_shader.float2("screen", 1, vec.ptr);
-		glUseProgram(directionlight_shader.id);
-		directionlight_shader.matrix4("projectionMatrixInverse", false, projITS);
-		directionlight_shader.float2("screen", 1, vec.ptr);
-		glUseProgram(pointlight_shader.id);
-		pointlight_shader.matrix4("projectionMatrixInverse", false, projITS);
-		pointlight_shader.float1("near_clip", c.near);
-		pointlight_shader.float2("screen", 1, vec.ptr);
-		glUseProgram(spotlight_shader.id);
-		spotlight_shader.matrix4("projectionMatrixInverse", false, projITS);
-		spotlight_shader.float2("screen", 1, vec.ptr);
-		glUseProgram(fog_shader.id);
-		fog_shader.matrix4("projectionMatrixInverse", false, projITS);
-		fog_shader.float2("screen", 1, vec.ptr);
+		directionLightSplitShader.bind();
+		directionLightSplitShader.projectionMatrixInverse.transposed = projITS;
+		directionLightSplitShader.screen = vec.ptr;
+
+		directionLightIsoShader.bind();
+		directionLightIsoShader.projectionMatrixInverse.transposed = projITS;
+		directionLightIsoShader.screen = vec.ptr;
+
+		directionLightShader.bind();
+		directionLightShader.projectionMatrixInverse.transposed = projITS;
+		directionLightShader.screen = vec.ptr;
+
+		pointLightShader.bind();
+		pointLightShader.projectionMatrixInverse.transposed = projITS;
+		pointLightShader.nearClip = c.near;
+		pointLightShader.screen = vec.ptr;
+
+		spotLightShader.bind();
+		spotLightShader.projectionMatrixInverse.transposed = projITS;
+		spotLightShader.screen = vec.ptr;
+
+		fogShader.bind();
+		fogShader.projectionMatrixInverse.transposed = projITS;
+		fogShader.screen = vec.ptr;
 
 		drawLights(c, w, view, proj);
 
@@ -410,11 +556,11 @@ protected:
 
 		if (sm.fake) {
 			s =  matShader[matShdr.FAKE + off];
-			glUseProgram(s.id);
+			s.bind();
 			glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
 		} else {
 			s =  matShader[matShdr.SHADOW + off];
-			glUseProgram(s.id);
+			s.bind();
 			glBindTexture(GL_TEXTURE_2D, 0); // No texture
 		}
 
@@ -592,14 +738,14 @@ protected:
 		glActiveTexture(GL_TEXTURE3);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, depthTargetArray.depthArray);
-		gluGetError("bind");
+		gluGetError("bind dirSplitShadow");
 
-		glUseProgram(directionlight_split_shader.id);
 		auto direction = view * dl.rotation.rotateHeading;
-		directionlight_split_shader.float3("lightDirection", direction);
-		directionlight_split_shader.float4("lightDiffuse", dl.diffuse);
-		directionlight_split_shader.float4("lightAmbient", dl.ambient);
-		directionlight_split_shader.float4("slices", 1, fars.ptr);
+		directionLightSplitShader.bind();
+		directionLightSplitShader.direction = direction;
+		directionLightSplitShader.diffuse = dl.diffuse;
+		directionLightSplitShader.ambient = dl.ambient;
+		directionLightSplitShader.slices = fars.ptr;
 		for (int i; i < num_splits; i++) {
 			glActiveTexture(GL_TEXTURE0 + cast(GLenum)(i));
 			glMatrixMode(GL_TEXTURE);
@@ -773,14 +919,14 @@ protected:
 		glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT,
 		                GL_TEXTURE_COMPARE_MODE,
 		                GL_COMPARE_R_TO_TEXTURE);
-		gluGetError("bind");
+		gluGetError("bind dirIsoSetup");
 
 		// Setup shader state
-		glUseProgram(directionlight_iso_shader.id);
 		auto direction = view * dl.rotation.rotateHeading;
-		directionlight_iso_shader.float3("lightDirection", direction);
-		directionlight_iso_shader.float4("lightDiffuse", dl.diffuse);
-		directionlight_iso_shader.float4("lightAmbient", dl.ambient);
+		directionLightIsoShader.bind();
+		directionLightIsoShader.direction = direction;
+		directionLightIsoShader.diffuse = dl.diffuse;
+		directionLightIsoShader.ambient = dl.ambient;
 		{
 			glActiveTexture(GL_TEXTURE0);
 			glMatrixMode(GL_TEXTURE);
@@ -813,10 +959,10 @@ protected:
 	{
 		auto direction = view * dl.rotation.rotateHeading;
 
-		glUseProgram(directionlight_shader.id);
-		directionlight_shader.float3("lightDirection", direction);
-		directionlight_shader.float4("lightDiffuse", dl.diffuse);
-		directionlight_shader.float4("lightAmbient", dl.ambient);
+		directionLightShader.bind();
+		directionLightShader.direction = direction;
+		directionLightShader.diffuse = dl.diffuse;
+		directionLightShader.ambient = dl.ambient;
 
 		glBegin(GL_QUADS);
 		glColor3f(  1.0f,  1.0f,  1.0f);
@@ -856,7 +1002,7 @@ protected:
 
 		c.transform();
 
-		glUseProgram(pointlight_shader.id);
+		pointLightShader.bind();
 
 		glBegin(GL_POINTS);
 		foreach(l; w.lights) {
@@ -931,12 +1077,12 @@ protected:
 		getSpotLightMatrix(sl, view, texture);
 
 
-		glUseProgram(spotlight_shader.id);
-		spotlight_shader.matrix4("textureMatrix", false, texture);
-		spotlight_shader.float4("lightDiffuse", sl.diffuse);
-		spotlight_shader.float3("lightPosition", view * sl.position);
-		spotlight_shader.float3("lightDirection", view * sl.rotation.rotateHeading);
-		spotlight_shader.float1("lightLength", sl.far);
+		spotLightShader.bind();
+		spotLightShader.textureMatrix.transposed = texture;
+		spotLightShader.diffuse = sl.diffuse;
+		spotLightShader.position = view * sl.position;
+		spotLightShader.direction = view * sl.rotation.rotateHeading;
+		spotLightShader.length = sl.far;
 
 		gluTexUnitEnableBind(GL_TEXTURE_2D, 3, spotlight_texture);
 
@@ -994,7 +1140,7 @@ protected:
 			s =  matShader[matShdr.TEX + off];
 
 		glBindTexture(GL_TEXTURE_2D, sm.texSafe.id);
-		glUseProgram(s.id);
+		s.bind();
 
 		r.drawAttrib(s);
 	}
@@ -1002,10 +1148,10 @@ protected:
 
 	void drawFog(Fog fog)
 	{
-		glUseProgram(fog_shader.id);
-		fog_shader.float4("color", 1, fog.color.ptr);
-		fog_shader.float1("start", fog.start);
-		fog_shader.float1("stop", fog.stop);
+		fogShader.bind();
+		fogShader.color = fog.color;
+		fogShader.start = fog.start;
+		fogShader.stop = fog.stop;
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

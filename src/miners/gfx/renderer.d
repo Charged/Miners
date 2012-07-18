@@ -178,7 +178,7 @@ class MinecraftDeferredRenderer : public GfxDeferredRenderer
 private:
 	mixin SysLogging;
 	static bool initialized;
-	static GfxShader material_shader;
+	static GfxShader materialShader;
 
 	static bool checked;
 	static bool checkStatus;
@@ -241,14 +241,13 @@ public:
 		if (!check())
 			return false;
 
-		material_shader = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
-						 Helper.materialFragDeferred,
-						 ["vs_position", "vs_uv", "vs_data"],
-						 ["diffuseTex"]);
+		materialShader = new GfxDeferredMaterialShader(
+			Helper.materialVertCompactMeshIndexed,
+			Helper.materialFragDeferred);
 
-		glUseProgram(material_shader.id);
-		material_shader.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
-		material_shader.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
+		materialShader.bind();
+		materialShader.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
+		materialShader.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
 		glUseProgram(0);
 
 		initialized = true;
@@ -264,16 +263,16 @@ public:
 protected:
 	void renderGroup(ChunkVBOGroupCompactMesh cvgcm, GfxSimpleMaterial m, bool shadow)
 	{
-		glUseProgram(material_shader.id);
+		materialShader.bind();
 		glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, m.texSafe.id);
 
 		if (m.stipple && !shadow) {
 			glPolygonStipple(cast(GLubyte*)Helper.stipplePattern.ptr);
 			glEnable(GL_POLYGON_STIPPLE);
-			cvgcm.drawAttrib(material_shader);
+			cvgcm.drawAttrib(materialShader);
 			glDisable(GL_POLYGON_STIPPLE);
 		} else {
-			cvgcm.drawAttrib(material_shader);
+			cvgcm.drawAttrib(materialShader);
 		}
 
 		glUseProgram(0);
