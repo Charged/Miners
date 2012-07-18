@@ -16,5 +16,6 @@ alias charge.gfx.cull.Frustum Frustum;
 alias charge.gfx.renderqueue.Renderable GfxRenderable;
 alias charge.gfx.renderqueue.RenderQueue GfxRenderQueue;
 alias charge.gfx.deferred.DeferredRenderer GfxDeferredRenderer;
+alias charge.gfx.forward.MaterialShader GfxForwardMaterialShader;
 alias charge.gfx.shader.Shader GfxShader;
 alias charge.gfx.shader.ShaderMaker GfxShaderMaker;

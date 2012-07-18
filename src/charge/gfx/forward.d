@@ -17,9 +17,43 @@ import charge.gfx.renderer;
 import charge.gfx.renderqueue;
 import charge.gfx.target;
 import charge.gfx.shader;
+import charge.gfx.uniform;
 import charge.gfx.texture;
 import charge.gfx.material;
 import charge.gfx.world;
+
+
+/**
+ * Base class for all directional light based shaders.
+ */
+class MaterialShader : public Shader
+{
+public:
+	UniformVector3d lightDirection;
+	UniformColor4f lightAmbient;
+	UniformColor4f lightDiffuse;
+
+
+public:
+	this(char[] vert, char[] frag)
+	{
+		GLuint id = ShaderMaker.makeShader(
+			vert, frag,
+			["vs_position", "vs_uv", "vs_normal"],
+			["diffuseTex"]);
+
+		this(id);
+	}
+
+	this(GLuint id)
+	{
+		super(id);
+
+		lightDirection.init("lightDirection", id);
+		lightDiffuse.init("lightDiffuse", id);
+		lightAmbient.init("lightAmbient", id);
+	}
+}
 
 /**
  * A bog standard forward renderer using shaders.
@@ -27,8 +61,8 @@ import charge.gfx.world;
 class ForwardRenderer : public Renderer
 {
 protected:
-	static Shader materialShaderMeshTex;
-	static Shader materialShaderSkelTex;
+	static MaterialShader materialShaderMeshTex;
+	static MaterialShader materialShaderSkelTex;
 
 private:
 	mixin Logging;
@@ -76,17 +110,8 @@ public:
 		if (!check())
 			return false;
 
-		materialShaderMeshTex =
-			ShaderMaker(materialVertMesh,
-				    materialFragTex,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
-
-		materialShaderSkelTex =
-			ShaderMaker(materialVertSkel,
-				    materialFragTex,
-				    ["vs_position", "vs_uv", "vs_normal"],
-				    ["diffuseTex"]);
+		materialShaderMeshTex = new MaterialShader(materialVertMesh, materialFragTex);
+		materialShaderSkelTex = new MaterialShader(materialVertSkel, materialFragTex);
 
 		initialized = true;
 		return true;
@@ -195,13 +220,13 @@ protected:
 	 *
 	 * Also given the transformed direction vector.
 	 */
-	void setupSimpleLight(Shader s, SimpleLight sl, Vector3d dir)
+	void setupSimpleLight(MaterialShader s, SimpleLight sl, Vector3d dir)
 	{
-		glUseProgram(s.id);
-		s.float3("lightDir", dir);
-		s.float4("lightDiffuse", sl.diffuse);
-		s.float4("lightAmbient", sl.ambient);
-		glUseProgram(0);
+		s.bind();
+		s.lightDirection = dir;
+		s.lightDiffuse = sl.diffuse;
+		s.lightAmbient = sl.ambient;
+		s.unbind();
 	}
 
 	void render(SimpleMaterial sm, Renderable r)
@@ -241,7 +266,7 @@ protected:
 
 uniform sampler2D diffuseTex;
 
-uniform vec3 lightDir;
+uniform vec3 lightDirection;
 uniform vec4 lightDiffuse;
 uniform vec4 lightAmbient;
 
@@ -252,7 +277,7 @@ void main()
 {
 	vec4 color = texture2D(diffuseTex, uv);
 
-	float nDotL = max(dot(normalize(normal), -lightDir), 0.0);
+	float nDotL = max(dot(normalize(normal), -lightDirection), 0.0);
 
 	// Lightning
 	color.rgb = color.rgb * nDotL * lightDiffuse.rgb + color.rgb * lightAmbient.rgb;

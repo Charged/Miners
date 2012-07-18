@@ -10,8 +10,8 @@ import miners.gfx.selector;
 class MinecraftForwardRenderer : public GfxForwardRenderer
 {
 private:
-	GfxShader material_shader;
-	GfxShader material_shader_indexed;
+	GfxForwardMaterialShader materialShader;
+	GfxForwardMaterialShader materialShaderIndexed;
 
 	mixin SysLogging;
 
@@ -74,24 +74,20 @@ public:
 		assert(initialized);
 
 		if (textureArraySupported) {
-			material_shader_indexed = GfxShaderMaker(Helper.materialVertCompactMeshIndexed,
-								 Helper.materialFragForwardIndexed,
-								 ["vs_position", "vs_uv", "vs_data"],
-								 ["diffuseTex"]);
+			materialShaderIndexed = new GfxForwardMaterialShader(
+				Helper.materialVertCompactMeshIndexed, Helper.materialFragForwardIndexed);
 
-			glUseProgram(material_shader_indexed.id);
-			material_shader_indexed.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
-			material_shader_indexed.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
+			materialShaderIndexed.bind();
+			materialShaderIndexed.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
+			materialShaderIndexed.float4("uv_mixs", cast(uint)Helper.uv_mixs.length / 4, Helper.uv_mixs.ptr);
 			glUseProgram(0);
 		}
 
-		material_shader = GfxShaderMaker(Helper.materialVertCompactMesh,
-						 Helper.materialFragForward,
-						 ["vs_position", "vs_uv", "vs_data"],
-						 ["diffuseTex"]);
+		materialShader = new GfxForwardMaterialShader(
+			Helper.materialVertCompactMesh, Helper.materialFragForward);
 
-		glUseProgram(material_shader.id);
-		material_shader.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
+		materialShader.bind();
+		materialShader.float4("normals", cast(uint)Helper.normals.length / 4, Helper.normals.ptr);
 		glUseProgram(0);
 	}
 
@@ -108,7 +104,7 @@ protected:
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		auto shader = textureArraySupported ? material_shader_indexed : material_shader;
+		auto shader = textureArraySupported ? materialShaderIndexed : materialShader;
 
 		auto sl = setupSimpleLight(w);
 
@@ -155,12 +151,12 @@ protected:
 			return;
 
 		if (textureArraySupported) {
-			s = material_shader_indexed;
-			glUseProgram(s.id);
+			s = materialShaderIndexed;
+			s.bind();
 			glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, m.texSafe.id);
 		} else {
-			s = material_shader;
-			glUseProgram(s.id);
+			s = materialShader;
+			s.bind();
 			glBindTexture(GL_TEXTURE_2D, m.texSafe.id);
 		}
 
@@ -397,7 +393,7 @@ public:
 
 uniform sampler2D diffuseTex;
 
-uniform vec3 lightDir;
+uniform vec3 lightDirection;
 uniform vec4 lightDiffuse;
 uniform vec4 lightAmbient;
 
@@ -411,7 +407,7 @@ void main()
 	if (color.a < 0.5)
 		discard;
 
-	float nDotL = max(dot(normalize(normal), -lightDir), 0.0);
+	float nDotL = max(dot(normalize(normal), -lightDirection), 0.0);
 	float l = nDotL * light;
 
 	// Lightning
@@ -432,7 +428,7 @@ void main()
 
 uniform sampler2DArray diffuseTex;
 
-uniform vec3 lightDir;
+uniform vec3 lightDirection;
 uniform vec4 lightDiffuse;
 uniform vec4 lightAmbient;
 
@@ -446,7 +442,7 @@ void main()
 	if (color.a < 0.5)
 		discard;
 
-	float nDotL = max(dot(normalize(normal), -lightDir), 0.0);
+	float nDotL = max(dot(normalize(normal), -lightDirection), 0.0);
 	float l = nDotL * light;
 
 	// Lighting
