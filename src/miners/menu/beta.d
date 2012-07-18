@@ -7,34 +7,35 @@ import charge.game.gui.layout;
 import charge.game.gui.textbased;
 
 import miners.error;
+import miners.options;
 import miners.interfaces;
 import miners.menu.base;
 import miners.importer.info;
 
 
-class LevelMenu : public MenuBase
+class LevelMenu : public MenuRunnerBase
 {
 private:
-	Text te;
-	LevelSelector ls;
-
 	const char[] header = `Select a level`;
 
 	const char[] text =
 `Welcome to charged miners, please select level below.`;
 
 public:
-	this(Router r)
+	this(Router r, Options opts)
 	{
-		super(r, header, Buttons.BACK);
+		auto mb = new MenuBase(header, MenuBase.Buttons.BACK);
+		mb.button.pressed ~= &back;
 
 		auto vc = new VerticalContainer(null, 0, 0, 0, 0, 16);
-		replacePlane(vc);
+		mb.replacePlane(vc);
 
-		te = new Text(this, 0, 0, text);
-		ls = new LevelSelector(this, 0, 0, &selectLevel);
+		auto te = new Text(mb, 0, 0, text);
+		auto ls = new LevelSelector(mb, 0, 0, &selectLevel);
 
-		repack();
+		mb.repack();
+
+		super(r, opts, mb);
 	}
 
 	void selectLevel(Button b)
@@ -45,6 +46,12 @@ public:
 			r.loadLevel(null);
 		else
 			r.loadLevel(lb.info.dir);
+	}
+
+	void back(Button b)
+	{
+		r.menu.displayMainMenu();
+		r.deleteMe(this);
 	}
 }
 

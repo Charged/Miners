@@ -8,6 +8,7 @@ import charge.charge;
 import charge.game.gui.textbased;
 
 import miners.types;
+import miners.options;
 import miners.interfaces;
 import miners.menu.base;
 import miners.classic.webpage;
@@ -51,13 +52,15 @@ public:
 /**
  * Displays connection status for a Classic connection.
  */
-class ClassicConnectingMenu : public MenuBase, public ClientListener
+class ClassicConnectingMenu : public MenuRunnerBase, public ClientListener
 {
 private:
 	ClientConnection cc;
 	MessageLogger ml;
-	Button ca;
+	MenuBase mb;
 	Text text;
+	Router r;
+
 
 public:
 	/**
@@ -65,58 +68,78 @@ public:
 	 * the connection status as it is made finally creating the
 	 * ClassicRunner once a level is loaded.
 	 */
-	this(Router r, ClassicServerInfo csi)
+	this(Router r, Options opts, ClassicServerInfo csi)
 	{
-		super(r, header, Buttons.CANCEL);
 		ml = new MessageLogger();
 		cc = new ClientConnection(this, ml, csi);
 
-		r.menu.setTicker(&cc.doPackets);
-
-		auto ct = new CenteredText(null, 0, 0,
-					   childWidth, childHeight,
-					   "Connecting");
-		replacePlane(ct);
-		text = ct.text;
-
-		repack();
+		this(r, opts, cc, "Connecting");
 	}
 
 	/**
 	 * This constructor is used we change world, the server
 	 * does this by sending levelInitialize packet.
 	 */
-	this(Router r, ClassicConnection cc)
+	this(Router r, Options opts, ClassicConnection cc)
 	{
-		super(r, header, Buttons.CANCEL);
 		this.cc = cast(ClientConnection)cc;
 
-		r.menu.setTicker(&(this.cc).doPackets);
-		this.cc.setListener(this);
+		this(r, opts, this.cc, "Changing Worlds");
+	}
+
+
+protected:
+	this(Router r, Options opts,
+	     ClientConnection cc, char[] startText)
+	{
+		this.r = r;
+		this.cc = cc;
+		cc.setListener(this);
+
+		mb = new MenuBase(header, MenuBase.Buttons.CANCEL);
+		mb.button.pressed ~= &cancel;
 
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
-					   "Changing World");
-		replacePlane(ct);
+					   startText);
+		mb.replacePlane(ct);
 		text = ct.text;
 
-		repack();
+		mb.repack();
+
+		super(r, opts, mb);
 	}
 
+
+public:
 	~this()
 	{
 		assert(cc is null);
 	}
 
-	void breakApart()
+	void close()
 	{
-		super.breakApart();
+		mb.button.pressed -= &cancel;
+
+		super.close();
 
 		if (cc !is null) {
-			r.menu.unsetTicker(&cc.doPackets);
 			cc.close();
 			cc = null;
 		}
+	}
+
+	void logic()
+	{
+		if (cc !is null)
+			cc.doPackets();
+	}
+
+protected:
+	void cancel(Button b)
+	{
+		r.menu.displayMainMenu();
+		r.deleteMe(this);
 	}
 
 
@@ -127,7 +150,6 @@ public:
 	 */
 
 
-protected:
 	void indentification(ubyte ver, char[] name, char[] motd, ubyte type)
 	{
 	}
@@ -136,29 +158,28 @@ protected:
 	{
 		auto t = format("Loading level 0%%");
 		text.setText(t);
-		repack();
+		mb.repack();
 	}
 
 	void levelLoadUpdate(ubyte precent)
 	{
 		auto t = format("Loading level %s%%", precent);
 		text.setText(t);
-		repack();
+		mb.repack();
 	}
 
 	void levelFinalize(uint x, uint y, uint z, ubyte data[])
 	{
 		auto t = format("Done!");
 		text.setText(t);
-		repack();
-
-		r.menu.unsetTicker(&cc.doPackets);
+		mb.repack();
 
 		// Make sure cc is null before breakApart gets called.
 		auto tmp = cc;
 		cc = null;
 
 		r.connectedTo(tmp, x, y, z, data);
+		r.deleteMe(this);
 	}
 
 	void setBlock(short x, short y, short z, ubyte type) {}
@@ -180,6 +201,7 @@ protected:
 	void disconnect(char[] reason)
 	{
 		r.menu.displayError(["Disconnected", reason], false);
+		r.deleteMe(this);
 	}
 }
 
@@ -191,12 +213,14 @@ protected:
  */
 
 
-class WebpageInfoMenu : public MenuBase, public ClassicWebpageListener
+class WebpageInfoMenu : public MenuRunnerBase, public ClassicWebpageListener
 {
 private:
 	ClassicServerInfo csi;
 	WebpageConnection wc;
+	MenuBase mb;
 	Text text;
+	Router r;
 
 	/// Cookie used for authentication.
 	char[] playSession;
@@ -210,33 +234,33 @@ public:
 	 * Retrive the server list, using a new connection
 	 * authenticating with the given credentials.
 	 */
-	this(Router r, char[] playSession)
+	this(Router r, Options opts, char[] playSession)
 	{
 		auto wc = new WebpageConnection(this, playSession);
 
 		this.playSession = playSession;
-		this(r, wc, null, false);
+		this(r, opts, wc, null, false);
 	}
 
 	/**
 	 * Retrive information about a server,
 	 * the connection has allready be authenticated.
 	 */
-	this(Router r, WebpageConnection wc, ClassicServerInfo csi)
+	this(Router r, Options opts, WebpageConnection wc, ClassicServerInfo csi)
 	{
-		this(r, wc, csi, true);
+		this(r, opts, wc, csi, true);
 	}
 
 	/**
 	 * Retrive information about a server, using a new connection
 	 * authenticating with the given credentials.
 	 */
-	this(Router r, char[] playSession, ClassicServerInfo csi)
+	this(Router r, Options opts, char[] playSession, ClassicServerInfo csi)
 	{
 		auto wc = new WebpageConnection(this, playSession);
 
 		this.playSession = playSession;
-		this(r, wc, csi, false);
+		this(r, opts, wc, csi, false);
 	}
 
 	/**
@@ -245,13 +269,13 @@ public:
 	 *
 	 * Should not use this versions.
 	 */
-	this(Router r, char[] username, char[] password, ClassicServerInfo csi)
+	this(Router r, Options opts, char[] username, char[] password, ClassicServerInfo csi)
 	{
 		auto wc = new WebpageConnection(this);
 
 		this.username = username;
 		this.password = password;
-		this(r, wc, csi, false);
+		this(r, opts, wc, csi, false);
 	}
 
 	~this()
@@ -259,42 +283,49 @@ public:
 		assert(wc is null);
 	}
 
-	void breakApart()
+	void close()
 	{
-		super.breakApart();
+		super.close();
 
 		shutdownConnection();
 	}
 
+	void logic()
+	{
+		if (wc !is null)
+			wc.doTick();
+	}
+
 
 private:
-	this(Router r, WebpageConnection wc,
+	this(Router r, Options opts,
+	     WebpageConnection wc,
 	     ClassicServerInfo csi,
 	     bool idle)
 	{
-		super(r, header, Buttons.CANCEL);
+		this.mb = new MenuBase(header, MenuBase.Buttons.CANCEL);
 		this.csi = csi;
 		this.wc = wc;
+		this.r = r;
 
 		if (idle)
 			wc.getServerInfo(csi);
 
-		r.menu.setTicker(&wc.doEvents);
-
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
 					   "Connecting");
-		replacePlane(ct);
+		mb.replacePlane(ct);
+		mb.button.pressed ~= &cancel;
 		text = ct.text;
 
-		repack();
+		mb.repack();
+
+		super(r, opts, mb);
 	}
 
 	void shutdownConnection()
 	{
 		if (wc !is null) {
-			r.menu.unsetTicker(&wc.doEvents);
-
 			try {
 				wc.close();
 			} catch (Exception e) {
@@ -306,12 +337,18 @@ private:
 	}
 
 protected:
+	void cancel(Button b)
+	{
+		r.menu.displayMainMenu();
+		r.deleteMe(this);
+	}
+
 	void authenticate()
 	{
 		wc.postLogin(username, password);
 
 		text.setText("Authenticating");
-		repack();
+		mb.repack();
 	}
 
 	void getServerList()
@@ -319,7 +356,7 @@ protected:
 		wc.getServerList();
 
 		text.setText("Retriving server list");
-		repack();
+		mb.repack();
 	}
 
 	void getServerInfo(ClassicServerInfo csi)
@@ -327,7 +364,7 @@ protected:
 		wc.getServerInfo(csi);
 
 		text.setText("Retriving server info");
-		repack();
+		mb.repack();
 	}
 
 
@@ -358,6 +395,7 @@ protected:
 		shutdownConnection();
 
 		r.menu.displayClassicList(csis);
+		r.deleteMe(this);
 	}
 
 	void serverInfo(ClassicServerInfo csi)
@@ -365,6 +403,7 @@ protected:
 		shutdownConnection();
 
 		r.menu.connectToClassic(csi);
+		r.deleteMe(this);
 	}
 
 	void error(Exception e)
@@ -372,6 +411,7 @@ protected:
 		shutdownConnection();
 
 		r.menu.displayError(["Disconnected", e.toString()], false);
+		r.deleteMe(this);
 	}
 
 	void disconnected()
@@ -380,5 +420,6 @@ protected:
 		shutdownConnection();
 
 		r.menu.displayError(["Disconnected"], false);
+		r.deleteMe(this);
 	}
 }

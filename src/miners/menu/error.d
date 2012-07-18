@@ -8,67 +8,73 @@ import charge.charge;
 import charge.game.gui.layout;
 import charge.game.gui.textbased;
 
+import miners.options;
 import miners.interfaces;
 import miners.menu.base;
 
 
-class InfoMenu : public MenuBase
+class InfoMenu : public MenuRunnerBase
 {
 private:
+	Router r;
 	Button b;
 	Text te[];
 	void delegate() dg;
 
 public:
-	this(Router r, char[] header, char[][] texts, char[] buttonText, void delegate() dg)
+	this(Router r, Options opts,
+	     char[] header, char[][] texts,
+	     char[] buttonText, void delegate() dg)
 	{
-		super(r, header, Buttons.NONE);
+		this.r = r;
 		this.dg = dg;
 
-		auto vc = new VerticalContainer(this, 0, 0, 300, 0, 8);
+		auto mb = new MenuBase(header);
+		auto vc = new VerticalContainer(mb, 0, 0, 300, 0, 8);
 		foreach(uint i, t; texts)
 			new Text(vc, 0, 0, t);
 		vc.repack();
 
-		b = new Button(this, 0, 0, buttonText, 8);
+		b = new Button(mb, 0, 0, buttonText, 8);
 		b.pressed ~= &pressed;
 		b.x = (vc.w - b.w) / 2;
 		b.y = vc.y + vc.h + 16;
 
-		repack();
+		mb.repack();
+
+		super(r, opts, mb);
 	}
 
 	void pressed(Button b)
 	{
 		if (dg !is null)
 			dg();
-		else
-			r.menu.closeMenu();
+		r.deleteMe(this);
 	}
 }
 
 
-class ErrorMenu : public MenuBase
+class ErrorMenu : public InfoMenu
 {
 private:
-	Text te[];
-
 	const char[] header = `Charged Miners`;
+	bool panic;
 
 public:
 	this(Router r, char[][] errorTexts, bool panic)
 	{
-		auto b = panic ? Buttons.QUIT : Buttons.OK;
-		super(r, header, b);
+		this.panic = panic;
+		auto txt = panic ? "Quit" : "Ok";
+		auto dg = panic ? &r.quit : &r.menu.displayMainMenu;
 
-		auto vc = new VerticalContainer(null, 0, 0, 300, 0, 8);
-		replacePlane(vc);
+		super(r, opts, header, errorTexts, txt, dg);
+	}
 
-		te.length = errorTexts.length;
-		foreach(uint i, t; errorTexts) {
-			te[i] = new Text(this, 0, 0, t);
-		}
-
-		repack();
+	void escapePressed()
+	{
+		if (panic)
+			r.quit();
+		else
+			super.escapePressed();
 	}
 }

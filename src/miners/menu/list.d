@@ -12,6 +12,7 @@ import charge.game.gui.text;
 import charge.game.gui.input;
 import charge.game.gui.component;
 import charge.game.gui.container;
+import charge.game.gui.textbased;
 
 import miners.types;
 import miners.options;
@@ -19,10 +20,11 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class ClassicServerListMenu : public MenuBase
+class ClassicServerListMenu : public MenuRunnerBase
 {
 private:
 	ListView lv;
+	MenuBase mb;
 	SearchField sf;
 
 	const char[] header = `Classic`;
@@ -30,14 +32,27 @@ private:
 public:
 	this(Router r, Options opts, ClassicServerInfo[] csis)
 	{
-		super(r, header, Buttons.QUIT);
+		mb = new MenuBase(header, MenuBase.Buttons.QUIT);
+		lv = new ListView(mb, 0, 0, r, opts, csis, &connect);
+		sf = new SearchField(mb, 0, 0, lv);
 
-		lv = new ListView(this, 0, 0, opts, csis);
-		sf = new SearchField(this, 0, 0, lv);
-
+		mb.button.pressed ~= &quit;
 		lv.y = sf.h;
 
-		repack();
+		mb.repack();
+
+		super(r, opts, mb);
+	}
+
+	void quit(Button b)
+	{
+		r.quit();
+	}
+
+	void connect(ClassicServerInfo csi)
+	{
+		r.menu.getClassicServerInfoAndConnect(csi);
+		r.deleteMe(this);
 	}
 }
 
@@ -185,7 +200,7 @@ protected:
 class ListView : public Component
 {
 private:
-	Router r;
+	Options opts;
 
 	const darkGrey = Color4f(0.05, 0.05, 0.05, 0.8);
 	const lightGrey = Color4f(0.7, 0.7, 0.7, 1);
@@ -212,16 +227,17 @@ private:
 
 	const int buttonSize = 14; //< For scrollbar layout
 
-	Options opts;
+	void delegate(ClassicServerInfo csi) dg;
 
 public:
-	this(ClassicServerListMenu cm, int x, int y,
-	     Options opts, ClassicServerInfo[] csis)
+	this(Container c, int x, int y, Router r,
+	     Options opts, ClassicServerInfo[] csis,
+	     void delegate(ClassicServerInfo) dg)
 	{
 		rowSize = gfxDefaultFont.height + 3;
-		super(cm, x, y, 424, rowSize*rows);
+		super(c, x, y, 424, rowSize*rows);
 
-		this.r = cm.r;
+		this.dg = dg;
 		this.opts = opts;
 		this.csis = csis;
 		this.fullList = csis;
@@ -286,7 +302,7 @@ protected:
 			auto csi = csis[which];
 
 			opts.lastClassicServer = csi.webName;
-			r.menu.getClassicServerInfoAndConnect(csi);
+			dg(csi);
 		} else {
 			if (y < h / 2) {
 				if (y < buttonSize)

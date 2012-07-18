@@ -14,7 +14,7 @@ import miners.classic.data;
 
 alias void delegate(ubyte) SelectedDg;
 
-class ClassicBlockMenu : public MenuBase
+class ClassicBlockMenu : public MenuRunnerBase
 {
 private:
 	const char[] header = `Select Block`;
@@ -26,33 +26,26 @@ public:
 		assert(selected !is null);
 
 		this.selected = selected;
+		this.r = r;
 
-		super(r, header, Buttons.NONE);
+		auto mb = new MenuBase(header);
+		auto cg = new ClassicGrid(mb, opts, 0, 0, &mySelected);
+		mb.repack();
 
-		new ClassicGrid(this, opts, 0, 0, &mySelected);
-
-		repack();
+		super(r, opts, mb);
 	}
 
-
-	void breakApart()
+	void close()
 	{
-		super.breakApart();
 		selected = null;
+		super.close();
 	}
-
-
-	void mouseDown(Mouse m, int x, int y, uint button)
-	{
-		writefln("HAH");
-	}
-
 
 private:
 	void mySelected(ubyte block)
 	{
 		selected(block);
-		r.menu.closeMenu();
+		r.deleteMe(this);
 	}
 }
 

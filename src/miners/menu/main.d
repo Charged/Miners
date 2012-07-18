@@ -5,11 +5,12 @@ module miners.menu.main;
 import charge.charge;
 import charge.game.gui.textbased;
 
+import miners.options;
 import miners.interfaces;
 import miners.menu.base;
 
 
-class MainMenu : public MenuBase
+class MainMenu : public MenuRunnerBase
 {
 private:
 	Text te;
@@ -28,24 +29,25 @@ private:
 `;
 
 public:
-	this(Router r)
+	this(Router r, Options opts)
 	{
+		auto mb = new MenuBase(header);
 		int pos;
 
-		super(r, header);
+		super(r, opts, mb);
 
-		te = new Text(this, 0, 0, text);
+		te = new Text(mb, 0, 0, text);
 		pos += te.h;
-		io = new Button(this, 0, pos, "Ion", 32);
+		io = new Button(mb, 0, pos, "Ion", 32);
 		pos += io.h;
-		ra = new Button(this, 0, pos, "Random", 32);
+		ra = new Button(mb, 0, pos, "Random", 32);
 		pos += ra.h;
-		cl = new Button(this, 0, pos, "Classic", 32);
+		cl = new Button(mb, 0, pos, "Classic", 32);
 		pos += cl.h;
-		be = new Button(this, 0, pos, "Beta", 32);
+		be = new Button(mb, 0, pos, "Beta", 32);
 		pos += be.h + 16;
-		cb = new Button(this, 0, pos, "Close", 8);
-		qb = new Button(this, 0, pos, "Quit", 8);
+		cb = new Button(mb, 0, pos, "Close", 8);
+		qb = new Button(mb, 0, pos, "Quit", 8);
 
 		io.pressed ~= &ion;
 		ra.pressed ~= &random;
@@ -54,12 +56,12 @@ public:
 		cb.pressed ~= &back;
 		qb.pressed ~= &quit;
 
-		repack();
+		mb.repack();
 
-		auto center = plane.w / 2;
+		auto center = mb.plane.w / 2;
 
 		// Center the children
-		foreach(c; getChildren) {
+		foreach(c; mb.getChildren) {
 			c.x = center - c.w/2;
 		}
 
@@ -69,10 +71,10 @@ public:
 	}
 
 private:
-	void ion(Button b) { r.chargeIon(); }
-	void random(Button b) { r.loadLevel(null); }
-	void classic(Button b) { r.loadLevel(null, true); }
-	void selectLevel(Button b) { r.menu.displayLevelSelector(); }
-	void back(Button b) { r.menu.closeMenu(); }
-	void quit(Button b) { r.quit(); }
+	void ion(Button b) { r.chargeIon(); r.deleteMe(this); }
+	void random(Button b) { r.loadLevel(null); r.deleteMe(this); }
+	void classic(Button b) { r.loadLevel(null, true); r.deleteMe(this); }
+	void selectLevel(Button b) { r.menu.displayLevelSelector(); r.deleteMe(this); }
+	void back(Button b) { r.menu.closeMenu(); r.deleteMe(this); }
+	void quit(Button b) { r.quit(); r.deleteMe(this); }
 }

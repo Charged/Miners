@@ -11,7 +11,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class PauseMenu : public MenuBase
+class PauseMenu : public MenuRunnerBase
 {
 private:
 	const char[] header = `Options`;
@@ -33,53 +33,51 @@ private:
 In order for the fullscreen option to take
 effect you need to restart Charged-Miners.`;
 
-	Options opts;
-
 	const spacerStr = "                                               ";
 
 public:
 	this(Router r, Options opts)
 	{
-		super(r, header, Buttons.NONE);
-		this.opts = opts;
-
-		auto t = new Text(this, 0, 0, spacerStr);
-		auto b1 = new Button(this, 0,               8, "", minButtonWidth);
-		auto b2 = new Button(this, 0, b1.y + b1.h, "", minButtonWidth);
-		auto b3 = new Button(this, 0, b2.y + b2.h, "", minButtonWidth);
-		auto b4 = new Button(this, 0, b3.y + b3.h, "", minButtonWidth);
-		auto b5 = new Button(this, 0, b4.y + b4.h, "", minButtonWidth);
+		auto mb = new MenuBase(header);
+		auto t = new Text(mb, 0, 0, spacerStr);
+		auto b1 = new Button(mb, 0,           8, "", minButtonWidth);
+		auto b2 = new Button(mb, 0, b1.y + b1.h, "", minButtonWidth);
+		auto b3 = new Button(mb, 0, b2.y + b2.h, "", minButtonWidth);
+		auto b4 = new Button(mb, 0, b3.y + b3.h, "", minButtonWidth);
+		auto b5 = new Button(mb, 0, b4.y + b4.h, "", minButtonWidth);
 
 		int bY = b5.y + b5.h + 16;
 
-		auto b6 = new Button(this, 0, bY, "Quit", 8);
-		auto b7 = new Button(this, bY, bY, "Close", 8);
-
-		setAaText(b1); b1.pressed ~= &aa;
-		setFogText(b2); b2.pressed ~= &fog;
-		setShadowText(b3); b3.pressed ~= &shadow;
-		setViewText(b4); b4.pressed ~= &view;
-		setFullscreenText(b5); b5.pressed ~= &fullscreen;
+		auto b6 = new Button(mb, 0, bY, "Quit", 8);
+		auto b7 = new Button(mb, bY, bY, "Close", 8);
 
 		b6.pressed ~= &quit;
 		b7.pressed ~= &close;
 
-		repack();
+		mb.repack();
 
-		auto center = plane.w / 2;
+		auto center = mb.plane.w / 2;
 
 		// Center the children
-		foreach(c; getChildren) {
+		foreach(c; mb.getChildren) {
 			c.x = center - c.w/2;
 		}
 
 		// Place the buttons next to each other.
 		b6.x = center - 8 - b6.w;
 		b7.x = center + 8;
+
+		super(r, opts, mb);
+
+		setAaText(b1); b1.pressed ~= &aa;
+		setFogText(b2); b2.pressed ~= &fog;
+		setShadowText(b3); b3.pressed ~= &shadow;
+		setViewText(b4); b4.pressed ~= &view;
+		setFullscreenText(b5); b5.pressed ~= &fullscreen;
 	}
 
 	void quit(Button b) { r.quit(); }
-	void close(Button b) { r.menu.closeMenu(); }
+	void close(Button b) { r.deleteMe(this); }
 
 	void view(Button b)
 	{

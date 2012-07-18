@@ -5,13 +5,36 @@ module miners.menu.base;
 import charge.charge;
 import charge.game.gui.textbased;
 
+import miners.options;
 import miners.interfaces;
+
+
+class MenuRunnerBase : public GameMenuRunner
+{
+public:
+	Router r;
+	Options opts;
+
+
+public:
+	this(Router r, Options opts, TextureContainer menu)
+	{
+		this.r = r;
+		this.opts = opts;
+		super(menu);
+	}
+
+	void escapePressed()
+	{
+		// Close this runner
+		r.deleteMe(this);
+	}
+}
 
 
 class MenuBase : public HeaderContainer
 {
-protected:
-	Router r;
+public:
 	Button button;
 
 	const bgColor = Color4f(0, 0, 0, 0.8);
@@ -24,6 +47,7 @@ protected:
 		BACK,
 		CANCEL
 	}
+
 	const char[][] buttonStrings = [
 		"N/A",
 		"Ok",
@@ -32,16 +56,16 @@ protected:
 		"Cancel",
 	];
 
+
 public:
-	this(Router r, char[] header)
+	this(char[] header)
 	{
 		super(bgColor, header, fgColor);
-		this.r = r;
 	}
 
-	this(Router r, char[] header, Buttons buttons)
+	this(char[] header, Buttons buttons)
 	{
-		this(r, header);
+		this(header);
 
 		// No need to add a button.
 		if (buttons == Buttons.NONE)
@@ -49,19 +73,6 @@ public:
 
 		auto t = buttonStrings[buttons];
 		button = new Button(null, 0, 0, t, 8);
-
-		switch (buttons) {
-		case Buttons.OK:
-		case Buttons.BACK:
-		case Buttons.CANCEL:
-			button.pressed ~= &back;
-			break;
-		case Buttons.QUIT:
-			button.pressed ~= &quit;
-			break;
-		default:
-			assert(false);
-		}
 
 		Container.add(button);
 	}
@@ -78,9 +89,4 @@ public:
 		button.y = h;
 		h += button.h + 8;
 	}
-
-private:
-	void quit(Button b) { r.quit(); }
-
-	void back(Button b) { r.menu.displayMainMenu(); }
 }

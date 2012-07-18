@@ -29,7 +29,7 @@ class MenuRunner : public Runner, public MenuManager
 {
 public:
 	bool active;
-	Router router;
+	Router r;
 	Options opts;
 
 protected:
@@ -57,7 +57,7 @@ public:
 	{
 		super(Type.Menu);
 
-		this.router = r;
+		this.r = r;
 		this.opts = opts;
 
 		ih = new InputHandler(null);
@@ -158,19 +158,20 @@ public:
 
 	void displayMainMenu()
 	{
-		changeWindow(new MainMenu(this.router));
+		closeMenu();
+		r.push(new MainMenu(r, opts));
 	}
 
 	void displayPauseMenu()
 	{
-		changeWindow(new PauseMenu(this.router, opts));
+		r.push(new PauseMenu(r, opts));
 	}
 
 	void displayLevelSelector()
 	{
 		try {
-			auto lm = new LevelMenu(this.router);
-			changeWindow(lm);
+			auto lm = new LevelMenu(r, opts);
+			r.push(lm);
 		} catch (Exception e) {
 			displayError(e, false);
 		}
@@ -178,51 +179,47 @@ public:
 
 	void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
 	{
-		changeWindow(new ClassicBlockMenu(this.router, opts, selectedDg));
+		r.push(new ClassicBlockMenu(r, opts, selectedDg));
 	}
 
 	void displayClassicMenu()
 	{
-		auto r = this.router;
 		auto psc = opts.playSessionCookie();
 
-		changeWindow(new WebpageInfoMenu(r, psc));
+		r.push(new WebpageInfoMenu(r, opts, psc));
 	}
 
 	void displayClassicList(ClassicServerInfo[] csis)
 	{
-		auto r = this.router;
-
-		changeWindow(new ClassicServerListMenu(r, opts, csis));
+		r.push(new ClassicServerListMenu(r, opts, csis));
 	}
 
 	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
 	{
-		auto r = this.router;
 		auto psc = opts.playSessionCookie();
 
-		changeWindow(new WebpageInfoMenu(r, psc, csi));
+		r.push(new WebpageInfoMenu(r, opts, psc, csi));
 	}
 
 	void connectToClassic(char[] usr, char[] pwd, ClassicServerInfo csi)
 	{
-		changeWindow(new WebpageInfoMenu(this.router, usr, pwd, csi));
+		r.push(new WebpageInfoMenu(r, opts, usr, pwd, csi));
 	}
 
 	void connectToClassic(ClassicServerInfo csi)
 	{
-		changeWindow(new ClassicConnectingMenu(this.router, csi));
+		r.push(new ClassicConnectingMenu(r, opts, csi));
 	}
 
 	void classicWorldChange(ClassicConnection cc)
 	{
-		changeWindow(new ClassicConnectingMenu(this.router, cc));
+		r.push(new ClassicConnectingMenu(r, opts, cc));
 	}
 
 	void displayInfo(char[] header, char[][] texts,
 	                 char[] buttonText, void delegate() dg)
 	{
-		changeWindow(new InfoMenu(this.router, header, texts, buttonText, dg));
+		r.push(new InfoMenu(r, opts, header, texts, buttonText, dg));
 	}
 
 	void displayError(Exception e, bool panic)
@@ -251,9 +248,7 @@ public:
 
 	void displayError(char[][] texts, bool panic)
 	{
-		auto m = new ErrorMenu(this.router, texts, panic);
-		changeWindow(m);
-		errorMode = panic;
+		r.push(new ErrorMenu(r, texts, panic));
 	}
 
 	void setTicker(void delegate() dg)
@@ -274,7 +269,7 @@ private:
 			return;
 
 		if (errorMode)
-			return router.quit();
+			return r.quit();
 
 		if (inControl)
 			closeMenu();
@@ -282,6 +277,9 @@ private:
 
 	void changeWindow(MenuBase mb)
 	{
+		// XXX this code is going to be killed
+		assert(mb is null);
+
 		sysReference(&menuTexture, null);
 		if (menu !is null)
 			menu.breakApart();
@@ -290,13 +288,13 @@ private:
 
 		if (menu is null) {
 			active = false;
-			router.backgroundMenu();
+			r.backgroundMenu();
 			return;
 		}
 
 		if (!active) {
 			active = true;
-			router.foregroundMenu();
+			r.foregroundMenu();
 		}
 
 		menu.paintTexture();
