@@ -57,9 +57,10 @@ protected:
 	int currentSlot;
 	ubyte[9] slots;
 
+	int chatBacklog;
 	const int chatBorder = 4;
-	const int chatBacklog = 40;
-	const int chatBacklogSmall = 4;
+	const int chatBacklogSmall = 7;
+	const int chatOffsetFromBottom = 32 + 8 + 8;
 
 	Text spacer;
 	ColorContainer chatGui;
@@ -104,6 +105,12 @@ public:
 
 		d = new GfxDraw();
 
+		uint width, height; bool fullscreen;
+		Core().size(width, height, fullscreen);
+
+		uint temp = chatBorder * 2 + gfxDefaultFont.height * 2 + chatOffsetFromBottom;
+		chatBacklog = (height - temp) / (gfxDefaultFont.height + 1);
+
 		chatDirty = true;
 		mlGui = new ClassicMessageLog(null, opts, chatBorder, chatBorder, chatBacklog);
 		spacer = new Text(null, chatBorder, mlGui.y+mlGui.h, chatSep);
@@ -112,7 +119,7 @@ public:
 		chatGui = new ColorContainer(
 			Color4f(0, 0, 0, 0.2),
 			mlGui.w + chatBorder * 2,
-			mlGui.h +  spacer.h + typedText.h + chatBorder * 2);
+			mlGui.h + spacer.h + typedText.h + chatBorder * 2);
 		chatGui.add(mlGui);
 		chatGui.add(spacer);
 		chatGui.add(typedText);
@@ -284,8 +291,7 @@ public:
 		int x;
 		int y;
 
-		// Hmm where does 32 + 8 + 8 come from?
-		uint offset = 32 + 8 + 8 +
+		uint offset = chatOffsetFromBottom +
 			(console.typing ? 0 : spacer.h + typedText.h);
 		t = tmpChatGui.texture;
 		d.blit(t, 8, rt.height - t.height - offset);
