@@ -75,29 +75,44 @@ public:
 	 */
 
 
-	char[] tabCompletePlayer(char[] start)
+	char[] tabCompletePlayer(char[] searchIn, char[] lastIn)
 	{
-		auto search = tolower(start);
-		int found = -1;
+		auto search = tolower(searchIn);
+		auto last = tolower(lastIn);
+		bool next = lastIn is null; // If null just pick the first match
+		int first = -1;
 
 		foreach(int i, tab; tabs) {
 			if (tab.length < search.length)
 				continue;
 
+			if (tab.length == 0)
+				continue;
+
 			if (tab[0 .. search.length] != search[0 .. $])
 				continue;
 
-			// Don't return anything on multiple hits.
-			if (found >= 0)
-				return null;
+			// Remmember the first match, for loop arounds
+			if (first < 0)
+				first = i;
 
-			found = i;
+			// Is this the player after the last player?
+			if (next)
+				return players[i];
+
+			// If name is to sort for last
+			if (tab.length < last.length)
+				continue;
+
+			// Is this the last player?
+			if (tab[0 .. last.length] == last[])
+				next = true;
 		}
 
-		if (found >= 0)
-			return players[found];
-
-		return null;
+		if (first >= 0)
+			return players[first];
+		else
+			return null;
 	}
 
 	void pushAll()

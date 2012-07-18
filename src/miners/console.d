@@ -73,6 +73,8 @@ public:
 		typing = false;
 		backspaceCounter = 0;
 
+		doUserInputed();
+
 		update("");
 	}
 
@@ -93,6 +95,8 @@ public:
 			if (backspaceCounter <= 0)
 				backspaceCounter = 1;
 
+			doUserInputed();
+
 			return decArrays();
 		}
 
@@ -111,6 +115,8 @@ public:
 		// Don't add any more once the buffer is full.
 		if (showing.length >= typedBuffer.length)
 			return;
+
+		doUserInputed();
 
 		incArrays();
 		typed[$-1] = cast(char)unicode;
@@ -162,6 +168,11 @@ protected:
 			return msgNoCommandGiven();
 
 		doCommand(cmds, str);
+	}
+
+	void doUserInputed()
+	{
+
 	}
 
 	void doCommand(char[][] cmds, char[] str)

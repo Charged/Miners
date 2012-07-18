@@ -889,7 +889,9 @@ public:
 class ClassicConsole : public Console
 {
 public:
-	char[] delegate(char[]) tabCompletePlayer;
+	char[] delegate(char[], char[]) tabCompletePlayer;
+	char[] lastTabComplete;
+	char[] tabCompleteText; //< what the user actually typed in
 
 protected:
 	MessageLogger ml;
@@ -917,20 +919,52 @@ protected:
 		if (tabCompletePlayer is null)
 			return;
 
-		int i = cast(int)typed.length;
-		foreach_reverse(c; typed) {
-			if (c == ' ')
-				break;
-			i--;
+		char[] search;
+		char[] tabbing;
+
+		// If we completed last, remove what we added
+		if (lastTabComplete !is null) {
+
+			// Search on the tab complete text
+			search = tabCompleteText;
+
+			int i = cast(int)typed.length;
+			// Find the first none whitespace
+			foreach_reverse(c; typed) {
+				if (c != ' ')
+					break;
+				i--;
+			}
+
+			// Find the first whitespace
+			foreach_reverse(c; typed[0 .. i]) {
+				if (c == ' ')
+					break;
+				i--;
+			}
+
+			// Make it remove what we added last time
+			if (i != typed.length)
+				tabbing = typed[i .. $];
+
+		} else if (typed.length != 0) {
+
+			int i = cast(int)typed.length;
+			foreach_reverse(c; typed) {
+				if (c == ' ')
+					break;
+				i--;
+			}
+
+			// Ends with space
+			if (i != typed.length)
+				tabbing = typed[i .. $];
+
+			search = tabbing;
+			tabCompleteText = tabbing.dup;
 		}
 
-		// Ends with space
-		if (i == typed.length)
-			return;
-
-		auto tabbing = typed[i .. $];
-
-		auto t = tabCompletePlayer(tabbing);
+		auto t = tabCompletePlayer(search, lastTabComplete);
 
 		// Nothing found return.
 		if (t is null)
@@ -939,8 +973,11 @@ protected:
 		// tabCompletePlayer returns with color encoding.
 		t = removeColorTags(t);
 
-		// We it this way so that all the arrays are
-		// correctly matched, we are apt to get it wrong.
+		// Save the last result
+		lastTabComplete = t;
+
+		// We do it this way so that all the arrays are
+		// correctly matched, or we are apt to get it wrong.
 		for(int k; k < tabbing.length; k++)
 			decArrays();
 
@@ -966,6 +1003,12 @@ protected:
 		    unicode == '&')
 			return false;
 		return true;
+	}
+
+	void doUserInputed()
+	{
+		tabCompleteText = null;
+		lastTabComplete = null;
 	}
 
 	void doCommand(char[][] cmds, char[] str)
