@@ -64,6 +64,9 @@ public:
 
 	~this()
 	{
+		w.gfx.remove(sl);
+		delete sl;
+
 		if (c !is null)
 			Dcpu_Destroy(&c);
 
