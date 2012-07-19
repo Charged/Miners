@@ -75,7 +75,7 @@ protected:
 	}
 }
 
-final class SpotLightShader : public LightShaderBase
+class SpotLightShaderBase : public LightShaderBase
 {
 public:
 	UniformMatrix4x4d textureMatrix;
@@ -84,6 +84,31 @@ public:
 	UniformColor4f diffuse;
 	UniformFloat length;
 
+
+protected:
+	this(char[] vert, char[] frag, char[][] texs)
+	{
+		GLuint id = ShaderMaker.makeShader(
+			vert, frag,
+			cast(char[][])null, texs);
+
+		this(id);
+	}
+
+	this(GLuint id)
+	{
+		super(id);
+
+		textureMatrix.init("textureMatrix", glId);
+		direction.init("lightDirection", glId);
+		position.init("lightPosition", glId);
+		diffuse.init("lightDiffuse", glId);
+		length.init("lightLength", glId);
+	}
+}
+
+final class SpotLightShader : public SpotLightShaderBase
+{
 public:
 	this()
 	{
@@ -91,16 +116,24 @@ public:
 		      DeferredRenderer.spotlight_shader_frag,
 		      ["colorTex", "normalTex", "depthTex", "spotTex"]);
 
-		textureMatrix.init("textureMatrix", glId);
-		direction.init("lightDirection", glId);
-		position.init("lightPosition", glId);
-		diffuse.init("lightDiffuse", glId);
-		length.init("lightLength", glId);
 		unbind();
 	}
 }
 
-class PointLightShader : public LightShaderBase
+final class SpotLightShadowShader : public SpotLightShaderBase
+{
+public:
+	this()
+	{
+		super(DeferredRenderer.deferred_base_vert,
+		      DeferredRenderer.spotlight_shader_shadow_frag,
+		      ["colorTex", "normalTex", "depthTex", "spotTex", "shadowTex"]);
+
+		unbind();
+	}
+}
+
+final class PointLightShader : public LightShaderBase
 {
 public:
 	UniformFloat nearClip;
@@ -224,6 +257,7 @@ private:
 	mixin Logging;
 
 	DeferredTarget deferredTarget;
+	DepthTarget depthTarget;
 	DepthTargetArray depthTargetArray;
 
 	enum matShdr {
@@ -240,6 +274,7 @@ private:
 	static DirectionalLightIsoShader directionLightIsoShader;
 	static DirectionalLightShader directionLightShader;
 	static PointLightShader pointLightShader;
+	static SpotLightShadowShader spotLightShadowShader;
 	static SpotLightShader spotLightShader;
 	static FogShader fogShader;
 
@@ -319,6 +354,7 @@ public:
 		directionLightIsoShader = new DirectionalLightIsoShader();
 		directionLightShader = new DirectionalLightShader();
 		pointLightShader = new PointLightShader();
+		spotLightShadowShader = new SpotLightShadowShader();
 		spotLightShader = new SpotLightShader();
 		fogShader = new FogShader();
 
@@ -330,6 +366,7 @@ public:
 	{
 		assert(initilized);
 
+		depthTarget = new DepthTarget(1024, 1024);
 		depthTargetArray = new DepthTargetArray(2048, 2048, 4);
 	}
 
@@ -440,6 +477,10 @@ protected:
 		pointLightShader.nearClip = c.near;
 		pointLightShader.screen = vec.ptr;
 
+		spotLightShadowShader.bind();
+		spotLightShadowShader.projectionMatrixInverse.transposed = projITS;
+		spotLightShadowShader.screen = vec.ptr;
+
 		spotLightShader.bind();
 		spotLightShader.projectionMatrixInverse.transposed = projITS;
 		spotLightShader.screen = vec.ptr;
@@ -500,7 +541,7 @@ protected:
 			if (dl !is null) {
 				drawDirectionLight(dl, c, w, view, proj);
 			} else if (sl !is null) {
-				drawSpotLight(sl, view, proj);
+				drawSpotLight(sl, w, view, proj);
 			} else {
 				continue;
 			}
@@ -1059,22 +1100,98 @@ protected:
 		glMatrixMode(GL_MODELVIEW);
 	}
 
-	void drawSpotLight(SpotLight sl, ref Matrix4x4d view, ref Matrix4x4d proj)
+	void drawSpotLightShadow(SpotLight sl, World w)
+	{
+		gluPushMatricesAttrib(GL_VIEWPORT_BIT);
+
+		glUseProgram(0);
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+
+		glDisable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+
+		gluTexUnitDisable(GL_TEXTURE_2D, 2);
+		gluTexUnitDisable(GL_TEXTURE_2D, 1);
+		gluTexUnitDisable(GL_TEXTURE_2D, 0);
+
+		glPolygonOffset(1.f, 2048.0f);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+
+		// Set meatricies
+		{
+			float shadowNear = sl.near;
+			float shadowFar = sl.far;
+			auto point = sl.position + sl.rotation.rotateHeading();
+			auto pos = sl.position;
+			auto up = sl.rotation.rotateUp();
+
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluPerspective(20, 1, shadowNear, shadowFar);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			gluLookAt(
+					pos.x, pos.y, pos.z,
+					point.x, point.y, point.z,
+					up.x, up.y, up.z
+				);
+		}
+
+		{
+			depthTarget.setTarget();
+			glViewport(0, 0, depthTarget.width, depthTarget.height);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			renderShadowLoop(sl.position, w);
+		}
+
+		glBindTexture(GL_TEXTURE_2D, deferredTarget.color);
+		glDisable(GL_POLYGON_OFFSET_FILL);
+
+		gluTexUnitEnable(GL_TEXTURE_2D, 0);
+		gluTexUnitEnable(GL_TEXTURE_2D, 1);
+		gluTexUnitEnable(GL_TEXTURE_2D, 2);
+
+		glCullFace(GL_BACK);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		gluPopMatricesAttrib();
+
+		renderTarget.setTarget();
+	}
+
+	void drawSpotLight(SpotLight sl, World w, ref Matrix4x4d view, ref Matrix4x4d proj)
 	{
 		auto position = view * sl.position;
 		auto rotation = view * sl.rotation.rotateHeading;
+		SpotLightShaderBase s;
+
+		if (sl.shadow) {
+			drawSpotLightShadow(sl, w);
+			s = spotLightShadowShader;
+
+			gluTexUnitEnableBind(GL_TEXTURE_2D, 3, sl.texture);
+			gluTexUnitEnableBind(GL_TEXTURE_2D, 4, depthTarget.depth);
+		} else {
+			s = spotLightShader;
+
+			gluTexUnitEnableBind(GL_TEXTURE_2D, 3, sl.texture);
+		}
 
 		Matrix4x4d texture;
 		getSpotLightMatrix(sl, view, texture);
 
-		spotLightShader.bind();
-		spotLightShader.textureMatrix.transposed = texture;
-		spotLightShader.diffuse = sl.diffuse;
-		spotLightShader.position = view * sl.position;
-		spotLightShader.direction = view * sl.rotation.rotateHeading;
-		spotLightShader.length = sl.far;
-
-		gluTexUnitEnableBind(GL_TEXTURE_2D, 3, sl.texture);
+		s.bind();
+		s.textureMatrix.transposed = texture;
+		s.diffuse = sl.diffuse;
+		s.position = view * sl.position;
+		s.direction = view * sl.rotation.rotateHeading;
+		s.length = sl.far;
 
 		glBegin(GL_QUADS);
 		glColor3f(  1.0f,  1.0f,  1.0f);
@@ -1084,6 +1201,7 @@ protected:
 		glVertex3f(-1.0f,  1.0f,  0.0f);
 		glEnd();
 
+		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 4);
 		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 3);
 	}
 
@@ -1307,6 +1425,72 @@ void main()
 {
 	/* Both matrixes are identity so just copy the position */
 	gl_Position = gl_Vertex;
+}
+";
+
+	const char[] spotlight_shader_shadow_frag = "
+#version 120
+#extension GL_EXT_gpu_shader4 : require
+
+uniform vec2 screen;
+uniform sampler2D colorTex;
+uniform sampler2D normalTex;
+uniform sampler2D depthTex;
+uniform sampler2D spotTex;
+uniform mat4 projectionMatrixInverse;
+uniform mat4 textureMatrix;
+uniform vec3 lightPosition;
+uniform vec4 lightDiffuse;
+uniform float lightLength;
+uniform sampler2DShadow shadowTex;
+
+float getCoffGuass(vec3 depthCoords)
+{
+	depthCoords.z = depthCoords.z;
+	float ret = shadow2D(shadowTex, depthCoords).x * 0.25;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( -1, -1)).x * 0.0625;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( -1, 0)).x * 0.125;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( -1, 1)).x * 0.0625;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( 0, -1)).x * 0.125;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( 0, 1)).x * 0.125;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( 1, -1)).x * 0.0625;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( 1, 0)).x * 0.125;
+	ret += shadow2DOffset(shadowTex, depthCoords, ivec2( 1, 1)).x * 0.0625;
+	return ret;
+}
+
+void main()
+{
+	vec2 coord = gl_FragCoord.xy * screen;
+	vec4 color = texture2D(colorTex, coord);
+	vec4 normal = texture2D(normalTex, coord);
+	float depth = texture2D(depthTex, coord).r;
+
+	vec4 position = projectionMatrixInverse * vec4(coord, depth, 1.0);
+	position.xyz /= position.w;
+	// normal is a vec4 only normalize xyz
+	normal.xyz = normalize((normal.xyz - 0.5) * 2.0);
+
+	vec4 spotTexCoord = vec4(position.xyz, 1.0);
+	spotTexCoord = textureMatrix * spotTexCoord;
+	spotTexCoord.xyz /= spotTexCoord.w;
+
+	if (spotTexCoord.x > 1.0 || spotTexCoord.x < 0.0)
+		discard;
+	if (spotTexCoord.y > 1.0 || spotTexCoord.y < 0.0)
+		discard;
+	if (spotTexCoord.z > 1.0 || spotTexCoord.z < 0.0)
+		discard;
+
+	float shadow = getCoffGuass(spotTexCoord.xyz);
+	vec4 lightDiffuse = texture2D(spotTex, spotTexCoord.xy);
+	vec3 lightDirection = normalize(lightPosition - position.xyz);
+	float nDotL = max(dot(normal.xyz, lightDirection.xyz), 0.0);
+	float minusDistance = -distance(lightPosition.xyz, position.xyz);
+	float factor = smoothstep(-lightLength, 0.0, minusDistance);
+
+	gl_FragData[0] = color * lightDiffuse * nDotL * factor * shadow;
+	gl_FragData[0].a = 1.0;
 }
 ";
 
