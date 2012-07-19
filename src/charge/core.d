@@ -19,7 +19,7 @@ enum coreFlag
 /**
  * Get a new core created with the given flags.
  */
-extern(C) Core chargeCore(coreFlag flags);
+extern(C) Core chargeCore(CoreOptions opts);
 
 /**
  * Signal a quit a condition, this function mearly pushes
@@ -28,6 +28,26 @@ extern(C) Core chargeCore(coreFlag flags);
 extern(C) void chargeQuit();
 
 
+/**
+ * Options at initialization.
+ */
+class CoreOptions
+{
+public:
+	char[] title;
+	coreFlag flags;
+
+public:
+	this()
+	{
+		this.flags = coreFlag.AUTO;
+		this.title = Core.defaultTitle;
+	}
+}
+
+/**
+ * Class holding the entire thing together.
+ */
 abstract class Core
 {
 public:
@@ -35,7 +55,7 @@ public:
 	const int defaultHeight = 600;
 	const bool defaultFullscreen = false;
 	const bool defaultFullscreenAutoSize = true;
-	const char[] defaultTitle = "Charged Miners";
+	const char[] defaultTitle = "Charge Game Engine";
 	const bool defaultForceResizeEnable = false;
 
 	coreFlag flags;
@@ -56,9 +76,20 @@ public:
 
 	static Core opCall(coreFlag flags)
 	{
-		assert(flags != 0);
+		auto opts = new CoreOptions();
+		opts.flags = flags;
+		return Core(opts);
+	}
 
-		instance = chargeCore(flags);
+	static Core opCall(CoreOptions opts)
+	in {
+		assert(opts !is null);
+		assert(instance is null);
+		assert(opts.flags != 0);
+		assert(opts.title !is null);
+	}
+	body {
+		instance = chargeCore(opts);
 		return instance;
 	}
 

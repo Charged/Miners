@@ -19,9 +19,9 @@ import lib.loader;
 import lib.gl.gl;
 import lib.sdl.sdl;
 
-extern(C) Core chargeCore(coreFlag flags)
+extern(C) Core chargeCore(CoreOptions opts)
 {
-	return new CoreSDL(flags);
+	return new CoreSDL(opts);
 }
 
 extern(C) void chargeQuit()
@@ -42,6 +42,9 @@ class CoreSDL : public CommonCore
 private:
 	mixin Logging;
 
+	CoreOptions opts;
+
+	char[] title;
 	int screenshotNum;
 	uint width, height; //< Current size of the main window
 	bool fullscreen; //< Should we be fullscreen
@@ -75,9 +78,10 @@ private:
 	}
 
 public:
-	this(coreFlag flags)
+	this(CoreOptions opts)
 	{
-		super(flags);
+		this.opts = opts;
+		super(opts.flags);
 
 		loadLibraries();
 
@@ -226,7 +230,7 @@ private:
 		height = p.getUint("h", defaultHeight);
 		fullscreen = p.getBool("fullscreen", defaultFullscreen);
 		fullscreenAutoSize = p.getBool("fullscreenAutoSize", defaultFullscreenAutoSize);
-		char* title = p.getStringz("title", defaultTitle);
+		char* title = toStringz(opts.title);
 
 		SDL_WM_SetCaption(title, title);
 

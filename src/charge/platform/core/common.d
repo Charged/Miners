@@ -174,7 +174,6 @@ protected:
 		p.addIfNotSet("h", defaultHeight);
 		p.addIfNotSet("fullscreen", defaultFullscreen);
 		p.addIfNotSet("fullscreenAutoSize", defaultFullscreenAutoSize);
-		p.addIfNotSet("title", defaultTitle);
 		p.addIfNotSet("forceResizeEnable", defaultForceResizeEnable);
 	}
 

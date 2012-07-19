@@ -203,6 +203,7 @@ alias charge.game.actors.primitive.StaticCube GameStaticCube;
 alias charge.game.actors.primitive.StaticRigid GameStaticRigid;
 
 alias charge.core.Core Core;
+alias charge.core.CoreOptions CoreOptions;
 alias charge.core.coreFlag coreFlag;
 
 
