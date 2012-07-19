@@ -6,6 +6,8 @@ import charge.math.movable;
 import charge.math.color;
 
 import charge.gfx.gl;
+import charge.gfx.texture;
+
 
 class Light : public Movable
 {
@@ -53,6 +55,7 @@ public:
 	float near;
 	float far;
 	bool shadow;
+	Texture texture;
 
 	this()
 	{
@@ -61,6 +64,13 @@ public:
 		near = 0.1;
 		ratio = 1.0;
 		angle = 20.0;
+
+		texture = Texture("res/spotlight.png");
+	}
+
+	~this()
+	{
+		texture.reference(&texture, null);
 	}
 
 }

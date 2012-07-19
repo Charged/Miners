@@ -242,7 +242,6 @@ private:
 	static PointLightShader pointLightShader;
 	static SpotLightShader spotLightShader;
 	static FogShader fogShader;
-	Texture spotlight_texture;
 
 	static bool checked;
 	static bool checkStatus;
@@ -332,19 +331,10 @@ public:
 		assert(initilized);
 
 		depthTargetArray = new DepthTargetArray(2048, 2048, 4);
-
-		// If we where to fail to allocate the depthtarget for some reason
-		// and throw a error and we allocated the spotlight texture before
-		// the depthtarget we would get segfaults in the resource pool.
-		// Why do you ask, well thats because the allocated class is not
-		// deleted at once but instead left up to the GC, and calling
-		// dereference from the GC context is bad.
-		spotlight_texture = Texture("res/spotlight.png");
 	}
 
 	~this()
 	{
-		Texture.reference(&spotlight_texture, null);
 		delete deferredTarget;
 	}
 
@@ -1073,9 +1063,9 @@ protected:
 	{
 		auto position = view * sl.position;
 		auto rotation = view * sl.rotation.rotateHeading;
+
 		Matrix4x4d texture;
 		getSpotLightMatrix(sl, view, texture);
-
 
 		spotLightShader.bind();
 		spotLightShader.textureMatrix.transposed = texture;
@@ -1084,7 +1074,7 @@ protected:
 		spotLightShader.direction = view * sl.rotation.rotateHeading;
 		spotLightShader.length = sl.far;
 
-		gluTexUnitEnableBind(GL_TEXTURE_2D, 3, spotlight_texture);
+		gluTexUnitEnableBind(GL_TEXTURE_2D, 3, sl.texture);
 
 		glBegin(GL_QUADS);
 		glColor3f(  1.0f,  1.0f,  1.0f);
