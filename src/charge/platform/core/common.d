@@ -148,11 +148,12 @@ protected:
 	{
 		auto fm = FileManager();
 
+		void[] spotlightPicture = import("spotlight.png");
 		void[] defaultPicture = import("default.png");
 		void[] fontPicture = import("font.png");
 
+		fm.addBuiltin("res/spotlight.png", spotlightPicture);
 		fm.addBuiltin("res/default.png", defaultPicture);
-		fm.addBuiltin("res/spotlight.png", defaultPicture);
 		fm.addBuiltin("res/font.png", fontPicture);
 	}
 
