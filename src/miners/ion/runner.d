@@ -64,6 +64,13 @@ public:
 
 	~this()
 	{
+		assert(sl is null);
+		assert(c is null);
+		assert(ct is null);
+	}
+
+	void close()
+	{
 		w.gfx.remove(sl);
 		delete sl;
 
@@ -74,6 +81,8 @@ public:
 			ct.destruct();
 			ct = null;
 		}
+
+		super.close();
 	}
 
 	void render()

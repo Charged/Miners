@@ -60,14 +60,22 @@ public:
 
 	~this()
 	{
-		dropControl();
+		assert(sl is null);
+		assert(s is null);
+		assert(c is null);
+		assert(w is null);
+	}
 
+	void close()
+	{
 		if (initialized) {
 			delete s;
 			delete c;
 			delete sl;
 			delete w;
+			initialized = false;
 		}
+		super.close();
 	}
 
 

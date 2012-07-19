@@ -76,12 +76,20 @@ public:
 
 	~this()
 	{
-		dropControl();
+		assert(cam is null);
+		assert(sl is null);
+		assert(m is null);
+		assert(w is null);
+	}
 
-		delete sl;
+	void close()
+	{
 		delete cam;
+		delete sl;
 		delete m;
 		delete w;
+
+		super.close();
 	}
 
 	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)

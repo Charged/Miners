@@ -176,12 +176,11 @@ public:
 
 	~this()
 	{
+		assert(sel is null);
 	}
 
 	void close()
 	{
-		super.close();
-
 		chatGui.breakApart();
 		chatGuiSmall.breakApart();
 		delete sel;
@@ -194,6 +193,8 @@ public:
 
 		if (ml !is null)
 			ml.message = null;
+
+		super.close();
 
 		if (c is null)
 			return;
