@@ -139,7 +139,9 @@ public:
 			return;
 
 		/* This will initalize Core and other important things */
-		super(coreFlag.AUTO);
+		auto opts = new CoreOptions();
+		opts.title = "Charged Miners";
+		super(opts);
 
 		defaultTarget = GfxDefaultTarget();
 

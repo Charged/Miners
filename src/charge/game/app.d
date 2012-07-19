@@ -43,11 +43,11 @@ protected:
 	bool running;
 
 public:
-	this(coreFlag flags)
+	this(CoreOptions opts)
 	{
 		running = true;
 
-		c = Core(flags);
+		c = Core(opts);
 		c.init();
 
 		i = Input();
@@ -81,9 +81,12 @@ protected:
 	TimeKeeper idleTime;
 	
 public:
-	this(charge.core.coreFlag flags = charge.core.coreFlag.AUTO)
+	this(CoreOptions opts = null)
 	{
-		super(flags);
+		if (opts is null)
+			opts = new CoreOptions();
+
+		super(opts);
 
 		i.resize ~= &resize;
 	}
@@ -177,9 +180,9 @@ private:
 	bool dirty;
 
 public:
-	this(charge.core.coreFlag flags = charge.core.coreFlag.AUTO)
+	this(CoreOptions opts = null)
 	{
-		super(flags);
+		super(opts);
 	}
 
 	void render()

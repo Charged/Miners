@@ -66,7 +66,9 @@ public:
 
 		parseArgs(arg);
 
-		super(coreFlag.AUTO);
+		auto opts = new CoreOptions();
+		opts.title = "Charged Robbers";
+		super(opts);
 
 		basePackage = SysZipFile("base.chz");
 
