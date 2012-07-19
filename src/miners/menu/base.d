@@ -38,7 +38,7 @@ public:
 	Button button;
 
 	const bgColor = Color4f(0, 0, 0, 0.8);
-	const fgColor = Color4f(0, 0, 1, 0.8);
+	const fgColor = Color4f(Color4b(0xb8_02_c3_ff));
 
 	enum Buttons {
 		NONE,

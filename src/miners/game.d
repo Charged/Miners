@@ -47,6 +47,7 @@ import miners.terrain.chunk;
 import miners.classic.data;
 import miners.classic.world;
 import miners.classic.runner;
+import miners.classic.startup;
 import miners.importer.info;
 import miners.importer.network;
 import miners.importer.texture;
@@ -332,7 +333,7 @@ protected:
 				else
 					return connectToClassic(username, password, csi);
 			} else if (playSessionCookie !is null) {
-				return displayClassicMenu();
+				return startClassicStartup();
 			}
 		}
 
@@ -736,6 +737,11 @@ protected:
 	void removeBuilder(bool delegate() dg)
 	{
 		builders.remove(dg);
+	}
+
+	void startClassicStartup()
+	{
+		push(new ClassicStartup(this, opts));
 	}
 
 	void chargeIon()
