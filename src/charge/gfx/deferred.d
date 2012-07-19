@@ -2024,21 +2024,24 @@ public:
 		glTexImage2D(GL_TEXTURE_2D, 0, depthFormat, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+		glDrawBuffer(GL_NONE);
+
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, depthTex, 0);
 
 		GLenum status = cast(GLenum)glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 			throw new Exception("DepthTarget framebuffer not complete " ~ std.string.toString(status));
 
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		l.bug("Created new depth target (%sx%s)", w, h);
 	}
 
@@ -2139,10 +2142,11 @@ public:
 
 		GLenum status = cast(GLenum)glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 			throw new Exception("DepthTargetArray framebuffer not complete " ~ std.string.toString(status));
 
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		l.bug("Created new depth target array (%sx%s)x%s", w, h, num);
 	}
 
