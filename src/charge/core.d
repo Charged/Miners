@@ -74,13 +74,6 @@ public:
 		return instance;
 	}
 
-	static Core opCall(coreFlag flags)
-	{
-		auto opts = new CoreOptions();
-		opts.flags = flags;
-		return Core(opts);
-	}
-
 	static Core opCall(CoreOptions opts)
 	in {
 		assert(opts !is null);
