@@ -173,6 +173,9 @@ protected:
 	}
 }
 
+/**
+ * Base class for containers that render into a texture.
+ */
 abstract class TextureTargetContainer : public Container
 {
 public:
@@ -247,6 +250,9 @@ public:
 	}
 }
 
+/**
+ * Class intended to be the bottom of a rendering stack.
+ */
 class TextureContainer : public TextureTargetContainer
 {
 public:
@@ -269,6 +275,10 @@ public:
 	}
 }
 
+/**
+ * Caches the rendering result in a texture thereby
+ * stopping paint to decend to children.
+ */
 class CacheContainer : public TextureTargetContainer
 {
 public:
@@ -290,6 +300,9 @@ public:
 	}
 }
 
+/**
+ * Does the same as ChacheContainer only drawing it anti-aliased.
+ */
 class AntiAliasingContainer : public TextureTargetContainer
 {
 public:
