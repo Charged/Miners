@@ -205,11 +205,6 @@ public:
 	 */
 
 
-	void doEvents()
-	{
-		doTick();
-	}
-
 protected:
 	void handleError(Exception e)
 	{

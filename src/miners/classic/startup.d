@@ -85,7 +85,7 @@ public:
 	void logic()
 	{
 		if (wc !is null)
-			wc.doEvents();
+			wc.doTick();
 	}
 
 	void render(GfxRenderTarget rt)
