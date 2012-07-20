@@ -213,7 +213,7 @@ protected:
 	{
 		// This needs to be done first,
 		// so errors messages can be displayed.
-		Runner br = new SafeBackgroundRunner(this);
+		BackgroundRunner br = new BackgroundRunner();
 		push(br);
 
 		GfxTexture dirt;
@@ -322,10 +322,8 @@ protected:
 		opts.classicFont = cf;
 		sysReference(&cf, null);
 
-		// Install a new background runner
-		deleteMe(br);
-		br = new DirtBackgroundRunner(this, opts);
-		push(br);
+		// Update the background.
+		br.initOpts(opts);
 
 		// Should we use classic
 		if (classicNetwork) {
