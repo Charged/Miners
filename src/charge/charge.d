@@ -74,6 +74,7 @@ public
 	static import charge.game.menu;
 	static import charge.game.runner;
 	static import charge.game.movers;
+	static import charge.game.background;
 	static import charge.game.actors.car;
 	static import charge.game.actors.playerspawn;
 	static import charge.game.actors.primitive;
@@ -197,6 +198,7 @@ alias charge.game.runner.Router GameRouter;
 alias charge.game.movers.Mover GameMover;
 alias charge.game.movers.IsoCameraMover GameIsoCameraMover;
 alias charge.game.movers.ProjCameraMover GameProjCameraMover;
+alias charge.game.background.BackgroundRunner GameBackgroundRunner;
 alias charge.game.actors.car.Car GameCar;
 alias charge.game.actors.playerspawn.PlayerSpawn GamePlayerSpawn;
 alias charge.game.actors.primitive.StaticCube GameStaticCube;
