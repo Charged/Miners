@@ -173,18 +173,21 @@ protected:
 	}
 }
 
-class TextureTargetContainer : public Container
+abstract class TextureTargetContainer : public Container
 {
 public:
 	void delegate() repaintDg;
+	Color4f bg;
 
 protected:
 	TextureTarget tt;
 
 public:
-	this(Container c, int x, int y, uint w, uint h)
+	this(Container c, int x, int y, uint w, uint h,
+	     Color4f bg = Color4f(0, 0, 0, 0))
 	{
 		super(c, x, y, w, h);
+		this.bg = bg;
 	}
 
 	~this()
@@ -207,6 +210,11 @@ public:
 			return;
 
 		repaintDg();
+	}
+
+	void paintBackground(Draw d)
+	{
+		d.fill(bg, false, 0, 0, w, h);
 	}
 
 	/**
@@ -234,6 +242,7 @@ public:
 
 	void paint(Draw d)
 	{
+		// Not the intended use.
 		assert(false);
 	}
 }
@@ -241,9 +250,14 @@ public:
 class TextureContainer : public TextureTargetContainer
 {
 public:
-	this(Container c, int x, int y, uint w, uint h)
+	this(uint w, uint h)
 	{
-		super(c, x, y, w, h);
+		super(null, 0, 0, w, h);
+	}
+
+	this(uint w, uint h, Color4f bg)
+	{
+		super(null, 0, 0, w, h, bg);
 	}
 
 	/**
@@ -263,6 +277,11 @@ public:
 		super(c, x, y, w, h);
 	}
 
+	this(Container c, int x, int y, uint w, uint h, Color4f bg)
+	{
+		super(c, x, y, w, h, bg);
+	}
+
 	void paint(Draw d)
 	{
 		d.blit(tt, Color4f.White, true,
@@ -277,6 +296,11 @@ public:
 	this(Container c, int x, int y, uint w, uint h)
 	{
 		super(c, x, y, w, h);
+	}
+
+	this(Container c, int x, int y, uint w, uint h, Color4f bg)
+	{
+		super(c, x, y, w, h, bg);
 	}
 
 	/**

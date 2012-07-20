@@ -24,7 +24,7 @@ public:
 	{
 		super(null, 0, 0, width, height, 0, 1);
 
-		container = new TextureContainer(null, 0, 0, w, h);
+		container = new TextureContainer(w, h);
 		container.add(this);
 
 		vram = mem[0x8000 .. 0x8000 + 32 * 16];

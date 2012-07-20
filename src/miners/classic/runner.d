@@ -63,16 +63,16 @@ protected:
 	const int chatOffsetFromBottom = 32 + 8 + 8;
 
 	Text spacer;
-	ColorContainer chatGui;
+	TextureContainer chatGui;
 	ClassicMessageLog mlGui;
 	Text typedText;
 	bool chatDirty;
 
-	ColorContainer chatGuiSmall;
+	TextureContainer chatGuiSmall;
 	ClassicMessageLog mlGuiSmall;
 
 
-	ColorContainer chatGuiCurrent;
+	TextureContainer chatGuiCurrent;
 
 	const chatSep = "----------------------------------------------------------------";
 
@@ -116,10 +116,10 @@ public:
 		spacer = new Text(null, chatBorder, mlGui.y+mlGui.h, chatSep);
 		typedText = new Text(null, chatBorder, spacer.y+spacer.h, "", true);
 
-		chatGui = new ColorContainer(
-			Color4f(0, 0, 0, 0.2),
+		chatGui = new TextureContainer(
 			mlGui.w + chatBorder * 2,
-			mlGui.h + spacer.h + typedText.h + chatBorder * 2);
+			mlGui.h + spacer.h + typedText.h + chatBorder * 2,
+			Color4f(0, 0, 0, 0.2));
 		chatGui.add(mlGui);
 		chatGui.add(spacer);
 		chatGui.add(typedText);
@@ -127,10 +127,10 @@ public:
 
 
 		mlGuiSmall = new ClassicMessageLog(null, opts, chatBorder, chatBorder, chatBacklogSmall);
-		chatGuiSmall = new ColorContainer(
-			Color4f(0, 0, 0, 0.0),
+		chatGuiSmall = new TextureContainer(
 			mlGuiSmall.w + chatBorder * 2,
-			mlGuiSmall.h + chatBorder * 2);
+			mlGuiSmall.h + chatBorder * 2,
+			Color4f(0, 0, 0, 0));
 		chatGuiSmall.add(mlGuiSmall);
 		chatGuiSmall.repaintDg = &handleRepaint;
 

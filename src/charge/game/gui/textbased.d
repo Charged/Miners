@@ -150,30 +150,7 @@ public:
  *
  */
 
-
-/**
- * A simple container.
- */
-class ColorContainer : public TextureContainer
-{
-public:
-	Color4f bg;
-
-public:
-	this(Color4f bg, uint w, uint h)
-	{
-		super(null, 0, 0, w, h);
-		this.bg = bg;
-	}
-
-protected:
-	void paintBackground(Draw d)
-	{
-		d.fill(bg, false, 0, 0, w, h);
-	}
-}
-
-class HeaderContainer : public ColorContainer
+class HeaderContainer : public TextureContainer
 {
 public:
 	Container plane;
@@ -183,7 +160,7 @@ public:
 public:
 	this(Color4f bg, char[] headerText, Color4f headerBG)
 	{
-		super(bg, 0, 0);
+		super(0, 0, bg);
 		this.plane = new Container(null, 0, 0, 1, 1);
 		this.headerText = new DoubleText(null, 0, 0, headerText, true);
 		Container.add(this.plane);

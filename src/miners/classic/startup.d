@@ -133,7 +133,7 @@ protected:
 	{
 		auto logo = new Logo(null, 0, 0);
 		auto aat = new AntiAliasingContainer(null, 0, 0, logo.w, logo.h);
-		auto tt = new TextureContainer(null, 0, 0, logo.w, logo.h);
+		auto tt = new TextureContainer(logo.w, logo.h);
 
 		aat.add(logo);
 		tt.add(aat);
@@ -150,7 +150,7 @@ protected:
 	{
 		auto cog = new Cogwheel(null, 0, 0, 32, 32, 26, 12);
 		auto aat = new AntiAliasingContainer(null, 0, 0, cog.w, cog.h);
-		auto tt = new TextureContainer(null, 0, 0, cog.w, cog.h);
+		auto tt = new TextureContainer(cog.w, cog.h);
 
 		aat.add(cog);
 		tt.add(aat);
