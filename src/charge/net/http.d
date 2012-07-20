@@ -205,15 +205,23 @@ private:
 
 			s.connect(addr);
 
-			sSetRead = new SocketSet();
-			sSetWrite = new SocketSet();
-			sSetError = new SocketSet();
-
-			return true;
 		} catch (Exception e) {
-			handleError(e);
-			return false;
+			version(darwin) {
+				if (e.toString != "Unable to connect socket: Operation now in progress") {
+					handleError(e);
+					return false;
+				}
+			} else {
+				handleError(e);
+				return false;
+			}
 		}
+
+		sSetRead = new SocketSet();
+		sSetWrite = new SocketSet();
+		sSetError = new SocketSet();
+
+		return true;
 	}
 
 	final int receive()
