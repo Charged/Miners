@@ -164,7 +164,7 @@ protected:
 		"\r\n"
 		"%s";
 
-		auto req = format(cmd, url, hostname, bdy);
+		auto req = format(http, cmd, url, hostname, bdy);
 		s.send(req);
 	}
 
@@ -351,7 +351,7 @@ protected:
 		"\r\n"
 		"%s";
 
-		auto req = format(cmd, url, hostname, bdy);
+		auto req = format(http, cmd, url, hostname, bdy);
 		s.send(req);
 	}
 
