@@ -28,6 +28,7 @@ public
 	static import charge.net.client;
 	static import charge.net.server;
 	static import charge.net.threaded;
+	static import charge.net.download;
 	static import charge.net.connection;
 
 	static import charge.sfx.sfx;
@@ -110,6 +111,8 @@ alias charge.net.threaded.ThreadedPacketQueue NetThreadedPacketQueue;
 alias charge.net.threaded.ThreadedTcpConnection NetThreadedTcpConnection;
 alias charge.net.http.HttpConnection NetHttpConnection;
 alias charge.net.http.ThreadedHttpConnection NetThreadedHttpConnection;
+alias charge.net.download.DownloadListener NetDownloadListener;
+alias charge.net.download.DownloadConnection NetDownloadConnection;
 alias charge.net.connection.Connection NetConnection;
 alias charge.net.connection.ConnectionListener NetConnectionListener;
 
