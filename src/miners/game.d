@@ -648,23 +648,18 @@ protected:
 	 */
 
 
-	void resize(uint w, uint h)
-	{
-		super.resize(w, h);
-
-		//if (runner !is null)
-		//	runner.resize(w, h);
-	}
-
 	void logic()
 	{
+		if (skin !is null)
+			skin.doTick();
+
 		ticks++;
 
 		// This make sure we at least always
 		// builds at least one chunk per frame.
 		built = false;
 
-		GameRouterApp.logic();
+		super.logic();
 	}
 
 	void render()
@@ -673,7 +668,7 @@ protected:
 			return;
 		ticks = 0;
 
-		GameRouterApp.render();
+		super.render();
 	}
 
 	void idle(long time)
