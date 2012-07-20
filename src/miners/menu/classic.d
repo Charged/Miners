@@ -228,6 +228,8 @@ private:
 	char[] username;
 	/// Password used for authentication
 	char[] password;
+	/// Current displayed text
+	char[] curText = "Error: %s%%";
 
 public:
 	/**
@@ -347,24 +349,24 @@ protected:
 	{
 		wc.postLogin(username, password);
 
-		text.setText("Authenticating");
-		mb.repack();
+		curText = "Authenticating: %s%%";
+		percentage(0);
 	}
 
 	void getServerList()
 	{
 		wc.getServerList();
 
-		text.setText("Retriving server list");
-		mb.repack();
+		curText = "Retriving server list: %s%%";
+		percentage(0);
 	}
 
 	void getServerInfo(ClassicServerInfo csi)
 	{
 		wc.getServerInfo(csi);
 
-		text.setText("Retriving server info");
-		mb.repack();
+		curText = "Retriving server info: %s%%";
+		percentage(0);
 	}
 
 
@@ -383,6 +385,12 @@ protected:
 			getServerInfo(csi);
 		else
 			getServerList();
+	}
+
+	void percentage(int p)
+	{
+		text.setText(format(curText, p));
+		mb.repack();
 	}
 
 	void authenticated()

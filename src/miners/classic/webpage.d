@@ -32,6 +32,11 @@ interface ClassicWebpageListener
 	void authenticated();
 
 	/**
+	 * Percentage done of download.
+	 */
+	void percentage(int p);
+
+	/**
 	 * Parsed the server list webpage.
 	 */
 	void serverList(ClassicServerInfo[] csis);
@@ -237,6 +242,7 @@ protected:
 
 	void handleUpdate(int percentage)
 	{
+		l.percentage(percentage);
 	}
 
 	void handleConnected()

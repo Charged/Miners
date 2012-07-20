@@ -42,7 +42,7 @@ private:
 	WebpageConnection wc;
 
 	const string connectingString = "Connecting...";
-	const string retrievingString = "Retrieving server list...";
+	const string retrievingString = "Retrieving server list: %s%%";
 
 public:
 	this(Router r, Options opts)
@@ -102,7 +102,7 @@ public:
 		}
 
 		if (statusText !is null) {
-			int x = rt.width - cast(int)retrievingString.length * 8 - 8;
+			int x = rt.width - cast(int)retrievingString.length * gfxDefaultFont.width - 8;
 			int y = rt.height - 16;
 
 			d.translate(x, y);
@@ -203,6 +203,11 @@ protected:
 		}
 	}
 
+	void percentage(int p)
+	{
+		statusText.setText(format(retrievingString, p));
+	}
+
 	void authenticate()
 	{
 		assert("Can not authenticate!" is null);
@@ -212,7 +217,7 @@ protected:
 	{
 		wc.getServerList();
 
-		statusText.setText(retrievingString);
+		percentage(0);
 	}
 
 
