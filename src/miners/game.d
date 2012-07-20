@@ -197,6 +197,8 @@ public:
 			fm.remBuiltin(terrainFilename);
 			cFree(terrainFile.ptr);
 		}
+
+		super.close();
 	}
 
 

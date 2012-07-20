@@ -42,6 +42,9 @@ protected:
 	Core c;
 	bool running;
 
+private:
+	bool closed;
+
 public:
 	this(CoreOptions opts)
 	{
@@ -56,9 +59,15 @@ public:
 
 	~this()
 	{
-		i.quit ~= &stop;
+		assert(closed);
+	}
 
+	void close()
+	{
+		running = false;
+		i.quit -= &stop;
 		c.close();
+		closed = true;
 	}
 
 	abstract void loop();
@@ -68,7 +77,6 @@ protected:
 	{
 		running = false;
 	}
-
 }
 
 abstract class SimpleApp : public App
@@ -79,7 +87,7 @@ protected:
 	TimeKeeper logicTime;
 	TimeKeeper inputTime;
 	TimeKeeper idleTime;
-	
+
 public:
 	this(CoreOptions opts = null)
 	{
@@ -99,7 +107,6 @@ public:
 	abstract void network();
 	abstract void render();
 	abstract void logic();
-	abstract void close();
 
 	void resize(uint w, uint h)
 	{
@@ -183,6 +190,23 @@ public:
 	this(CoreOptions opts = null)
 	{
 		super(opts);
+	}
+
+	~this()
+	{
+		assert(vec.length == 0);
+		assert(del.length == 0);
+		assert(currentInput is null);
+	}
+
+	void close()
+	{
+		while(vec.length || del.length) {
+			deleteAll();
+			manageRunners();
+		}
+
+		super.close();
 	}
 
 	void render()
