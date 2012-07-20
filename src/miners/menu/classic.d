@@ -334,7 +334,7 @@ private:
 				cast(void)e;
 			}
 
-			wc = null;
+			delete wc;
 		}
 	}
 

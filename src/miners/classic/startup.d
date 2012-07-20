@@ -72,10 +72,12 @@ public:
 
 	void close()
 	{
-		if (statusText !is null)
+		if (statusText !is null) {
 			statusText.breakApart();
-		if (wc !is null)
-			wc.close();
+			statusText = null;
+		}
+
+		shutdownConnection();
 
 		sysReference(&logo, null);
 	}
@@ -199,7 +201,6 @@ protected:
 			}
 
 			delete wc;
-			wc = null;
 		}
 	}
 
@@ -245,12 +246,8 @@ protected:
 	{
 		shutdownConnection();
 
-		statusText.breakApart();
-		statusText = null;
-
-		r.deleteMe(this);
-
 		r.displayClassicList(csis);
+		r.deleteMe(this);
 	}
 
 	void serverInfo(ClassicServerInfo csi)
@@ -263,6 +260,7 @@ protected:
 		shutdownConnection();
 
 		r.displayError(["Disconnected", e.toString()], false);
+		r.deleteMe(this);
 	}
 
 	void disconnected()
@@ -271,5 +269,6 @@ protected:
 		shutdownConnection();
 
 		r.displayError(["Disconnected"], false);
+		r.deleteMe(this);
 	}
 }
