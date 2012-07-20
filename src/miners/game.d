@@ -703,10 +703,6 @@ protected:
 			super.idle(time);
 	}
 
-	void network()
-	{
-	}
-
 	void render(GfxWorld w, GfxCamera cam, GfxRenderTarget rt)
 	{
 		rm.render(w, cam, rt);
@@ -725,11 +721,6 @@ protected:
 	 *
 	 */
 
-
-	void quit()
-	{
-		running = false;
-	}
 
 	void addBuilder(bool delegate() dg)
 	{

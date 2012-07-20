@@ -18,12 +18,6 @@ alias charge.game.runner.Router GameRouter;
  */
 interface Router : GameRouter
 {
-	/**
-	 * Gracefully quit the game.
-	 */
-	void quit();
-
-
 	/*
 	 *
 	 * Runner related.
