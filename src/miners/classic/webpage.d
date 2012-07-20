@@ -235,6 +235,10 @@ protected:
 		}
 	}
 
+	void handleUpdate(int percentage)
+	{
+	}
+
 	void handleConnected()
 	{
 		curOp = Op.NO_OP;

@@ -178,6 +178,7 @@ protected:
 
 	abstract void handleError(Exception e);
 	abstract void handleConnected();
+	abstract void handleUpdate(int percentage);
 	abstract void handleResponse(char[] header, char[] res);
 	abstract void handleDisconnect();
 
@@ -254,8 +255,11 @@ private:
 		contentLength = getContentLength(data[0 .. pageBodyStart]);
 
 		size_t end = pageBodyStart + contentLength;
+		int percentage = cast(int)((dataRead * 100f) / end);
 		if (dataRead == end)
 			doHandleResponse();
+		else
+			handleUpdate(percentage);
 	}
 
 	void getBody()
@@ -266,8 +270,9 @@ private:
 			return;
 
 		size_t end = pageBodyStart + contentLength;
+		int percentage = cast(int)((dataRead * 100f) / end);
 		if (dataRead < end)
-			return;
+			return handleUpdate(percentage);
 		else if (dataRead == end)
 			doHandleResponse();
 		else {

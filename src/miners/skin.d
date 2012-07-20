@@ -118,6 +118,10 @@ public:
 		super.close();
 	}
 
+	void handleUpdate(int percentage)
+	{
+	}
+
 	void handleConnected()
 	{
 		httpGetSkin(curSkin);
