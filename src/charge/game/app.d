@@ -238,6 +238,23 @@ public:
 		}
 	}
 
+	void network()
+	{
+	}
+
+
+	/*
+	 *
+	 * Router functions.
+	 *
+	 */
+
+
+	void quit()
+	{
+		running = false;
+	}
+
 	void push(Runner r)
 	{
 		assert(r !is null);

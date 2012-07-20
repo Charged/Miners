@@ -76,6 +76,11 @@ interface Router
 {
 public:
 	/**
+	 * Quit the game.
+	 */
+	void quit();
+
+	/**
 	 * Push this runner to top of the stack.
 	 */
 	void push(Runner r);
