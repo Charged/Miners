@@ -51,7 +51,6 @@ public:
 		running = true;
 
 		c = Core(opts);
-		c.init();
 
 		i = Input();
 		i.quit ~= &stop;
