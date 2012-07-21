@@ -5,23 +5,20 @@ module miners.ion.runner;
 import std.stdio;
 static import std.file;
 
-import lib.dcpu.dcpu;
-
 import charge.charge;
-
-import charge.game.gui.container;
-import charge.game.gui.messagelog;
 
 import miners.world;
 import miners.runner;
 import miners.viewer;
 import miners.options;
 import miners.interfaces;
-import miners.ion.texture;
 import miners.classic.world;
 import miners.actors.camera;
 import miners.actors.sunlight;
 import miners.actors.otherplayer;
+
+import charge.game.dcpu.cpu;
+import charge.game.dcpu.lem1802;
 
 
 /**
@@ -32,10 +29,8 @@ class IonRunner : public ViewerRunner
 private:
 	mixin SysLogging;
 
-	vm_t* vm;
-	//Dcpu c;
-	bool cpuRunning;
-	DpcuTexture ct;
+	Dcpu c;
+	Lem1802 lem;
 	GfxDraw d;
 	GfxSpotLight sl;
 
@@ -49,12 +44,11 @@ public:
 
 		super(r, opts, new ClassicWorld(opts));
 
-		cpuRunning = true;
-		vm = vm_create();
-		vm.ram[0 .. mem.length] = mem;
+		c = new Dcpu();
+		c.ram[0 .. mem.length] = mem;
 
 		d = new GfxDraw();
-		ct = new DpcuTexture(vm.ram.ptr);
+		lem = new Lem1802(c);
 
 		sl = new GfxSpotLight();
 		w.gfx.add(sl);
@@ -63,23 +57,22 @@ public:
 	~this()
 	{
 		assert(sl is null);
-		assert(vm is null);
-		assert(ct is null);
+		assert(c is null);
+		assert(lem is null);
 	}
 
 	void close()
 	{
 		w.gfx.remove(sl);
 		delete sl;
-
-		if (vm !is null) {
-			vm_free(vm);
-			vm = null;
+		if (c !is null) {
+			c.close();
+			c = null;
 		}
 
-		if (ct !is null) {
-			ct.destruct();
-			ct = null;
+		if (lem !is null) {
+			lem.destruct();
+			lem = null;
 		}
 
 		super.close();
@@ -94,10 +87,7 @@ public:
 	{
 		super.logic();
 
-		if (!cpuRunning)
-			return;
-
-		cpuRunning = vm_run_cycles(vm, 10000);
+		c.step(1000);
 	}
 
 	void render(GfxRenderTarget rt)
@@ -109,15 +99,17 @@ public:
 
 		r.render(w.gfx, cam.current, rt);
 
-		ct.paint();
-		auto t = ct.texture;
+		lem.paintTexture();
+		auto t = lem.texture;
 
-		int x = rt.width / 2 - t.width / 2;
-		int y = rt.height / 2 - t.height / 2;
+		int x = rt.width / 2 - t.width;
+		int y = rt.height / 2 - t.height;
 
 		d.target = rt;
 		d.start();
-		d.blit(t, x, y);
+		d.blit(t, Color4f.White, false,
+		       0, 0, t.width, t.height,
+		       x, y, t.width * 2, t.height * 2);
 		d.stop();
 	}
 }
