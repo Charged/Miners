@@ -349,7 +349,6 @@ public:
 		super(Pool(), name, GL_TEXTURE_2D);
 	}
 
-package:
 	void update(uint id, uint w, uint h)
 	{
 		if (glIsTexture(this.glId) && id != glId)
