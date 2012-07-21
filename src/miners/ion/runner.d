@@ -32,7 +32,8 @@ class IonRunner : public ViewerRunner
 private:
 	mixin SysLogging;
 
-	Dcpu c;
+	vm_t* vm;
+	//Dcpu c;
 	bool cpuRunning;
 	DpcuTexture ct;
 	GfxDraw d;
@@ -48,15 +49,12 @@ public:
 
 		super(r, opts, new ClassicWorld(opts));
 
-		c = Dcpu_Create();
-
 		cpuRunning = true;
-		Dcpu_SetSysCall(c, &cPrintf, 2, cast(void*)this);
-
-		Dcpu_GetRam(c)[0 .. mem.length] = mem;
+		vm = vm_create();
+		vm.ram[0 .. mem.length] = mem;
 
 		d = new GfxDraw();
-		ct = new DpcuTexture(Dcpu_GetRam(c));
+		ct = new DpcuTexture(vm.ram.ptr);
 
 		sl = new GfxSpotLight();
 		w.gfx.add(sl);
@@ -65,7 +63,7 @@ public:
 	~this()
 	{
 		assert(sl is null);
-		assert(c is null);
+		assert(vm is null);
 		assert(ct is null);
 	}
 
@@ -74,8 +72,10 @@ public:
 		w.gfx.remove(sl);
 		delete sl;
 
-		if (c !is null)
-			Dcpu_Destroy(&c);
+		if (vm !is null) {
+			vm_free(vm);
+			vm = null;
+		}
 
 		if (ct !is null) {
 			ct.destruct();
@@ -97,9 +97,7 @@ public:
 		if (!cpuRunning)
 			return;
 
-		cpuRunning = Dcpu_Execute(c, 10000) == 1;
-
-		auto m = Dcpu_GetRam(c);
+		cpuRunning = vm_run_cycles(vm, 10000);
 	}
 
 	void render(GfxRenderTarget rt)
@@ -121,22 +119,5 @@ public:
 		d.start();
 		d.blit(t, x, y);
 		d.stop();
-	}
-
-	void printf()
-	{
-		auto v = Dcpu_Pop(c);
-		auto s = Dcpu_GetRam(c)[v .. ushort.max];
-		foreach (c; s) {
-			if (!c)
-				break;
-			writef(cast(char)(0x7f & c));
-		}
-	}
-
-	extern(C) static void cPrintf(Dcpu me, void *data)
-	{
-		auto ir = cast(IonRunner)data;
-		ir.printf();
 	}
 }
