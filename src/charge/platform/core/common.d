@@ -90,6 +90,47 @@ protected:
 			initSfx(p);
 	}
 
+	void initSubSystem(coreFlag flag)
+	{
+		const not = coreFlag.PHY | coreFlag.SFX;
+
+		if (flag & ~not)
+			throw new Exception("Flag not supported");
+
+		if (flag == not)
+			throw new Exception("More then one flag not supported");
+
+		if (flag & coreFlag.PHY) {
+			if (phyLoaded)
+				return;
+
+			flags |= coreFlag.PHY;
+			loadPhy();
+			initPhy(p);
+
+			if (phyLoaded)
+				return;
+
+			flags &= ~coreFlag.PHY;
+			throw new Exception("Could not load PHY");
+		}
+
+		if (flag & coreFlag.SFX) {
+			if (sfxLoaded)
+				return;
+
+			flags |= coreFlag.SFX;
+			loadSfx();
+			initSfx(p);
+
+			if (sfxLoaded)
+				return;
+
+			flags &= ~coreFlag.SFX;
+			throw new Exception("Could not load SFX");
+		}
+	}
+
 	void notLoaded(coreFlag mask, char[] name)
 	{
 		if (flags & mask)
@@ -113,6 +154,9 @@ protected:
 
 	void loadPhy()
 	{
+		if (odeLoaded)
+			return;
+
 		version(DynamicODE) {
 			ode = Library.loads(libODEname);
 			if (ode is null) {
@@ -128,6 +172,9 @@ protected:
 
 	void loadSfx()
 	{
+		if (openalLoaded)
+			return;
+
 		openal = Library.loads(libOpenALname);
 		alut = Library.loads(libALUTname);
 

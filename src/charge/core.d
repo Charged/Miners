@@ -86,7 +86,22 @@ public:
 		return instance;
 	}
 
+	/**
+	 * Shutsdown everything, make sure you have freed all resources before
+	 * calling this function. It is not supported to initialize Core again
+	 * after a call to this function.
+	 */
 	abstract void close();
+
+	/**
+	 * Initialize a subsystem. Only a single subsystem can be initialized
+	 * a time. Will throw Exception upon failure.
+	 *
+	 * XXX: Most Cores are bit picky when it comes which subsystems can be
+	 * initialized after a general initialization, generally speaking
+	 * SFX and PHY should always work.
+	 */
+	abstract void initSubSystem(coreFlag flags);
 
 	/**
 	 * These functions are run just after Core is initialize and
