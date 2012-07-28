@@ -672,6 +672,10 @@ protected:
 			far_array[i-1] = near_array[i] * 1.005f;
 		}
 		far_array[splits-1] = far;
+
+		// Always make objects close look good.
+		near_array[1] = fmin(fmax(8, near+7), near_array[1]);
+		far_array[0] = near_array[1] * 1.005f;
 	}
 
 	void setDirSplitMatrices(SimpleLight dl, ProjCamera c,
@@ -735,12 +739,26 @@ protected:
 		gluTexUnitDisable(GL_TEXTURE_2D, 1);
 		gluTexUnitDisable(GL_TEXTURE_2D, 0);
 
-		// Need to be tweeked depending on distance.
-		glPolygonOffset(1.0f, 768.0f);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 
 		for (int i; i < num_splits; i++) {
 			depthTargetArray.setTarget(i);
+
+			// Magic values tweeked by hand.
+			float offset;
+			if (fars[i] < 8)
+				offset = 64.0f;
+			else if (fars[i] < 16)
+				offset = 128.0f;
+			else if (fars[i] < 64)
+				offset = 256.0f;
+			else if (fars[i] < 128)
+				offset = 512.0f;
+			else
+				offset = 1024.0f;
+
+			glPolygonOffset(1.0f, offset);
+
 			glViewport(0, 0, depthTargetArray.width, depthTargetArray.height);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			setDirSplitMatrices(dl, cam, nears[i], fars[i]);
