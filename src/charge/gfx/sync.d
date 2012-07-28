@@ -44,5 +44,5 @@ GfxSync gfxSyncInsert()
 	if (!GL_ARB_sync)
 		return null;
 
-	return glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	return cast(GfxSync)glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
