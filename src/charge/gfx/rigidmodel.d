@@ -35,6 +35,15 @@ public:
 		return new RigidModel(w, vbo);
 	}
 
+	static RigidModel opCall(World w, RigidMeshVBO vbo)
+	{
+		// Take on reference because the constructor doesn't.
+		RigidMeshVBO tmp;
+		vbo.reference(&tmp, vbo);
+
+		return new RigidModel(w, vbo);
+	}
+
 	void setSize(double sx, double sy, double sz)
 	{
 		x = sx;
