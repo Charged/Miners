@@ -7,7 +7,6 @@ import std.conv;
 import std.socket;
 import uri = std.uri;
 
-import lib.sdl.sdl;
 import std.c.string;
 
 import charge.sys.logger;
@@ -94,7 +93,6 @@ public:
 		sSetError.reset();
 		sSetError.add(s);
 
-		auto outerThen = SDL_GetTicks();
 		try {
 			// Ugh work around silly Phobos bug
 			version (Posix) {
