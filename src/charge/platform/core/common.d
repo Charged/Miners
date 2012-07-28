@@ -4,6 +4,7 @@ module charge.platform.core.common;
 
 import lib.loader;
 import lib.al.al;
+import lib.al.loader;
 import lib.ode.ode;
 
 import charge.core;

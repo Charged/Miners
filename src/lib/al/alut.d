@@ -1,7 +1,7 @@
 module lib.al.alut;
 
-import lib.loader;
 import lib.al.types;
+
 
 const ALUT_API_MAJOR_VERSION = 1;
 const ALUT_API_MINOR_VERSION = 1;
@@ -31,27 +31,6 @@ const ALUT_WAVEFORM_WHITENOISE = 0x103;
 const ALUT_WAVEFORM_IMPULSE = 0x104;
 const ALUT_LOADER_BUFFER = 0x300;
 const ALUT_LOADER_MEMORY = 0x301;
-
-void loadALUT(Loader l)
-{
-	loadFunc!(alutInit)(l);
-	loadFunc!(alutInitWithoutContext)(l);
-	loadFunc!(alutExit)(l);
-	loadFunc!(alutGetError)(l);
-	loadFunc!(alutGetErrorString)(l);
-	loadFunc!(alutCreateBufferFromFile)(l);
-	loadFunc!(alutCreateBufferFromFileImage)(l);
-	loadFunc!(alutCreateBufferHelloWorld)(l);
-	loadFunc!(alutCreateBufferWaveform)(l);
-	loadFunc!(alutLoadMemoryFromFile)(l);
-	loadFunc!(alutLoadMemoryFromFileImage)(l);
-	loadFunc!(alutLoadMemoryHelloWorld)(l);
-	loadFunc!(alutLoadMemoryWaveform)(l);
-	loadFunc!(alutGetMIMETypes)(l);
-	loadFunc!(alutGetMajorVersion)(l);
-	loadFunc!(alutGetMinorVersion)(l);
-	loadFunc!(alutSleep)(l);	
-}
 
 extern(C):
 

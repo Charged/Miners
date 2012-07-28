@@ -1,31 +1,7 @@
 module lib.al.alc;
 
-import lib.loader;
 import lib.al.types;
 
-void loadALC(Loader l)
-{
-	loadFunc!(alcCreateContext)(l);
-	loadFunc!(alcMakeContextCurrent)(l);
-	loadFunc!(alcProcessContext)(l);
-	loadFunc!(alcSuspendContext)(l);
-	loadFunc!(alcDestroyContext)(l);
-	loadFunc!(alcGetCurrentContext)(l);
-	loadFunc!(alcGetContextsDevice)(l);
-	loadFunc!(alcOpenDevice)(l);
-	loadFunc!(alcCloseDevice)(l);
-	loadFunc!(alcGetError)(l);
-	loadFunc!(alcIsExtensionPresent)(l);
-	loadFunc!(alcGetProcAddress)(l);
-	loadFunc!(alcGetEnumValue)(l);
-	loadFunc!(alcGetString)(l);
-	loadFunc!(alcGetIntegerv)(l);
-	loadFunc!(alcCaptureOpenDevice)(l);
-	loadFunc!(alcCaptureCloseDevice)(l);
-	loadFunc!(alcCaptureStart)(l);
-	loadFunc!(alcCaptureStop)(l);
-	loadFunc!(alcCaptureSamples)(l);
-}
 
 const ALC_FALSE                            = 0;
 const ALC_TRUE                             = 1;
