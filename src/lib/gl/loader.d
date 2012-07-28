@@ -37,6 +37,7 @@ void loadGL(Loader l)
 	findExtentions();
 	loadGL_EXT_framebuffer_object(l);
 	loadGL_NV_depth_buffer_float(l);
+	loadGL_ARB_sync(l);
 	loadGL_ARB_texture_compression(l);
 	loadGL_ARB_vertex_buffer_object(l);
 	loadGL_ARB_vertex_array_object(l);
@@ -146,6 +147,7 @@ void findExtentions()
 
 	testFunc!(GL_EXT_framebuffer_object)(e);
 	testFunc!(GL_ARB_texture_compression)(e);
+	testFunc!(GL_ARB_sync)(e);
 	testFunc!(GL_NV_depth_buffer_float)(e);
 	testFunc!(GL_ARB_vertex_buffer_object)(e);
 	testFunc!(GL_ARB_vertex_array_object)(e);
@@ -761,6 +763,20 @@ void loadGL_APPLE_vertex_array_object(Loader l)
 	loadFunc!(glDeleteVertexArraysAPPLE)(l);
 	loadFunc!(glGenVertexArraysAPPLE)(l);
 	loadFunc!(glIsVertexArrayAPPLE)(l);
+}
+
+void loadGL_ARB_sync(Loader l)
+{
+	if (!GL_ARB_sync)
+		return;
+
+	loadFunc!(glFenceSync)(l);
+	loadFunc!(glIsSync)(l);
+	loadFunc!(glDeleteSync)(l);
+	loadFunc!(glClientWaitSync)(l);
+	loadFunc!(glWaitSync)(l);
+	loadFunc!(glGetInteger64v)(l);
+	loadFunc!(glGetSynciv)(l);
 }
 
 void loadGL_ARB_texture_compression(Loader l)

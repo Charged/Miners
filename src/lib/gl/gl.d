@@ -14,6 +14,7 @@ import lib.gl.core.gl20;
 import lib.gl.core.gl21;
 import lib.gl.ext.extframebufferobject;
 import lib.gl.ext.nvdepthbufferfloat;
+import lib.gl.ext.arbsync;
 import lib.gl.ext.arbtexturecompression;
 import lib.gl.ext.arbvertexbufferobject;
 import lib.gl.ext.arbvertexarrayobject;

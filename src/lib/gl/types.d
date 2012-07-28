@@ -30,6 +30,11 @@ alias char      GLcharARB;
 alias size_t    GLsizeiptrARB;
 alias int*      GLintptrARB;
 
+// GL_ARB_sync
+alias long GLint64;
+alias ulong GLuint64;
+alias void* GLsync;
+
 // GL_NV_half_float
 alias ushort    GLhalf;
 
