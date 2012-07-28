@@ -19,6 +19,7 @@ import lib.loader;
 import lib.gl.gl;
 import lib.gl.loader;
 import lib.sdl.sdl;
+import lib.sdl.loader;
 
 
 extern(C) Core chargeCore(CoreOptions opts)

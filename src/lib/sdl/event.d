@@ -5,6 +5,7 @@ module lib.sdl.event;
 import lib.sdl.types;
 import lib.sdl.keyboard;
 
+
 const SDL_RELEASED = 0;
 const SDL_PRESSED  = 1;
 
@@ -200,20 +201,6 @@ const SDL_ENABLE  = 1;
 
 version (DynamicSDL)
 {
-import lib.loader;
-
-package void loadSDL_Event(Loader l)
-{
-	loadFunc!(SDL_PumpEvents)(l);
-	loadFunc!(SDL_PeepEvents)(l);
-	loadFunc!(SDL_PollEvent)(l);
-	loadFunc!(SDL_WaitEvent)(l);
-	loadFunc!(SDL_PushEvent)(l);
-	loadFunc!(SDL_SetEventFilter)(l);
-	loadFunc!(SDL_GetEventFilter)(l);
-	loadFunc!(SDL_EventState)(l);
-}
-
 extern (C):
 void (*SDL_PumpEvents)();
 int (*SDL_PeepEvents)(SDL_Event *events, int numevents, SDL_eventaction action, Uint32 mask);

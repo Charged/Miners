@@ -5,6 +5,7 @@ module lib.sdl.keyboard;
 import lib.sdl.types;
 import lib.sdl.keysym;
 
+
 struct SDL_keysym
 {
     Uint8 scancode;
@@ -19,19 +20,6 @@ const SDL_DEFAULT_REPEAT_INTERVAL = 30;
 
 version (DynamicSDL)
 {
-import lib.loader;
-
-package void loadSDL_Keyboard(Loader l)
-{
-	loadFunc!(SDL_EnableUNICODE)(l);
-	loadFunc!(SDL_EnableKeyRepeat)(l);
-	loadFunc!(SDL_GetKeyRepeat)(l);
-	loadFunc!(SDL_GetKeyState)(l);
-	loadFunc!(SDL_GetModState)(l);
-	loadFunc!(SDL_SetModState)(l);
-	loadFunc!(SDL_GetKeyName)(l);
-}
-
 extern (C):
 int (*SDL_EnableUNICODE)(int);
 int (*SDL_EnableKeyRepeat)(int,int);

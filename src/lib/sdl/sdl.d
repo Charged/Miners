@@ -26,26 +26,6 @@ const SDL_INIT_EVERYTHING  = 0x0000FFFF;
 
 version (DynamicSDL)
 {
-import lib.loader;
-
-void loadSDL(Loader l)
-{
-	loadSDL_Event(l);
-	loadSDL_Video(l);
-	loadSDL_Keyboard(l);
-	loadSDL_Timer(l);
-	loadSDL_RWops(l);
-	loadSDL_audio(l);
-	loadSDL_Mouse(l);
-	loadSDL_Joystick(l);
-
-	loadFunc!(SDL_Init)(l);
-	loadFunc!(SDL_InitSubSystem)(l);
-	loadFunc!(SDL_QuitSubSystem)(l);
-	loadFunc!(SDL_WasInit)(l);
-	loadFunc!(SDL_Quit)(l);
-}
-
 extern (C):
 int (*SDL_Init)(Uint32 flags);
 int (*SDL_InitSubSystem)(Uint32 flags);

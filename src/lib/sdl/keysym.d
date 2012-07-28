@@ -2,6 +2,7 @@
 // See copyright in src/lib/sdl/sdl.d (LGPLv2+).
 module lib.sdl.keysym;
 
+
 alias int SDLKey;
 const SDLK_UNKNOWN        = 0;
 const SDLK_FIRST          = 0;

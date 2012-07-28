@@ -4,6 +4,7 @@ module lib.sdl.timer;
 
 import lib.sdl.types;
 
+
 enum : Uint32
 {
 	SDL_TIMESLICE  = 10,
@@ -17,18 +18,6 @@ typedef extern(C) Uint32 function(Uint32,void*) SDL_NewTimerCallback;
 
 version (DynamicSDL)
 {
-import lib.loader;
-
-package void loadSDL_Timer(Loader l)
-{
-
-	loadFunc!(SDL_GetTicks)(l);
-	loadFunc!(SDL_Delay)(l);
-	loadFunc!(SDL_SetTimer)(l);
-	loadFunc!(SDL_AddTimer)(l);
-	loadFunc!(SDL_RemoveTimer)(l);
-}
-
 extern(C):
 Uint32 (*SDL_GetTicks)();
 void (*SDL_Delay)(Uint32);

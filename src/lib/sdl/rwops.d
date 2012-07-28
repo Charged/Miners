@@ -6,6 +6,7 @@ import std.c.stdio;
 
 import lib.sdl.types;
 
+
 struct SDL_RWops
 {
 public:
@@ -54,30 +55,6 @@ const RW_SEEK_END = 2;
 
 version (DynamicSDL)
 {
-import lib.loader;
-
-package void loadSDL_RWops(Loader l)
-{
-	loadFunc!(SDL_RWFromFile)(l);
-	loadFunc!(SDL_RWFromFP)(l);
-	loadFunc!(SDL_RWFromMem)(l);
-	loadFunc!(SDL_RWFromConstMem)(l);
-	loadFunc!(SDL_AllocRW)(l);
-	loadFunc!(SDL_FreeRW)(l);
-	loadFunc!(SDL_ReadLE16)(l);
-	loadFunc!(SDL_ReadBE16)(l);
-	loadFunc!(SDL_ReadLE32)(l);
-	loadFunc!(SDL_ReadBE32)(l);
-	loadFunc!(SDL_ReadLE64)(l);
-	loadFunc!(SDL_ReadBE64)(l);
-	loadFunc!(SDL_WriteLE16)(l);
-	loadFunc!(SDL_WriteBE16)(l);
-	loadFunc!(SDL_WriteLE32)(l);
-	loadFunc!(SDL_WriteBE32)(l);
-	loadFunc!(SDL_WriteLE64)(l);
-	loadFunc!(SDL_WriteBE64)(l);
-}
-
 extern (C):
 SDL_RWops* (*SDL_RWFromFile)(char *file, char *mode);
 SDL_RWops* (*SDL_RWFromFP)(FILE *fp, int autoclose);

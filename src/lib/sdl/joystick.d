@@ -4,6 +4,7 @@ module lib.sdl.joystick;
 
 import lib.sdl.types;
 
+
 alias void* SDL_Joystick;
 
 const SDL_HAT_CENTERED =	0x00;
@@ -18,28 +19,6 @@ const SDL_HAT_LEFTDOWN =	(SDL_HAT_LEFT|SDL_HAT_DOWN);
 
 version (DynamicSDL)
 {
-import lib.loader;
-
-package void loadSDL_Joystick(Loader l)
-{
-	loadFunc!(SDL_NumJoysticks)(l);
-	loadFunc!(SDL_JoystickName)(l);
-	loadFunc!(SDL_JoystickOpen)(l);
-	loadFunc!(SDL_JoystickOpened)(l);
-	loadFunc!(SDL_JoystickIndex)(l);
-	loadFunc!(SDL_JoystickNumAxes)(l);
-	loadFunc!(SDL_JoystickNumBalls)(l);
-	loadFunc!(SDL_JoystickNumHats)(l);
-	loadFunc!(SDL_JoystickNumButtons)(l);
-	loadFunc!(SDL_JoystickUpdate)(l);
-	loadFunc!(SDL_JoystickEventState)(l);
-	loadFunc!(SDL_JoystickGetAxis)(l);
-	loadFunc!(SDL_JoystickGetHat)(l);
-	loadFunc!(SDL_JoystickGetBall)(l);
-	loadFunc!(SDL_JoystickGetButton)(l);
-	loadFunc!(SDL_JoystickClose)(l);
-}
-
 extern(C):
 int (*SDL_NumJoysticks)();
 char* (*SDL_JoystickName)(int device_index);
