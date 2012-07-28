@@ -2,12 +2,6 @@
 // See copyright at the bottom of this file (BSD/MIT like).
 module lib.gl.gl;
 
-import std.conv;
-import std.stdio;
-import std.string;
-
-import lib.loader;
-
 public:
 import lib.gl.types;
 import lib.gl.core.gl10;
@@ -30,87 +24,8 @@ import lib.gl.ext.exttexturearray;
 import lib.gl.ext.exttexturecompressions3tc;
 import lib.gl.glu;
 
-struct glVersion {
-	static uint major;
-	static uint minor;
-};
-
-void loadGL(Loader l)
-{
-	loadFunc!(glGetString)(l);
-
-	if (glGetString is null)
-		return;
-
-	findCore();
-	loadGL10(l);
-	loadGL11(l);
-	loadGL12(l);
-	loadGL13(l);
-	loadGL14(l);
-	loadGL15(l);
-	loadGL20(l);
-	loadGL21(l);
-
-	findExtentions();
-	loadGL_EXT_framebuffer_object(l);
-	loadGL_NV_depth_buffer_float(l);
-	loadGL_ARB_texture_compression(l);
-	loadGL_ARB_vertex_buffer_object(l);
-	loadGL_ARB_vertex_array_object(l);
-	loadGL_APPLE_vertex_array_object(l);
-	loadGL_EXT_geometry_shader4(l);
-	loadGL_EXT_texture_array(l);
-
-	loadGL_CHARGE_vertex_array_object();
-}
 
 private:
-
-struct testFunc(alias T)
-{
-	static void opCall(char[] string) {
-		try {
-			T = find(string, T.stringof) >= 0;
-		} catch (Exception e) {}
-	}
-}
-
-void findCore()
-{
-	glVersion.major = 0;
-	glVersion.minor = 0;
-
-	auto ver = toString(glGetString(GL_VERSION)); 
-	glVersion.major = toUint(ver[0 .. 1]);
-	glVersion.minor = toUint(ver[2 .. 3]);
-
-	GL_VERSION_1_0 = glVersion.major == 1 && glVersion.minor >= 0 || glVersion.major > 1;
-	GL_VERSION_1_1 = glVersion.major == 1 && glVersion.minor >= 1 || glVersion.major > 1;
-	GL_VERSION_1_2 = glVersion.major == 1 && glVersion.minor >= 2 || glVersion.major > 1;
-	GL_VERSION_1_3 = glVersion.major == 1 && glVersion.minor >= 3 || glVersion.major > 1;
-	GL_VERSION_1_4 = glVersion.major == 1 && glVersion.minor >= 4 || glVersion.major > 1;
-	GL_VERSION_1_5 = glVersion.major == 1 && glVersion.minor >= 5 || glVersion.major > 1;
-	GL_VERSION_2_0 = glVersion.major == 2 && glVersion.minor >= 0 || glVersion.major > 2;
-	GL_VERSION_2_1 = glVersion.major == 2 && glVersion.minor >= 1 || glVersion.major > 2;
-}
-
-void findExtentions()
-{
-	char[] e = toString(glGetString(GL_EXTENSIONS));
-
-	testFunc!(GL_EXT_framebuffer_object)(e);
-	testFunc!(GL_ARB_texture_compression)(e);
-	testFunc!(GL_NV_depth_buffer_float)(e);
-	testFunc!(GL_ARB_vertex_buffer_object)(e);
-	testFunc!(GL_ARB_vertex_array_object)(e);
-	testFunc!(GL_APPLE_vertex_array_object)(e);
-	testFunc!(GL_EXT_geometry_shader4)(e);
-	testFunc!(GL_EXT_texture_array)(e);
-	testFunc!(GL_EXT_texture_compression_s3tc)(e);
-}
-
-
 char[] licenseText = `
 The OpenGL Extension Wrangler Library
 Copyright (C) 2002-2008, Milan Ikits <milan ikits@ieee org>

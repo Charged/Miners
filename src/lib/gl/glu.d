@@ -2,71 +2,8 @@
 // See the copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.glu;
 
-import lib.loader;
 import lib.gl.types;
 
-void loadGLU(Loader l)
-{
-//	loadFunc!(gluBuild1DMipmapLevels)(l);
-	loadFunc!(gluBuild1DMipmaps)(l);
-//	loadFunc!(gluBuild2DMipmapLevels)(l);
-	loadFunc!(gluBuild2DMipmaps)(l);
-//	loadFunc!(gluBuild3DMipmapLevels)(l);
-//	loadFunc!(gluBuild3DMipmaps)(l);
-//	loadFunc!(gluCheckExtension)(l);
-	loadFunc!(gluErrorString)(l);
-	loadFunc!(gluGetString)(l);
-	loadFunc!(gluCylinder)(l);
-	loadFunc!(gluDisk)(l);
-	loadFunc!(gluPartialDisk)(l);
-	loadFunc!(gluSphere)(l);
-	loadFunc!(gluBeginCurve)(l);
-	loadFunc!(gluBeginPolygon)(l);
-	loadFunc!(gluBeginSurface)(l);
-	loadFunc!(gluBeginTrim)(l);
-	loadFunc!(gluEndCurve)(l);
-	loadFunc!(gluEndPolygon)(l);
-	loadFunc!(gluEndSurface)(l);
-	loadFunc!(gluEndTrim)(l);
-	loadFunc!(gluDeleteNurbsRenderer)(l);
-	loadFunc!(gluDeleteQuadric)(l);
-	loadFunc!(gluDeleteTess)(l);
-	loadFunc!(gluGetNurbsProperty)(l);
-	loadFunc!(gluGetTessProperty)(l);
-	loadFunc!(gluLoadSamplingMatrices)(l);
-	loadFunc!(gluNewNurbsRenderer)(l);
-	loadFunc!(gluNewQuadric)(l);
-	loadFunc!(gluNewTess)(l);
-	loadFunc!(gluNextContour)(l);
-	loadFunc!(gluNurbsCallback)(l);
-//	loadFunc!(gluNurbsCallbackData)(l);
-//	loadFunc!(gluNurbsCallbackDataEXT)(l);
-	loadFunc!(gluNurbsCurve)(l);
-	loadFunc!(gluNurbsProperty)(l);
-	loadFunc!(gluNurbsSurface)(l);
-	loadFunc!(gluPwlCurve)(l);
-	loadFunc!(gluQuadricCallback)(l);
-	loadFunc!(gluQuadricDrawStyle)(l);
-	loadFunc!(gluQuadricNormals)(l);
-	loadFunc!(gluQuadricOrientation)(l);
-	loadFunc!(gluQuadricTexture)(l);
-	loadFunc!(gluTessBeginContour)(l);
-	loadFunc!(gluTessBeginPolygon)(l);
-	loadFunc!(gluTessCallback)(l);
-	loadFunc!(gluTessEndContour)(l);
-	loadFunc!(gluTessEndPolygon)(l);
-	loadFunc!(gluTessNormal)(l);
-	loadFunc!(gluTessProperty)(l);
-	loadFunc!(gluTessVertex)(l);
-	loadFunc!(gluLookAt)(l);
-	loadFunc!(gluOrtho2D)(l);
-	loadFunc!(gluPerspective)(l);
-	loadFunc!(gluPickMatrix)(l);
-	loadFunc!(gluProject)(l);
-	loadFunc!(gluScaleImage)(l);
-	loadFunc!(gluUnProject)(l);
-//	loadFunc!(gluUnProject4)(l);
-}
 
 const GLU_VERSION = 100800;
 const GLU_EXTENSIONS = 100801;

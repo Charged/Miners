@@ -17,7 +17,9 @@ import charge.platform.core.common;
 
 import lib.loader;
 import lib.gl.gl;
+import lib.gl.loader;
 import lib.sdl.sdl;
+
 
 extern(C) Core chargeCore(CoreOptions opts)
 {

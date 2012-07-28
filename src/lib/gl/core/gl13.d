@@ -2,62 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.core.gl13;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_VERSION_1_3;
-
-void loadGL13(Loader l) {
-	if (!GL_VERSION_1_3)
-		return;
-
-	loadFunc!(glActiveTexture)(l);
-	loadFunc!(glClientActiveTexture)(l);
-	loadFunc!(glCompressedTexImage1D)(l);
-	loadFunc!(glCompressedTexImage2D)(l);
-	loadFunc!(glCompressedTexImage3D)(l);
-	loadFunc!(glCompressedTexSubImage1D)(l);
-	loadFunc!(glCompressedTexSubImage2D)(l);
-	loadFunc!(glCompressedTexSubImage3D)(l);
-	loadFunc!(glGetCompressedTexImage)(l);
-	loadFunc!(glLoadTransposeMatrixd)(l);
-	loadFunc!(glLoadTransposeMatrixf)(l);
-	loadFunc!(glMultTransposeMatrixd)(l);
-	loadFunc!(glMultTransposeMatrixf)(l);
-	loadFunc!(glMultiTexCoord1d)(l);
-	loadFunc!(glMultiTexCoord1dv)(l);
-	loadFunc!(glMultiTexCoord1f)(l);
-	loadFunc!(glMultiTexCoord1fv)(l);
-	loadFunc!(glMultiTexCoord1i)(l);
-	loadFunc!(glMultiTexCoord1iv)(l);
-	loadFunc!(glMultiTexCoord1s)(l);
-	loadFunc!(glMultiTexCoord1sv)(l);
-	loadFunc!(glMultiTexCoord2d)(l);
-	loadFunc!(glMultiTexCoord2dv)(l);
-	loadFunc!(glMultiTexCoord2f)(l);
-	loadFunc!(glMultiTexCoord2fv)(l);
-	loadFunc!(glMultiTexCoord2i)(l);
-	loadFunc!(glMultiTexCoord2iv)(l);
-	loadFunc!(glMultiTexCoord2s)(l);
-	loadFunc!(glMultiTexCoord2sv)(l);
-	loadFunc!(glMultiTexCoord3d)(l);
-	loadFunc!(glMultiTexCoord3dv)(l);
-	loadFunc!(glMultiTexCoord3f)(l);
-	loadFunc!(glMultiTexCoord3fv)(l);
-	loadFunc!(glMultiTexCoord3i)(l);
-	loadFunc!(glMultiTexCoord3iv)(l);
-	loadFunc!(glMultiTexCoord3s)(l);
-	loadFunc!(glMultiTexCoord3sv)(l);
-	loadFunc!(glMultiTexCoord4d)(l);
-	loadFunc!(glMultiTexCoord4dv)(l);
-	loadFunc!(glMultiTexCoord4f)(l);
-	loadFunc!(glMultiTexCoord4fv)(l);
-	loadFunc!(glMultiTexCoord4i)(l);
-	loadFunc!(glMultiTexCoord4iv)(l);
-	loadFunc!(glMultiTexCoord4s)(l);
-	loadFunc!(glMultiTexCoord4sv)(l);
-	loadFunc!(glSampleCoverage)(l);
-}
 
 const GL_TEXTURE0 = 0x84C0;
 const GL_TEXTURE1 = 0x84C1;

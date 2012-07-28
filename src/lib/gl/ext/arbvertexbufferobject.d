@@ -2,24 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.ext.arbvertexbufferobject;
 
-import lib.loader;
 import lib.gl.types;
 
-bool GL_ARB_vertex_buffer_object;
 
-void loadGL_ARB_vertex_buffer_object(Loader l) {
-	loadFunc!(glBindBufferARB)(l);
-	loadFunc!(glDeleteBuffersARB)(l);
-	loadFunc!(glGenBuffersARB)(l);
-	loadFunc!(glIsBufferARB)(l);
-	loadFunc!(glBufferDataARB)(l);
-	loadFunc!(glBufferSubDataARB)(l);
-	loadFunc!(glGetBufferSubDataARB)(l);
-	loadFunc!(glMapBufferARB)(l);
-	loadFunc!(glUnmapBufferARB)(l);
-	loadFunc!(glGetBufferParameterivARB)(l);
-	loadFunc!(glGetBufferPointervARB)(l);
-}
+bool GL_ARB_vertex_buffer_object;
 
 const GL_ARRAY_BUFFER_ARB = 0x8892;
 const GL_ELEMENT_ARRAY_BUFFER_ARB = 0x8893;

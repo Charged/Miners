@@ -2,33 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.ext.extframebufferobject;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_EXT_framebuffer_object;
-
-void loadGL_EXT_framebuffer_object(Loader l) {
-	if (!GL_EXT_framebuffer_object)
-		return;
-
-	loadFunc!(glBindFramebufferEXT)(l);
-	loadFunc!(glBindRenderbufferEXT)(l);
-	loadFunc!(glCheckFramebufferStatusEXT)(l);
-	loadFunc!(glDeleteFramebuffersEXT)(l);
-	loadFunc!(glDeleteRenderbuffersEXT)(l);
-	loadFunc!(glFramebufferRenderbufferEXT)(l);
-	loadFunc!(glFramebufferTexture1DEXT)(l);
-	loadFunc!(glFramebufferTexture2DEXT)(l);
-	loadFunc!(glFramebufferTexture3DEXT)(l);
-	loadFunc!(glGenFramebuffersEXT)(l);
-	loadFunc!(glGenRenderbuffersEXT)(l);
-	loadFunc!(glGenerateMipmapEXT)(l);
-	loadFunc!(glGetFramebufferAttachmentParameterivEXT)(l);
-	loadFunc!(glGetRenderbufferParameterivEXT)(l);
-	loadFunc!(glIsFramebufferEXT)(l);
-	loadFunc!(glIsRenderbufferEXT)(l);
-	loadFunc!(glRenderbufferStorageEXT)(l);
-}
 
 const GL_INVALID_FRAMEBUFFER_OPERATION_EXT = 0x0506;
 const GL_MAX_RENDERBUFFER_SIZE_EXT = 0x84E8;

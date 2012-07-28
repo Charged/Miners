@@ -2,37 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.core.gl11;
 
-import lib.loader;
 import lib.gl.types;
 
-bool GL_VERSION_1_1;
 
-void loadGL11(Loader l)
-{
-	loadFunc!(glGenTextures)(l);
-	loadFunc!(glDeleteTextures)(l);
-	loadFunc!(glBindTexture)(l);
-	loadFunc!(glPrioritizeTextures)(l);
-	loadFunc!(glAreTexturesResident)(l);
-	loadFunc!(glIsTexture)(l);
-	loadFunc!(glTexSubImage1D)(l);
-	loadFunc!(glTexSubImage2D)(l);
-	loadFunc!(glCopyTexImage1D)(l);
-	loadFunc!(glCopyTexImage2D)(l);
-	loadFunc!(glCopyTexSubImage1D)(l);
-	loadFunc!(glCopyTexSubImage2D)(l);
-	loadFunc!(glVertexPointer)(l);
-	loadFunc!(glNormalPointer)(l);
-	loadFunc!(glColorPointer)(l);
-	loadFunc!(glIndexPointer)(l);
-	loadFunc!(glTexCoordPointer)(l);
-	loadFunc!(glEdgeFlagPointer)(l);
-	loadFunc!(glGetPointerv)(l);
-	loadFunc!(glArrayElement)(l);
-	loadFunc!(glDrawArrays)(l);
-	loadFunc!(glDrawElements)(l);
-	loadFunc!(glInterleavedArrays)(l);
-}
+bool GL_VERSION_1_1;
 
 const GL_PROXY_TEXTURE_1D = 0x8063;
 const GL_PROXY_TEXTURE_2D = 0x8064;

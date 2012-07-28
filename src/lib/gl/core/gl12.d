@@ -2,20 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.core.gl12;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_VERSION_1_2;
-
-void loadGL12(Loader l) {
-	if (!GL_VERSION_1_2)
-		return;
-
-	loadFunc!(glDrawRangeElements)(l);
-	loadFunc!(glTexImage3D)(l);
-	loadFunc!(glTexSubImage3D)(l);
-	loadFunc!(glCopyTexSubImage3D)(l);
-}
 
 const GL_UNSIGNED_BYTE_3_3_2 = 0x8032;
 const GL_UNSIGNED_SHORT_4_4_4_4 = 0x8033;

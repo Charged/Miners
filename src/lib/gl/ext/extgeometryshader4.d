@@ -2,20 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.ext.extgeometryshader4;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_EXT_geometry_shader4;
-
-void loadGL_EXT_geometry_shader4(Loader l) {
-	if (!GL_EXT_geometry_shader4)
-		return;
-
-	loadFunc!(glProgramParameteriEXT)(l);
-	loadFunc!(glFramebufferTextureEXT)(l);
-	loadFunc!(glFramebufferTextureLayerEXT)(l);
-	loadFunc!(glFramebufferTextureFaceEXT)(l);
-}
 
 const GL_GEOMETRY_SHADER_EXT = 0x8DD9;
 const GL_MAX_GEOMETRY_VARYING_COMPONENTS_EXT = 0x8DDD;
@@ -39,6 +29,7 @@ const GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER_EXT = 0x8CD4;
 const GL_PROGRAM_POINT_SIZE_EXT = 0x8642;
 
 extern (System):
+
 void (*glProgramParameteriEXT)(GLuint program, GLenum pname, GLint value);
 void (*glFramebufferTextureEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level);
 void (*glFramebufferTextureLayerEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);

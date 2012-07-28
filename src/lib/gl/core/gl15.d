@@ -2,35 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.core.gl15;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_VERSION_1_5;
-
-void loadGL15(Loader l) {
-	if (!GL_VERSION_1_5)
-		return;
-
-	loadFunc!(glGenQueries)(l);
-	loadFunc!(glDeleteQueries)(l);
-	loadFunc!(glIsQuery)(l);
-	loadFunc!(glBeginQuery)(l);
-	loadFunc!(glEndQuery)(l);
-	loadFunc!(glGetQueryiv)(l);
-	loadFunc!(glGetQueryObjectiv)(l);
-	loadFunc!(glGetQueryObjectuiv)(l);
-	loadFunc!(glBindBuffer)(l);
-	loadFunc!(glDeleteBuffers)(l);
-	loadFunc!(glGenBuffers)(l);
-	loadFunc!(glIsBuffer)(l);
-	loadFunc!(glBufferData)(l);
-	loadFunc!(glBufferSubData)(l);
-	loadFunc!(glGetBufferSubData)(l);
-	loadFunc!(glMapBuffer)(l);
-	loadFunc!(glUnmapBuffer)(l);
-	loadFunc!(glGetBufferParameteriv)(l);
-	loadFunc!(glGetBufferPointerv)(l);
-}
 
 const GL_BUFFER_SIZE = 0x8764;
 const GL_BUFFER_USAGE = 0x8765;

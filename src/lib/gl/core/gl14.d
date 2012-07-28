@@ -2,63 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.core.gl14;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_VERSION_1_4;
-
-void loadGL14(Loader l) {
-	if (!GL_VERSION_1_4)
-		return;
-
-	loadFunc!(glBlendEquation)(l);
-	loadFunc!(glBlendColor)(l);
-	loadFunc!(glFogCoordf)(l);
-	loadFunc!(glFogCoordfv)(l);
-	loadFunc!(glFogCoordd)(l);
-	loadFunc!(glFogCoorddv)(l);
-	loadFunc!(glFogCoordPointer)(l);
-	loadFunc!(glMultiDrawArrays)(l);
-	loadFunc!(glMultiDrawElements)(l);
-	loadFunc!(glPointParameteri)(l);
-	loadFunc!(glPointParameteriv)(l);
-	loadFunc!(glPointParameterf)(l);
-	loadFunc!(glPointParameterfv)(l);
-	loadFunc!(glSecondaryColor3b)(l);
-	loadFunc!(glSecondaryColor3bv)(l);
-	loadFunc!(glSecondaryColor3d)(l);
-	loadFunc!(glSecondaryColor3dv)(l);
-	loadFunc!(glSecondaryColor3f)(l);
-	loadFunc!(glSecondaryColor3fv)(l);
-	loadFunc!(glSecondaryColor3i)(l);
-	loadFunc!(glSecondaryColor3iv)(l);
-	loadFunc!(glSecondaryColor3s)(l);
-	loadFunc!(glSecondaryColor3sv)(l);
-	loadFunc!(glSecondaryColor3ub)(l);
-	loadFunc!(glSecondaryColor3ubv)(l);
-	loadFunc!(glSecondaryColor3ui)(l);
-	loadFunc!(glSecondaryColor3uiv)(l);
-	loadFunc!(glSecondaryColor3us)(l);
-	loadFunc!(glSecondaryColor3usv)(l);
-	loadFunc!(glSecondaryColorPointer)(l);
-	loadFunc!(glBlendFuncSeparate)(l);
-	loadFunc!(glWindowPos2d)(l);
-	loadFunc!(glWindowPos2f)(l);
-	loadFunc!(glWindowPos2i)(l);
-	loadFunc!(glWindowPos2s)(l);
-	loadFunc!(glWindowPos2dv)(l);
-	loadFunc!(glWindowPos2fv)(l);
-	loadFunc!(glWindowPos2iv)(l);
-	loadFunc!(glWindowPos2sv)(l);
-	loadFunc!(glWindowPos3d)(l);
-	loadFunc!(glWindowPos3f)(l);
-	loadFunc!(glWindowPos3i)(l);
-	loadFunc!(glWindowPos3s)(l);
-	loadFunc!(glWindowPos3dv)(l);
-	loadFunc!(glWindowPos3fv)(l);
-	loadFunc!(glWindowPos3iv)(l);
-	loadFunc!(glWindowPos3sv)(l);
-}
 
 const GL_GENERATE_MIPMAP = 0x8191;
 const GL_GENERATE_MIPMAP_HINT = 0x8192;

@@ -2,22 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.core.gl21;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_VERSION_2_1;
-
-void loadGL21(Loader l) {
-	if (!GL_VERSION_2_1)
-		return;
-
-	loadFunc!(glUniformMatrix2x3fv)(l);
-	loadFunc!(glUniformMatrix3x2fv)(l);
-	loadFunc!(glUniformMatrix2x4fv)(l);
-	loadFunc!(glUniformMatrix4x2fv)(l);
-	loadFunc!(glUniformMatrix3x4fv)(l);
-	loadFunc!(glUniformMatrix4x3fv)(l);
-}
 
 const GL_CURRENT_RASTER_SECONDARY_COLOR = 0x845F;
 const GL_PIXEL_PACK_BUFFER = 0x88EB;

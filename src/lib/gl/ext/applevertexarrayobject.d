@@ -2,20 +2,10 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.ext.applevertexarrayobject;
 
-import lib.loader;
 import lib.gl.types;
 
+
 bool GL_APPLE_vertex_array_object;
-
-void loadGL_APPLE_vertex_array_object(Loader l) {
-	if (!GL_APPLE_vertex_array_object)
-		return;
-
-	loadFunc!(glBindVertexArrayAPPLE)(l);
-	loadFunc!(glDeleteVertexArraysAPPLE)(l);
-	loadFunc!(glGenVertexArraysAPPLE)(l);
-	loadFunc!(glIsVertexArrayAPPLE)(l);
-}
 
 const GL_VERTEX_ARRAY_BINDING_APPLE = 0x85B5;
 

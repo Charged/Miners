@@ -2,21 +2,12 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.ext.exttexturearray;
 
-import lib.loader;
 import lib.gl.types;
 
 import lib.gl.ext.extgeometryshader4;
 
+
 bool GL_EXT_texture_array;
-
-void loadGL_EXT_texture_array(Loader l) {
-	if (!GL_EXT_texture_array)
-		return;
-
-	// Collides with GL_EXT_geometry_shader4
-	if (!GL_EXT_geometry_shader4)
-		loadFunc!(glFramebufferTextureLayerEXT)(l);
-}
 
 const GL_TEXTURE_1D_ARRAY_EXT = 0x8C18;
 const GL_TEXTURE_2D_ARRAY_EXT = 0x8C1A;
@@ -33,5 +24,6 @@ const GL_SAMPLER_1D_ARRAY_SHADOW_EXT = 0x8DC3;
 const GL_SAMPLER_2D_ARRAY_SHADOW_EXT = 0x8DC4;
 
 extern (System):
+
 // Collides with GL_EXT_geometry_shader4
 // void (*glFramebufferTextureLayerEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
