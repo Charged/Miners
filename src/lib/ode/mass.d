@@ -4,6 +4,7 @@ module lib.ode.mass;
 
 import lib.ode.common;
 
+
 struct dMass
 {
 	dReal mass;
@@ -43,29 +44,6 @@ struct dMass
 
 version(DynamicODE)
 {
-import lib.loader;
-
-package void loadODE_Mass(Loader l)
-{
-	loadFunc!(dMassCheck)(l);
-	loadFunc!(dMassSetZero)(l);
-	loadFunc!(dMassSetParameters)(l);
-	loadFunc!(dMassSetSphere)(l);
-	loadFunc!(dMassSetSphereTotal)(l);
-	loadFunc!(dMassSetCapsule)(l);
-	loadFunc!(dMassSetCapsuleTotal)(l);
-	loadFunc!(dMassSetCylinder)(l);
-	loadFunc!(dMassSetCylinderTotal)(l);
-	loadFunc!(dMassSetBox)(l);
-	loadFunc!(dMassSetBoxTotal)(l);
-	loadFunc!(dMassSetTrimesh)(l);
-//	loadFunc!(dMassSetTrimeshTotal)(l);
-	loadFunc!(dMassAdjust)(l);
-	loadFunc!(dMassTranslate)(l);
-	loadFunc!(dMassRotate)(l);
-	loadFunc!(dMassAdd)(l);
-}
-
 extern(C):
 int (*dMassCheck)(dMass *m);
 void (*dMassSetZero)(dMass *);

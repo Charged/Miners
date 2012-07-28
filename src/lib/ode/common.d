@@ -2,7 +2,6 @@
 // See copyright in src/ode/ode.d (BSD).
 module lib.ode.common;
 
-import lib.loader;
 
 alias float dReal;
 
@@ -114,14 +113,6 @@ struct dJointFeedback
 
 version(DynamicODE)
 {
-import lib.loader;
-
-void loadODE_Common(Loader l)
-{
-	loadFunc!(dGeomMoved)(l);
-	loadFunc!(dGeomGetBodyNext)(l);
-}
-
 extern (C):
 void (*dGeomMoved)(dGeomID);
 dGeomID (*dGeomGetBodyNext)(dGeomID);

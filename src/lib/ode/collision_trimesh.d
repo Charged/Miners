@@ -4,6 +4,7 @@ module lib.ode.collision_trimesh;
 
 import lib.ode.common;
 
+
 enum { TRIMESH_FACE_NORMALS };
 
 typedef void* dTriMeshDataID;
@@ -13,46 +14,9 @@ extern(C) {
 	typedef void dTriArrayCallback(dGeomID TriMesh, dGeomID RefObject, int* TriIndices, int TriCount);
 	typedef int dTriRayCallback(dGeomID TriMesh, dGeomID Ray, int TriangleIndex, dReal u, dReal v);
 }
+
 version(DynamicODE)
 {
-import lib.loader;
-
-package void loadODE_CollisionTrimesh(Loader l)
-{
-	loadFunc!(dGeomTriMeshDataCreate)(l);
-	loadFunc!(dGeomTriMeshDataDestroy)(l);
-	loadFunc!(dGeomTriMeshDataSet)(l);
-	loadFunc!(dGeomTriMeshDataGet)(l);
-	loadFunc!(dGeomTriMeshSetLastTransform)(l);
-	loadFunc!(dGeomTriMeshGetLastTransform)(l);
-	loadFunc!(dGeomTriMeshDataBuildSingle)(l);
-	loadFunc!(dGeomTriMeshDataBuildSingle1)(l);
-	loadFunc!(dGeomTriMeshDataBuildDouble)(l);
-	loadFunc!(dGeomTriMeshDataBuildDouble1)(l);
-	loadFunc!(dGeomTriMeshDataBuildSimple)(l);
-	loadFunc!(dGeomTriMeshDataBuildSimple1)(l);
-	loadFunc!(dGeomTriMeshDataPreprocess)(l);
-	loadFunc!(dGeomTriMeshDataGetBuffer)(l);
-	loadFunc!(dGeomTriMeshDataSetBuffer)(l);
-	loadFunc!(dGeomTriMeshSetCallback)(l);
-	loadFunc!(dGeomTriMeshGetCallback)(l);
-	loadFunc!(dGeomTriMeshSetArrayCallback)(l);
-	loadFunc!(dGeomTriMeshGetArrayCallback)(l);
-	loadFunc!(dGeomTriMeshSetRayCallback)(l);
-	loadFunc!(dGeomTriMeshGetRayCallback)(l);
-	loadFunc!(dCreateTriMesh)(l);
-	loadFunc!(dGeomTriMeshSetData)(l);
-	loadFunc!(dGeomTriMeshGetData)(l);
-	loadFunc!(dGeomTriMeshEnableTC)(l);
-	loadFunc!(dGeomTriMeshIsTCEnabled)(l);
-	loadFunc!(dGeomTriMeshClearTCCache)(l);
-	loadFunc!(dGeomTriMeshGetTriMeshDataID)(l);
-	loadFunc!(dGeomTriMeshGetTriangle)(l);
-	loadFunc!(dGeomTriMeshGetPoint)(l);
-	loadFunc!(dGeomTriMeshGetTriangleCount)(l);
-	loadFunc!(dGeomTriMeshDataUpdate)(l);
-}
-
 extern(C):
 dTriMeshDataID (*dGeomTriMeshDataCreate)();
 void (*dGeomTriMeshDataDestroy)(dTriMeshDataID g);

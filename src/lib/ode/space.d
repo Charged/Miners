@@ -5,32 +5,13 @@ module lib.ode.space;
 import lib.ode.common;
 import lib.ode.contact;
 
+
 extern (C) {
 	typedef void function (void *data, dGeomID o1, dGeomID o2) dNearCallback;
 }
 
 version(DynamicODE)
 {
-import lib.loader;
-
-package void loadODE_Space(Loader l)
-{
-	loadFunc!(dSimpleSpaceCreate)(l);
-	loadFunc!(dHashSpaceCreate)(l);
-	loadFunc!(dQuadTreeSpaceCreate)(l);
-	loadFunc!(dSpaceDestroy)(l);
-	loadFunc!(dHashSpaceSetLevels)(l);
-	loadFunc!(dHashSpaceGetLevels)(l);
-	loadFunc!(dSpaceSetCleanup)(l);
-	loadFunc!(dSpaceGetCleanup)(l);
-	loadFunc!(dSpaceAdd)(l);
-	loadFunc!(dSpaceRemove)(l);
-	loadFunc!(dSpaceQuery)(l);
-	loadFunc!(dSpaceClean)(l);
-	loadFunc!(dSpaceGetNumGeoms)(l);
-	loadFunc!(dSpaceGetGeom)(l);
-}
-
 extern(C):
 dSpaceID (*dSimpleSpaceCreate)(dSpaceID space);
 dSpaceID (*dHashSpaceCreate)(dSpaceID space);

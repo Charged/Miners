@@ -6,6 +6,7 @@ import lib.ode.common;
 import lib.ode.contact;
 import lib.ode.space;
 
+
 const CONTACTS_UNIMPORTANT = 0x80000000;
 
 const dMaxUserClasses = 4;
@@ -59,108 +60,6 @@ struct dGeomClass
 
 version(DynamicODE)
 {
-import lib.loader;
-
-package void loadODE_Collision(Loader l)
-{
-	loadFunc!(dGeomDestroy)(l);
-	loadFunc!(dGeomSetData)(l);
-	loadFunc!(dGeomGetData)(l);
-	loadFunc!(dGeomSetBody)(l);
-	loadFunc!(dGeomGetBody)(l);
-	loadFunc!(dGeomSetPosition)(l);
-	loadFunc!(dGeomSetRotation)(l);
-	loadFunc!(dGeomSetQuaternion)(l);
-	loadFunc!(dGeomGetPosition)(l);
-	loadFunc!(dGeomCopyPosition)(l);
-	loadFunc!(dGeomGetRotation)(l);
-	loadFunc!(dGeomCopyRotation)(l);
-	loadFunc!(dGeomGetQuaternion)(l);
-	loadFunc!(dGeomGetAABB)(l);
-	loadFunc!(dGeomIsSpace)(l);
-	loadFunc!(dGeomGetSpace)(l);
-	loadFunc!(dGeomGetClass)(l);
-	loadFunc!(dGeomSetCategoryBits)(l);
-	loadFunc!(dGeomSetCollideBits)(l);
-	loadFunc!(dGeomGetCategoryBits)(l);
-	loadFunc!(dGeomGetCollideBits)(l);
-	loadFunc!(dGeomEnable)(l);
-	loadFunc!(dGeomDisable)(l);
-	loadFunc!(dGeomIsEnabled)(l);
-	loadFunc!(dGeomSetOffsetPosition)(l);
-	loadFunc!(dGeomSetOffsetRotation)(l);
-	loadFunc!(dGeomSetOffsetQuaternion)(l);
-	loadFunc!(dGeomSetOffsetWorldPosition)(l);
-	loadFunc!(dGeomSetOffsetWorldRotation)(l);
-	loadFunc!(dGeomSetOffsetWorldQuaternion)(l);
-	loadFunc!(dGeomClearOffset)(l);
-	loadFunc!(dGeomIsOffset)(l);
-	loadFunc!(dGeomGetOffsetPosition)(l);
-	loadFunc!(dGeomCopyOffsetPosition)(l);
-	loadFunc!(dGeomGetOffsetRotation)(l);
-	loadFunc!(dGeomCopyOffsetRotation)(l);
-	loadFunc!(dGeomGetOffsetQuaternion)(l);
-	loadFunc!(dCollide)(l);
-	loadFunc!(dSpaceCollide)(l);
-	loadFunc!(dSpaceCollide2)(l);
-	loadFunc!(dCreateSphere)(l);
-	loadFunc!(dGeomSphereSetRadius)(l);
-	loadFunc!(dGeomSphereGetRadius)(l);
-	loadFunc!(dGeomSpherePointDepth)(l);
-	loadFunc!(dCreateConvex)(l);
-	loadFunc!(dGeomSetConvex)(l);
-	loadFunc!(dCreateBox)(l);
-	loadFunc!(dGeomBoxSetLengths)(l);
-	loadFunc!(dGeomBoxGetLengths)(l);
-	loadFunc!(dGeomBoxPointDepth)(l);
-	loadFunc!(dCreatePlane)(l);
-	loadFunc!(dGeomPlaneSetParams)(l);
-	loadFunc!(dGeomPlaneGetParams)(l);
-	loadFunc!(dGeomPlanePointDepth)(l);
-	loadFunc!(dCreateCapsule)(l);
-	loadFunc!(dGeomCapsuleSetParams)(l);
-	loadFunc!(dGeomCapsuleGetParams)(l);
-	loadFunc!(dGeomCapsulePointDepth)(l);
-	loadFunc!(dCreateCylinder)(l);
-	loadFunc!(dGeomCylinderSetParams)(l);
-	loadFunc!(dGeomCylinderGetParams)(l);
-	loadFunc!(dCreateRay)(l);
-	loadFunc!(dGeomRaySetLength)(l);
-	loadFunc!(dGeomRayGetLength)(l);
-	loadFunc!(dGeomRaySet)(l);
-	loadFunc!(dGeomRayGet)(l);
-	loadFunc!(dGeomRaySetParams)(l);
-	loadFunc!(dGeomRayGetParams)(l);
-	loadFunc!(dGeomRaySetClosestHit)(l);
-	loadFunc!(dGeomRayGetClosestHit)(l);
-	loadFunc!(dCreateGeomTransform)(l);
-	loadFunc!(dGeomTransformSetGeom)(l);
-	loadFunc!(dGeomTransformGetGeom)(l);
-	loadFunc!(dGeomTransformSetCleanup)(l);
-	loadFunc!(dGeomTransformGetCleanup)(l);
-	loadFunc!(dGeomTransformSetInfo)(l);
-	loadFunc!(dGeomTransformGetInfo)(l);
-	loadFunc!(dCreateHeightfield)(l);
-	loadFunc!(dGeomHeightfieldDataCreate)(l);
-	loadFunc!(dGeomHeightfieldDataDestroy)(l);
-	loadFunc!(dGeomHeightfieldDataBuildCallback)(l);
-	loadFunc!(dGeomHeightfieldDataBuildByte)(l);
-	loadFunc!(dGeomHeightfieldDataBuildShort)(l);
-	loadFunc!(dGeomHeightfieldDataBuildSingle)(l);
-	loadFunc!(dGeomHeightfieldDataBuildDouble)(l);
-	loadFunc!(dGeomHeightfieldDataSetBounds)(l);
-	loadFunc!(dGeomHeightfieldSetHeightfieldData)(l);
-	loadFunc!(dGeomHeightfieldGetHeightfieldData)(l);
-	loadFunc!(dClosestLineSegmentPoints)(l);
-	loadFunc!(dBoxTouchesBox)(l);
-	loadFunc!(dBoxBox)(l);
-	loadFunc!(dInfiniteAABB)(l);
-	loadFunc!(dCloseODE)(l);
-	loadFunc!(dCreateGeomClass)(l);
-	loadFunc!(dGeomGetClassData)(l);
-	loadFunc!(dCreateGeom)(l);
-}
-
 extern(C):
 void (*dGeomDestroy)(dGeomID geom);
 void (*dGeomSetData)(dGeomID geom, void* data);

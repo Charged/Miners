@@ -6,6 +6,7 @@ import lib.loader;
 import lib.al.al;
 import lib.al.loader;
 import lib.ode.ode;
+import lib.ode.loader;
 
 import charge.core;
 import charge.sfx.sfx;

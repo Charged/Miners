@@ -2,8 +2,6 @@
 // See copyright at the bottom of this file.
 module lib.ode.ode;
 
-import lib.loader;
-
 public:
 import lib.ode.common;
 import lib.ode.mass;
@@ -14,19 +12,6 @@ import lib.ode.collision_trimesh;
 import lib.ode.space;
 import lib.ode.init;
 
-version(DynamicODE)
-{
-void loadODE(Loader l)
-{
-	loadODE_Objects(l);
-	loadODE_Mass(l);
-	loadODE_Collision(l);
-	loadODE_CollisionTrimesh(l);
-	loadODE_Space(l);
-	loadODE_Common(l);
-	loadODE_Init(l);
-}
-}
 
 char[] licenseText = `
 Open Dynamics Engine

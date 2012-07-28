@@ -4,6 +4,7 @@ module lib.ode.contact;
 
 import lib.ode.common;
 
+
 const dContactMu2       = 0x001;
 const dContactFDir1     = 0x002;
 const dContactBounce    = 0x004;
