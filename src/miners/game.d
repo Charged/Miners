@@ -103,8 +103,6 @@ private:
 
 	bool built; /**< Have we built a chunk */
 
-	int ticks;
-
 	GfxDraw d;
 
 	// Extracted files from minecraft
@@ -653,22 +651,11 @@ protected:
 		if (skin !is null)
 			skin.doTick();
 
-		ticks++;
-
 		// This make sure we at least always
 		// builds at least one chunk per frame.
 		built = false;
 
 		super.logic();
-	}
-
-	void render()
-	{
-		if (ticks < 2)
-			return;
-		ticks = 0;
-
-		super.render();
 	}
 
 	void idle(long time)

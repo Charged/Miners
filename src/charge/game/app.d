@@ -11,6 +11,8 @@ import charge.gfx.target;
 import charge.sys.resource;
 import charge.game.runner;
 
+import charge.gfx.sync;
+
 
 struct TimeKeeper
 {
@@ -87,6 +89,8 @@ protected:
 	TimeKeeper inputTime;
 	TimeKeeper idleTime;
 
+	bool changed; //< Tracks if should render
+
 public:
 	this(CoreOptions opts = null)
 	{
@@ -139,7 +143,6 @@ public:
 		long where = now;
 		long last = now;
 
-		bool changed;
 
 		while(running) {
 			now = SDL_GetTicks();
@@ -157,8 +160,8 @@ public:
 			}
 
 			if (changed) {
-				do_render();
 				changed = false;
+				do_render();
 			}
 
 			now = SDL_GetTicks();
@@ -179,11 +182,16 @@ private:
 
 abstract class RouterApp : SimpleApp, Router
 {
+protected:
+	bool fastRender = true; //< Try to render as fast as possible.
+
 private:
 	Vector!(Runner) vec;
 	Vector!(Runner) del;
 	Runner currentInput;
-	bool dirty;
+	bool dirty; //< Do we need to manage runners.
+
+	GfxSync curSync;
 
 public:
 	this(CoreOptions opts = null)
@@ -210,6 +218,10 @@ public:
 
 	void render()
 	{
+		changed = !gfxSyncWaitAndDelete(curSync, 0);
+		if (changed)
+			return;
+
 		auto rt = DefaultTarget();
 
 		int i = cast(int)vec.length;
@@ -223,6 +235,7 @@ public:
 			vec[i].render(rt);
 
 		rt.swap();
+		curSync = gfxSyncInsert();
 	}
 
 	void logic()
@@ -239,6 +252,18 @@ public:
 
 	void network()
 	{
+	}
+
+	void idle(long time)
+	{
+		charge.sys.resource.Pool().collect();
+
+		if (time > 0) {
+			if (curSync && fastRender)
+				gfxSyncWaitAndDelete(curSync, time);
+			else
+				SDL_Delay(cast(uint)time);
+		}
 	}
 
 
