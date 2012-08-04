@@ -234,17 +234,23 @@ public:
 		int yEnd = ws.ws_height;
 		int zEnd = ws.ws_depth;
 
-		int xOff = xPos * BuildWidth - 1;
-		int yOff = yPos * BuildHeight - 1;
-		int yOffMeta = yPos * BuildHeight;
+		int xOffStart = xPos * BuildWidth - 1;
 		int zOffStart = zPos * BuildDepth - 1;
 
-		int startX, y, yMeta, startZ;
+		int yOff = yPos * BuildHeight - 1;
+		int yOffMeta = yPos * BuildHeight;
+
+		int startX, startZ;
+		int y, yMeta;
 
 		// Handle underflow
-		if (xOff < 0) {
+		if (xOffStart < 0) {
 			startX++;
-			xOff++;
+			xOffStart++;
+		}
+		if (zOffStart < 0) {
+			startZ++;
+			zOffStart++;
 		}
 		if (yOff < 0) {
 			y = 1;
@@ -252,18 +258,14 @@ public:
 			yEnd--;
 			yOff++;
 		}
-		if (zOffStart < 0) {
-			startZ++;
-			zOffStart++;
-		}
 
 		// Handle overflow
-		if (xOff + xEnd >= xSize)
-			xEnd = xSize - xOff;
+		if (xOffStart + xEnd >= xSize)
+			xEnd = xSize - (xOffStart - startX);
+		if (zOffStart + zEnd >= zSize)
+			zEnd = zSize - (zOffStart - startZ);
 		if (yOff + yEnd >= ySize)
 			yEnd = ySize - yOff;
-		if (zOffStart + zEnd >= zSize)
-			zEnd = zSize - zOffStart;
 
 		// Need to include the whole last byte
 		int yMetaEnd = yEnd / 2 + (yEnd % 2);
@@ -271,9 +273,8 @@ public:
 		// Could be smarter about this
 		ws.zero();
 
-		for (int x = startX; x < xEnd; x++, xOff++) {
-			int zOff = zOffStart;
-			for (int z = startZ; z < zEnd; z++, zOff++) {
+		for (int x = startX, xOff = xOffStart; x < xEnd; x++, xOff++) {
+			for (int z = startZ, zOff = zOffStart; z < zEnd; z++, zOff++) {
 				assert(xPos >= 0 && yPos >= 0 && zPos >= 0);
 
 				auto ptr = getTypePointerUnsafe(xOff, yOff, zOff);
