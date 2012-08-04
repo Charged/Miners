@@ -46,7 +46,7 @@ private:
 public:
 	this(Router r, Options opts)
 	{
-		super(Type.Game);
+		super(Type.Menu);
 		this.r = r;
 		this.opts = opts;
 
