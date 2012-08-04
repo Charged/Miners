@@ -33,6 +33,7 @@ public:
 	{
 		if (opts !is null) {
 			opts.background -= &newBackground;
+			opts.backgroundTiled -= &changeOption;
 			opts.backgroundDoubled -= &changeOption;
 		}
 
@@ -48,14 +49,20 @@ public:
 		this.opts = opts;
 
 		opts.background ~= &newBackground;
+		opts.backgroundTiled ~= &changeOption;
 		opts.backgroundDoubled ~= &changeOption;
 		newBackground(opts.background());
 		changeOption(opts.backgroundDoubled());
 	}
 
-	void changeOption(bool val)
+	void changeOption(bool)
 	{
-		backgroundTiledCenter = !val;
-		backgroundTiledDoubled = val;
+		bool tiled = opts.backgroundTiled();
+		bool doubled = opts.backgroundDoubled();
+
+		if (tiled)
+			mode = doubled ? Mode.TiledDoubled : Mode.TiledCenterSeem;
+		else
+			mode = doubled ? Mode.CenterDoubled : Mode.Center;
 	}
 }

@@ -21,8 +21,16 @@ class BackgroundRunner : public Runner
 public:
 	Color4f color;
 
-	bool backgroundTiledDoubled;
-	bool backgroundTiledCenter;
+	enum Mode {
+		Color,
+		Center,
+		CenterDoubled,
+		Tiled,
+		TiledDoubled,
+		TiledCenterSeem,
+	}
+
+	Mode mode;
 
 protected:
 	Texture background;
@@ -53,20 +61,44 @@ public:
 		d.target = rt;
 		d.start();
 
-		if (background is null) {
+		auto mode = background is null ? Mode.Color : this.mode;
 
+		switch(mode) {
+		case Mode.Color:
 			// Fill everything with a single color
 			d.fill(color, false, 0, 0, rt.width, rt.height);
+			break;
+		case Mode.Center:
+			// Center the picture
+			int x = rt.width / 2 - background.width / 2;
+			int y = rt.height / 2 - background.height / 2;
 
-		} else if (backgroundTiledDoubled) {
+			d.fill(color, false, 0, 0, rt.width, rt.height);
+			d.blit(background, Color4f.White, false, x, y);
+			break;
+		case Mode.CenterDoubled:
+			// Centered and doubled
+			int x = rt.width / 2 - background.width;
+			int y = rt.height / 2 - background.height;
 
+			d.fill(color, false, 0, 0, rt.width, rt.height);
+			d.blit(background, Color4f.White, false,
+			       0, 0, background.width, background.height,
+			       x, y, background.width * 2, background.height * 2);
+			break;
+		case Mode.Tiled:
 			// Just a normal tile
+			d.blit(background, Color4f.White, false,
+			       0, 0, rt.width, rt.height,
+			       0, 0, rt.width, rt.height);
+			break;
+		case Mode.TiledDoubled:
+			// Like normal but dubbled.
 			d.blit(background, Color4f.White, false,
 			       0, 0, rt.width / 2, rt.height / 2,
 			       0, 0, rt.width, rt.height);
-
-		} else if (backgroundTiledCenter) {
-
+			break;
+		case Mode.TiledCenterSeem:
 			// Tile with a seem in the middle
 			uint bW = background.width * 100;
 			uint bH = background.height * 100;
@@ -77,14 +109,9 @@ public:
 			d.blit(background, Color4f.White, false,
 			       0, 0, bW, bH,
 			       -offX, -offY, bW, bH);
-		} else {
-
-			// Center the picture
-			int w = rt.width / 2 - background.width / 2;
-			int h = rt.height / 2 - background.height / 2;
-
-			d.fill(color, false, 0, 0, rt.width, rt.height);
-			d.blit(background, Color4f.White, false, w, h);
+			break;
+		default:
+			assert(false);
 		}
 
 		d.stop();

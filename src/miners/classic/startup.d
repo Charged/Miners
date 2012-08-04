@@ -35,7 +35,6 @@ private:
 
 	GfxDraw d;
 	Text statusText;
-	GfxTexture logo;
 
 
 	char[] playSession;
@@ -55,7 +54,6 @@ public:
 		mouse = CtlInput().mouse;
 
 		createLogo();
-		createBackground();
 
 		d = new GfxDraw();
 
@@ -79,7 +77,7 @@ public:
 
 		shutdownConnection();
 
-		sysReference(&logo, null);
+		createBackground();
 	}
 
 	void logic()
@@ -92,16 +90,6 @@ public:
 	{
 		d.target = rt;
 		d.start();
-
-		glClearColor(0, 0, 0, 0);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		if (logo !is null) {
-			int x = (rt.width - logo.width) / 2;
-			int y = (rt.height - logo.height) / 2;
-
-			d.blit(logo, Color4f.White, true, x, y);
-		}
 
 		if (statusText !is null) {
 			int x = rt.width - cast(int)retrievingString.length * gfxDefaultFont.width - 8;
@@ -143,7 +131,9 @@ protected:
 		aat.paintTexture();
 		tt.paintTexture();
 
-		sysReference(&this.logo, tt.texture);
+		opts.background = tt.texture;
+		opts.backgroundTiled = false;
+		opts.backgroundDoubled = false;
 
 		tt.breakApart();
 	}
@@ -161,6 +151,7 @@ protected:
 		tt.paintTexture();
 
 		opts.background = tt.texture;
+		opts.backgroundTiled = true;
 		opts.backgroundDoubled = false;
 
 		tt.breakApart();

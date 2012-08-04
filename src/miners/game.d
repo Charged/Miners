@@ -262,6 +262,7 @@ protected:
 		dirt.filter = GfxTexture.Filter.Nearest;
 		opts.dirt = dirt;
 		opts.background = dirt;
+		opts.backgroundTiled = true;
 		opts.backgroundDoubled = true;
 
 		sysReference(&dirtPic, null);
