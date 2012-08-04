@@ -168,6 +168,7 @@ public:
 
 		auto p = Core().properties;
 		p.add(opts.aaName, opts.aa());
+		p.add(opts.fovName, opts.fov());
 		p.add(opts.fogName, opts.fog());
 		p.add(opts.shadowName, opts.shadow());
 		p.add(opts.useCmdPrefixName, opts.useCmdPrefix());
