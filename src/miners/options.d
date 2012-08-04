@@ -62,6 +62,7 @@ public:
 
 	Option!(bool) aa; /**< should anti-aliasing be used */
 	Option!(bool) fog; /**< should fog be drawn */
+	Option!(int) fov; /**< which fov should be used */
 	Option!(bool) hideUi; /**< hide the user interface */
 	Option!(bool) shadow; /**< should advanced shadowing be used */
 	Option!(bool) showDebug; /**< should debug info be shown */
@@ -70,12 +71,14 @@ public:
 
 	const string aaName = "mc.aa";
 	const string fogName = "mc.fog";
+	const string fovName = "mc.fov";
 	const string shadowName = "mc.shadow";
 	const string useCmdPrefixName = "mc.useCmdPrefix";
 	const string viewDistanceName = "mc.viewDistance";
 
 	const bool aaDefault = true;
 	const bool fogDefault = true;
+	const int fovDefault = 45;
 	const bool shadowDefault = true;
 	const bool useCmdPrefixDefault = true;
 	const double viewDistanceDefault = 256;

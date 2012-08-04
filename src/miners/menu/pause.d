@@ -45,14 +45,16 @@ public:
 		auto b3 = new Button(mb, 0, b2.y + b2.h, "", minButtonWidth);
 		auto b4 = new Button(mb, 0, b3.y + b3.h, "", minButtonWidth);
 		auto b5 = new Button(mb, 0, b4.y + b4.h, "", minButtonWidth);
+		auto b6 = new Button(mb, 0, b5.y + b5.h, "", minButtonWidth);
 
-		int bY = b5.y + b5.h + 16;
+		auto lastButton = b6;
+		int bY = lastButton.y + lastButton.h + 16;
 
-		auto b6 = new Button(mb, 0, bY, "Quit", 8);
-		auto b7 = new Button(mb, bY, bY, "Close", 8);
+		auto bQuit = new Button(mb, 0, bY, "Quit", 8);
+		auto bClose = new Button(mb, bY, bY, "Close", 8);
 
-		b6.pressed ~= &quit;
-		b7.pressed ~= &close;
+		bQuit.pressed ~= &quit;
+		bClose.pressed ~= &close;
 
 		mb.repack();
 
@@ -64,16 +66,17 @@ public:
 		}
 
 		// Place the buttons next to each other.
-		b6.x = center - 8 - b6.w;
-		b7.x = center + 8;
+		bQuit.x = center - 8 - bQuit.w;
+		bClose.x = center + 8;
 
 		super(r, opts, mb);
 
 		setAaText(b1); b1.pressed ~= &aa;
 		setFogText(b2); b2.pressed ~= &fog;
 		setShadowText(b3); b3.pressed ~= &shadow;
-		setViewText(b4); b4.pressed ~= &view;
-		setFullscreenText(b5); b5.pressed ~= &fullscreen;
+		setViewText(b4); b5.pressed ~= &view;
+		setFovText(b5); b5.pressed ~= &fov;
+		setFullscreenText(b6); b6.pressed ~= &fullscreen;
 	}
 
 	void quit(Button b) { r.quit(); }
@@ -114,6 +117,32 @@ public:
 	void setAaText(Button b)
 	{
 		b.setText(opts.aa() ? aaOnText : aaOffText, minButtonWidth);
+	}
+
+	void fov(Button b)
+	{
+		int fov = opts.fov();
+		if (fov < 70)
+			fov = 70;
+		else if (fov < 120)
+			fov = 120;
+		else
+			fov = 45;
+
+		opts.fov = fov;
+		setFovText(b);
+	}
+
+	void setFovText(Button b)
+	{
+		char[] str;
+		switch(opts.fov()) {
+		case  45: str = "Fov: Charged"; break;
+		case  70: str = "Fov: Minecraft"; break;
+		case 120: str = "Fov: Quake Pro"; break;
+		default:  str = "Fov: Custom"; break;
+		}
+		b.setText(str, minButtonWidth);
 	}
 
 	void fog(Button b)

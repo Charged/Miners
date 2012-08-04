@@ -217,6 +217,7 @@ protected:
 
 		// First init options
 		opts.aa = p.getIfNotFoundSet(opts.aaName, opts.aaDefault);
+		opts.fov = p.getIfNotFoundSet(opts.fovName, opts.fovDefault);
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
 		opts.useCmdPrefix = p.getIfNotFoundSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);

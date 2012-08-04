@@ -73,18 +73,24 @@ public:
 		pcam = new GfxProjCamera();
 		icam = new GfxIsoCamera(800, 600, -200, 200, GfxIsoCamera.TwoToOne);
 
+		// Set defaults
 		proj = true;
-
-		w.opts.viewDistance ~= &far;
-
 		near = 0.1;
+		fov = w.opts.fov();
 		far = w.opts.viewDistance();
+
+		w.opts.fov ~= &fov;
+		w.opts.viewDistance ~= &far;
 
 		resize(800, 600);
 	}
 
 	~this()
 	{
+		auto w = cast(World)w;
+		w.opts.fov -= &fov;
+		w.opts.viewDistance -= &far;
+
 		delete icam;
 		delete pcam;
 	}
@@ -130,11 +136,6 @@ public:
 		resize(width, height);
 	}
 
-	final void far(double value)
-	{
-		pcam.far = value;
-	}
-
 	final void isoHeight(double value)
 	{
 		isoCenterHeight = value / 2;
@@ -146,7 +147,10 @@ public:
 	final void iso(bool value) { c = value ? icam : pcam; }
 	final void proj(bool value) { iso = !value; }
 
+	final void fov(int value) { pcam.fov = value; }
+	final void far(double value) { pcam.far = value; }
 	final void near(double value) { pcam.near = value; }
+	final int fov() { return cast(int)pcam.fov; }
 	final double far() { return pcam.far; }
 	final double near() { return pcam.near; }
 
