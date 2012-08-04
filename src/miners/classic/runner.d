@@ -179,6 +179,14 @@ public:
 		assert(sel is null);
 	}
 
+
+	/*
+	 *
+	 * Runner functions.
+	 *
+	 */
+
+
 	void close()
 	{
 		chatGui.breakApart();
@@ -318,6 +326,40 @@ public:
 			glDisable(GL_COLOR_LOGIC_OP);
 			glLogicOp(GL_COPY);
 		}
+	}
+
+	void dropControl()
+	{
+		stopMoving();
+		super.dropControl();
+	}
+
+
+	/*
+	 *
+	 * Helper functions.
+	 *
+	 */
+
+
+	void stopMoving()
+	{
+		m.forward = false;
+		m.backward = false;
+		m.left = false;
+		m.right = false;
+		m.up = false;
+		m.speed = false;
+
+		pp.forward = false;
+		pp.backward = false;
+		pp.left = false;
+		pp.right = false;
+		pp.up = false;
+		pp.down = false;
+		pp.jump = false;
+		pp.crouch = false;
+		pp.run = false;
 	}
 
 	void drawSlotBar(GfxDraw d, GfxRenderTarget rt)
@@ -504,6 +546,7 @@ public:
 			// Start entering a command when we press '/'
 			console.startTyping();
 			console.keyDown(sym, unicode);
+			stopMoving();
 			return;
 		}
 
@@ -575,9 +618,10 @@ public:
 			// XXX Fix
 
 		} else if (sym == opts.keyChat) {
-			if (keyDown)
+			if (keyDown) {
 				console.startTyping();
-
+				stopMoving();
+			}
 		} else if (sym == opts.keySelector) {
 			if (keyDown)
 				r.displayClassicBlockSelector(&selectedBlock);
