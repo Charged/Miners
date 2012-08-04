@@ -338,7 +338,7 @@ protected:
 		}
 
 		if (level !is null)
-			return loadLevel(level, false);
+			return loadLevelModern(level);
 
 		return displayMainMenu();
 	}
@@ -739,26 +739,10 @@ protected:
 		push(r);
 	}
 
-	void loadLevel(char[] level, bool classic = false)
-	{
-		auto r = doLoadLevel(level, classic);
-
-		// Close the menu and old runner.
-		push(r);
-	}
-
-	Runner doLoadLevel(char[] level, bool classic)
+	void loadLevelModern(char[] level)
 	{
 		Runner r;
 		World w;
-
-		if (classic) {
-			if (level is null)
-				return new ClassicRunner(this, opts);
-			else
-				return new ClassicRunner(this, opts, level);
-		}
-
 
 		if (level is null) {
 			w = new IsleWorld(opts);
@@ -771,7 +755,7 @@ protected:
 
 			w = new BetaWorld(info, opts);
 		} else {
-			w = new ClassicWorld(opts, level);
+			throw new GameException("Level needs to be a directory", null, false);
 		}
 
 		auto scriptName = "script/main-level.lua";
@@ -810,7 +794,21 @@ protected:
 			writefln("Average time: %s seconds", total / (times - 1) / 1000.0);
 		}
 
-		return r;
+		push(r);
+	}
+
+	void loadLevelClassic(char[] level)
+	{
+		Runner r;
+
+		if (level is null)
+			r = new ClassicRunner(this, opts);
+		else if (isfile(level))
+			r = new ClassicRunner(this, opts, level);
+		else
+			throw new GameException("Level must be a file", null, false);
+
+		push(r);
 	}
 
 

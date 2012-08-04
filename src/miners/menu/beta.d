@@ -43,9 +43,9 @@ public:
 		auto lb = cast(LevelButton)b;
 
 		if (lb is null)
-			r.loadLevel(null);
+			r.loadLevelModern(null);
 		else
-			r.loadLevel(lb.info.dir);
+			r.loadLevelModern(lb.info.dir);
 	}
 
 	void back(Button b)

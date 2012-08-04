@@ -46,14 +46,19 @@ interface Router : GameRouter
 	void chargeIon();
 
 	/**
-	 * Load a level, name should be a level directory
-	 * containing level.dat for final and a file for
-	 * classic levels.
+	 * Load a level, name should be a level
+	 * directory containing level.dat.
 	 *
-	 * If name is null it opens a random level for beta
-	 * and a flatland for classic.
+	 * If name is null it opens a random level.
 	 */
-	void loadLevel(char[] name, bool classic = false);
+	void loadLevelModern(char[] name);
+
+	/**
+	 * Load a level, name should be a classic level filename.
+	 *
+	 * If name is null it generates a simple flatland.
+	 */
+	void loadLevelClassic(char[] name);
 
 	/**
 	 * Start a classic runner listening to the given connection.
