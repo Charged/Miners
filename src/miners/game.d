@@ -62,21 +62,6 @@ static import miners.builder.classic;
 class Game : public GameRouterApp, public Router
 {
 private:
-	/* program args */
-	char[] level;
-	bool build_all;
-	bool classicNetwork;
-	bool classicHttp;
-	bool classicMc;
-
-	char[] username; /**< webpage username */
-	char[] password; /**< webpage password */
-	char[] playSessionCookie; /**< webpage cookie */
-	char[] launcherPath; /**< Launch this on logout */
-
-	/* Classic server information */
-	ClassicServerInfo csi;
-
 	/** Regexp for extracting information out of a mc url */
 	RegExp mcUrl;
 	/** Regexp for extracting information out of a http url */
@@ -123,13 +108,16 @@ public:
 		playSessionCookieExp = RegExp(playSessionCookieStr);
 		launcherPathExp = RegExp(launcherPathStr);
 
+		running = true;
+
+		// Arguments stored on options.
+		opts = new Options();
+
 		// Some defaults
-		csi = new ClassicServerInfo();
+		auto csi = opts.classicServerInfo = new ClassicServerInfo();
 		csi.username = "Username";
 		csi.hostname = "localhost";
 		csi.port = 25565;
-
-		running = true;
 
 		parseArgs(args);
 
@@ -214,6 +202,9 @@ protected:
 		BackgroundRunner br = new BackgroundRunner();
 		push(br);
 
+		// Initialize the shared resources.
+		opts.allocateResources();
+
 		GfxTexture dirt;
 
 		// For options
@@ -225,8 +216,6 @@ protected:
 		viewDistance = fmin(viewDistance, short.max);
 
 		// First init options
-		opts = new Options();
-		opts.playSessionCookie = playSessionCookie;
 		opts.aa = p.getIfNotFoundSet(opts.aaName, opts.aaDefault);
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
@@ -285,7 +274,7 @@ protected:
 		manipulateTextureClassic(pic);
 		createTextures(pic, true);
 
-		assert(classicBlocks.length == opts.classicSides.length);
+		static assert(classicBlocks.length == opts.classicSides.length);
 
 		foreach (int i, ref tex; opts.classicSides) {
 			if (!classicBlocks[i].placable)
@@ -324,21 +313,27 @@ protected:
 		br.initOpts(opts);
 
 		// Should we use classic
-		if (classicNetwork) {
-			if (classicMc) {
+		if (opts.isClassicNetwork) {
+			auto csi = opts.classicServerInfo;
+			if (opts.isClassicMcUrl) {
 				return connectToClassic(csi);
-			} else if (classicHttp) {
-				if (playSessionCookie !is null)
+			} else if (opts.isClassicHttp) {
+				if (opts.playSessionCookie !is null)
 					return getClassicServerInfoAndConnect(csi);
 				else
-					return connectToClassic(username, password, csi);
-			} else if (playSessionCookie !is null) {
+					return connectToClassic(
+						opts.username,
+						opts.password,
+						csi);
+			} else if (opts.playSessionCookie !is null) {
 				return startClassicStartup();
+			} else {
+				assert(false, "Classic arguments in wrong state");
 			}
 		}
 
-		if (level !is null)
-			return loadLevelModern(level);
+		if (opts.levelPath !is null)
+			return loadLevelModern(opts.levelPath);
 
 		return displayMainMenu();
 	}
@@ -351,7 +346,7 @@ protected:
 			case "-level":
 			case "--level":
 				if (++i < args.length) {
-					level = args[i];
+					opts.levelPath = args[i];
 					break;
 				}
 				writefln("Expected argument to level switch");
@@ -359,7 +354,7 @@ protected:
 			case "-a":
 			case "-all":
 			case "--all":
-				build_all = true;
+				opts.shouldBuildAll = true;
 				break;
 			default:
 				if (tryArgs(args[i]))
@@ -389,9 +384,9 @@ protected:
 		       tryArgLauncherPath(arg);
 	}
 
-	void checkHttpMc()
+	void checkHttpMcUrl()
 	{
-		if (classicHttp || classicMc) {
+		if (opts.isClassicHttp || opts.isClassicMcUrl) {
 			l.warn("Error: multiple url/mc/html-page arguemnts");
 			writefln("Error: multiple url/mc/html-page arguemnts");
 			running = false;
@@ -408,10 +403,13 @@ protected:
 		if (r.length < 2)
 			return false;
 
+		checkHttpMcUrl();
+
+		auto csi = opts.classicServerInfo;
 		csi.webId = r[2];
 
-		classicNetwork = true;
-		classicHttp = true;
+		opts.isClassicNetwork = true;
+		opts.isClassicHttp = true;
 
 		l.info("Url http://minecraft.net/classic/play/%s", csi.webId);
 
@@ -428,17 +426,19 @@ protected:
 		if (r.length < 5)
 			return false;
 
-		username = r[1];
-		password = r[3];
+		checkHttpMcUrl();
+
+		auto csi = opts.classicServerInfo;
 		csi.webId = r[5];
 
-		checkHttpMc();
+		opts.username = r[1];
+		opts.password = r[3];
 
-		classicNetwork = true;
-		classicHttp = true;
+		opts.isClassicNetwork = true;
+		opts.isClassicHttp = true;
 
 		l.info("Url http://%s:<redacted>@mc.net/classic/play/%s",
-		       username, csi.webId);
+		       opts.username, csi.webId);
 
 		return true;
 	}
@@ -453,6 +453,9 @@ protected:
 		if (r.length < 8)
 			return false;
 
+		checkHttpMcUrl();
+
+		auto csi = opts.classicServerInfo;
 		csi.hostname = r[1];
 
 		if (r[5].length > 0)
@@ -466,10 +469,8 @@ protected:
 		} catch (Exception e) {
 		}
 
-		checkHttpMc();
-
-		classicNetwork = true;
-		classicMc = true;
+		opts.isClassicNetwork = true;
+		opts.isClassicMcUrl = true;
 
 		l.info("Url mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);
@@ -490,6 +491,9 @@ protected:
 		    arg[$ - 5 .. $] != ".html")
 			return false;
 
+		checkHttpMcUrl();
+
+		auto csi = opts.classicServerInfo;
 		try {
 			auto txt = cast(char[])std.file.read(arg);
 
@@ -498,10 +502,8 @@ protected:
 			return false;
 		}
 
-		checkHttpMc();
-
-		classicNetwork = true;
-		classicMc = true;
+		opts.isClassicNetwork = true;
+		opts.isClassicMcUrl = true;
 
 		l.info("Html mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);
@@ -518,9 +520,9 @@ protected:
 		if (r.length < 2)
 			return false;
 
-		playSessionCookie = r[1];
+		opts.playSessionCookie = r[1];
 
-		classicNetwork = true;
+		opts.isClassicNetwork = true;
 
 		l.info("PLAY_SESSION=<redacted>");
 
@@ -536,9 +538,9 @@ protected:
 		if (r.length < 2)
 			return false;
 
-		launcherPath = r[1];
+		opts.launcherPath = r[1];
 
-		l.info("LAUNCHER_PATH=%s", launcherPath);
+		l.info("LAUNCHER_PATH=%s", opts.launcherPath);
 
 		return true;
 	}
@@ -768,7 +770,7 @@ protected:
 		if (r is null)
 			r = new ViewerRunner(this, opts, w);
 
-		if (build_all) {
+		if (opts.shouldBuildAll) {
 			int times = 5;
 			ulong total;
 
@@ -862,7 +864,7 @@ the executable. Or in the Charged Miners config folder located here:
 
 	void displayClassicMenu()
 	{
-		auto psc = opts.playSessionCookie();
+		auto psc = opts.playSessionCookie;
 
 		push(new WebpageInfoMenu(this, opts, psc));
 	}
@@ -874,7 +876,7 @@ the executable. Or in the Charged Miners config folder located here:
 
 	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
 	{
-		auto psc = opts.playSessionCookie();
+		auto psc = opts.playSessionCookie;
 
 		push(new WebpageInfoMenu(this, opts, psc, csi));
 	}

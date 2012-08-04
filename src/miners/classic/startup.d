@@ -61,7 +61,7 @@ public:
 
 		statusText = new Text(null, 0, 0, connectingString);
 
-		playSession = opts.playSessionCookie();
+		playSession = opts.playSessionCookie;
 		wc = new WebpageConnection(this, playSession);
 	}
 

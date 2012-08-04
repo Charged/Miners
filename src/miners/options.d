@@ -23,13 +23,27 @@ public:
 	 *
 	 */
 
-
 	/**
-	 * Authentication cookie of mc page.
+	 * Arguments parsed.
 	 *
-	 * Do not share to mods.
+	 * Do not share to mods, contains authentication information.
 	 */
-	Option!(char[]) playSessionCookie;
+	/*@{*/
+	bool shouldBuildAll;
+
+	bool isClassicNetwork;
+	bool isClassicMcUrl;
+	bool isClassicHttp;
+
+	char[] playSessionCookie;
+	char[] username;
+	char[] password;
+
+	ClassicServerInfo classicServerInfo;
+
+	char[] levelPath;
+	char[] launcherPath;
+	/*@}*/
 
 	/**
 	 * Last connected classic server name.
@@ -222,13 +236,6 @@ public:
 
 
 public:
-	this()
-	{
-		playerSkeleton = GfxSimpleSkeleton.VBO(PlayerModelData.verts);
-		blackTexture = GfxColorTexture(Color4f.Black);
-		whiteTexture = GfxColorTexture(Color4f.White);
-	}
-
 	~this()
 	{
 		sysReference(&playerSkeleton, null);
@@ -255,6 +262,17 @@ public:
 		foreach (ref tex; classicSides) {
 			sysReference(&tex, null);
 		}
+	}
+
+	void allocateResources()
+	{
+		assert(playerSkeleton is null &&
+		       blackTexture is null &&
+		       whiteTexture is null);
+
+		playerSkeleton = GfxSimpleSkeleton.VBO(PlayerModelData.verts);
+		blackTexture = GfxColorTexture(Color4f.Black);
+		whiteTexture = GfxColorTexture(Color4f.White);
 	}
 
 	void setRenderer(TerrainBuildTypes bt, char[] s)
