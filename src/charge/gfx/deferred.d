@@ -683,7 +683,8 @@ protected:
 	{
 		Point3d center;
 		double radius;
-		getDirSplitSphere(c.fov, c.ratio, near, far, center, radius);
+		double radFov = c.fov * PI / 180;
+		getDirSplitSphere(radFov, c.ratio, near, far, center, radius);
 		auto rot = dl.rotation;
 		auto pos = (c.rotation * cast(Vector3d)center) + c.position;
 		auto point = pos + rot.rotateHeading();
