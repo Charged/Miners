@@ -147,6 +147,7 @@ public:
 		p.add("fullscreen", res);
 
 		r.displayInfo("Info", [fullscreenInfoText], "Ok", &r.displayPauseMenu);
+		r.deleteMe(this);
 	}
 
 	void setFullscreenText(Button b)
