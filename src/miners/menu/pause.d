@@ -74,7 +74,7 @@ public:
 		setAaText(b1); b1.pressed ~= &aa;
 		setFogText(b2); b2.pressed ~= &fog;
 		setShadowText(b3); b3.pressed ~= &shadow;
-		setViewText(b4); b5.pressed ~= &view;
+		setViewText(b4); b4.pressed ~= &view;
 		setFovText(b5); b5.pressed ~= &fov;
 		setFullscreenText(b6); b6.pressed ~= &fullscreen;
 	}
