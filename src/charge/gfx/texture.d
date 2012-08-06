@@ -575,8 +575,11 @@ public:
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 
-		char[] new_name = name ~ "?array";
-		l.info("Loaded %s", new_name);
+		char[] new_name;
+		if (name !is null) {
+			new_name = name ~ "?array";
+			l.info("Loaded %s", new_name);
+		}
 		auto t = new TextureArray(Pool(), new_name,
 					  id, pic.width, pic.height, length);
 		t.filter = Texture.Filter.Linear;
