@@ -21,38 +21,26 @@ private:
 	GfxTexture background;
 
 public:
-	this()
+	this(Options opts)
 	{
 		super();
-
-		if (opts !is null)
-			initOpts(opts);
-	}
-
-	void close()
-	{
-		if (opts !is null) {
-			opts.background -= &newBackground;
-			opts.backgroundTiled -= &changeOption;
-			opts.backgroundDoubled -= &changeOption;
-		}
-
-		super.close();
-	}
-
-	/**
-	 * This is used during init, when we need a background
-	 * before options and other resources has been initialized.
-	 */
-	void initOpts(Options opts)
-	{
 		this.opts = opts;
 
 		opts.background ~= &newBackground;
 		opts.backgroundTiled ~= &changeOption;
 		opts.backgroundDoubled ~= &changeOption;
+
 		newBackground(opts.background());
 		changeOption(opts.backgroundDoubled());
+	}
+
+	void close()
+	{
+		opts.background -= &newBackground;
+		opts.backgroundTiled -= &changeOption;
+		opts.backgroundDoubled -= &changeOption;
+
+		super.close();
 	}
 
 	void changeOption(bool)

@@ -187,7 +187,7 @@ protected:
 	{
 		// This needs to be done first,
 		// so errors messages can be displayed.
-		BackgroundRunner br = new BackgroundRunner();
+		BackgroundRunner br = new BackgroundRunner(opts);
 		push(br);
 
 		// Initialize the shared resources.
@@ -295,9 +295,6 @@ protected:
 		auto cf = ClassicFont("res/font.png");
 		opts.classicFont = cf;
 		sysReference(&cf, null);
-
-		// Update the background.
-		br.initOpts(opts);
 
 		// Should we use classic
 		if (opts.isClassicNetwork) {
