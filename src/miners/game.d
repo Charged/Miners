@@ -255,10 +255,17 @@ protected:
 
 		// Do the manipulation of the texture to fit us
 		manipulateTextureModern(pic);
+		opts.modernTerrainPic = pic;
 		opts.modernTextures = createTextures(pic, opts.rendererBuildIndexed);
+
+		// Copy and juggle reference count.
+		auto tmpPic = Picture(null, pic);
+		sysReference(&pic, null);
+		pic = tmpPic;
 
 		// Get a texture that works with classic
 		manipulateTextureClassic(pic);
+		opts.classicTerrainPic = pic;
 		opts.classicTextures = createTextures(pic, opts.rendererBuildIndexed);
 
 		// Create the textures for the classic block selector

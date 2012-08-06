@@ -190,6 +190,9 @@ public:
 	Option!(bool) backgroundTiled; /**< should the background be tiled */
 	Option!(bool) backgroundDoubled; /**< should the background be doubled in size */
 
+	Option!(Picture) modernTerrainPic;
+	Option!(Picture) classicTerrainPic;
+
 	Option!(GfxTexture) dirt;
 	Option!(GfxTexture) background;
 	Option!(GfxBitmapFont) classicFont;
@@ -264,6 +267,9 @@ public:
 		backgroundTiled.destruct();
 		backgroundDoubled.destruct();
 
+		modernTerrainPic.destruct();
+		classicTerrainPic.destruct();
+
 		dirt.destruct();
 		background.destruct();
 		classicFont.destruct();
@@ -337,7 +343,8 @@ private struct Option(T)
 
 	void opAssign(T t)
 	{
-		static if (is(T : GfxTexture) ||
+		static if (is(T : Picture) ||
+		           is(T : GfxTexture) ||
 		           is(T : GfxTextureArray) ||
 		           is(T : GfxBitmapFont))
 			sysReference(&value, t);
@@ -368,7 +375,8 @@ private struct Option(T)
 	{
 		signal.destruct();
 
-		static if (is(T : GfxTexture) ||
+		static if (is(T : Picture) ||
+		           is(T : GfxTexture) ||
 		           is(T : GfxTextureArray) ||
 		           is(T : GfxBitmapFont))
 			sysReference(&value, null);
