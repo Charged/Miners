@@ -3,6 +3,7 @@
 module miners.terrain.finite;
 
 import charge.charge;
+import charge.math.ints;
 
 import miners.types;
 import miners.defines;
@@ -59,6 +60,10 @@ protected:
 	int xSaved;
 	int ySaved;
 	int zSaved;
+
+	int xCenter;
+	int yCenter;
+	int zCenter;
 
 public:
 	this(GameWorld w, Options opts,
@@ -229,6 +234,7 @@ public:
 		auto ws = builder.getWorkspace();
 
 		assert(xPos >= 0 && yPos >= 0 && zPos >= 0);
+		assert(xPos < xNumChunks && yPos < yNumChunks && zPos < zNumChunks);
 
 		int xEnd = ws.ws_width;
 		int yEnd = ws.ws_height;
@@ -351,12 +357,23 @@ public:
 
 	/**
 	 * Set the center of the view circle.
-	 *
-	 * XXX: Currently not implemented.
 	 */
 	void setCenter(int xNew, int yNew, int zNew)
 	{
+		xNew = imax(0, imin(xNumChunks, xNew));
+		yNew = imax(0, imin(yNumChunks, yNew));
+		zNew = imax(0, imin(zNumChunks, zNew));
 
+		if (xCenter == xNew &&
+		    yCenter == yNew &&
+		    zCenter == zNew)
+			return;
+
+		xCenter = xNew;
+		yCenter = yNew;
+		zCenter = zNew;
+
+		resetBuild();
 	}
 
 	/**
@@ -398,13 +415,32 @@ public:
 		int y = ySaved;
 		int z = zSaved;
 
-		for (; x < xNumChunks; x++) {
-			for (; z < zNumChunks; z++) {
-				for (; y < yNumChunks; y++) {
-					if (!build(x, y, z))
+		int xNum = (xNumChunks - 1) * 2 + 1;
+		int yNum = (yNumChunks - 1) * 2 + 1;
+		int zNum = (zNumChunks - 1) * 2 + 1;
+
+		int offset(int i) { i++; return i & 1 ? -(i >> 1) : (i >> 1); }
+
+		for (; x < xNum; x++) {
+			int xPos = offset(x) + xCenter;
+			if (xPos < 0 || xPos >= xNumChunks)
+				continue;
+
+			for (; z < zNum; z++) {
+				int zPos = offset(z) + zCenter;
+				if (zPos < 0 || zPos >= zNumChunks)
+					continue;
+
+				for (; y < yNum; y++) {
+					int yPos = offset(y) + yCenter;
+					if (yPos < 0 || yPos >= yNumChunks)
 						continue;
+
+					if (!build(xPos, yPos, zPos))
+						continue;
+
 					xSaved = x;
-					ySaved = y++;
+					ySaved = y + 1;
 					zSaved = z;
 					return true;
 				}
