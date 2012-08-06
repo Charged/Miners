@@ -64,7 +64,7 @@ public:
 	this(GameWorld w, Options opts,
 	     MeshBuilder builder,
 	     int x, int y, int z,
-	     bool useClassicTerrain)
+	     TerrainTextures texs)
 	{
 		l.info("Created (%sx%sx%s)", x, y, z);
 
@@ -106,7 +106,7 @@ public:
 		blocks = store.ptr;
 		data = store.ptr + sizeBlocks;
 
-		super(w, opts, builder, useClassicTerrain);
+		super(w, opts, builder, texs);
 	}
 
 	~this()

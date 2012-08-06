@@ -35,7 +35,7 @@ public:
 	{
 		this.rxOff = 0;
 		this.rzOff = 0;
-		super(w, opts, builder, false);
+		super(w, opts, builder, opts.modernTextures);
 
 		assert(dg !is null);
 

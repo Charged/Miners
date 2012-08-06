@@ -20,7 +20,7 @@ public:
 	ChunkVBOGroupCompactMesh[BuildMeshes] cvgcm;
 	bool buildIndexed; // The renderer supports array textures.
 	MeshBuilder builder;
-	bool useClassicTexture;
+	TerrainTextures texs;
 
 protected:
 	Options opts;
@@ -31,12 +31,12 @@ private:
 	mixin SysLogging;
 
 public:
-	this(GameWorld w, Options opts, MeshBuilder builder, bool useClassicTexture)
+	this(GameWorld w, Options opts, MeshBuilder builder, TerrainTextures texs)
 	{
 		super(w);
 		this.opts = opts;
+		this.texs = texs;
 		this.builder = builder;
-		this.useClassicTexture = useClassicTexture;
 
 		// Setup the groups
 		buildIndexed = opts.rendererBuildIndexed;
@@ -78,14 +78,6 @@ protected:
 		foreach(g; cvgcm)
 			delete g;
 
-		GfxTexture t = opts.terrain();
-		GfxTextureArray ta = opts.terrainArray();
-
-		if (useClassicTexture) {
-			t = opts.classicTerrain();
-			ta = opts.classicTerrainArray();
-		}
-
 		switch(type) {
 		case TerrainBuildTypes.RigidMesh:
 			// XXX Disabled for now
@@ -94,7 +86,7 @@ protected:
 			foreach(int i, ref g; cvgcm) {
 				g = new ChunkVBOGroupCompactMesh(w.gfx);
 				auto m = g.getMaterial();
-				m["tex"] = buildIndexed ? ta : t;
+				m["tex"] = buildIndexed ? texs.ta : texs.t;
 				m["fake"] = true;
 				if (i == 1)
 					m["stipple"] = true;

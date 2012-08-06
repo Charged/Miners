@@ -254,15 +254,15 @@ protected:
 		sysReference(&dirt, null);
 
 		// Do the manipulation of the texture to fit us
-		manipulateTexture(pic);
-		createTextures(pic);
+		manipulateTextureModern(pic);
+		opts.modernTextures = createTextures(pic, opts.rendererBuildIndexed);
 
 		// Get a texture that works with classic
 		manipulateTextureClassic(pic);
-		createTextures(pic, true);
+		opts.classicTextures = createTextures(pic, opts.rendererBuildIndexed);
 
+		// Create the textures for the classic block selector
 		static assert(classicBlocks.length == opts.classicSides.length);
-
 		foreach (int i, ref tex; opts.classicSides) {
 			if (!classicBlocks[i].placable)
 				continue;
@@ -566,41 +566,6 @@ protected:
 		fm.addBuiltin(terrainFilename, terrainFile);
 
 		return Picture(terrainFilename);
-	}
-
-	/**
-	 * Create textures and set the option terrain textures. Handleds
-	 * both beta- and classic-textures, default is beta. Does not do
-	 * any manipulation.
-	 *
-	 * @classic should the classic options terrain textures be set.
-	 */
-	void createTextures(Picture pic, bool classic = false)
-	{
-		char[] name = classic ? "mc/classicTerrain" : "mc/terrain";
-		GfxTexture t;
-		GfxTextureArray ta;
-
-		t = GfxTexture(name, pic);
-		// Or we get errors near the block edges
-		t.filter = GfxTexture.Filter.Nearest;
-
-		if (!classic)
-			opts.terrain = t;
-		else
-			opts.classicTerrain = t;
-		sysReference(&t, null);
-
-		if (rm.textureArray) {
-			ta = ta.fromTileMap(name, pic, 16, 16);
-			ta.filter = GfxTexture.Filter.NearestLinear;
-
-			if (!classic)
-				opts.terrainArray = ta;
-			else
-				opts.classicTerrainArray = ta;
-			sysReference(&ta, null);
-		}
 	}
 
 	bool checkLevel(char[] level)

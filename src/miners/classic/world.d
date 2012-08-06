@@ -79,7 +79,7 @@ public:
 
 		auto builder = new ClassicMeshBuilder();
 
-		t = ft = new FiniteTerrain(this, opts, builder, x, y, z, true);
+		t = ft = new FiniteTerrain(this, opts, builder, x, y, z, opts.classicTextures);
 	}
 
 	/**

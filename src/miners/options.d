@@ -192,13 +192,12 @@ public:
 
 	Option!(GfxTexture) dirt;
 	Option!(GfxTexture) background;
-	Option!(GfxTexture) terrain;
-	Option!(GfxTextureArray) terrainArray;
 	Option!(GfxBitmapFont) classicFont;
-	Option!(GfxTexture) classicTerrain;
-	Option!(GfxTextureArray) classicTerrainArray;
 
 	GfxTexture[50] classicSides;
+
+	TerrainTextures modernTextures;
+	TerrainTextures classicTextures;
 
 
 	/*
@@ -246,7 +245,16 @@ public:
 		sysReference(&blackTexture, null);
 		sysReference(&whiteTexture, null);
 
-		terrain.destruct();
+		if (modernTextures !is null) {
+			modernTextures.breakApart();
+			modernTextures = null;
+		}
+
+		if (classicTextures !is null) {
+			classicTextures.breakApart();
+			classicTextures = null;
+		}
+
 		renderer.destruct();
 		shadow.destruct();
 		showDebug.destruct();
@@ -257,12 +265,8 @@ public:
 		backgroundDoubled.destruct();
 
 		dirt.destruct();
-		terrain.destruct();
 		background.destruct();
-		terrainArray.destruct();
 		classicFont.destruct();
-		classicTerrain.destruct();
-		classicTerrainArray.destruct();
 
 		foreach (ref tex; classicSides) {
 			sysReference(&tex, null);
@@ -285,6 +289,30 @@ public:
 		rendererString = s;
 		rendererBuildType = bt;
 		renderer(bt, s);
+	}
+}
+
+
+/**
+ * Helper container for terrain textures.
+ */
+class TerrainTextures
+{
+public:
+	GfxTexture t;
+	GfxTextureArray ta;
+
+public:
+	~this()
+	{
+		assert(t is null);
+		assert(ta is null);
+	}
+
+	void breakApart()
+	{
+		sysReference(&t, null);
+		sysReference(&ta, null);
 	}
 }
 

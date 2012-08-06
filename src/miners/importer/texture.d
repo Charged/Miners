@@ -4,10 +4,12 @@ module miners.importer.texture;
 
 import std.mmfile;
 
+import charge.gfx.texture : Texture, TextureArray;
 import charge.util.zip;
 import charge.math.color;
 import charge.math.picture;
 
+import miners.options;
 import miners.classic.data;
 import miners.builder.types;
 import miners.builder.beta;
@@ -38,7 +40,7 @@ void[] extractMinecraftTexture(char[] dir = null)
 /**
  * Do the manipulation of the texture
  */
-void manipulateTexture(Picture pic)
+void manipulateTextureModern(Picture pic)
 {
 	// Doesn't support biomes right now fixup the texture before use.
 	applyStaticBiome(pic);
@@ -65,6 +67,31 @@ void manipulateTextureClassic(Picture pic)
 		copyTile(pic, 0, 4, u, v);
 		modulateColor(pic, u, v, classicWoolColors[i]);
 	}
+}
+
+/**
+ * Create textures and set the option terrain textures.
+ *
+ * @doArray should array textures be made.
+ */
+TerrainTextures createTextures(Picture pic, bool doArray)
+{
+	auto texs = new TerrainTextures();
+	Texture t;
+	TextureArray ta;
+
+	t = Texture(null, pic);
+	// Or we get errors near the block edges
+	t.filter = Texture.Filter.Nearest;
+	texs.t = t;
+
+	if (doArray) {
+		ta = TextureArray.fromTileMap(null, pic, 16, 16);
+		ta.filter = Texture.Filter.NearestLinear;
+		texs.ta = ta;
+	}
+
+	return texs;
 }
 
 /**
