@@ -97,7 +97,7 @@ public:
 
 	final void setAa(bool aa)
 	{
-		this.aa = aa;
+		this.aa = aa && GfxDoubleTarget.check;
 	}
 
 protected:

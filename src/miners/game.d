@@ -230,9 +230,6 @@ protected:
 			throw new GameException(text, null, true);
 		}
 
-		// Now lets poke around with gfx stuff.
-		opts.aa = opts.aa() && GfxDoubleTarget.check;
-
 		// I just wanted a comment here to make the code look prettier.
 		rm = new RenderManager();
 
