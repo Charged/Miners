@@ -67,6 +67,11 @@ public:
 		return new Picture(Pool(), name, pic);
 	}
 
+	static Picture opCall(char[] name, Picture pic)
+	{
+		return new Picture(Pool(), name, pic);
+	}
+
 
 protected:
 	this(Pool p, char[] name, uint w, uint h)
@@ -86,6 +91,15 @@ protected:
 		this.width = image.width;
 		this.height = image.height;
 		this.pixels = cast(Color4b*)image.pixels.steal.ptr;
+	}
+
+	this(Pool p, char[] name, Picture image)
+	{
+		// Allocs pixels
+		this(p, name, image.width, image.height);
+
+		size_t size = image.width * image.height;
+		pixels[0 .. size] = image.pixels[0 .. size];
 	}
 
 	~this()
