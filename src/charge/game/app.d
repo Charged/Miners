@@ -186,12 +186,19 @@ protected:
 	bool fastRender = true; //< Try to render as fast as possible.
 
 private:
+	GfxSync curSync;
+
 	Vector!(Runner) vec;
 	Vector!(Runner) del;
 	Runner currentInput;
-	bool dirty; //< Do we need to manage runners.
 
-	GfxSync curSync;
+	bool dirty; //< Do we need to manage runners.
+	bool built; //< Have we built this logic pass.
+
+	TimeKeeper buildTime;
+
+	alias bool delegate() BuilderDg;
+	Vector!(BuilderDg) builders;
 
 public:
 	this(CoreOptions opts = null)
@@ -203,6 +210,7 @@ public:
 	{
 		assert(vec.length == 0);
 		assert(del.length == 0);
+		assert(builders.length == 0);
 		assert(currentInput is null);
 	}
 
@@ -240,6 +248,10 @@ public:
 
 	void logic()
 	{
+		// This make sure we at least call
+		// the builders once per frame.
+		built = false;
+
 		manageRunners();
 
 		foreach_reverse(r; vec) {
@@ -256,8 +268,33 @@ public:
 
 	void idle(long time)
 	{
+		// If we have built at least once this frame and have very little
+		// time left don't build again. But we always build one each frame.
+		if (built && time < 5 || builders.length == 0)
+			return wait(time);
+
+		// Account this time for build instead of idle
+		idleTime.stop();
+		buildTime.start();
+
+		// Do the build
+		foreach(b; builders)
+			built = b() || built;
+
+		// Delete unused resources
 		charge.sys.resource.Pool().collect();
 
+		// Switch back to idle
+		buildTime.stop();
+		idleTime.start();
+
+		// Didn't build anything, just sleep.
+		if (!built)
+			return wait(time);
+	}
+
+	void wait(long time)
+	{
 		if (time > 0) {
 			if (curSync && fastRender)
 				gfxSyncWaitAndDelete(curSync, time);
@@ -305,6 +342,16 @@ public:
 	{
 		vec.remove(r);
 		dirty = true;
+	}
+
+	void addBuilder(bool delegate() dg)
+	{
+		builders ~= dg;
+	}
+
+	void removeBuilder(bool delegate() dg)
+	{
+		builders.remove(dg);
 	}
 
 	void deleteMe(Runner r)

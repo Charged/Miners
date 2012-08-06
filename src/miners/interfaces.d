@@ -26,16 +26,6 @@ interface Router : GameRouter
 
 
 	/**
-	 * Add a callback to be run on idle time.
-	 */
-	void addBuilder(bool delegate() dg);
-
-	/**
-	 * Remove a builder callback.
-	 */
-	void removeBuilder(bool delegate() dg);
-
-	/**
 	 * Render the world, from camera to rt.
 	 */
 	void render(GfxWorld w, GfxCamera c, GfxRenderTarget rt);

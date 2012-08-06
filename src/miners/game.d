@@ -76,17 +76,11 @@ private:
 	/** Regexp for extracting the launcher path */
 	RegExp launcherPathExp;
 
-
-	/* time keepers */
-	charge.game.app.TimeKeeper buildTime;
-
 	Options opts;
 	RenderManager rm;
 	GfxDefaultTarget defaultTarget;
 
 	SkinDownloader skin;
-
-	bool built; /**< Have we built a chunk */
 
 	GfxDraw d;
 
@@ -94,8 +88,6 @@ private:
 	void[] terrainFile;
 	const terrainFilename = "%terrain.png";
 
-	alias bool delegate() BuilderDg;
-	Vector!(BuilderDg) builders;
 
 public:
 	mixin SysLogging;
@@ -144,11 +136,6 @@ public:
 		manageRunners();
 
  		d = new GfxDraw();
-	}
-
-	~this()
-	{
-		assert(builders.length == 0);
 	}
 
 	void close()
@@ -656,38 +643,7 @@ protected:
 		if (skin !is null)
 			skin.doTick();
 
-		// This make sure we at least always
-		// builds at least one chunk per frame.
-		built = false;
-
 		super.logic();
-	}
-
-	void idle(long time)
-	{
-		// If we have built at least one chunk this frame and have very little
-		// time left don't build again. But we always build one each frame.
-		if (built && time < 5 || builders.length == 0)
-			return super.idle(time);
-
-		// Account this time for build instead of idle
-		idleTime.stop();
-		buildTime.start();
-
-		// Do the build
-		foreach(b; builders)
-			built = b() || built;
-
-		// Delete unused resources
-		charge.sys.resource.Pool().collect();
-
-		// Switch back to idle
-		buildTime.stop();
-		idleTime.start();
-
-		// Didn't build anything, just sleep.
-		if (!built)
-			super.idle(time);
 	}
 
 	void render(GfxWorld w, GfxCamera cam, GfxRenderTarget rt)
@@ -708,16 +664,6 @@ protected:
 	 *
 	 */
 
-
-	void addBuilder(bool delegate() dg)
-	{
-		builders ~= dg;
-	}
-
-	void removeBuilder(bool delegate() dg)
-	{
-		builders.remove(dg);
-	}
 
 	void startClassicStartup()
 	{

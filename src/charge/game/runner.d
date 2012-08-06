@@ -94,4 +94,14 @@ public:
 	 * The given runner wants to be deleted.
 	 */
 	void deleteMe(Runner r);
+
+	/**
+	 * Add a callback to be run on idle time.
+	 */
+	void addBuilder(bool delegate() dg);
+
+	/**
+	 * Remove a builder callback.
+	 */
+	void removeBuilder(bool delegate() dg);
 }
