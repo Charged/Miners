@@ -354,7 +354,7 @@ public:
 	 *
 	 * XXX: Currently not implemented.
 	 */
-	void setCenter(int xNew, int zNew)
+	void setCenter(int xNew, int yNew, int zNew)
 	{
 
 	}

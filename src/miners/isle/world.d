@@ -39,9 +39,10 @@ public:
 		auto y = cast(int)spawn.y;
 		auto z = cast(int)spawn.z;
 		auto xPos = x < 0 ? (x - 15) / 16 : x / 16;
+		auto yPos = y < 0 ? (y - 15) / 16 : y / 16;
 		auto zPos = z < 0 ? (z - 15) / 16 : z / 16;
 
-		bt.setCenter(xPos, zPos);
+		bt.setCenter(xPos, yPos, zPos);
 		bt.loadChunk(xPos, zPos);
 
 		auto p = bt.getTypePointer(x, z);

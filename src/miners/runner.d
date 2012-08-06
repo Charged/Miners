@@ -23,6 +23,7 @@ public:
 
 	Movable centerer;
 	int x; /**< Current chunk of camera */
+	int y; /**< Current chunk of camera */
 	int z; /**< Current chunk of camera */
 
 	bool inControl;
@@ -122,13 +123,16 @@ protected:
 
 		auto p = centerer.position;
 		int x = cast(int)p.x;
+		int y = cast(int)p.z;
 		int z = cast(int)p.z;
 		x = p.x < 0 ? (x - 16) / 16 : x / 16;
+		y = p.y < 0 ? (y - 16) / 16 : y / 16;
 		z = p.z < 0 ? (z - 16) / 16 : z / 16;
 
-		if (this.x != x || this.z != z)
-			w.t.setCenter(x, z);
+		if (this.x != x || this.y != y || this.z != z)
+			w.t.setCenter(x, y, z);
 		this.x = x;
+		this.y = y;
 		this.z = z;
 	}
 

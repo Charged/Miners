@@ -42,7 +42,7 @@ public:
 		newChunkDg = dg;
 
 		// Make sure all state is setup correctly
-		setCenter(0, 0);
+		setCenter(0, 0, 0);
 	}
 
 	~this() {
@@ -365,7 +365,7 @@ public:
 	 * Set the current center from which chunks are built.
 	 * Coords in chunk space.
 	 */
-	void setCenter(int xNew, int zNew)
+	void setCenter(int xNew, int yNew, int zNew)
 	{
 		setCenterRegions(xNew, zNew);
 
