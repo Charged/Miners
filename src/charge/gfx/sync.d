@@ -13,7 +13,7 @@ bool gfxSyncWaitAndDelete(ref GfxSync sync, long timeout)
 	if (sync is null)
 		return true;
 
-	auto tm = timeout * 1000;
+	auto tm = timeout * 1000 * 1000;
 	if (tm < 0)
 		tm = 0;
 
