@@ -51,8 +51,8 @@ public:
 		try {
 			int value;
 
-			if (!GL_EXT_texture_array)
-				throw new Exception("GL_EXT_texture_array not supported");
+			if (!GfxTextureArray.check())
+				throw new Exception("Texture Arrays not supported");
 
 			glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS_EXT, &value);
 			if (value < 256)

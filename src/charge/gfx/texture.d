@@ -493,16 +493,42 @@ public:
 
 private:
 	mixin Logging;
+	static bool checked;
+	static bool checkStatus;
 
 public:
-	static bool checkSupport()
+	static bool check()
 	{
-		return GL_EXT_texture_array;
+		if (checked)
+			return checkStatus;
+
+		checked = true;
+
+		try {
+			if (!GL_EXT_texture_array)
+				throw new Exception("GL_EXT_texture_array not supported");
+
+			// Windows Intel driver lie
+			version (Windows) {
+				auto str = toString(glGetString(GL_VENDOR));
+				if (str == "Intel")
+					throw new Exception("Intel drivers are blacklisted");
+			}
+		} catch (Exception e) {
+			l.info("Is not capable of using texture arrays");
+			l.bug(e.toString());
+			return false;
+		}
+
+		l.info("Can use TextureArrays");
+
+		checkStatus = true;
+		return true;
 	}
 
 	static TextureArray fromTileMap(char[] name, int num_w, int num_h)
 	{
-		if (!checkSupport)
+		if (!check())
 			return null;
 
 		auto pic = Picture(name);
@@ -523,7 +549,7 @@ public:
 		uint length;
 		GLuint id;
 
-		if (!checkSupport)
+		if (!check())
 			return null;
 
 		tile_w = pic.width / num_w;

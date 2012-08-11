@@ -297,7 +297,7 @@ public:
 
 			if (!GL_EXT_geometry_shader4)
 				throw new Exception("GL_EXT_geometry_shader4 not supported");
-			if (!GL_EXT_texture_array)
+			if (!TextureArray.check())
 				throw new Exception("GL_EXT_texture_array not supported");
 			//if (!GL_EXT_gpu_shader4)
 			//	throw new Exception("GL_EXT_gpu_shader4 not supported");
