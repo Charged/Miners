@@ -1,6 +1,6 @@
 // This file is generated from text files from GLEW.
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
-module lib.gl.arbtexturecompression;
+module lib.gl.ext.arbtexturecompression;
 
 import lib.gl.types;
 

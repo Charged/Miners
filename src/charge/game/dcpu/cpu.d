@@ -1,6 +1,6 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module chage.dcpu.cpu;
+module charge.game.dcpu.cpu;
 
 import lib.gl.gl;
 
