@@ -323,7 +323,8 @@ public:
 	{
 		assert(r !is null);
 
-		dirty = true;
+		// Remove and then reinsert the runner on top.
+		remove(r);
 
 		if (r.flags & Runner.Flag.AlwaysOnTop)
 			return vec ~= r;
