@@ -123,7 +123,7 @@ protected:
 
 		auto p = centerer.position;
 		int x = cast(int)p.x;
-		int y = cast(int)p.z;
+		int y = cast(int)p.y;
 		int z = cast(int)p.z;
 		x = p.x < 0 ? (x - 16) / 16 : x / 16;
 		y = p.y < 0 ? (y - 16) / 16 : y / 16;
