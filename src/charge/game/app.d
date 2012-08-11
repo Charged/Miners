@@ -277,6 +277,9 @@ public:
 		idleTime.stop();
 		buildTime.start();
 
+		// Need to reset each idle check
+		built = false;
+
 		// Do the build
 		foreach(b; builders)
 			built = b() || built;
