@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.texture;
 
-import std.string : format;
+import std.string : format, toString;
 import std.stdio;
 
 import charge.sys.resource;
@@ -510,7 +510,7 @@ public:
 
 			// Windows Intel driver lie
 			version (Windows) {
-				auto str = toString(glGetString(GL_VENDOR));
+				auto str = .toString(glGetString(GL_VENDOR));
 				if (str == "Intel")
 					throw new Exception("Intel drivers are blacklisted");
 			}
