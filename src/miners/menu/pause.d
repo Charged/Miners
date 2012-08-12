@@ -5,6 +5,7 @@ module miners.menu.pause;
 import charge.charge;
 import charge.game.gui.layout;
 import charge.game.gui.textbased;
+import charge.platform.homefolder;
 
 import miners.options;
 import miners.interfaces;
@@ -46,8 +47,9 @@ public:
 		auto b4 = new Button(mb, 0, b3.y + b3.h, "", minButtonWidth);
 		auto b5 = new Button(mb, 0, b4.y + b4.h, "", minButtonWidth);
 		auto b6 = new Button(mb, 0, b5.y + b5.h, "", minButtonWidth);
+		auto b7 = new Button(mb, 0, b6.y + b6.h + 16, "", minButtonWidth);
 
-		auto lastButton = b6;
+		auto lastButton = b7;
 		int bY = lastButton.y + lastButton.h + 16;
 
 		auto bQuit = new Button(mb, 0, bY, "Quit", 8);
@@ -77,6 +79,9 @@ public:
 		setViewText(b4); b4.pressed ~= &view;
 		setFovText(b5); b5.pressed ~= &fov;
 		setFullscreenText(b6); b6.pressed ~= &fullscreen;
+
+		b7.setText("Open textures & screenshots");
+		b7.pressed ~= &openFolder;
 	}
 
 	void quit(Button b) { r.quit(); }
@@ -185,4 +190,111 @@ public:
 		auto r = p.getBool("fullscreen", Core.defaultFullscreen);
 		b.setText(r ? fullscreenOnText : fullscreenOffText, minButtonWidth);
 	}
+
+	void openFolder(Button b)
+	{
+		version(Windows) {
+			try {
+				windowsOpenFolder();
+			} catch (Exception e) {
+				r.displayError(e, false);
+				r.deleteMe(this);
+			}
+		} else {
+			r.displayInfo("Sorry", [
+				"Can't open the settings folder on this platform",
+				chargeConfigFolder], "Ok", &r.displayPauseMenu);
+			r.deleteMe(this);
+		}
+	}
+}
+
+version(Windows)
+{
+	void windowsOpenFolder()
+	{
+		bool bRet;
+		uint uRet;
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		si.cb = cast(uint)si.sizeof;
+
+		auto cmd = "explorer.exe \"" ~ chargeConfigFolder ~ "\"\0";
+
+		bRet = CreateProcessA(
+			null,
+			cmd.ptr,
+			null,
+			null,
+			false,
+			0,
+			null,
+			null,
+			&si,
+			&pi);
+
+		if (!bRet)
+			throw new Exception("Failed to show folder");
+
+		scope(exit) {
+			CloseHandle(pi.hProcess);
+			CloseHandle(pi.hThread);
+		}
+	}
+
+	struct STARTUPINFO {
+		uint  cb;
+		void* lpReserved;
+		void* lpDesktop;
+		void* lpTitle;
+		uint  dwX;
+		uint  dwY;
+		uint  dwXSize;
+		uint  dwYSize;
+		uint  dwXCountChars;
+		uint  dwYCountChars;
+		uint  dwFillAttribute;
+		uint  dwFlags;
+		short wShowWindow;
+		short cbReserved2;
+		void* lpReserved2;
+		void* hStdInput;
+		void* hStdOutput;
+		void* hStdError;
+	}
+
+	struct PROCESS_INFORMATION {
+		void* hProcess;
+		void* hThread;
+		uint dwProcessId;
+		uint dwThreadId;
+	}
+
+	extern(System) bool CreateProcessA(
+		char* lpApplicationName,
+		char* lpCommandLine,
+		void* lpProcessAttributes,
+		void* lpThreadAttributes,
+		bool bInheritHandles,
+		uint dwCreationFlags,
+		void* lpEnvironment,
+		void* lpCurrentDirectory,
+		STARTUPINFO* lpStartupInfo,
+		PROCESS_INFORMATION* lpProcessInformation
+	);
+
+	extern(System) uint WaitForSingleObject(
+		void* hHandle,
+		uint dwMilliseconds,
+	);
+
+	extern(System) bool GetExitCodeProcess(
+		void* hHandle,
+		uint* lpDword
+	);
+
+	extern(System) bool CloseHandle(
+		void* hHandle
+	);
 }
