@@ -25,6 +25,7 @@ import miners.world;
 import miners.runner;
 import miners.viewer;
 import miners.options;
+import miners.debugger;
 import miners.interfaces;
 import miners.background;
 import miners.ion.runner;
@@ -81,6 +82,8 @@ private:
 	GfxDefaultTarget defaultTarget;
 
 	SkinDownloader skin;
+
+	DebugRunner dr;
 
 	GfxDraw d;
 
@@ -140,6 +143,9 @@ public:
 
 	void close()
 	{
+		deleteMe(dr);
+		dr = null;
+
 		deleteAll();
 
 		manageRunners();
@@ -190,6 +196,13 @@ protected:
 		BackgroundRunner br = new BackgroundRunner(opts);
 		push(br);
 
+		// Always create the debug runner,
+		// only use it on debug builds.
+		dr = new DebugRunner(this);
+		opts.showDebug ~= &showDebug;
+		// Will push the runner now if debug build.
+		debug { opts.showDebug = true; }
+
 		// Initialize the shared resources.
 		opts.allocateResources();
 
@@ -211,7 +224,6 @@ protected:
 		opts.useCmdPrefix = p.getIfNotFoundSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
 		opts.lastClassicServer = p.getIfNotFoundSet(opts.lastClassicServerName, opts.lastClassicServerDefault);
 		opts.viewDistance = viewDistance;
-		debug { opts.showDebug = true; }
 		for (int i; i < opts.keyNames.length; i++)
 			opts.keyArray[i] =  p.getIfNotFoundSet(opts.keyNames[i], opts.keyDefaults[i]);
 
@@ -646,6 +658,14 @@ protected:
 	{
 		rm.switchRenderer();
 		opts.setRenderer(rm.bt, rm.s);
+	}
+
+	void showDebug(bool value)
+	{
+		if (value)
+			push(dr);
+		else
+			remove(dr);
 	}
 
 
