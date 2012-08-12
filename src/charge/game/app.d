@@ -8,34 +8,11 @@ import charge.util.vector;
 import charge.core;
 import charge.ctl.input;
 import charge.gfx.target;
+import charge.gfx.sync;
+import charge.sys.tracker;
 import charge.sys.resource;
 import charge.game.runner;
 
-import charge.gfx.sync;
-
-
-struct TimeKeeper
-{
-	long then;
-	long accumilated;
-
-	void start()
-	{
-		then = SDL_GetTicks();
-	}
-
-	void stop()
-	{
-		accumilated += SDL_GetTicks() - then;
-	}
-
-	double calc(long elapsed)
-	{
-		double ret = accumilated / cast(real)elapsed * 100.0;
-		accumilated = 0;
-		return ret;
-	}
-}
 
 abstract class App
 {
@@ -83,11 +60,12 @@ protected:
 abstract class SimpleApp : public App
 {
 protected:
-	TimeKeeper networkTime;
-	TimeKeeper renderTime;
-	TimeKeeper logicTime;
-	TimeKeeper inputTime;
-	TimeKeeper idleTime;
+	TimeTracker networkTime;
+	TimeTracker renderTime;
+	TimeTracker logicTime;
+	TimeTracker inputTime;
+	TimeTracker buildTime;
+	TimeTracker idleTime;
 
 	bool changed; //< Tracks if should render
 
@@ -96,6 +74,13 @@ public:
 	{
 		if (opts is null)
 			opts = new CoreOptions();
+
+		networkTime = new TimeTracker("net");
+		renderTime = new TimeTracker("gfx");
+		inputTime = new TimeTracker("ctl");
+		logicTime = new TimeTracker("logic");
+		buildTime = new TimeTracker("build");
+		idleTime = new TimeTracker("idle");
 
 		super(opts);
 
@@ -195,8 +180,6 @@ private:
 	bool dirty; //< Do we need to manage runners.
 	bool built; //< Have we built this logic pass.
 
-	TimeKeeper buildTime;
-
 	alias bool delegate() BuilderDg;
 	Vector!(BuilderDg) builders;
 
@@ -274,7 +257,6 @@ public:
 			return wait(time);
 
 		// Account this time for build instead of idle
-		idleTime.stop();
 		buildTime.start();
 
 		// Need to reset each idle check
@@ -289,7 +271,6 @@ public:
 
 		// Switch back to idle
 		buildTime.stop();
-		idleTime.start();
 
 		// Didn't build anything, just sleep.
 		if (!built)
