@@ -47,41 +47,41 @@ BuildBlockDescriptor tile[256] = [
 	{  true, toTex(  4,  0 ), toTex(  4,  0 ) }, // wooden plank
 	{ false, toTex( 15,  0 ), toTex( 15,  0 ) }, // sapling
 	{  true, toTex(  1,  1 ), toTex(  1,  1 ) }, // bedrock
-	{ false, toTex( 15, 13 ), toTex( 15, 13 ) }, // water                 // 8
-	{ false, toTex( 15, 13 ), toTex( 15, 13 ) }, // spring water
-	{  true, toTex( 15, 15 ), toTex( 15, 15 ) }, // lava
-	{  true, toTex( 15, 15 ), toTex( 15, 15 ) }, // spring lava
+	{ false, toTex( 14,  0 ), toTex( 14,  0 ) }, // water                 // 8
+	{ false, toTex( 14,  0 ), toTex( 14,  0 ) }, // spring water
+	{  true, toTex( 14,  1 ), toTex( 14,  1 ) }, // lava
+	{  true, toTex( 14,  1 ), toTex( 14,  1 ) }, // spring lava
 	{  true, toTex(  2,  1 ), toTex(  2,  1 ) }, // sand
 	{  true, toTex(  3,  1 ), toTex(  3,  1 ) }, // gravel
 	{  true, toTex(  0,  2 ), toTex(  0,  2 ) }, // gold ore
 	{  true, toTex(  1,  2 ), toTex(  1,  2 ) }, // iron ore
 	{  true, toTex(  2,  2 ), toTex(  2,  2 ) }, // coal ore              // 16
 	{  true, toTex(  4,  1 ), toTex(  5,  1 ) }, // log
-	{ false, toTex(  4,  3 ), toTex(  4,  3 ) }, // leaves
+	{ false, toTex(  6,  1 ), toTex(  6,  1 ) }, // leaves
 	{  true, toTex(  0,  3 ), toTex(  0,  3 ) }, // sponge
 	{ false, toTex(  1,  3 ), toTex(  1,  3 ) }, // glass
-	{  true, toTex(  1,  7 ), toTex(  1,  7 ) }, // red
-	{  true, toTex(  1,  8 ), toTex(  1,  8 ) }, // orange
-	{  true, toTex(  1,  9 ), toTex(  1,  9 ) }, // yellow
-	{  true, toTex(  1, 10 ), toTex(  1, 10 ) }, // lime green            // 24
-	{  true, toTex(  1, 11 ), toTex(  1, 11 ) }, // green
-	{  true, toTex(  1, 12 ), toTex(  1, 12 ) }, // aqua green
-	{  true, toTex(  1, 13 ), toTex(  1, 13 ) }, // cyan
-	{  true, toTex(  1, 14 ), toTex(  1, 14 ) }, // blue
-	{  true, toTex(  2,  7 ), toTex(  2,  7 ) }, // purple
-	{  true, toTex(  2,  8 ), toTex(  2,  8 ) }, // indigo
-	{  true, toTex(  2,  9 ), toTex(  2,  9 ) }, // violet
-	{  true, toTex(  2, 10 ), toTex(  2, 10 ) }, // magenta               // 32
-	{  true, toTex(  2, 11 ), toTex(  2, 11 ) }, // pink
-	{  true, toTex(  2, 12 ), toTex(  2, 12 ) }, // black
-	{  true, toTex(  2, 13 ), toTex(  2, 13 ) }, // grey
-	{  true, toTex(  0,  4 ), toTex(  0,  4 ) }, // white,
+	{  true, toTex(  0,  4 ), toTex(  0,  4 ) }, // red
+	{  true, toTex(  1,  4 ), toTex(  1,  4 ) }, // orange
+	{  true, toTex(  2,  4 ), toTex(  2,  4 ) }, // yellow
+	{  true, toTex(  3,  4 ), toTex(  3,  4 ) }, // lime green            // 24
+	{  true, toTex(  4,  4 ), toTex(  4,  4 ) }, // green
+	{  true, toTex(  5,  4 ), toTex(  5,  4 ) }, // aqua green
+	{  true, toTex(  6,  4 ), toTex(  6,  4 ) }, // cyan
+	{  true, toTex(  7,  4 ), toTex(  7,  4 ) }, // blue
+	{  true, toTex(  8,  4 ), toTex(  8,  4 ) }, // purple
+	{  true, toTex(  9,  4 ), toTex(  9,  4 ) }, // indigo
+	{  true, toTex( 10,  4 ), toTex( 10,  4 ) }, // violet
+	{  true, toTex( 11,  4 ), toTex( 11,  4 ) }, // magenta               // 32
+	{  true, toTex( 12,  4 ), toTex( 12,  4 ) }, // pink
+	{  true, toTex( 13,  4 ), toTex( 13,  4 ) }, // black
+	{  true, toTex( 14,  4 ), toTex( 14,  4 ) }, // grey
+	{  true, toTex( 15,  4 ), toTex( 15,  4 ) }, // white,
 	{ false, toTex( 13,  0 ), toTex( 13,  0 ) }, // yellow flower
 	{ false, toTex( 12,  0 ), toTex( 12,  0 ) }, // red rose
 	{ false, toTex( 13,  1 ), toTex(  0,  0 ) }, // brown myshroom
 	{ false, toTex( 12,  1 ), toTex(  0,  0 ) }, // red mushroom          // 40
-	{  true, toTex(  7,  1 ), toTex(  7,  1 ) }, // gold block
-	{  true, toTex(  6,  1 ), toTex(  6,  1 ) }, // iron block
+	{  true, toTex(  8,  2 ), toTex(  8,  1 ) }, // gold block
+	{  true, toTex(  7,  2 ), toTex(  7,  1 ) }, // iron block
 	{  true, toTex(  5,  0 ), toTex(  6,  0 ) }, // double slab
 	{ false, toTex(  5,  0 ), toTex(  6,  0 ) }, // slab
 	{  true, toTex(  7,  0 ), toTex(  7,  0 ) }, // brick block

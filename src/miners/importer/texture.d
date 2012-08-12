@@ -58,13 +58,59 @@ void manipulateTextureClassic(Picture pic)
 	uint tile_x = 0;
 	uint tile_y = 4;
 	uint max;
+	uint src, dst;
 	tile_x *= tile_size;
 	tile_y *= tile_size;
 
+	void copy(uint src, uint dst) {
+		uint src_u = src % 16;
+		uint src_v = src / 16;
+		uint dst_u = dst % 16;
+		uint dst_v = dst / 16;
+		copyTile(pic, src_u, src_v, dst_u, dst_v);
+	}
+
+	// Gold block, must come before iron.
+	src = miners.builder.beta.tile[41].yTex;
+	dst = miners.builder.classic.tile[41].yTex;
+	copy(src, dst);
+	copy(src, dst+16);
+	copy(src, dst+32);
+
+	// Iron block, must come after gold.
+	src = miners.builder.beta.tile[42].yTex;
+	dst = miners.builder.classic.tile[42].yTex;
+	copy(src, dst);
+	copy(src, dst+16);
+	copy(src, dst+32);
+
+	// Leaves, must come after iron.
+	src = miners.builder.beta.tile[18].yTex;
+	dst = miners.builder.classic.tile[18].yTex;
+	copy(src, dst);
+
+	// Water
+	src = miners.builder.beta.tile[8].yTex;
+	dst = miners.builder.classic.tile[8].yTex;
+	copy(src, dst);
+
+	// Water
+	src = miners.builder.beta.tile[10].yTex;
+	dst = miners.builder.classic.tile[10].yTex;
+	copy(src, dst);
+
+	// Move the white wool to its place.
+	src = miners.builder.beta.tile[21+15].xzTex;
+	dst = miners.builder.classic.tile[21+15].xzTex;
+	copy(src, dst);
+
+	// Copy and modulate the white wool.
+	uint wool_u = dst % 16;
+	uint wool_v = dst / 16;
 	for (int i; i < 15; i++) {
-		auto t = &miners.builder.classic.tile[i+21];
-		int u = t.xzTex % 16, v = t.xzTex / 16;
-		copyTile(pic, 0, 4, u, v);
+		dst = miners.builder.classic.tile[i+21].xzTex;
+		int u = dst % 16, v = dst / 16;
+		copyTile(pic, wool_u, wool_v, u, v);
 		modulateColor(pic, u, v, classicWoolColors[i]);
 	}
 }

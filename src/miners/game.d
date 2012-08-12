@@ -224,7 +224,7 @@ protected:
 		sysReference(&defSkin, null);
 
 		// Most common problem people have is missing terrain.png
-		Picture pic = getMinecraftTexture();
+		Picture pic = getModernTexture();
 		if (pic is null) {
 			auto text = format(terrainNotFoundText, chargeConfigFolder);
 			throw new GameException(text, null, true);
@@ -258,13 +258,16 @@ protected:
 		opts.modernTerrainPic = pic;
 		opts.modernTextures = createTextures(pic, opts.rendererBuildIndexed);
 
-		// Copy and juggle reference count.
-		auto tmpPic = Picture(null, pic);
+		// Done with the modern picture.
 		sysReference(&pic, null);
-		pic = tmpPic;
 
 		// Get a texture that works with classic
-		manipulateTextureClassic(pic);
+		pic = getClassicTexture();
+		if (pic is null) {
+			// Copy and manipulate
+			pic = Picture(null, opts.modernTerrainPic());
+			manipulateTextureClassic(pic);
+		}
 		opts.classicTerrainPic = pic;
 		opts.classicTextures = createTextures(pic, opts.rendererBuildIndexed);
 
@@ -539,7 +542,7 @@ protected:
 	/**
 	 * Load the Minecraft texture.
 	 */
-	Picture getMinecraftTexture()
+	Picture getModernTexture()
 	{
 		char[][] locations = [
 			"terrain.png",
@@ -573,6 +576,28 @@ protected:
 		fm.addBuiltin(terrainFilename, terrainFile);
 
 		return Picture(terrainFilename);
+	}
+
+	/**
+	 * Load the Minecraft texture.
+	 */
+	Picture getClassicTexture()
+	{
+		char[][] locations = [
+			"terrain.classic.png",
+			chargeConfigFolder ~ "/terrain.classic.png",
+		];
+
+		foreach(l; locations) {
+			auto pic = Picture("mc/terrain.classic", l);
+			if (pic is null)
+				continue;
+
+			this.l.info("Found terrain.classic.png please ignore above warnings");
+			return pic;
+		}
+
+		return null;
 	}
 
 	bool checkLevel(char[] level)
