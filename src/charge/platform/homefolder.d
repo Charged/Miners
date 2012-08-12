@@ -19,17 +19,18 @@ static this()
 	version(linux) {
 		homeFolder = toString(getenv("HOME"));
 		applicationConfigFolder = homeFolder ~ "/.config";
+		chargeConfigFolder = applicationConfigFolder ~ "/charge";
 	} else version(darwin) {
 		homeFolder = toString(getenv("HOME"));
 		applicationConfigFolder = homeFolder ~ "/Library/Application Support";
+		chargeConfigFolder = applicationConfigFolder ~ "/charge";
 	} else version(Windows) {
 		homeFolder = toString(getenv("USERPROFILE"));
 		applicationConfigFolder = toString(getenv("APPDATA"));
+		chargeConfigFolder = applicationConfigFolder ~ "\\charge";
 	} else {
 		static assert(false);
 	}
-
-	chargeConfigFolder = applicationConfigFolder ~ "/charge";
 
 	version(darwin) {
 		auto s = macGetPrivateFrameworksPath();
