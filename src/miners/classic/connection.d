@@ -189,7 +189,7 @@ protected:
 	 */
 	void serverIdentification(ServerIdentification *si)
 	{
-		ubyte ver = si.playerType;
+		ubyte ver = si.protocolVersion;
 		char[] name = removeTrailingSpaces(si.name);
 		char[] motd = removeTrailingSpaces(si.motd);
 		ubyte type = si.playerType;
