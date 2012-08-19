@@ -61,6 +61,8 @@ private:
 	Text text;
 	Router r;
 
+	const char[] disconnectString = "Disconnected while \"%s\"";
+	char[] disString;
 
 public:
 	/**
@@ -95,6 +97,8 @@ protected:
 		this.r = r;
 		this.cc = cc;
 		cc.setListener(this);
+
+		disString = format(disconnectString, startText);
 
 		mb = new MenuBase(header, MenuBase.Buttons.CANCEL);
 		mb.button.pressed ~= &cancel;
@@ -156,6 +160,8 @@ protected:
 
 	void levelInitialize()
 	{
+		disString = format(disconnectString, "Loading level");
+
 		auto t = format("Loading level 0%%");
 		text.setText(t);
 		mb.repack();
@@ -200,7 +206,7 @@ protected:
 	void message(byte id, char[] message) {}
 	void disconnect(char[] reason)
 	{
-		r.displayError(["Disconnected", reason], false);
+		r.displayError([disString, reason], false);
 		r.deleteMe(this);
 	}
 }
@@ -221,6 +227,10 @@ private:
 	MenuBase mb;
 	Text text;
 	Router r;
+
+	/// Disconnected message
+	const char[] disconnectString = "Disconnected while \"%s\"";
+	char[] disString;
 
 	/// Cookie used for authentication.
 	char[] playSession;
@@ -313,6 +323,8 @@ private:
 		if (idle)
 			wc.getServerInfo(csi);
 
+		disString = format(disconnectString, "Connecting");
+
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
 					   "Connecting");
@@ -349,6 +361,7 @@ protected:
 	{
 		wc.postLogin(username, password);
 
+		disString = format(disconnectString, "Authenticating");
 		curText = "Authenticating: %s%%";
 		percentage(0);
 	}
@@ -357,6 +370,7 @@ protected:
 	{
 		wc.getServerList();
 
+		disString = format(disconnectString, "Retriving server list");
 		curText = "Retriving server list: %s%%";
 		percentage(0);
 	}
@@ -365,6 +379,7 @@ protected:
 	{
 		wc.getServerInfo(csi);
 
+		disString = format(disconnectString, "Retriving server info");
 		curText = "Retriving server info: %s%%";
 		percentage(0);
 	}
@@ -418,7 +433,7 @@ protected:
 	{
 		shutdownConnection();
 
-		r.displayError(["Disconnected", e.toString()], false);
+		r.displayError([disString, e.toString()], false);
 		r.deleteMe(this);
 	}
 
@@ -427,7 +442,7 @@ protected:
 		// The server closed the connection peacefully.
 		shutdownConnection();
 
-		r.displayError(["Disconnected"], false);
+		r.displayError([disString], false);
 		r.deleteMe(this);
 	}
 }

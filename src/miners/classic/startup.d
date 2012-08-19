@@ -42,6 +42,8 @@ private:
 
 	const string connectingString = "Connecting...";
 	const string retrievingString = "Retrieving server list: %s%%";
+	const string disconnectedString =
+		"Disconnected while trying to retrive server list";
 
 public:
 	this(Router r, Options opts)
@@ -250,7 +252,7 @@ protected:
 	{
 		shutdownConnection();
 
-		r.displayError(["Disconnected", e.toString()], false);
+		r.displayError([disconnectedString, e.toString()], false);
 		r.deleteMe(this);
 	}
 
@@ -259,7 +261,7 @@ protected:
 		// The server closed the connection peacefully.
 		shutdownConnection();
 
-		r.displayError(["Disconnected"], false);
+		r.displayError([disconnectedString], false);
 		r.deleteMe(this);
 	}
 }
