@@ -500,6 +500,17 @@ public:
 	 */
 	void selectedBlock(ubyte block)
 	{
+		int i;
+		foreach(b; slots) {
+			if (b == block)
+				break;
+			i++;
+		}
+
+		// Swap places if the same
+		if (i < slots.length)
+			slots[i] = slots[currentSlot];
+
 		slots[currentSlot] = block;
 	}
 
@@ -743,7 +754,17 @@ public:
 			if (!info.placable)
 				return false;
 
-			slots[currentSlot] = b.type;
+			int i;
+			foreach(block; slots) {
+				if (block == b.type)
+					break;
+				i++;
+			}
+
+			if (i < slots.length)
+				currentSlot = i;
+			else
+				slots[currentSlot] = b.type;
 
 			return false;
 		}
