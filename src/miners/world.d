@@ -7,7 +7,6 @@ import std.math;
 import charge.charge;
 
 import miners.options;
-import miners.builder.beta;
 import miners.terrain.beta;
 import miners.terrain.common;
 import miners.importer.info;
