@@ -19,6 +19,15 @@ import miners.lua.state;
 import lib.lua.lua;
 import lib.lua.lauxlib;
 
+import miners.lua.wrappers.types;
+import miners.lua.functions;
+import miners.lua.wrappers.isle;
+import miners.lua.wrappers.beta;
+import miners.lua.wrappers.types;
+import miners.lua.wrappers.actors;
+import miners.lua.wrappers.terrain;
+import miners.lua.wrappers.classic;
+
 
 class ScriptRunner : public GameRunnerBase
 {
@@ -159,7 +168,7 @@ protected:
 		s.pop();
 
 		// Load miners
-		s.openMiners();
+		openMiners(s);
 		s.pop();
 
 		// Ctl
@@ -376,5 +385,44 @@ protected:
 		s.pushStringz(str);
 		s.pushNil();
 		s.setTable(lib.lua.lua.LUA_GLOBALSINDEX);
+	}
+
+	const luaL_Reg minerslib[] = [
+		{ "Block", &BlockWrapper.newBlock },
+		{ "OtherPlayer", &OtherPlayerWrapper.newOtherPlayer },
+		{ "getRayPoints", &getRayPoints },
+		{ null, null },
+	];
+
+	void openMiners(LuaState s)
+	{
+		s.pushCFunction(&openlib);
+		s.pushStringz("miners");
+		s.call(1);
+	}
+
+	extern (C) static int openlib(lua_State *l)
+	{
+		auto s = LuaState(l);
+
+		luaL_register(l, "miners", minerslib.ptr);
+
+		// Register structs
+		BlockWrapper.register(s);
+
+		// Register actors
+		CameraWrapper.register(s);
+		OptionsWrapper.register(s);
+		SunLightWrapper.register(s);
+		OtherPlayerWrapper.register(s);
+
+		// Register world and terrain
+		IsleWorldWrapper.register(s);
+		BetaWorldWrapper.register(s);
+		BetaTerrainWrapper.register(s);
+		ClassicWorldWrapper.register(s);
+		FiniteTerrainWrapper.register(s);
+
+		return 1;
 	}
 }
