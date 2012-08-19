@@ -71,6 +71,8 @@ protected:
 	TextureContainer chatGuiSmall;
 	ClassicMessageLog mlGuiSmall;
 
+	int mouseButtonCounter1;
+	int mouseButtonCounter3;
 
 	TextureContainer chatGuiCurrent;
 
@@ -227,6 +229,24 @@ public:
 		if (console.typing)
 			console.logic();
 
+		// Handle remove repeat.
+		if (mouseButtonCounter1 > 0) {
+			mouseButtonCounter1++;
+			if (mouseButtonCounter1 > 35) {
+				doRemoveBlock();
+				mouseButtonCounter1 = 20;
+			}
+		}
+
+		// Handle placement repeat.
+		if (mouseButtonCounter3 > 0) {
+			mouseButtonCounter3++;
+			if (mouseButtonCounter3 > 35) {
+				doPlaceBlock();
+				mouseButtonCounter3 = 20;
+			}
+		}
+
 		if (c is null)
 			return;
 
@@ -344,6 +364,9 @@ public:
 
 	void stopMoving()
 	{
+		mouseButtonCounter1 = 0;
+		mouseButtonCounter3 = 0;
+
 		m.forward = false;
 		m.backward = false;
 		m.left = false;
@@ -685,6 +708,48 @@ public:
 			return;
 		}
 
+
+		// XXX Custamizable buttons.
+		if (button == 1) {
+			mouseButtonCounter1 = 1;
+			mouseButtonCounter3 = 0;
+			doRemoveBlock();
+		} else if (button == 2) {
+			doCopyBlock();
+		} else if (button == 3) {
+			mouseButtonCounter1 = 0;
+			mouseButtonCounter3 = 1;
+			doPlaceBlock();
+		}
+	}
+
+
+	void mouseUp(CtlMouse, int button)
+	{
+		// XXX Custamizable buttons.
+		if (button == 1) {
+			mouseButtonCounter1 = 0;
+		} else if (button == 3) {
+			mouseButtonCounter3 = 0;
+		}
+	}
+
+
+	/*
+	 *
+	 * Block functions.
+	 *
+	 */
+
+
+	/**
+	 * Place a block of the type that is currently selected in the slot bar.
+	 */
+	void doPlaceBlock()
+	{
+		auto pos = cam.position;
+		auto vec = cam.rotation.rotateHeading();
+
 		int xLast, yLast, zLast;
 		int numBlocks;
 
@@ -711,13 +776,27 @@ public:
 
 			if (c !is null)
 				c.sendClientSetBlock(cast(short)xLast,
-						     cast(short)yLast,
-						     cast(short)zLast,
-						     1, cur);
+				                     cast(short)yLast,
+				                     cast(short)zLast,
+				                     1, cur);
 
 			// We should only place one block.
 			return false;
 		}
+
+		stepDirection(pos, vec, 6, &stepPlace);
+	}
+
+	/**
+	 * Removes the current looked at block.
+	 */
+	void doRemoveBlock()
+	{
+		auto pos = cam.position;
+		auto vec = cam.rotation.rotateHeading();
+
+		int xLast, yLast, zLast;
+		int numBlocks;
 
 		bool stepRemove(int x, int y, int z) {
 			auto b = w.t[x, y, z];
@@ -732,13 +811,27 @@ public:
 
 			if (c !is null)
 				c.sendClientSetBlock(cast(short)x,
-						     cast(short)y,
-						     cast(short)z,
-						     0, cur);
+				                     cast(short)y,
+				                     cast(short)z,
+				                     0, cur);
 
 			// We should only remove one block.
 			return false;
 		}
+
+		stepDirection(pos, vec, 6, &stepRemove);
+	}
+
+	/**
+	 * Copies the block being looked at and updates the slot bar.
+	 */
+	void doCopyBlock()
+	{
+		auto pos = cam.position;
+		auto vec = cam.rotation.rotateHeading();
+
+		int xLast, yLast, zLast;
+		int numBlocks;
 
 		bool stepCopy(int x, int y, int z) {
 			auto b = w.t[x, y, z];
@@ -769,16 +862,7 @@ public:
 			return false;
 		}
 
-		auto pos = cam.position;
-		auto vec = cam.rotation.rotateHeading();
-
-		if (button == 3)
-			stepDirection(pos, vec, 6, &stepPlace);
-		else if (button == 1)
-			stepDirection(pos, vec, 6, &stepRemove);
-		else if (button == 2)
-			stepDirection(pos, vec, 6, &stepCopy);
-
+		stepDirection(pos, vec, 6, &stepCopy);
 	}
 
 
