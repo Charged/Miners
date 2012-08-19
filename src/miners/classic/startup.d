@@ -123,6 +123,13 @@ public:
 protected:
 	void createLogo()
 	{
+		auto tex = GfxTexture("background.png");
+		if (tex !is null) {
+			setBackground(tex, false);
+			return sysReference(&tex, null);
+		}
+
+		// Fallback to a inbuilt one.
 		auto logo = new Logo(null, 0, 0);
 		auto aat = new AntiAliasingContainer(null, 0, 0, logo.w, logo.h);
 		auto tt = new TextureContainer(logo.w, logo.h);
@@ -142,6 +149,21 @@ protected:
 
 	void createBackground()
 	{
+		// See if the user has overridden the background.
+		auto tex = GfxTexture("background.tiled.png");
+		if (tex !is null) {
+			setBackground(tex, true);
+			return sysReference(&tex, null);
+		}
+
+		// Try the other one as well.
+		tex = GfxTexture("background.png");
+		if (tex !is null) {
+			setBackground(tex, false);
+			return sysReference(&tex, null);
+		}
+
+		// Fallback to a inbuilt one.
 		auto cog = new Cogwheel(null, 0, 0, 32, 32, 26, 12);
 		auto aat = new AntiAliasingContainer(null, 0, 0, cog.w, cog.h);
 		auto tt = new TextureContainer(cog.w, cog.h);
@@ -152,11 +174,16 @@ protected:
 		aat.paintTexture();
 		tt.paintTexture();
 
-		opts.background = tt.texture;
-		opts.backgroundTiled = true;
-		opts.backgroundDoubled = false;
+		setBackground(tex, true);
 
 		tt.breakApart();
+	}
+
+	void setBackground(GfxTexture tex, bool tiled)
+	{
+		opts.background = tex;
+		opts.backgroundTiled = tiled;
+		opts.backgroundDoubled = false;
 	}
 
 
