@@ -3,6 +3,7 @@
 module miners.classic.runner;
 
 import std.string : format, find;
+import std.math : PI, PI_2;
 
 import lib.sdl.keysym;
 import lib.gl.gl;
@@ -15,11 +16,12 @@ import charge.game.gui.messagelog;
 
 import miners.types;
 import miners.runner;
-import miners.viewer;
 import miners.options;
 import miners.console;
 import miners.interfaces;
 import miners.gfx.selector;
+import miners.actors.camera;
+import miners.actors.sunlight;
 import miners.classic.data;
 import miners.classic.world;
 import miners.classic.message;
@@ -33,7 +35,7 @@ import miners.importer.network;
 /**
  * Classic runner
  */
-class ClassicRunner : public ViewerRunner, public ClientListener
+class ClassicRunner : public GameRunnerBase, public ClientListener
 {
 private:
 	mixin SysLogging;
@@ -80,16 +82,53 @@ protected:
 
 	ClassicConsole console;
 
+
+
+	/* Light related */
+	SunLight sl;
+	double lightHeading;
+	double lightPitch;
+	bool lightMoveing;
+
+	/* Camera related */
+	Camera cam;
+	double camHeading;
+	double camPitch;
+	bool camMoveing;
+
+	/* Moves the camera */
 	PlayerPhysics pp;
+
 
 public:
 	this(Router r, Options opts)
 	{
+		this.opts = opts;
+
 		if (w is null)
 			w = new ClassicWorld(opts);
 
 		super(r, opts, w);
 
+		// Camera defaults
+		camHeading = 0.0;
+		camPitch = 0.0;
+
+		centerer = cam = new Camera(w);
+		cam.position = w.spawn + Vector3d(0.5, 1.5, 0.5);
+
+		centerMap();
+
+		// Light defaults
+		lightHeading = PI/3;
+		lightPitch = -PI/6;
+
+		sl = new SunLight(w);
+		sl.gfx.diffuse = Color4f(200.0/255, 200.0/255, 200.0/255);
+		sl.gfx.ambient = Color4f(65.0/255, 65.0/255, 65.0/255);
+		sl.rotation = Quatd(lightHeading, lightPitch, 0);
+
+		// Show which block is selected.
 		sel = new Selector(w.gfx);
 		sel.show = true;
 		sel.setBlock(0, 0, 0);
@@ -204,6 +243,10 @@ public:
 		if (ml !is null)
 			ml.message = null;
 
+		delete cam;
+		delete sl;
+		delete w;
+
 		super.close();
 
 		if (c is null)
@@ -215,11 +258,8 @@ public:
 
 	void logic()
 	{
-		if (false) {
-			m.tick();
-		} else {
-			cam.position = pp.movePlayer(cam.position, cam_heading);
-		}
+		// Yay
+		cam.position = pp.movePlayer(cam.position, camHeading);
 
 		// From BaseRunner class.
 		w.tick();
@@ -259,18 +299,18 @@ public:
 		if (!(sentCounter++ % 5)) {
 			auto pos = cam.position;
 			if (pos != saveCamPos ||
-			    cam_heading != saveCamHeading ||
-			    cam_pitch != saveCamPitch) {
+			    camHeading != saveCamHeading ||
+			    camPitch != saveCamPitch) {
 
 				c.sendClientPlayerUpdate(pos.x,
 							 pos.y,
 							 pos.z,
-							 cam_heading,
-							 cam_pitch);
+							 camHeading,
+							 camPitch);
 
 				saveCamPos = pos;
-				saveCamHeading = cam_heading;
-				saveCamPitch = cam_pitch;
+				saveCamHeading = camHeading,
+				saveCamPitch = camPitch;
 			} else {
 				sentCounter = 0;
 			}
@@ -348,6 +388,11 @@ public:
 		}
 	}
 
+	void resize(uint w, uint h)
+	{
+		cam.resize(w, h);
+	}
+
 	void dropControl()
 	{
 		stopMoving();
@@ -357,8 +402,8 @@ public:
 	bool grab(bool val)
 	{
 		if (val) {
-			cam_moveing = false;
-			light_moveing = false;
+			camMoveing = false;
+			lightMoveing = false;
 		}
 
 		return super.grab(val);
@@ -381,13 +426,6 @@ public:
 	{
 		mouseButtonCounter1 = 0;
 		mouseButtonCounter3 = 0;
-
-		m.forward = false;
-		m.backward = false;
-		m.left = false;
-		m.right = false;
-		m.up = false;
-		m.speed = false;
 
 		pp.forward = false;
 		pp.backward = false;
@@ -631,23 +669,18 @@ public:
 	void keyBinding(CtlKeyboard kb, int sym, bool keyDown)
 	{
 		if (sym == opts.keyForward) {
-			m.forward = keyDown;
 			pp.forward = keyDown;
 
 		} else if (sym == opts.keyBackward) {
-			m.backward = keyDown;
 			pp.backward = keyDown;
 
 		} else if (sym == opts.keyLeft) {
-			m.left = keyDown;
 			pp.left = keyDown;
 
 		} else if (sym == opts.keyRight) {
-			m.right = keyDown;
 			pp.right = keyDown;
 
 		} else if (sym == opts.keyCameraUp) {
-			m.up = keyDown;
 			pp.up = keyDown;
 
 		} else if (sym == opts.keyCameraDown) {
@@ -660,7 +693,6 @@ public:
 			pp.crouch = keyDown;
 
 		} else if (sym == opts.keyRun) {
-			m.speed = keyDown;
 			pp.run = keyDown;
 
 		} else if (sym == opts.keyFlightMode) {
@@ -717,9 +749,9 @@ public:
 
 		if ((button < 0 && button > 3) || !grabbed) {
 			if (button == 1)
-				cam_moveing = true;
+				camMoveing = true;
 			if (button == 3)
-				light_moveing = true;
+				lightMoveing = true;
 			return;
 		}
 
@@ -742,11 +774,40 @@ public:
 	{
 		// XXX Custamizable buttons.
 		if (button == 1) {
-			cam_moveing = false;
+			camMoveing = false;
 			mouseButtonCounter1 = 0;
 		} else if (button == 3) {
-			light_moveing = false;
+			lightMoveing = false;
 			mouseButtonCounter3 = 0;
+		}
+	}
+
+	void mouseMove(CtlMouse mouse, int ixrel, int iyrel)
+	{
+		if (camMoveing || (grabbed && !lightMoveing)) {
+			double xrel = ixrel;
+			double yrel = iyrel;
+
+			if (grabbed) {
+				camHeading += xrel / -500.0;
+				camPitch += yrel / -500.0;
+			} else {
+				camHeading += xrel / 500.0;
+				camPitch += yrel / 500.0;
+			}
+
+			if (camPitch < -PI_2) camPitch = -PI_2;
+			if (camPitch >  PI_2) camPitch =  PI_2;
+
+			cam.rotation = Quatd(camHeading, camPitch, 0);
+		}
+
+		if (lightMoveing) {
+			double xrel = ixrel;
+			double yrel = iyrel;
+			lightHeading += xrel / 500.0;
+			lightPitch += yrel / 500.0;
+			sl.rotation = Quatd(lightHeading, lightPitch, 0);
 		}
 	}
 
@@ -943,8 +1004,8 @@ public:
 		if (index == 255) {
 			cam.position = Point3d(x, y, z);
 			cam.rotation = Quatd(heading, pitch, 0);
-			cam_heading = heading;
-			cam_pitch = pitch;
+			camHeading = heading;
+			camPitch = pitch;
 			return;
 		}
 
@@ -970,8 +1031,8 @@ public:
 		if (index == 255) {
 			cam.position = Point3d(x, y, z);
 			cam.rotation = Quatd(heading, pitch, 0);
-			cam_heading = heading;
-			cam_pitch = pitch;
+			camHeading = heading;
+			camPitch = pitch;
 			return;
 		}
 
