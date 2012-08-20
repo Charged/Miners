@@ -45,7 +45,6 @@ import miners.terrain.beta;
 import miners.terrain.chunk;
 import miners.classic.world;
 import miners.classic.runner;
-import miners.classic.startup;
 import miners.importer.info;
 import miners.importer.network;
 import miners.importer.texture;
@@ -251,8 +250,6 @@ protected:
 						csi);
 			} else if (opts.classicServerList !is null) {
 				return displayClassicList(opts.classicServerList);
-			} else if (opts.playSessionCookie !is null) {
-				return startClassicStartup();
 			} else {
 				assert(false, "Classic arguments in wrong state");
 			}
@@ -573,11 +570,6 @@ protected:
 	 *
 	 */
 
-
-	void startClassicStartup()
-	{
-		push(new ClassicStartup(this, opts));
-	}
 
 	void chargeIon()
 	{
