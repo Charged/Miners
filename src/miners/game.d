@@ -196,6 +196,18 @@ protected:
 		BackgroundRunner br = new BackgroundRunner(opts);
 		push(br);
 
+		// Setup the inbuilt script files
+		initLuaBuiltins();
+
+		// Setup the renderer manager.
+		rm = new RenderManager();
+		opts.rendererString = rm.s;
+		opts.rendererBuildType = rm.bt;
+		opts.rendererBuildIndexed = rm.textureArray;
+		opts.changeRenderer = &changeRenderer;
+		opts.aa ~= &rm.setAa;
+		rm.setAa(opts.aa());
+
 		// Always create the debug runner,
 		// only use it on debug builds.
 		dr = new DebugRunner(this);
@@ -206,13 +218,12 @@ protected:
 		// Initialize the shared resources.
 		opts.allocateResources();
 
-		GfxTexture dirt;
-
 		// For options
 		auto p = Core().properties;
 
 		// Have to validate the view distance value.
-		double viewDistance = p.getIfNotFoundSet(opts.viewDistanceName, opts.viewDistanceDefault);
+		double viewDistance = p.getIfNotFoundSet(
+			opts.viewDistanceName, opts.viewDistanceDefault);
 		viewDistance = fmax(32, viewDistance);
 		viewDistance = fmin(viewDistance, short.max);
 
@@ -221,15 +232,16 @@ protected:
 		opts.fov = p.getIfNotFoundSet(opts.fovName, opts.fovDefault);
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
-		opts.useCmdPrefix = p.getIfNotFoundSet(opts.useCmdPrefixName, opts.useCmdPrefixDefault);
-		opts.lastClassicServer = p.getIfNotFoundSet(opts.lastClassicServerName, opts.lastClassicServerDefault);
+		opts.useCmdPrefix = p.getIfNotFoundSet(
+			opts.useCmdPrefixName, opts.useCmdPrefixDefault);
+		opts.lastClassicServer = p.getIfNotFoundSet(
+			opts.lastClassicServerName, opts.lastClassicServerDefault);
 		opts.viewDistance = viewDistance;
 		for (int i; i < opts.keyNames.length; i++)
-			opts.keyArray[i] =  p.getIfNotFoundSet(opts.keyNames[i], opts.keyDefaults[i]);
+			opts.keyArray[i] =  p.getIfNotFoundSet(
+				opts.keyNames[i], opts.keyDefaults[i]);
 
-		// Setup the inbuilt script files
-		initLuaBuiltins();
-
+		// Setup the skin loader.
 		auto defSkin = GfxColorTexture(Color4f.White);
 		skin = new SkinDownloader(defSkin);
 		opts.getSkin = &skin.getSkin;
@@ -242,36 +254,27 @@ protected:
 			throw new GameException(text, null, true);
 		}
 
-		// I just wanted a comment here to make the code look prettier.
-		rm = new RenderManager();
-
-		// Another comment that I made after the one above.
-		opts.rendererString = rm.s;
-		opts.rendererBuildType = rm.bt;
-		opts.rendererBuildIndexed = rm.textureArray;
-		opts.changeRenderer = &changeRenderer;
-		opts.aa ~= &rm.setAa;
-		rm.setAa(opts.aa());
+		// Do the manipulation of the texture to fit us
+		manipulateTextureModern(pic);
+		opts.modernTerrainPic = pic;
+		opts.modernTextures = createTextures(pic, opts.rendererBuildIndexed);
 
 		// Extract the dirt texture
-		Picture dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0);
-		dirt = GfxTexture("mc/dirt", dirtPic);
+		auto dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0);
+		auto dirt = GfxTexture("mc/dirt", dirtPic);
 		dirt.filter = GfxTexture.Filter.Nearest;
 		opts.dirt = dirt;
 		opts.background = dirt;
 		opts.backgroundTiled = true;
 		opts.backgroundDoubled = true;
 
+		// Clean up after the dir picture
 		sysReference(&dirtPic, null);
 		sysReference(&dirt, null);
 
-		// Do the manipulation of the texture to fit us
-		manipulateTextureModern(pic);
-		opts.modernTerrainPic = pic;
-		opts.modernTextures = createTextures(pic, opts.rendererBuildIndexed);
-
 		// Done with the modern picture.
 		sysReference(&pic, null);
+
 
 		// Get a texture that works with classic
 		pic = getClassicTexture();
@@ -312,6 +315,7 @@ protected:
 
 		// Not needed anymore.
 		sysReference(&pic, null);
+
 
 		// Install the classic font handler.
 		auto cf = ClassicFont("res/font.png");
