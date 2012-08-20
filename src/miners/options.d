@@ -41,6 +41,8 @@ public:
 
 	ClassicServerInfo classicServerInfo;
 
+	ClassicServerInfo[] classicServerList;
+
 	char[] levelPath;
 	char[] launcherPath;
 	/*@}*/

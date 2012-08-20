@@ -2,13 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.game;
 
-import std.math;
 import std.file;
 import std.conv;
 import std.stdio;
 import std.regexp;
-import std.string;
-import std.c.stdlib;
 
 import lib.sdl.sdl;
 
@@ -24,6 +21,7 @@ import miners.error;
 import miners.world;
 import miners.runner;
 import miners.viewer;
+import miners.startup;
 import miners.options;
 import miners.debugger;
 import miners.interfaces;
@@ -45,7 +43,6 @@ import miners.menu.classic;
 import miners.menu.blockselector;
 import miners.terrain.beta;
 import miners.terrain.chunk;
-import miners.classic.data;
 import miners.classic.world;
 import miners.classic.runner;
 import miners.classic.startup;
@@ -53,6 +50,7 @@ import miners.importer.info;
 import miners.importer.network;
 import miners.importer.texture;
 import miners.importer.classicinfo;
+
 
 static import miners.builder.classic;
 
@@ -215,32 +213,6 @@ protected:
 		// Will push the runner now if debug build.
 		debug { opts.showDebug = true; }
 
-		// Initialize the shared resources.
-		opts.allocateResources();
-
-		// For options
-		auto p = Core().properties;
-
-		// Have to validate the view distance value.
-		double viewDistance = p.getIfNotFoundSet(
-			opts.viewDistanceName, opts.viewDistanceDefault);
-		viewDistance = fmax(32, viewDistance);
-		viewDistance = fmin(viewDistance, short.max);
-
-		// First init options
-		opts.aa = p.getIfNotFoundSet(opts.aaName, opts.aaDefault);
-		opts.fov = p.getIfNotFoundSet(opts.fovName, opts.fovDefault);
-		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
-		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
-		opts.useCmdPrefix = p.getIfNotFoundSet(
-			opts.useCmdPrefixName, opts.useCmdPrefixDefault);
-		opts.lastClassicServer = p.getIfNotFoundSet(
-			opts.lastClassicServerName, opts.lastClassicServerDefault);
-		opts.viewDistance = viewDistance;
-		for (int i; i < opts.keyNames.length; i++)
-			opts.keyArray[i] =  p.getIfNotFoundSet(
-				opts.keyNames[i], opts.keyDefaults[i]);
-
 		// Setup the skin loader.
 		auto defSkin = GfxColorTexture(Color4f.White);
 		skin = new SkinDownloader(defSkin);
@@ -248,80 +220,22 @@ protected:
 		sysReference(&defSkin, null);
 
 		// Most common problem people have is missing terrain.png
+		// XXX Still does this here :-/
 		Picture pic = getModernTexture();
 		if (pic is null) {
 			auto text = format(terrainNotFoundText, chargeConfigFolder);
 			throw new GameException(text, null, true);
 		}
 
-		// Do the manipulation of the texture to fit us
-		manipulateTextureModern(pic);
+		// Save it for later.
 		opts.modernTerrainPic = pic;
-		opts.modernTextures = createTextures(pic, opts.rendererBuildIndexed);
-
-		// Extract the dirt texture
-		auto dirtPic = getTileAsSeperate(pic, "mc/dirt", 2, 0);
-		auto dirt = GfxTexture("mc/dirt", dirtPic);
-		dirt.filter = GfxTexture.Filter.Nearest;
-		opts.dirt = dirt;
-		opts.background = dirt;
-		opts.backgroundTiled = true;
-		opts.backgroundDoubled = true;
-
-		// Clean up after the dir picture
-		sysReference(&dirtPic, null);
-		sysReference(&dirt, null);
-
-		// Done with the modern picture.
 		sysReference(&pic, null);
 
+		return push(new StartupRunner(this, opts, &doneStartup));
+	}
 
-		// Get a texture that works with classic
-		pic = getClassicTexture();
-		if (pic is null) {
-			// Copy and manipulate
-			pic = Picture(null, opts.modernTerrainPic());
-			manipulateTextureClassic(pic);
-		}
-		opts.classicTerrainPic = pic;
-		opts.classicTextures = createTextures(pic, opts.rendererBuildIndexed);
-
-		// Create the textures for the classic block selector
-		static assert(classicBlocks.length == opts.classicSides.length);
-		foreach (int i, ref tex; opts.classicSides) {
-			if (!classicBlocks[i].placable)
-				continue;
-
-			// Get the location of the block
-			ubyte index = miners.builder.classic.tile[i].xzTex;
-			int x = index % 16;
-			int y = index / 16;
-
-			auto texPic = getTileAsSeperate(pic, null, x, y);
-
-			// XXX Hack for half slabs
-			if (i == 44) {
-				auto d = texPic.pixels[0 .. texPic.width * texPic.height];
-				d[$ / 2 .. $] = d[0 .. $ / 2];
-				d[0 .. $ / 2] = Color4b(0, 0, 0, 0);
-			}
-
-			tex = GfxTexture(null, texPic);
-			tex.filter = tex.width <= 32 ? GfxTexture.Filter.Nearest :
-			                               GfxTexture.Filter.NearestLinear;
-
-			sysReference(&texPic, null);
-		}
-
-		// Not needed anymore.
-		sysReference(&pic, null);
-
-
-		// Install the classic font handler.
-		auto cf = ClassicFont("res/font.png");
-		opts.classicFont = cf;
-		sysReference(&cf, null);
-
+	void doneStartup()
+	{
 		// Should we use classic
 		if (opts.isClassicNetwork) {
 			auto csi = opts.classicServerInfo;
@@ -335,6 +249,8 @@ protected:
 						opts.username,
 						opts.password,
 						csi);
+			} else if (opts.classicServerList !is null) {
+				return displayClassicList(opts.classicServerList);
 			} else if (opts.playSessionCookie !is null) {
 				return startClassicStartup();
 			} else {
@@ -592,28 +508,6 @@ protected:
 		fm.addBuiltin(terrainFilename, terrainFile);
 
 		return Picture(terrainFilename);
-	}
-
-	/**
-	 * Load the Minecraft texture.
-	 */
-	Picture getClassicTexture()
-	{
-		char[][] locations = [
-			"terrain.classic.png",
-			chargeConfigFolder ~ "/terrain.classic.png",
-		];
-
-		foreach(l; locations) {
-			auto pic = Picture("mc/terrain.classic", l);
-			if (pic is null)
-				continue;
-
-			this.l.info("Found terrain.classic.png please ignore above warnings");
-			return pic;
-		}
-
-		return null;
 	}
 
 	bool checkLevel(char[] level)
