@@ -354,6 +354,21 @@ public:
 		super.dropControl();
 	}
 
+	bool grab(bool val)
+	{
+		if (val) {
+			cam_moveing = false;
+			light_moveing = false;
+		}
+
+		return super.grab(val);
+	}
+
+	bool grab()
+	{
+		return super.grab();
+	}
+
 
 	/*
 	 *
@@ -723,13 +738,14 @@ public:
 		}
 	}
 
-
 	void mouseUp(CtlMouse, int button)
 	{
 		// XXX Custamizable buttons.
 		if (button == 1) {
+			cam_moveing = false;
 			mouseButtonCounter1 = 0;
 		} else if (button == 3) {
+			light_moveing = false;
 			mouseButtonCounter3 = 0;
 		}
 	}
