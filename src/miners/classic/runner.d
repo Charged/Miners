@@ -637,7 +637,16 @@ public:
 			return;
 		}
 
-		keyBinding(kb, sym, true);
+		switch(sym) {
+		case SDLK_g:
+			if (kb.ctrl) {
+				grab = !grab;
+				break;
+			}
+			// Fallthrough
+		default:
+			keyBinding(kb, sym, true);
+		}
 	}
 
 	void keyUp(CtlKeyboard kb, int sym)
@@ -646,12 +655,6 @@ public:
 			return console.keyUp(sym);;
 
 		switch(sym) {
-		case SDLK_g:
-			if (kb.ctrl)
-				grab = !grab;
-			else
-				keyBinding(kb, sym, false);
-			break;
 		case SDLK_F2:
 			opts.hideUi.toggle;
 			break;
