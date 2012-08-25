@@ -100,8 +100,14 @@ protected:
 
 		disString = format(disconnectString, startText);
 
-		mb = new MenuBase(header, MenuBase.Buttons.CANCEL);
-		mb.button.pressed ~= &cancel;
+		MenuBase.Buttons buttons;
+		if (opts.playSessionCookie is null)
+			buttons = MenuBase.Buttons.QUIT;
+		else
+			buttons = MenuBase.Buttons.CANCEL;
+
+		mb = new MenuBase(header, buttons);
+		mb.button.pressed ~= &button;
 
 		auto ct = new CenteredText(null, 0, 0,
 					   childWidth, childHeight,
@@ -123,8 +129,6 @@ public:
 
 	void close()
 	{
-		mb.button.pressed -= &cancel;
-
 		super.close();
 
 		if (cc !is null) {
@@ -140,9 +144,12 @@ public:
 	}
 
 protected:
-	void cancel(Button b)
+	void button(Button b)
 	{
-		r.displayMainMenu();
+		if (opts.playSessionCookie is null)
+			r.quit();
+		else
+			r.displayClassicMenu();
 		r.deleteMe(this);
 	}
 
@@ -315,7 +322,7 @@ private:
 	     ClassicServerInfo csi,
 	     bool idle)
 	{
-		this.mb = new MenuBase(header, MenuBase.Buttons.CANCEL);
+		this.mb = new MenuBase(header, MenuBase.Buttons.QUIT);
 		this.csi = csi;
 		this.wc = wc;
 		this.r = r;
@@ -329,7 +336,7 @@ private:
 					   childWidth, childHeight,
 					   "Connecting");
 		mb.replacePlane(ct);
-		mb.button.pressed ~= &cancel;
+		mb.button.pressed ~= &quit;
 		text = ct.text;
 
 		mb.repack();
@@ -351,10 +358,9 @@ private:
 	}
 
 protected:
-	void cancel(Button b)
+	void quit(Button b)
 	{
-		r.displayMainMenu();
-		r.deleteMe(this);
+		r.quit();
 	}
 
 	void authenticate()
