@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.shader;
 
+import std.c.stdlib : alloca;
+
 import charge.math.color;
 import charge.math.point3d;
 import charge.math.vector3d;
@@ -355,12 +357,16 @@ private:
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 		}
 
-		char[] buffer = new char[length+1];
-		if (program)
-			glGetProgramInfoLog(shader, length, &length, buffer.ptr);
-		else
-			glGetShaderInfoLog(shader, length, &length, buffer.ptr);
-		buffer.length = length;
+		char[] buffer;
+		if (length > 1) {
+			// Yes length+1 and just length.
+			buffer = (cast(char*)alloca(length+1))[0 .. length];
+			if (program)
+				glGetProgramInfoLog(shader, length, &length, buffer.ptr);
+			else
+				glGetShaderInfoLog(shader, length, &length, buffer.ptr);
+			assert(buffer.length == length);
+		}
 
 		switch (status) {
 		case GL_TRUE:
