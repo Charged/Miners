@@ -452,7 +452,10 @@ public:
 
 	void close()
 	{
-
+		if (wc !is null) {
+			wc.close();
+			delete wc;
+		}
 	}
 
 	bool build()
