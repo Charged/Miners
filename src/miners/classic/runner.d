@@ -655,8 +655,10 @@ public:
 		if (sym == 27) {
 			if (console.typing)
 				return console.stopTyping();
+			else if (c !is null && opts.playSessionCookie !is null)
+				return r.displayClassicPauseMenu(this);
 			else
-				return r.displayPauseMenu();
+				return r.displayClassicPauseMenu(null);
 		}
 
 		if (console.typing)

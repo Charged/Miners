@@ -675,7 +675,13 @@ the executable. Or in the Charged Miners config folder located here:
 
 	void displayPauseMenu()
 	{
-		push(new PauseMenu(this, opts));
+		push(new PauseMenu(this, opts, null));
+
+	}
+
+	void displayClassicPauseMenu(Runner part)
+	{
+		push(new PauseMenu(this, opts, part));
 	}
 
 	void displayLevelSelector()

@@ -30,15 +30,24 @@ private:
 	const fullscreenOnText = "Fullscreen: on";
 	const fullscreenOffText = "Fullscreen: off";
 
+	const otherPartText = "Part";
+	const otherCloseText = "Close";
+
+	const quitText = "Quit";
+
 	const fullscreenInfoText = `
 In order for the fullscreen option to take
 effect you need to restart Charged-Miners.`;
 
 	const spacerStr = "                                               ";
 
+	Runner partRunner;
+
 public:
-	this(Router r, Options opts)
+	this(Router r, Options opts, Runner part)
 	{
+		this.partRunner = part;
+
 		auto mb = new MenuBase(header);
 		auto t = new Text(mb, 0, 0, spacerStr);
 		auto b1 = new Button(mb, 0,           8, "", minButtonWidth);
@@ -52,11 +61,13 @@ public:
 		auto lastButton = b7;
 		int bY = lastButton.y + lastButton.h + 16;
 
-		auto bQuit = new Button(mb, 0, bY, "Quit", 8);
-		auto bClose = new Button(mb, bY, bY, "Close", 8);
+		string otherText = part !is null ? otherPartText : otherCloseText;
+
+		auto bQuit = new Button(mb, 0, bY, quitText, 8);
+		auto bOther = new Button(mb, bY, bY, otherText, 8);
 
 		bQuit.pressed ~= &quit;
-		bClose.pressed ~= &close;
+		bOther.pressed ~= &other;
 
 		mb.repack();
 
@@ -69,7 +80,7 @@ public:
 
 		// Place the buttons next to each other.
 		bQuit.x = center - 8 - bQuit.w;
-		bClose.x = center + 8;
+		bOther.x = center + 8;
 
 		super(r, opts, mb);
 
@@ -85,7 +96,16 @@ public:
 	}
 
 	void quit(Button b) { r.quit(); }
-	void close(Button b) { r.deleteMe(this); }
+
+	void other(Button b)
+	{
+		if (partRunner !is null) {
+			r.deleteMe(partRunner);
+			r.displayClassicMenu();
+		}
+
+		r.deleteMe(this);
+	}
 
 	void view(Button b)
 	{

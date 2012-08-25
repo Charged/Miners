@@ -76,6 +76,11 @@ interface Router : GameRouter
 	void displayPauseMenu();
 
 	/**
+	 * See above, but specialized for classic.
+	 */
+	void displayClassicPauseMenu(Runner part);
+
+	/**
 	 * See above.
 	 */
 	void displayLevelSelector();
