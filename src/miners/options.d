@@ -93,7 +93,7 @@ public:
 	 */
 
 
-	const string[22] keyNames = [
+	const string[23] keyNames = [
 		"mc.keyForward",
 		"mc.keyBackward",
 		"mc.keyLeft",
@@ -107,6 +107,7 @@ public:
 		"mc.keyChat",
 		"mc.keySelector",
 		"mc.keyScreenshot",
+		"mc.keyPlayerList",
 		"mc.keySlot0",
 		"mc.keySlot1",
 		"mc.keySlot2",
@@ -118,7 +119,7 @@ public:
 		"mc.keySlot8",
 	];
 
-	const int[22] keyDefaults = [
+	const int[23] keyDefaults = [
 		SDLK_w,
 		SDLK_s,
 		SDLK_a,
@@ -132,6 +133,7 @@ public:
 		SDLK_t,
 		SDLK_b,
 		SDLK_o,
+		SDLK_TAB,
 		SDLK_1, // mc.keySlot1
 		SDLK_2,
 		SDLK_3,
@@ -161,6 +163,7 @@ public:
 			int keyChat;
 			int keySelector;
 			int keyScreenshot;
+			int keyPlayerList;
 			int keySlot0;
 			int keySlot1;
 			int keySlot2;
@@ -171,7 +174,7 @@ public:
 			int keySlot7;
 			int keySlot8;
 		};
-		int[22] keyArray;
+		int[23] keyArray;
 	}
 	Signal!() keyBindings;
 

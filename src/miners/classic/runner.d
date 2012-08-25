@@ -70,6 +70,8 @@ protected:
 	Text typedText;
 	bool chatDirty;
 
+	bool showPlayerList;
+
 	TextureContainer chatGuiSmall;
 	ClassicMessageLog mlGuiSmall;
 
@@ -346,6 +348,9 @@ public:
 		scope (exit)
 			d.stop();
 
+		if (showPlayerList)
+			drawPlayerList();
+
 		auto cam = cast(GfxProjCamera)cam.current;
 		if (cam !is null)
 			drawPlayerNames(cam, rt);
@@ -427,6 +432,8 @@ public:
 		mouseButtonCounter1 = 0;
 		mouseButtonCounter3 = 0;
 
+		showPlayerList = false;
+
 		pp.forward = false;
 		pp.backward = false;
 		pp.left = false;
@@ -468,6 +475,32 @@ public:
 			       pos + slotEdge, startY + slotEdge, blockSize, blockSize);
 
 			pos += slotSize;
+		}
+	}
+
+	void drawPlayerList()
+	{
+		auto f = opts.classicFont();
+
+		int x = 8;
+		int y = 8;
+		int w = f.width * 64 + chatBorder * 2;
+		int h = chatBorder * 2;
+		foreach(p; players) {
+			if (p is null)
+				continue;
+			h += f.height;
+		}
+
+		d.fill(Color4f(0, 0, 0, 0.2), true, x, y, w, h);
+
+		x = 8 + chatBorder;
+		y = 8 + chatBorder;
+		foreach(p; players) {
+			if (p is null)
+				continue;
+			f.draw(d, x, y, p.name);
+			y += f.height;
 		}
 	}
 
@@ -713,6 +746,9 @@ public:
 		} else if (sym == opts.keyScreenshot) {
 			if (keyDown)
 				Core().screenShot();
+
+		} else if (sym == opts.keyPlayerList) {
+			showPlayerList = keyDown;
 
 		} else if (sym == opts.keySlot0) {
 			currentSlot = 0;
