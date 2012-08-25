@@ -385,7 +385,7 @@ class CreateTiledBackground : OptionsTask
 {
 	this(StartupRunner startup, Options opts)
 	{
-		text = "Creating cog";
+		text = "Loading Background";
 		super(startup, opts);
 	}
 
@@ -424,8 +424,6 @@ class CreateTiledBackground : OptionsTask
 		opts.backgroundDoubled = false;
 
 		tt.breakApart();
-
-		signalDone();
 
 		return done();
 	}
