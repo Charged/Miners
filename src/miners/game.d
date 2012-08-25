@@ -21,6 +21,7 @@ import miners.error;
 import miners.world;
 import miners.runner;
 import miners.viewer;
+import miners.defines;
 import miners.startup;
 import miners.options;
 import miners.debugger;
@@ -86,7 +87,6 @@ private:
 
 	// Extracted files from minecraft
 	void[] terrainFile;
-	const terrainFilename = "%terrain.png";
 
 
 public:
@@ -171,7 +171,7 @@ public:
 
 		if (terrainFile !is null) {
 			auto fm = FileManager();
-			fm.remBuiltin(terrainFilename);
+			fm.remBuiltin(borrowedModernTerrainTexture);
 			cFree(terrainFile.ptr);
 		}
 
@@ -218,16 +218,16 @@ protected:
 		opts.getSkin = &skin.getSkin;
 		sysReference(&defSkin, null);
 
+		// Do this always.
+		borrowModernTerrainTexture();
+
 		// Most common problem people have is missing terrain.png
 		// XXX Still does this here :-/
-		Picture pic = getModernTexture();
+		Picture pic = getModernTerrainTexture();
 		if (pic is null) {
 			auto text = format(terrainNotFoundText, chargeConfigFolder);
 			throw new GameException(text, null, true);
 		}
-
-		// Save it for later.
-		opts.modernTerrainPic = pic;
 		sysReference(&pic, null);
 
 		return push(new StartupRunner(this, opts, &doneStartup));
@@ -469,42 +469,23 @@ protected:
 	}
 
 	/**
-	 * Load the Minecraft texture.
+	 * Borrow the modern terrain.png form minecraft.jar.
 	 */
-	Picture getModernTexture()
+	void borrowModernTerrainTexture()
 	{
-		char[][] locations = [
-			"terrain.png",
-			"res/terrain.png",
-			chargeConfigFolder ~ "/terrain.png",
-		];
-
-		foreach(l; locations) {
-			auto pic = Picture("mc/terrain", l);
-			if (pic is null)
-				continue;
-
-			this.l.info("Found terrain.png please ignore above warnings");
-			return pic;
-		}
-
-		// If we can't find a minecraft terrain.png,
-		// load it from minecraft.jar
+		// Try and load the terrain png file from minecraft.jar.
 		try {
 			terrainFile = extractMinecraftTexture();
 			assert(terrainFile !is null);
 			l.info("Using borrowed terrain.png from minecraft.jar");
-			l.info("Please ignore above warnings");
 		} catch (Exception e) {
 			l.info("Could not extract terrain.png from minecraft.jar because:");
-			l.bug(e.classinfo.name, " ", e);
-			return null;
+			l.info(e.classinfo.name, " ", e);
+			return;
 		}
 
 		auto fm = FileManager();
-		fm.addBuiltin(terrainFilename, terrainFile);
-
-		return Picture(terrainFilename);
+		fm.addBuiltin(borrowedModernTerrainTexture, terrainFile);
 	}
 
 	bool checkLevel(char[] level)

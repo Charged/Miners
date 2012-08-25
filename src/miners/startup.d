@@ -208,6 +208,8 @@ class OptionsLoader : OptionsTask
  */
 class LoadModernTexture : OptionsTask
 {
+	mixin SysLogging;
+
 	this(StartupRunner startup, Options opts)
 	{
 		text = "Loading Modern Texture";
@@ -218,15 +220,23 @@ class LoadModernTexture : OptionsTask
 
 	bool build()
 	{
-		auto pic = opts.modernTerrainPic();
+		auto pic = getModernTerrainTexture();
+		if (pic is null) {
+			signalError(["Could not load terrain.png"]);
+			return false;
+		} else {
+			l.info("Found terrain.png please ignore above warnings");
+		}
 
 		// Do the manipulation of the texture to fit us
 		manipulateTextureModern(pic);
 
+		opts.modernTerrainPic = pic;
 		opts.modernTextures = createTextures(pic, opts.rendererBuildIndexed);
 
-		signalDone();
+		sysReference(&pic, null);
 
+		signalDone();
 		nextTask(new LoadClassicTexture(startup, opts));
 
 		return true;
@@ -251,7 +261,7 @@ class LoadClassicTexture : OptionsTask
 	bool build()
 	{
 		// Get a texture that works with classic
-		auto pic = getClassicTexture();
+		auto pic = getClassicTerrainTexture();
 		if (pic is null) {
 			// Copy and manipulate
 			pic = Picture(null, opts.modernTerrainPic());
@@ -263,32 +273,9 @@ class LoadClassicTexture : OptionsTask
 		sysReference(&pic, null);
 
 		signalDone();
-
 		nextTask(new LoadClassicIcons(startup, opts));
 
 		return true;
-	}
-
-	/**
-	 * Load the Minecraft texture.
-	 */
-	Picture getClassicTexture()
-	{
-		char[][] locations = [
-			"terrain.classic.png",
-			chargeConfigFolder ~ "/terrain.classic.png",
-		];
-
-		foreach(l; locations) {
-			auto pic = Picture("mc/terrain.classic", l);
-			if (pic is null)
-				continue;
-
-			this.l.info("Found terrain.classic.png please ignore above warnings");
-			return pic;
-		}
-
-		return null;
 	}
 }
 

@@ -8,14 +8,36 @@ import charge.gfx.texture : Texture, TextureArray;
 import charge.util.zip;
 import charge.math.color;
 import charge.math.picture;
+import charge.platform.homefolder;
 
 import miners.options;
+import miners.defines;
 import miners.classic.data;
 import miners.builder.types;
 import miners.builder.beta;
 import miners.builder.classic;
 import miners.importer.folders;
 
+
+/**
+ * Load the modern terrain.png file.
+ */
+Picture getModernTerrainTexture()
+{
+	string[] locations = [
+		"terrain.png",
+		chargeConfigFolder ~ "/terrain.png",
+		borrowedModernTerrainTexture,
+	];
+
+	foreach(l; locations) {
+		auto pic = Picture(cast(string)null, l);
+		if (pic !is null)
+			return pic;
+	}
+
+	return null;
+}
 
 /**
  * Locate minecraft.jar and extract terrain.png.
@@ -47,6 +69,25 @@ void manipulateTextureModern(Picture pic)
 
 	// Doesn't support redstone wire that well either
 	setupRedstoneWire(pic);
+}
+
+/**
+ * Load the classic terrain.classic.png file.
+ */
+Picture getClassicTerrainTexture()
+{
+	char[][] locations = [
+		"terrain.classic.png",
+		chargeConfigFolder ~ "/terrain.classic.png",
+	];
+
+	foreach(l; locations) {
+		auto pic = Picture("mc/terrain.classic", l);
+		if (pic is null)
+			return pic;
+	}
+
+	return null;
 }
 
 /**

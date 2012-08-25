@@ -15,3 +15,14 @@ const int BuildDepth = 16;
  * The number of meshes that are built.
  */
 const int BuildMeshes = 2;
+
+
+/**
+ * Whered borrowed textures go.
+ */
+const string borrowedPath = "borrowed/";
+
+/**
+ * Where the borrowed terrain.png is saved.
+ */
+const string borrowedModernTerrainTexture = borrowedPath ~ "terrain.png";
