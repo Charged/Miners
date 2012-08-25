@@ -197,7 +197,7 @@ class OptionsLoader : OptionsTask
 
 		signalDone();
 
-		nextTask(new LoadClassicTexture(startup, opts));
+		nextTask(new LoadModernTexture(startup, opts));
 
 		return true;
 	}
