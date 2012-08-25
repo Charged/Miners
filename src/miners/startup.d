@@ -116,7 +116,7 @@ class CreateLogo : OptionsTask
 	{
 		auto tex = GfxTexture("background.png");
 		if (tex !is null) {
-			setBackground(tex, false);
+			setBackground(tex);
 			sysReference(&tex, null);
 			return done();
 		}
@@ -131,7 +131,7 @@ class CreateLogo : OptionsTask
 		aat.paintTexture();
 		tt.paintTexture();
 
-		setBackground(tex, true);
+		setBackground(tt.texture);
 		tt.breakApart();
 
 		return done();
@@ -146,10 +146,10 @@ class CreateLogo : OptionsTask
 		return true;
 	}
 
-	void setBackground(GfxTexture tex, bool tiled)
+	void setBackground(GfxTexture tex)
 	{
 		opts.background = tex;
-		opts.backgroundTiled = tiled;
+		opts.backgroundTiled = false;
 		opts.backgroundDoubled = false;
 	}
 }
