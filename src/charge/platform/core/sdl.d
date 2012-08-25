@@ -86,6 +86,13 @@ public:
 		this.opts = opts;
 		super(opts.flags);
 
+		// Seems to work fine, at least on Win7.
+		// Built nativly on windows with DMD still seems broken tho.
+		version(Windows) {
+			version(GNU)
+				resizeSupported = true;
+		}
+
 		loadLibraries();
 
 		initGfx(p);
