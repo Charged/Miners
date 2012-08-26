@@ -82,8 +82,8 @@ Picture getClassicTerrainTexture()
 	];
 
 	foreach(l; locations) {
-		auto pic = Picture("mc/terrain.classic", l);
-		if (pic is null)
+		auto pic = Picture(cast(string)null, l);
+		if (pic !is null)
 			return pic;
 	}
 
