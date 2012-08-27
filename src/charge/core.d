@@ -124,6 +124,11 @@ public:
 	 */
 
 
+	/**
+	 * Returns text from the clipboard, should any be in it.
+	 */
+	abstract string getClipboardText();
+
 	abstract void resize(uint w, uint h);
 	abstract void resize(uint w, uint h, bool fullscreen);
 	abstract void size(out uint w, out uint h, out bool fullscreen);

@@ -15,6 +15,12 @@ import charge.util.memory;
 import charge.platform.homefolder;
 import charge.platform.core.common;
 
+version(Windows) {
+	import charge.platform.windows;
+} else {
+	string getClipboardText() { return null; }
+}
+
 import lib.loader;
 import lib.gl.gl;
 import lib.gl.loader;
@@ -113,6 +119,11 @@ public:
 		closeSfx();
 		closePhy();
 		closeGfx();
+	}
+
+	string getClipboardText()
+	{
+		return .getClipboardText();
 	}
 
 	void screenShot()
