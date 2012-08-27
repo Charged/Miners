@@ -153,7 +153,7 @@ protected:
 			return false;
 
 		version (Windows)
-			if (kb.ctrl && unicode == 'c')
+			if (kb.ctrl && sym == 'v')
 				return true;
 
 		return false;
