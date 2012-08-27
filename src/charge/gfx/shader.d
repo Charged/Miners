@@ -361,11 +361,14 @@ private:
 		if (length > 1) {
 			// Yes length+1 and just length.
 			buffer = (cast(char*)alloca(length+1))[0 .. length];
+			buffer.ptr[length] = 0;
+
 			if (program)
 				glGetProgramInfoLog(shader, length, &length, buffer.ptr);
 			else
 				glGetShaderInfoLog(shader, length, &length, buffer.ptr);
-			assert(buffer.length == length);
+			assert(buffer.length >= length);
+			buffer.length = length;
 		}
 
 		switch (status) {
