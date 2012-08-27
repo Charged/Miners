@@ -662,12 +662,12 @@ public:
 		}
 
 		if (console.typing)
-			return console.keyDown(sym, unicode);
+			return console.keyDown(kb, sym, unicode);
 
 		if (unicode == '/') {
 			// Start entering a command when we press '/'
 			console.startTyping();
-			console.keyDown(sym, unicode);
+			console.keyDown(kb, sym, unicode);
 			stopMoving();
 			return;
 		}
@@ -687,7 +687,7 @@ public:
 	void keyUp(CtlKeyboard kb, int sym)
 	{
 		if (console.typing)
-			return console.keyUp(sym);;
+			return console.keyUp(kb, sym);
 
 		switch(sym) {
 		case SDLK_F2:

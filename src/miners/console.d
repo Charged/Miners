@@ -3,6 +3,8 @@
 module miners.console;
 
 import std.string : split, format, find;
+import charge.core : Core;
+import charge.ctl.keyboard : CtlKeyboard = Keyboard;
 
 
 /**
@@ -55,7 +57,7 @@ public:
 
 			if (backspaceCounter >= 30) {
 				backspaceCounter -= 5;
-				keyDown(0x08, 0);
+				keyDown(null, 0x08, 0);
 			}
 		}
 	}
@@ -78,8 +80,24 @@ public:
 		update("");
 	}
 
-	void keyDown(int sym, dchar unicode)
+	void keyDown(CtlKeyboard kb, int sym, dchar unicode)
 	{
+		// Something else on other systems.
+		if (isPasteShortcut(kb, sym, unicode)) {
+
+			auto str = Core().getClipboardText();
+
+			foreach(c; str) {
+				if (c == '\n' ||
+				    c == '\r')
+					break;
+
+				keyDown(null, 0, c);
+			}
+
+			return;
+		}
+
 		// Enter, we are done typing.
 		if (sym == 0x0D) {
 			if (typed.length > 0)
@@ -122,13 +140,25 @@ public:
 		typed[$-1] = cast(char)unicode;
 	}
 
-	void keyUp(uint sym)
+	void keyUp(CtlKeyboard kb, uint sym)
 	{
 		if (sym == 0x08)
 			backspaceCounter = 0;
 	}
 
 protected:
+	bool isPasteShortcut(CtlKeyboard kb, int sym, dchar unicode)
+	{
+		if (kb is null)
+			return false;
+
+		version (Windows)
+			if (kb.ctrl && unicode == 'c')
+				return true;
+
+		return false;
+	}
+
 	bool validateChar(dchar unicode)
 	{
 		if (unicode == '\t' ||
