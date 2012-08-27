@@ -590,8 +590,9 @@ public:
 
 		bool step(int x, int y, int z) {
 			auto b = w.t[x, y, z];
+			auto info = &classicBlocks[b.type];
 
-			if (b.type == 0)
+			if (!info.selectable)
 				return true;
 
 			sel.show = true;
@@ -873,10 +874,11 @@ public:
 
 		bool stepPlace(int x, int y, int z) {
 			auto b = w.t[x, y, z];
+			auto info = &classicBlocks[b.type];
 
 			numBlocks++;
 
-			if (b.type == 0) {
+			if (!info.selectable) {
 				xLast = x;
 				yLast = y;
 				zLast = z;
@@ -918,8 +920,9 @@ public:
 
 		bool stepRemove(int x, int y, int z) {
 			auto b = w.t[x, y, z];
+			auto info = &classicBlocks[b.type];
 
-			if (b.type == 0)
+			if (!info.selectable)
 				return true;
 
 			auto cur = slots[currentSlot];
@@ -953,14 +956,13 @@ public:
 
 		bool stepCopy(int x, int y, int z) {
 			auto b = w.t[x, y, z];
+			auto info = &classicBlocks[b.type];
 
-			if (b.type == 0)
+			if (!info.selectable)
 				return true;
 
 			if (b.type >= classicBlocks.length)
 				return false;
-
-			auto info = classicBlocks[b.type];
 
 			if (!info.placable)
 				return false;
