@@ -32,7 +32,7 @@ class Loader
 private:
 	mixin SysLogging;
 
-	static LoaderFunc[char[]] map;
+	static LoaderFunc[string] map;
 	static RegExp pos;
 	static RegExp rot;
 
@@ -50,7 +50,7 @@ public:
 		rot = RegExp(`(\S+)\s+(\S+)\s+(\S+)\s+(\S+)`);
 	}
 
-	static void load(World w, char[] filename)
+	static void load(World w, string filename)
 	{
 		XmlElement level;
 
@@ -65,7 +65,7 @@ public:
 			delete p;
 
 		try {
-			level = p.parseData(cast(char[])f.peekMem());
+			level = p.parseData(cast(string)f.peekMem());
 		} catch (XmlException xe) {
 			l.error(xe.msg);
 			return;
@@ -193,7 +193,7 @@ public:
 		return true;
 	}
 
-	static bool exPoint(char[] text, ref Point3d posi)
+	static bool exPoint(string text, ref Point3d posi)
 	{
 		Point3d r;
 		auto p = pos.exec(text);
@@ -214,12 +214,12 @@ public:
 		return true;
 	}
 
-	static bool exRotation(char[] text, ref Quatd rota)
+	static bool exRotation(string text, ref Quatd rota)
 	{
 		return exRotation4(text, rota) || exRotation3(text, rota);
 	}
 
-	static bool exRotation3(char[] text, ref Quatd rota)
+	static bool exRotation3(string text, ref Quatd rota)
 	{
 		Quatd r;
 		auto p = pos.exec(text);
@@ -241,7 +241,7 @@ public:
 		return true;
 	}
 
-	static bool exRotation4(char[] text, ref Quatd rota)
+	static bool exRotation4(string text, ref Quatd rota)
 	{
 		Quatd r;
 		auto p = rot.exec(text);
@@ -267,7 +267,7 @@ public:
 		return true;
 	}
 
-	static bool exBool(char[] text, out bool output)
+	static bool exBool(string text, out bool output)
 	{
 		if (text is null)
 			return false;
@@ -278,7 +278,7 @@ public:
 		return true;
 	}
 
-	static bool addLoader(char[] key, LoaderFunc f)
+	static bool addLoader(string key, LoaderFunc f)
 	{
 		if (key in map)
 			return false;
@@ -287,7 +287,7 @@ public:
 		return true;
 	}
 
-	static bool delLoader(char[] key)
+	static bool delLoader(string key)
 	{
 		if (key in map) {
 			map.remove(key);

@@ -53,10 +53,10 @@ private:
 	bool running;
 	bool server;
 	ushort port;
-	char[] address;
+	string address;
 
 public:
-	this(char[][] arg)
+	this(string[] arg)
 	{
 		// Defaults
 		server = false;
@@ -360,7 +360,7 @@ private:
 		auto cube = new Cube(w, id, true);
 	}
 
-	void parseArgs(char[][] arg)
+	void parseArgs(string[] arg)
 	{
 		for(int i; i < arg.length; i++) {
 			if (arg[i] == "-server")
