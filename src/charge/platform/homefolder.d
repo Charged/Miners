@@ -4,7 +4,7 @@ module charge.platform.homefolder;
 
 import std.c.stdlib;
 import std.file;
-import std.stdio;
+import std.stdio : writefln;
 import std.string;
 
 string homeFolder;

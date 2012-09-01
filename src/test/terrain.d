@@ -3,7 +3,7 @@
 module test.terrain;
 
 import std.math;
-import std.stdio;
+import std.stdio : writefln;
 import std.string;
 import std.random;
 
@@ -16,7 +16,7 @@ import charge.math.mesh;
 
 version(Windows) {
 	uint ntohl(uint i) {
-		std.stdio.writefln("WARNING: Programer to lazy to fix ntohl");
+		writefln("WARNING: Programer to lazy to fix ntohl");
 		assert(i == 0);
 		return i;
 	}

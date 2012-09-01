@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.connection;
 
-import std.stdio;
+import std.stdio : writef;
 import std.socket;
 import std.stdint;
 

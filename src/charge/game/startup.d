@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.startup;
 
-import std.stdio;
 import charge.charge;
 
 import charge.game.runner;

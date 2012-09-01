@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.gui.component;
 
-static import std.stdio;
-
 import charge.ctl.mouse;
 import charge.ctl.keyboard;
 import charge.gfx.draw;

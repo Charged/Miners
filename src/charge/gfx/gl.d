@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.gl;
 
-import std.stdio;
+import std.stdio : writef, writefln;
 
 public {
 	import lib.gl.gl;

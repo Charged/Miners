@@ -3,7 +3,6 @@
 module charge.gfx.renderer;
 
 import std.math;
-import std.stdio;
 static import std.string;
 
 import charge.math.color;

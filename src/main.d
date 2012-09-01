@@ -1,7 +1,7 @@
 /* See Copyright Notice in src/charge/charge.d */
 module main;
 
-import std.stdio;
+import std.stdio : writefln;
 import charge.core;
 
 static import test.lua;

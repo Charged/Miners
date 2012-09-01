@@ -4,8 +4,9 @@ module miners.game;
 
 import std.file;
 import std.conv;
-import std.stdio;
+import std.stdio : writefln;
 import std.regexp;
+import std.string : format;
 
 import lib.sdl.sdl;
 

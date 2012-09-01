@@ -3,7 +3,6 @@
 module charge.game.actors.car;
 
 import std.math;
-import std.stdio;
 
 import charge.math.point3d;
 import charge.math.vector3d;

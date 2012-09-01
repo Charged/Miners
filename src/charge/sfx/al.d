@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.sfx.al;
 
-import std.stdio;
+import std.stdio : writefln;
 
 public {
 	import lib.al.al;

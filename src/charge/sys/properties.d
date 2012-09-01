@@ -4,7 +4,6 @@ module charge.sys.properties;
 
 import std.file;
 import std.conv;
-import std.stdio;
 import std.stream;
 import std.regexp;
 import std.string : toString, toStringz;
@@ -102,11 +101,6 @@ public:
 	uint getUint(string key, uint def) { return toUintOrDef(safeGet(key), def); }
 	double getDouble(string key, double def) { return toDoubleOrDef(safeGet(key), def); }
 	bool getBool(string key, bool def) { return toBoolOrDef(safeGet(key), def); }
-
-	void print()
-	{
-		writefln(map);
-	}
 
 	bool save(string filename)
 	{

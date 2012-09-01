@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.blockselector;
 
-import std.stdio;
-
 import charge.charge;
 import charge.game.gui.textbased;
 

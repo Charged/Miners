@@ -3,7 +3,6 @@
 module charge.gfx.texture;
 
 import std.string : format, toString;
-import std.stdio;
 
 import charge.sys.resource;
 import charge.sys.logger;
@@ -295,7 +294,7 @@ public:
 	static ColorTexture opCall(Pool p, Color4b c)
 	{
 		auto path = "charge/gfx/texture/color";
-		auto str = std.string.format("%s%02x%02x%02x%02x", path, c.r, c.g, c.b, c.a);
+		auto str = format("%s%02x%02x%02x%02x", path, c.r, c.g, c.b, c.a);
 
 
 		auto r = p.resource(uri, str);

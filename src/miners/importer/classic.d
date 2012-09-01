@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.classic;
 
-import std.stdio;
 import std.stream;
 import std.mmfile;
 import std.zlib;

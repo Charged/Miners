@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.ctl.input;
 
-import std.stdio;
 import std.utf : toUTF8;
 
 import lib.sdl.sdl;

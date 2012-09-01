@@ -3,7 +3,6 @@
 module robbers.actors.car;
 
 import std.math;
-import std.stdio;
 
 import charge.charge;
 import robbers.network;

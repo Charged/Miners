@@ -4,7 +4,6 @@ module charge.net.packet;
 
 import charge.net.util;
 
-import std.stdio;
 import std.stdint;
 import std.gc;
 

@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.game;
 
-import robbers.actors.primitive;
-import std.stdio;
 import std.string;
 import std.math;
 
@@ -17,6 +15,7 @@ import robbers.loader;
 
 import robbers.actors.car;
 import robbers.actors.cube;
+import robbers.actors.primitive;
 
 bool running = false;
 

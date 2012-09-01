@@ -3,7 +3,6 @@
 module robbers.player;
 
 import std.math;
-import std.stdio;
 
 import charge.charge;
 import robbers.world;

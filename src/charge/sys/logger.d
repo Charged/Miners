@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.sys.logger;
 
-import std.stdio;
+import std.stdio : FILE, FPUTC, stdout, fopen, fflush, fprintf;
 import std.string;
 import std.stdarg;
 

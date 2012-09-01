@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module lib.loader;
 
-import std.stdio;
+import std.stdio : writefln;
 import std.string;
 
 alias void* delegate(string) Loader;

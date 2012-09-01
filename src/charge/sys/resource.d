@@ -3,7 +3,6 @@
 module charge.sys.resource;
 
 import std.string;
-import std.stdio;
 
 import charge.sys.logger;
 

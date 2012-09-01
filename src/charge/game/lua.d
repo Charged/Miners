@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.lua;
 
-import std.stdio;
 import std.string;
 
 import lib.lua.lua;

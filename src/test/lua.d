@@ -2,8 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module test.lua;
 
-
-import std.stdio;
+import std.stdio : writefln;
 import std.string;
 
 import lib.lua.lua : LUA_GLOBALSINDEX;

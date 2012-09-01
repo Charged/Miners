@@ -4,7 +4,6 @@ module charge.gfx.material;
 
 import std.regexp;
 import std.conv;
-import std.stdio;
 import std.string;
 
 import lib.xml.xml;

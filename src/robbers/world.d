@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.world;
 
-import std.stdio;
-
 import charge.charge;
 import robbers.network;
 

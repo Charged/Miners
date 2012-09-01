@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.phy.world;
 
-import std.stdio;
-
 import charge.util.vector;
 
 import charge.phy.phy;

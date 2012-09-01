@@ -3,7 +3,6 @@
 module charge.gfx.fixed;
 
 import std.math;
-import std.stdio;
 static import std.string;
 
 import charge.math.color;

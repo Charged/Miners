@@ -2,9 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.actors.cube;
 
-import std.math;
-import std.stdio;
-
 import charge.charge;
 import robbers.player;
 import robbers.network;

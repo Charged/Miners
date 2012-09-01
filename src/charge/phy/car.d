@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.phy.car;
 
-import std.stdio;
 import std.math : abs, fmin;
 
 import charge.math.movable;
@@ -127,7 +126,7 @@ public:
 	void setSyncData(in float data[])
 	{
 		if (data.length != getSyncDataLength) {
-			writefln("to little data: ", data.length);
+			l.warn("to little data: ", data.length);
 			return;
 		}
 		int k;

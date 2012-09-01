@@ -1,6 +1,5 @@
 module lib.lua.state;
 
-import std.stdio;
 import std.string;
 
 import lib.lua.all;

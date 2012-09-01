@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module lib.xml.xml;
 
-import std.stdio;
 import std.stream;
 import std.regexp;
 import std.string;

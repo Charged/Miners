@@ -3,7 +3,6 @@
 module test.frustum;
 
 import std.math;
-import std.stdio;
 import std.string;
 import std.intrinsic;
 

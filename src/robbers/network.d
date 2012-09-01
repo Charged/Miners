@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.network;
 
-import std.stdio;
-
 import charge.charge;
 
 interface NetworkObject
