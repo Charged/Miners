@@ -17,7 +17,7 @@ import miners.types;
  *
  * Will throw various exceptions if the page is malformed.
  */
-ClassicServerInfo[] getClassicServerList(char[] text)
+ClassicServerInfo[] getClassicServerList(in char[] text)
 {
 	// Only parse the interesting parts.
 	const startText = "<table";
@@ -134,7 +134,7 @@ ClassicServerInfo[] getClassicServerList(char[] text)
  *
  * Will throw various exceptions if the page is malformed.
  */
-void getClassicServerInfo(ClassicServerInfo csi, char[] text)
+void getClassicServerInfo(ClassicServerInfo csi, in char[] text)
 {
 	// Only parse the interesting parts.
 	const startText = "<applet";

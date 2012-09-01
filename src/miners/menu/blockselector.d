@@ -17,7 +17,7 @@ alias void delegate(ubyte) SelectedDg;
 class ClassicBlockMenu : public MenuRunnerBase
 {
 private:
-	const char[] header = `Select Block`;
+	const string header = `Select Block`;
 	SelectedDg selected;
 
 public:

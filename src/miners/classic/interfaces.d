@@ -23,13 +23,13 @@ interface Connection
  */
 interface ClientListener
 {
-	void indentification(ubyte ver, char[] name, char[] motd, ubyte type);
+	void indentification(ubyte ver, string name, string motd, ubyte type);
 
 	void levelInitialize();
 	void levelLoadUpdate(ubyte precent);
 	void levelFinalize(uint x, uint y, uint z, ubyte data[]);
 
-	void disconnect(char[] reason);
+	void disconnect(string reason);
 
 	/*
 	 * These packets are what normaly comes during gameplay.
@@ -37,7 +37,7 @@ interface ClientListener
 
 	void setBlock(short x, short y, short z, ubyte type);
 
-	void playerSpawn(byte id, char[] name, double x, double y, double z,
+	void playerSpawn(byte id, string name, double x, double y, double z,
 			 double heading, double pitch);
 
 	void playerMoveTo(byte id, double x, double y, double z,
@@ -57,13 +57,13 @@ interface ClientListener
  */
 interface ClientMessageListener
 {
-	void archive(byte id, char[] message);
+	void archive(byte id, string message);
 
 	/*
 	 * Player tracking.
 	 */
 
-	void addPlayer(byte id, char[] name);
+	void addPlayer(byte id, string name);
 	void removePlayer(byte id);
 	void removeAllPlayers();
 }

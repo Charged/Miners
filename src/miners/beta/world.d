@@ -23,7 +23,7 @@ class BetaWorld : public World
 {
 public:
 	BetaTerrain bt;
-	char[] dir;
+	string dir;
 
 public:
 	this(MinecraftLevelInfo *info, Options opts)

@@ -52,7 +52,7 @@ public:
 		centerer = c;
 	}
 
-	this(Router r, Options opts, World w, char[] filename)
+	this(Router r, Options opts, World w, string filename)
 	{
 		auto file = FileManager(filename);
 		if (file is null) {
@@ -210,7 +210,7 @@ protected:
 	 *
 	 * Part of the runner init process.
 	 */
-	void loadfile(File file, char[] filename)
+	void loadfile(File file, string filename)
 	{
 		assert(file !is null);
 

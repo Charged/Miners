@@ -10,7 +10,7 @@ import std.zlib;
 import charge.util.zip;
 
 
-void saveClassicTerrain(char[] file, uint x, uint y, uint z, ubyte *blocks)
+void saveClassicTerrain(string file, uint x, uint y, uint z, ubyte *blocks)
 {
 	int size = x * y * z;
 
@@ -28,7 +28,7 @@ void saveClassicTerrain(char[] file, uint x, uint y, uint z, ubyte *blocks)
 	o.close();
 }
 
-ubyte[] loadClassicTerrain(char[] file, out uint x, out uint y, out uint z)
+ubyte[] loadClassicTerrain(string file, out uint x, out uint y, out uint z)
 {
 	auto mmap = new MmFile(file);
 	int i;

@@ -64,7 +64,7 @@ class WebpageConnection : public NetHttpConnection
 {
 private:
 	// Server details
-	const char[] hostname = "www.minecraft.net";
+	const string hostname = "www.minecraft.net";
 	const ushort port = 80;
 
 	enum Op {
@@ -84,7 +84,7 @@ private:
 	ClassicWebpageListener l;
 
 	/// Session id
-	char[] playSession;
+	string playSession;
 	/// Retrived list of server info
 	ClassicServerInfo[] csis;
 	/// Info to retrive and return
@@ -100,7 +100,7 @@ public:
 		super(hostname, port);
 	}
 
-	this(ClassicWebpageListener l, char[] playSession)
+	this(ClassicWebpageListener l, string playSession)
 	{
 		this.playSession = playSession;
 		this(l);
@@ -116,7 +116,7 @@ public:
 
 	void getServerList()
 	{
-		const char[] http =
+		const string http =
 		"GET /classic/list HTTP/1.1\r\n"
 		"User-Agent: Charged-Miners\r\n"
 		"Host: %s\r\n"
@@ -138,7 +138,7 @@ public:
 
 	void getServerInfo(ClassicServerInfo csi)
 	{
-		const char[] http =
+		const string http =
 		"GET /classic/play/%s HTTP/1.1\r\n"
 		"User-Agent: Charged-Miners\r\n"
 		"Host: %s\r\n"
@@ -172,9 +172,9 @@ public:
 	 *
 	 * XXX: This method is insecure, should only be used for debugging purposes.
 	 */
-	void postLogin(char[] username, char[] password)
+	void postLogin(string username, string password)
 	{
-		const char[] http =
+		const string http =
 		"POST /login HTTP/1.1\r\n"
 		"User-Agent: Charged-Miners\r\n"
 		"Host: %s\r\n"
@@ -182,7 +182,7 @@ public:
 		"Content-Type: application/x-www-form-urlencoded\r\n"
 		"\r\n"
 		"%s";
-		const char[] content =
+		const string content =
 		"username=%s&password=%s";
 
 		if (curOp != Op.NO_OP)
@@ -267,7 +267,7 @@ protected:
 	 */
 
 
-	char[] getPlaySession(char[] header)
+	string getPlaySession(char[] header)
 	{
 		const startTag = "Set-Cookie: PLAY_SESSION=";
 		auto start = cast(size_t)find(header, startTag);

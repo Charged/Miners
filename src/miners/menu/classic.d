@@ -17,7 +17,7 @@ import miners.classic.interfaces;
 import miners.classic.connection;
 
 
-const char[] header = `Classic`;
+const string header = `Classic`;
 const uint childWidth = 424;
 const uint childHeight = 9*16;
 
@@ -27,7 +27,7 @@ class CenteredText : public Container
 public:
 	Text text;
 
-	this(Container p, int x, int y, uint minW, uint minH, char[] text)
+	this(Container p, int x, int y, uint minW, uint minH, string text)
 	{
 		super(p, x, x, minW, minH);
 
@@ -61,8 +61,8 @@ private:
 	Text text;
 	Router r;
 
-	const char[] disconnectString = "Disconnected while \"%s\"";
-	char[] disString;
+	const string disconnectString = "Disconnected while \"%s\"";
+	string disString;
 
 public:
 	/**
@@ -92,7 +92,7 @@ public:
 
 protected:
 	this(Router r, Options opts,
-	     ClientConnection cc, char[] startText)
+	     ClientConnection cc, string startText)
 	{
 		this.r = r;
 		this.cc = cc;
@@ -161,7 +161,7 @@ protected:
 	 */
 
 
-	void indentification(ubyte ver, char[] name, char[] motd, ubyte type)
+	void indentification(ubyte ver, string name, string motd, ubyte type)
 	{
 	}
 
@@ -197,7 +197,7 @@ protected:
 
 	void setBlock(short x, short y, short z, ubyte type) {}
 
-	void playerSpawn(byte id, char[] name, double x, double y, double z,
+	void playerSpawn(byte id, string name, double x, double y, double z,
 			 double heading, double pitch) {}
 
 	void playerMoveTo(byte id, double x, double y, double z,
@@ -210,8 +210,8 @@ protected:
 	void playerType(ubyte type) {}
 
 	void ping() {}
-	void message(byte id, char[] message) {}
-	void disconnect(char[] reason)
+	void message(byte id, string message) {}
+	void disconnect(string reason)
 	{
 		r.displayError([disString, reason], false);
 		r.deleteMe(this);
@@ -236,24 +236,24 @@ private:
 	Router r;
 
 	/// Disconnected message
-	const char[] disconnectString = "Disconnected while \"%s\"";
-	char[] disString;
+	const string disconnectString = "Disconnected while \"%s\"";
+	string disString;
 
 	/// Cookie used for authentication.
-	char[] playSession;
+	string playSession;
 	/// Username used for authentication
-	char[] username;
+	string username;
 	/// Password used for authentication
-	char[] password;
+	string password;
 	/// Current displayed text
-	char[] curText = "Error: %s%%";
+	string curText = "Error: %s%%";
 
 public:
 	/**
 	 * Retrive the server list, using a new connection
 	 * authenticating with the given credentials.
 	 */
-	this(Router r, Options opts, char[] playSession)
+	this(Router r, Options opts, string playSession)
 	{
 		auto wc = new WebpageConnection(this, playSession);
 
@@ -274,7 +274,7 @@ public:
 	 * Retrive information about a server, using a new connection
 	 * authenticating with the given credentials.
 	 */
-	this(Router r, Options opts, char[] playSession, ClassicServerInfo csi)
+	this(Router r, Options opts, string playSession, ClassicServerInfo csi)
 	{
 		auto wc = new WebpageConnection(this, playSession);
 
@@ -288,7 +288,7 @@ public:
 	 *
 	 * Should not use this versions.
 	 */
-	this(Router r, Options opts, char[] username, char[] password, ClassicServerInfo csi)
+	this(Router r, Options opts, string username, string password, ClassicServerInfo csi)
 	{
 		auto wc = new WebpageConnection(this);
 

@@ -13,7 +13,7 @@ import charge.ctl.keyboard : CtlKeyboard = Keyboard;
 class Console
 {
 public:
-	alias void delegate(char[]) TextDg;
+	alias void delegate(string) TextDg;
 
 	bool typing;
 	const typingCursor = 219;
@@ -29,7 +29,7 @@ public:
 	 *
 	 * If cmdPrefix is null all input is regarded as commands.
 	 */
-	char[] cmdPrefix;
+	string cmdPrefix;
 
 	TextDg message; /**< The console wants to put something on the backlog. */
 	TextDg chat; /**< Called when something was chatted. */
@@ -171,7 +171,7 @@ protected:
 
 	abstract void tabComplete();
 
-	void process(char[] str)
+	void process(in char[] str)
 	{
 		char[] findStr;
 
@@ -215,13 +215,13 @@ protected:
 	final void doMessage(char[] str)
 	{
 		if (message !is null)
-			message(str);
+			message(str.dup);
 	}
 
 	final void doChat(char[] str)
 	{
 		if (chat !is null)
-			chat(str);
+			chat(str.dup);
 	}
 
 	void msgNoCommandGiven()

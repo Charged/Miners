@@ -41,14 +41,14 @@ interface Router : GameRouter
 	 *
 	 * If name is null it opens a random level.
 	 */
-	void loadLevelModern(char[] name);
+	void loadLevelModern(string name);
 
 	/**
 	 * Load a level, name should be a classic level filename.
 	 *
 	 * If name is null it generates a simple flatland.
 	 */
-	void loadLevelClassic(char[] name);
+	void loadLevelClassic(string name);
 
 	/**
 	 * Start a classic runner listening to the given connection.
@@ -91,8 +91,8 @@ interface Router : GameRouter
 	 *
 	 * Also see above.
 	 */
-	void displayInfo(char[] header, char[][] texts,
-	                 char[] buttonText, void delegate() dg);
+	void displayInfo(string header, string[] texts,
+	                 string buttonText, void delegate() dg);
 
 	/**
 	 * Display the classic block selector.
@@ -129,7 +129,7 @@ interface Router : GameRouter
 	 *
 	 * This function is unsecure and should only be used for debugging.
 	 */
-	void connectToClassic(char[] user, char[] pass, ClassicServerInfo csi);
+	void connectToClassic(string user, string pass, ClassicServerInfo csi);
 
 	/**
 	 * Display the a world change menu.
@@ -147,5 +147,5 @@ interface Router : GameRouter
 	/**
 	 * See above.
 	 */
-	void displayError(char[][] texts, bool panic);
+	void displayError(string[] texts, bool panic);
 }

@@ -56,7 +56,7 @@ public:
 	}
 
 	abstract void setCenter(int xNew, int yNew, int zNew);
-	abstract void setBuildType(TerrainBuildTypes type, char[] name);
+	abstract void setBuildType(TerrainBuildTypes type, string name);
 	abstract bool buildOne();
 	abstract void unbuildAll();
 

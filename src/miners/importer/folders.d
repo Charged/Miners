@@ -12,15 +12,15 @@ import charge.platform.homefolder;
 /**
  * Return the folder where the Minecraft config, saves & texture packs lives.
  */
-char[] getMinecraftFolder()
+string getMinecraftFolder()
 {
 	// The minecraft config folder move around a bit.
 	version(linux) {
-		char[] mcFolder = homeFolder ~ "/.minecraft";
+		string mcFolder = homeFolder ~ "/.minecraft";
 	} else version (darwin) {
-		char[] mcFolder = applicationConfigFolder ~ "/minecraft";
+		string mcFolder = applicationConfigFolder ~ "/minecraft";
 	} else version (Windows) {
-		char[] mcFolder = applicationConfigFolder ~ "/.minecraft";
+		string mcFolder = applicationConfigFolder ~ "/.minecraft";
 	} else {
 		static assert(false);
 	}
@@ -31,7 +31,7 @@ char[] getMinecraftFolder()
 /**
  * Returns the save folder for Minecraft.
  */
-char[] getMinecraftSaveFolder(char[] dir = null)
+string getMinecraftSaveFolder(string dir = null)
 {
 	if (dir is null)
 		dir = getMinecraftFolder();
@@ -42,7 +42,7 @@ char[] getMinecraftSaveFolder(char[] dir = null)
 /**
  * Return the file name for a Alpha chunk.
  */
-char[] getAlphaChunkName(char[] dir, int x, int z)
+string getAlphaChunkName(string dir, int x, int z)
 {
 	uint px = cast(uint)x % 64;
 	uint pz = cast(uint)z % 64;
@@ -56,7 +56,7 @@ char[] getAlphaChunkName(char[] dir, int x, int z)
 /**
  * Return the region filename for a Beta chunk.
  */
-char[] getBetaRegionName(char[] dir, int x, int z)
+string getBetaRegionName(string dir, int x, int z)
 {
 	int px = cast(int)floor(x/32.0);
 	int pz = cast(int)floor(z/32.0);

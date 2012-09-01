@@ -194,8 +194,7 @@ public:
 		pp = new PlayerPhysics(&ppGetBlock);
 	}
 
-	this(Router r, Options opts,
-	     char[] filename)
+	this(Router r, Options opts, string filename)
 	{
 		w = new ClassicWorld(opts, filename);
 
@@ -997,7 +996,7 @@ public:
 	{
 	}
 
-	void indentification(ubyte ver, char[] name, char[] motd, ubyte type)
+	void indentification(ubyte ver, string name, string motd, ubyte type)
 	{
 		name = removeColorTags(name);
 		motd = removeColorTags(motd);
@@ -1037,7 +1036,7 @@ public:
 		w.t.resetBuild();
 	}
 
-	void playerSpawn(byte id, char[] name,
+	void playerSpawn(byte id, string name,
 			 double x, double y, double z,
 			 double heading, double pitch)
 	{
@@ -1147,7 +1146,7 @@ public:
 		l.info("player type changed %s.", type);
 	}
 
-	void disconnect(char[] reason)
+	void disconnect(string reason)
 	{
 		auto rs = removeColorTags(reason);
 
@@ -1166,8 +1165,8 @@ class ClassicConsole : public Console
 {
 public:
 	char[] delegate(char[], char[]) tabCompletePlayer;
-	char[] lastTabComplete;
-	char[] tabCompleteText; //< what the user actually typed in
+	string lastTabComplete;
+	string tabCompleteText; //< what the user actually typed in
 
 protected:
 	MessageLogger ml;
@@ -1385,7 +1384,7 @@ public:
 
 
 protected:
-	void drawRow(GfxDraw d, int y, char[] row)
+	void drawRow(GfxDraw d, int y, string row)
 	{
 		bf.draw(d, 0, y, row);
 	}

@@ -13,7 +13,7 @@ import miners.terrain.common;
 struct TerrainWrapper
 {
 	const static char *namez = "d_class_minecraft_terrain_common_Terrain";
-	const static char[] name = "d_class_minecraft_terrain_common_Terrain";
+	const static string name = "d_class_minecraft_terrain_common_Terrain";
 
 	extern (C) static int index(lua_State *l)
 	{
@@ -164,7 +164,7 @@ struct TerrainWrapper
 struct FiniteTerrainWrapper
 {
 	const static char *namez = "d_class_minecraft_terrain_finite_FiniteTerrain";
-	const static char[] name = "d_class_minecraft_terrain_finite_FintieTerrain";
+	const static string name = "d_class_minecraft_terrain_finite_FintieTerrain";
 
 	static void register(LuaState s)
 	{
@@ -202,7 +202,7 @@ struct FiniteTerrainWrapper
 struct BetaTerrainWrapper
 {
 	const static char *namez = "d_class_minecraft_terrain_beta_BetaTerrain";
-	const static char[] name = "d_class_minecraft_terrain_beta_BetaTerrain";
+	const static string name = "d_class_minecraft_terrain_beta_BetaTerrain";
 
 	static void register(LuaState s)
 	{

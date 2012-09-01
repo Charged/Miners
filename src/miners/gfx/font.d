@@ -14,16 +14,16 @@ import miners.gfx.imports;
 class ClassicFont : public BitmapFont
 {
 public:
-	const char[] uri = "bfc://";
+	const string uri = "bfc://";
 
 
 public:
-	void draw(Draw, int x, int y, char[] text, bool shaded = false)
+	void draw(Draw, int x, int y, string text, bool shaded = false)
 	{
 		drawLayoutedText(x, y, text);
 	}
 
-	void buildSize(char[] text, out uint width, out uint height)
+	void buildSize(string text, out uint width, out uint height)
 	{
 		bool colorSelect;
 		int max, x, y;
@@ -57,7 +57,7 @@ public:
 		height = (y + 1) * this.height;
 	}
 
-	static ClassicFont opCall(char[] filename)
+	static ClassicFont opCall(string filename)
 	{
 		auto p = Pool();
 		if (filename is null)
@@ -90,12 +90,12 @@ public:
 
 
 protected:
-	void drawLayoutedText(char[] text, bool shaded)
+	void drawLayoutedText(string text, bool shaded)
 	{
 		drawLayoutedText(0, 0, text);
 	}
 
-	void drawLayoutedText(int startX, int startY, char[] text)
+	void drawLayoutedText(int startX, int startY, string text)
 	{
 		uint w = width;
 		uint h = height;
@@ -205,7 +205,7 @@ protected:
 
 
 private:
-	this(Pool p, char[] name, Texture tex)
+	this(Pool p, string name, Texture tex)
 	{
 		super(p, uri, name, tex);
 	}

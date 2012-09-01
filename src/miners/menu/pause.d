@@ -15,7 +15,7 @@ import miners.menu.base;
 class PauseMenu : public MenuRunnerBase
 {
 private:
-	const char[] header = `Options`;
+	const string header = `Options`;
 	const int minButtonWidth = 32;
 
 	const aaOnText = "Aa: on";
@@ -119,7 +119,7 @@ public:
 
 	void setViewText(Button b)
 	{
-		char[] str;
+		string str;
 		switch(cast(int)opts.viewDistance()) {
 		case   32: str = "Distance: Tiny"; break;
 		case   64: str = "Distance: Short"; break;
@@ -160,7 +160,7 @@ public:
 
 	void setFovText(Button b)
 	{
-		char[] str;
+		string str;
 		switch(opts.fov()) {
 		case  45: str = "Fov: Charged"; break;
 		case  70: str = "Fov: Minecraft"; break;

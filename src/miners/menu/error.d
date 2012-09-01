@@ -23,8 +23,8 @@ private:
 
 public:
 	this(Router r, Options opts,
-	     char[] header, char[][] texts,
-	     char[] buttonText, void delegate() dg)
+	     string header, string[] texts,
+	     string buttonText, void delegate() dg)
 	{
 		this.r = r;
 		this.dg = dg;
@@ -57,11 +57,11 @@ public:
 class ErrorMenu : public InfoMenu
 {
 private:
-	const char[] header = `Charged Miners`;
+	const string header = `Charged Miners`;
 	bool panic;
 
 public:
-	this(Router r, char[][] errorTexts, bool panic)
+	this(Router r, string[] errorTexts, bool panic)
 	{
 		this.panic = panic;
 		auto txt = panic ? "Quit" : "Ok";

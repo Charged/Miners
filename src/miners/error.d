@@ -16,7 +16,7 @@ public:
 	bool panic;
 
 public:
-	this(char[] text, Exception next, bool panic)
+	this(string text, Exception next, bool panic)
 	{
 		if (text is null)
 			text = bugzilla;
@@ -27,7 +27,7 @@ public:
 	}
 
 private:
-	const char[] bugzilla =
+	const string bugzilla =
 `Charged Miners experienced some kind of problem, this isn't meant to happen.
 Sorry about that, please file a bug in the Charge Miners issue tracker and
 tell us what happened. Also please privode the Exception printout if shown.

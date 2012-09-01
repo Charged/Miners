@@ -27,7 +27,7 @@ private:
 	MenuBase mb;
 	SearchField sf;
 
-	const char[] header = `Classic`;
+	const string header = `Classic`;
 
 public:
 	this(Router r, Options opts, ClassicServerInfo[] csis)
@@ -221,7 +221,7 @@ private:
 	ClassicServerInfo[] csis;
 	ClassicServerInfo[] fullList;
 
-	char[] oldSearch;
+	string oldSearch;
 
 	GfxDynamicTexture glyphs;
 

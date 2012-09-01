@@ -16,9 +16,9 @@ import miners.importer.info;
 class LevelMenu : public MenuRunnerBase
 {
 private:
-	const char[] header = `Select a level`;
+	const string header = `Select a level`;
 
-	const char[] text =
+	const string text =
 `Welcome to charged miners, please select level below.`;
 
 public:
@@ -68,7 +68,7 @@ public:
 		super(p, x, y, 0, 0, 0);
 
 		auto levels = scanForLevels();
-		char[] str;
+		string str;
 
 		if (levels.length == 0)
 			throw new GameException("No levels found", null, false);

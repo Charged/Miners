@@ -20,7 +20,7 @@ import miners.importer.folders;
 /**
  * Gets the blocks from a alpha chunk at (x, z).
  */
-bool getAlphaBlocksForChunk(char[] dir, int x, int z,
+bool getAlphaBlocksForChunk(string dir, int x, int z,
 			    out ubyte *blocks, out ubyte *data)
 {
 	nbt_node *file;
@@ -39,7 +39,7 @@ bool getAlphaBlocksForChunk(char[] dir, int x, int z,
 /**
  * Gets the blocks and data from a beta level directory from chunk at (x, z).
  */
-bool getBetaBlocksForChunk(char[] dir, int x, int z,
+bool getBetaBlocksForChunk(string dir, int x, int z,
 			   out ubyte *blocks, out ubyte *data)
 {
 	auto region = getBetaRegionName(dir, x, z);

@@ -18,8 +18,8 @@ import lib.nbt.nbt;
  */
 struct MinecraftLevelInfo
 {
-	char[] name;   /**< Level name */
-	char[] dir;    /**< Directory holding this level */
+	string name;   /**< Level name */
+	string dir;    /**< Directory holding this level */
 	bool beta;     /**< Is this level a beta level */
 	bool nether;   /**< Does this level have a nether directory */
 	Point3d spawn; /**< Spawn point */
@@ -30,11 +30,11 @@ struct MinecraftLevelInfo
  *
  * Returns null if no level.dat was found inside the directory.
  */
-MinecraftLevelInfo* checkMinecraftLevel(char[] level)
+MinecraftLevelInfo* checkMinecraftLevel(string level)
 {
 	auto region = format(level, "/region");
 	auto nether = format(level, "/DIM-1");
-	char[] name;
+	string name;
 	Point3d spawn;
 
 	if (!getInfoFromLevelDat(level, name, spawn))
@@ -62,7 +62,7 @@ MinecraftLevelInfo* checkMinecraftLevel(char[] level)
  *
  * Returns a array of MinecraftLevelInfo's.
  */
-MinecraftLevelInfo[] scanForLevels(char[] dir = null)
+MinecraftLevelInfo[] scanForLevels(string dir = null)
 {
 	VectorData!(MinecraftLevelInfo) levels;
 
@@ -98,7 +98,7 @@ MinecraftLevelInfo[] scanForLevels(char[] dir = null)
 /**
  * Gets information from a level.dat.
  */
-private bool getInfoFromLevelDat(char[] level, out char[] name, out Point3d spawn)
+private bool getInfoFromLevelDat(string level, out string name, out Point3d spawn)
 {
 	auto dat = format(level, "/level.dat\0");
 	nbt_node *data;

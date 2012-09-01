@@ -17,7 +17,7 @@ import miners.actors.otherplayer;
 struct CameraWrapper
 {
 	const static char *namez = "d_class_minecraft_lua_actors_Camera";
-	const static char[] name = "d_class_minecraft_lua_actors_Camera";
+	const static string name = "d_class_minecraft_lua_actors_Camera";
 
 	extern (C) static int newCamera(lua_State *l)
 	{
@@ -37,7 +37,7 @@ struct CameraWrapper
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto c = s.checkClass!(Camera)(1, false);
 		s.checkString(2);
 
@@ -74,7 +74,7 @@ struct CameraWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto c = s.checkClass!(Camera)(1, false);
 		s.checkString(2);
 
@@ -142,7 +142,7 @@ struct CameraWrapper
 struct SunLightWrapper
 {
 	const static char *namez = "d_class_minecraft_lua_actors_SunLight";
-	const static char[] name = "d_class_minecraft_lua_actors_SunLight";
+	const static string name = "d_class_minecraft_lua_actors_SunLight";
 
 	extern (C) static int newSunLight(lua_State *l)
 	{
@@ -162,7 +162,7 @@ struct SunLightWrapper
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto sl = s.checkClass!(SunLight)(1, false);
 		s.checkString(2);
 
@@ -203,7 +203,7 @@ struct SunLightWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto sl = s.checkClass!(SunLight)(1, false);
 		s.checkString(2);
 
@@ -266,7 +266,7 @@ struct SunLightWrapper
 struct OtherPlayerWrapper
 {
 	const static char *namez = "d_class_minecraft_actors_otherplayer_OtherPlayer";
-	const static char[] name = "d_class_minecraft_actors_otherplayer_OtherPlayer";
+	const static string name = "d_class_minecraft_actors_otherplayer_OtherPlayer";
 
 	extern (C) static int newOtherPlayer(lua_State *l)
 	{
@@ -287,7 +287,7 @@ struct OtherPlayerWrapper
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto op = s.checkClass!(OtherPlayer)(1, false);
 		s.checkString(2);
 
@@ -312,7 +312,7 @@ struct OtherPlayerWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto op = s.checkClass!(OtherPlayer)(1, false);
 		s.checkString(2);
 
@@ -345,7 +345,7 @@ struct OtherPlayerWrapper
 	extern (C) static int update(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto op = s.checkClass!(OtherPlayer)(1, false);
 		auto pos = s.checkPoint3d(2);
 		auto heading = s.checkNumber(3);
@@ -378,12 +378,12 @@ struct OtherPlayerWrapper
 struct OptionsWrapper
 {
 	const static char *namez = "d_class_minecraft_options_Options";
-	const static char[] name = "d_class_minecraft_options_Options";
+	const static string name = "d_class_minecraft_options_Options";
 
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto opts = s.checkClass!(Options)(1, false);
 		s.checkString(2);
 
@@ -423,7 +423,7 @@ struct OptionsWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto opts = s.checkClass!(Options)(1, false);
 		s.checkString(2);
 

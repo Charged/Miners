@@ -9,12 +9,12 @@ import miners.isle.world;
 struct IsleWorldWrapper
 {
 	const static char *namez = "d_class_minecraft_world_World";
-	const static char[] name = "d_class_minecraft_world_World";
+	const static string name = "d_class_minecraft_world_World";
 
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto w = s.checkClass!(IsleWorld)(1, false);
 		s.checkString(2);
 

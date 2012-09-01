@@ -5,6 +5,7 @@ module miners.classic.message;
 import std.string : tolower;
 
 import miners.classic.interfaces;
+import miners.importer.network : removeColorTags;
 
 
 class MessageLogger : public ClientMessageListener
@@ -12,15 +13,15 @@ class MessageLogger : public ClientMessageListener
 public:
 	const backlog = 100;
 
-	char[][backlog] msgs;
+	string[backlog] msgs;
 	size_t cur;
 
 	bool dirty;
 
-	void delegate(char[]) message;
+	void delegate(string) message;
 
-	char[][ubyte.max+1] tabs;
-	char[][ubyte.max+1] players;
+	string[ubyte.max+1] tabs;
+	string[ubyte.max+1] players;
 
 public:
 	/*
@@ -30,9 +31,9 @@ public:
 	 */
 
 
-	void archive(byte id, char[] msg) { archive(msg); }
+	void archive(byte id, string msg) { archive(msg); }
 
-	void archive(char[] msg)
+	void archive(string msg)
 	{
 		auto m = msgs[cur++] = escapeBad(msg.dup);
 		if (cur >= msgs.length)
@@ -41,7 +42,7 @@ public:
 		doMessage(m);
 	}
 
-	void addPlayer(byte id, char[] name)
+	void addPlayer(byte id, string name)
 	{
 		tabs[cast(ubyte)id] = null;
 		players[cast(ubyte)id] = name;
@@ -49,10 +50,7 @@ public:
 		if (name is null)
 			return;
 
-		if (name[0] == '&' && name.length > 2)
-			name = name[2 .. $];
-
-		tabs[cast(ubyte)id] = tolower(name);
+		tabs[cast(ubyte)id] = tolower(removeColorTags(name));
 	}
 
 	void removePlayer(byte id)
@@ -75,7 +73,7 @@ public:
 	 */
 
 
-	char[] tabCompletePlayer(char[] searchIn, char[] lastIn)
+	string tabCompletePlayer(in char[] searchIn, string lastIn)
 	{
 		auto search = tolower(searchIn);
 		auto last = tolower(lastIn);
@@ -100,7 +98,7 @@ public:
 			if (next)
 				return players[i];
 
-			// If name is to sort for last
+			// If name is to short for last
 			if (tab.length < last.length)
 				continue;
 

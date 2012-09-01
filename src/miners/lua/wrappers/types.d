@@ -16,7 +16,7 @@ import lib.lua.lauxlib;
 struct BlockWrapper
 {
 	const static char *namez = "d_struct_miners_types_Block";
-	const static char[] name = "d_struct_miners_types_Block";
+	const static string name = "d_struct_miners_types_Block";
 
 	extern (C) static int toString(lua_State *l)
 	{

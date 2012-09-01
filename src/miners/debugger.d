@@ -115,7 +115,7 @@ public:
 			stats.freeblocks);
 
 		size_t pos = info.length;
-		void callback(char[] name, double value) {
+		void callback(string name, double value) {
 			auto ret = sformat(tmp[pos .. $], "\n% 6s %6.1f%%", name, value);
 			pos += ret.length;
 		}

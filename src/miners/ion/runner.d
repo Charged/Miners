@@ -35,7 +35,7 @@ private:
 	GfxSpotLight sl;
 
 public:
-	this(Router r, Options opts, char[] file)
+	this(Router r, Options opts, string file)
 	{
 		if (file is null)
 			file = "a.dcpu16";

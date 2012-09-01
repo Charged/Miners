@@ -410,7 +410,7 @@ public:
 	 * Which type of mesh should be built, needs to match up
 	 * with the capabilities of the current renderer.
 	 */
-	void setBuildType(TerrainBuildTypes type, char[] name)
+	void setBuildType(TerrainBuildTypes type, string name)
 	{
 		if (type == currentBuildType)
 			return;

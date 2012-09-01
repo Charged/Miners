@@ -48,7 +48,7 @@ public:
 		CANCEL
 	}
 
-	const char[][] buttonStrings = [
+	const string[] buttonStrings = [
 		"N/A",
 		"Ok",
 		"Quit",
@@ -58,12 +58,12 @@ public:
 
 
 public:
-	this(char[] header)
+	this(string header)
 	{
 		super(bgColor, header, fgColor);
 	}
 
-	this(char[] header, Buttons buttons)
+	this(string header, Buttons buttons)
 	{
 		this(header);
 

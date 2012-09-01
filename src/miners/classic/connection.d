@@ -25,14 +25,14 @@ class ClientConnection : public Connection
 {
 private:
 	// Server details
-	char[] hostname;
+	string hostname;
 	ushort port;
 
 	/// Username that was authenticated to mc.net
-	char[] username;
+	string username;
 
 	/// Verification recieved from mc.net
-	char[] verificationKey;
+	string verificationKey;
 
 	/// Stored data when receiving the level
 	ubyte[] inData;
@@ -115,7 +115,7 @@ public:
 	 */
 
 
-	void sendClientIdentification(char[] name, char[] key)
+	void sendClientIdentification(string name, string key)
 	{
 		ClientIdentification ci;
 
@@ -163,7 +163,7 @@ public:
 		sendPacket!(cpupo)(s);
 	}
 
-	void sendClientMessage(char[] msg)
+	void sendClientMessage(in char[] msg)
 	{
 		ClientMessage cm;
 
@@ -190,8 +190,8 @@ protected:
 	void serverIdentification(ServerIdentification *si)
 	{
 		ubyte ver = si.protocolVersion;
-		char[] name = removeTrailingSpaces(si.name);
-		char[] motd = removeTrailingSpaces(si.motd);
+		string name = removeTrailingSpaces(si.name);
+		string motd = removeTrailingSpaces(si.motd);
 		ubyte type = si.playerType;
 
 		l.indentification(ver, name, motd, type);
@@ -385,7 +385,7 @@ protected:
 	void message(ServerMessage *sm)
 	{
 		byte player = sm.playerId;
-		char[] msg = removeTrailingSpaces(sm.message);
+		string msg = removeTrailingSpaces(sm.message);
 
 		if (ml !is null)
 			ml.archive(player, msg);
@@ -396,7 +396,7 @@ protected:
 	 */
 	void disconnect(ServerDisconnect *sd)
 	{
-		char[] reason = removeTrailingSpaces(sd.reason);
+		string reason = removeTrailingSpaces(sd.reason);
 
 		l.disconnect(reason);
 	}
@@ -548,9 +548,9 @@ protected:
 
 private class ConnectionException : public Exception
 {
-	this(char[] str)
+	this(string str)
 	{
-		char[] s = format("Connection error (%s)", str);
+		string s = format("Connection error (%s)", str);
 		super(s);
 	}
 }
@@ -564,7 +564,7 @@ private class InvalidPacketException : public Exception
 
 	this(ubyte b)
 	{
-		char[] s = format("Invalid packet type (0x%02x)", b);
+		string s = format("Invalid packet type (0x%02x)", b);
 		super(s);
 	}
 }

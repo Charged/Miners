@@ -29,11 +29,11 @@ struct Block
  */
 class ClassicServerInfo
 {
-	char[] webName; /**< Name as given by the webpage. */
-	char[] webId; /**< Id on the webpage */
+	string webName; /**< Name as given by the webpage. */
+	string webId; /**< Id on the webpage */
 
-	char[] hostname; /**< Hostname to connect to */
+	string hostname; /**< Hostname to connect to */
 	ushort port; /**< Port number to connect to */
-	char[] username; /**< Username used in slat */
-	char[] verificationKey; /**< Retrived from webpage */
+	string username; /**< Username used in slat */
+	string verificationKey; /**< Retrived from webpage */
 }

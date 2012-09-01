@@ -35,22 +35,22 @@ public:
 	bool isClassicMcUrl;
 	bool isClassicHttp;
 
-	char[] playSessionCookie;
-	char[] username;
-	char[] password;
+	string playSessionCookie;
+	string username;
+	string password;
 
 	ClassicServerInfo classicServerInfo;
 
 	ClassicServerInfo[] classicServerList;
 
-	char[] levelPath;
-	char[] launcherPath;
+	string levelPath;
+	string launcherPath;
 	/*@}*/
 
 	/**
 	 * Last connected classic server name.
 	 */
-	Option!(char[]) lastClassicServer;
+	Option!(string) lastClassicServer;
 	const string lastClassicServerName = "mc.lastClassicServer";
 	const string lastClassicServerDefault = "s";
 
@@ -216,9 +216,9 @@ public:
 
 
 	bool rendererBuildIndexed; /**< support array textures */
-	char[] rendererString; /**< readable string for current renderer */
+	string rendererString; /**< readable string for current renderer */
 	TerrainBuildTypes rendererBuildType;
-	Signal!(TerrainBuildTypes, char[]) renderer;
+	Signal!(TerrainBuildTypes, string) renderer;
 
 
 	/*
@@ -231,7 +231,7 @@ public:
 	/**
 	 * Change the terrain texture to this file.
 	 */
-	bool delegate(char[] file) changeTexture;
+	bool delegate(string file) changeTexture;
 
 
 	/**
@@ -243,7 +243,7 @@ public:
 	/**
 	 * Not a trigger as such, but downloads a player skin.
 	 */
-	GfxTexture delegate(char[] name) getSkin;
+	GfxTexture delegate(string name) getSkin;
 
 
 public:
@@ -295,7 +295,7 @@ public:
 		whiteTexture = GfxColorTexture(Color4f.White);
 	}
 
-	void setRenderer(TerrainBuildTypes bt, char[] s)
+	void setRenderer(TerrainBuildTypes bt, string s)
 	{
 		rendererString = s;
 		rendererBuildType = bt;

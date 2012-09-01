@@ -44,7 +44,7 @@ Picture getModernTerrainTexture()
  *
  * Returns the terrain.png file a C allocated array.
  */
-void[] extractMinecraftTexture(char[] dir = null)
+void[] extractMinecraftTexture(string dir = null)
 {
 	if (dir is null)
 		dir = getMinecraftFolder();
@@ -76,7 +76,7 @@ void manipulateTextureModern(Picture pic)
  */
 Picture getClassicTerrainTexture()
 {
-	char[][] locations = [
+	string[] locations = [
 		"terrain.classic.png",
 		chargeConfigFolder ~ "/terrain.classic.png",
 	];
@@ -184,7 +184,7 @@ TerrainTextures createTextures(Picture pic, bool doArray)
 /**
  * Extract one tile form the given picture.
  */
-Picture getTileAsSeperate(Picture src, char[] name, int tile_x, int tile_y)
+Picture getTileAsSeperate(Picture src, string name, int tile_x, int tile_y)
 {
 	uint tile_size = src.width / 16;
 

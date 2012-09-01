@@ -21,9 +21,9 @@ private:
 	Button cb;
 	Button qb;
 
-	const char[] header = `Charged Miners`;
+	const string header = `Charged Miners`;
 
-	const char[] text =
+	const string text =
 `Welcome to charged miners, please select below.
 
 `;

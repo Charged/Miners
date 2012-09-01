@@ -13,14 +13,14 @@ import std.math;
  * username = r[5]
  * password = r[7]
  */
-const mcUrlStr = "mc://([^/:]+)" "(:([^/]+))?" "(/([^/]+))?" "(/([^/]+))?";
+const string mcUrlStr = "mc://([^/:]+)" "(:([^/]+))?" "(/([^/]+))?" "(/([^/]+))?";
 
 /**
  * String to parse a minecraft play string.
  *
  * id = r[2]
  */
-const httpUrlStr = "http://(www\\.)?" "minecraft.net/classic/play/" "(.+)";
+const string httpUrlStr = "http://(www\\.)?" "minecraft.net/classic/play/" "(.+)";
 
 /**
  * String to parse a minecraft play string with username and password.
@@ -29,15 +29,15 @@ const httpUrlStr = "http://(www\\.)?" "minecraft.net/classic/play/" "(.+)";
  * password = r[3]
  * id = r[5]
  */
-const httpUserPassUrlStr = "http://([^/:]+)" "(:([^@]+))?" "@" "(www\\.)?"
-                           "minecraft.net/classic/play/" "(.+)";
+const string httpUserPassUrlStr = "http://([^/:]+)" "(:([^@]+))?" "@" "(www\\.)?"
+                                  "minecraft.net/classic/play/" "(.+)";
 
 /**
  * String to parse a PLAY_SESSION cookie string.
  *
  * playSessionCookie = r[1]
  */
-const playSessionCookieStr = "PLAY_SESSION=([^;]+)";
+const string playSessionCookieStr = "PLAY_SESSION=([^;]+)";
 
 
 /**
@@ -45,15 +45,16 @@ const playSessionCookieStr = "PLAY_SESSION=([^;]+)";
  *
  * launcherPath = r[1]
  */
-const launcherPathStr = "LAUNCHER_PATH=([^:]+)";
+const string launcherPathStr = "LAUNCHER_PATH=([^:]+)";
 
 
 /**
  * Remove any trailing spaces from a string.
  *
  * Used to deal with strings from classic servers.
+ * XXX Use alloca.
  */
-char[] removeTrailingSpaces(char[] arg)
+string removeTrailingSpaces(in char[] arg)
 {
 	size_t len = arg.length;
 	while(len) {
@@ -76,8 +77,9 @@ char[] removeTrailingSpaces(char[] arg)
  * Remove any classic color tags from a string.
  *
  * Used to deal with strings from classic servers.
+ * XXX Use alloca.
  */
-char[] removeColorTags(char[] arg)
+string removeColorTags(in char[] arg)
 {
 	char[] ret;
 	int k;

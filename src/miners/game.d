@@ -92,7 +92,7 @@ private:
 public:
 	mixin SysLogging;
 
-	this(char[][] args)
+	this(string[] args)
 	{
 		mcUrl = RegExp(mcUrlStr);
 		httpUrl = RegExp(httpUrlStr);
@@ -261,7 +261,7 @@ protected:
 		return displayMainMenu();
 	}
 
-	void parseArgs(char[][] args)
+	void parseArgs(string[] args)
 	{
 		for(int i = 1; i < args.length; i++) {
 			switch(args[i]) {
@@ -300,7 +300,7 @@ protected:
 	/**
 	 * Try all arguments.
 	 */
-	bool tryArgs(char[] arg)
+	bool tryArgs(string arg)
 	{
 		return tryArgHttpUrl(arg) || tryArgMcUrl(arg) ||
 		       tryArgHtml(arg)    || tryArgCookie(arg) ||
@@ -320,7 +320,7 @@ protected:
 	 * Is this argument a Minecraft http Url?
 	 * If so set all the game arguments and switch to classic.
 	 */
-	bool tryArgHttpUrl(char[] arg)
+	bool tryArgHttpUrl(string arg)
 	{
 		auto r = httpUrl.exec(arg);
 		if (r.length < 2)
@@ -343,7 +343,7 @@ protected:
 	 * Is this argument a Minecraft http Url?
 	 * If so set all the game arguments and switch to classic.
 	 */
-	bool tryArgHttpUserPassUrl(char[] arg)
+	bool tryArgHttpUserPassUrl(string arg)
 	{
 		auto r = httpUserPassUrl.exec(arg);
 		if (r.length < 5)
@@ -370,7 +370,7 @@ protected:
 	 * Is this argument a Minecraft Url?
 	 * If so set all the game arguments and switch to classic.
 	 */
-	bool tryArgMcUrl(char[] arg)
+	bool tryArgMcUrl(string arg)
 	{
 		auto r = mcUrl.exec(arg);
 		if (r.length < 8)
@@ -405,7 +405,7 @@ protected:
 	 * Is this argument a classic play html page? If so extract the
 	 * info, set all the game arguments and switch to classic.
 	 */
-	bool tryArgHtml(char[] arg)
+	bool tryArgHtml(string arg)
 	{
 		if (arg.length <= 5)
 			return false;
@@ -437,7 +437,7 @@ protected:
 	/**
 	 * Is this argument a Minecraft PLAY_SESSION cookie?
 	 */
-	bool tryArgCookie(char[] arg)
+	bool tryArgCookie(string arg)
 	{
 		auto r = playSessionCookieExp.exec(arg);
 		if (r.length < 2)
@@ -455,7 +455,7 @@ protected:
 	/**
 	 * Is this argument a LAUNCHER_PATH info string?
 	 */
-	bool tryArgLauncherPath(char[] arg)
+	bool tryArgLauncherPath(string arg)
 	{
 		auto r = launcherPathExp.exec(arg);
 		if (r.length < 2)
@@ -488,7 +488,7 @@ protected:
 		fm.addBuiltin(borrowedModernTerrainTexture, terrainFile);
 	}
 
-	bool checkLevel(char[] level)
+	bool checkLevel(string level)
 	{
 		auto ni = checkMinecraftLevel(level);
 
@@ -572,7 +572,7 @@ protected:
 		push(r);
 	}
 
-	void loadLevelModern(char[] level)
+	void loadLevelModern(string level)
 	{
 		Runner r;
 		World w;
@@ -630,7 +630,7 @@ protected:
 		push(r);
 	}
 
-	void loadLevelClassic(char[] level)
+	void loadLevelClassic(string level)
 	{
 		Runner r;
 
@@ -652,7 +652,7 @@ protected:
 	 */
 
 
-	const char[] terrainNotFoundText =
+	const string terrainNotFoundText =
 `Could not find terrain.png! You have a couple of options, easiest is just to
 install Minecraft and Charged Miners will get it from there. Another option is
 to get one from a texture pack and place it in either the working directory of
@@ -718,7 +718,7 @@ the executable. Or in the Charged Miners config folder located here:
 		push(new WebpageInfoMenu(this, opts, psc, csi));
 	}
 
-	void connectToClassic(char[] usr, char[] pwd, ClassicServerInfo csi)
+	void connectToClassic(string usr, string pwd, ClassicServerInfo csi)
 	{
 		push(new WebpageInfoMenu(this, opts, usr, pwd, csi));
 	}
@@ -733,8 +733,8 @@ the executable. Or in the Charged Miners config folder located here:
 		push(new ClassicConnectingMenu(this, opts, cc));
 	}
 
-	void displayInfo(char[] header, char[][] texts,
-	                 char[] buttonText, void delegate() dg)
+	void displayInfo(string header, string[] texts,
+	                 string buttonText, void delegate() dg)
 	{
 		push(new InfoMenu(this, opts, header, texts, buttonText, dg));
 	}
@@ -747,7 +747,7 @@ the executable. Or in the Charged Miners config folder located here:
 			ge = new GameException(null, e, panic);
 
 
-		char[][] texts;
+		string[] texts;
 		auto next = ge.next;
 
 		if (next is null) {
@@ -763,7 +763,7 @@ the executable. Or in the Charged Miners config folder located here:
 		displayError(texts, ge.panic);
 	}
 
-	void displayError(char[][] texts, bool panic)
+	void displayError(string[] texts, bool panic)
 	{
 		push(new ErrorMenu(this, texts, panic));
 	}
