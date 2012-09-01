@@ -15,7 +15,7 @@ import charge.gfx.texture;
 class BitmapFont : public Resource
 {
 public:
-	const char[] uri = "bf://";
+	const string uri = "bf://";
 
 	/**
 	 * Default inbuilt font, will always be available as long as
@@ -36,7 +36,7 @@ private:
 	mixin Logging;
 
 public:
-	void draw(Draw d, int x, int y, char[] text, bool shaded = false)
+	void draw(Draw d, int x, int y, string text, bool shaded = false)
 	{
 		if (x != 0 || y != 0) {
 			d.translate(x, y);
@@ -47,7 +47,7 @@ public:
 		}
 	}
 
-	void buildSize(char[] text, out uint width, out uint height)
+	void buildSize(string text, out uint width, out uint height)
 	{
 		if (text is null)
 			return;
@@ -74,7 +74,7 @@ public:
 		height = (y + 1) * this.height;
 	}
 
-	void render(DynamicTexture dt, char[] text)
+	void render(DynamicTexture dt, string text)
 	{
 		GLint oldFbo;
 
@@ -134,7 +134,7 @@ public:
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, 0, 0);
 	}
 
-	static BitmapFont opCall(char[] filename)
+	static BitmapFont opCall(string filename)
 	{
 		auto p = Pool();
 		if (filename is null)
@@ -167,12 +167,12 @@ public:
 
 
 protected:
-	this(Pool p, char[] name, Texture tex)
+	this(Pool p, string name, Texture tex)
 	{
 		this(p, uri, name, tex);
 	}
 
-	this(Pool p, char[] uri, char[] name, Texture tex)
+	this(Pool p, string uri, string name, Texture tex)
 	{
 		glGenFramebuffersEXT(1, &fbo);
 
@@ -188,7 +188,7 @@ protected:
 		tex.reference(&tex, null);
 	}
 
-	void drawLayoutedText(char[] text, bool shaded)
+	void drawLayoutedText(string text, bool shaded)
 	{
 		// This is all the state we need to setup,
 		// the rest is handled by draw or the render function.
@@ -218,7 +218,7 @@ protected:
 		glDisable(GL_BLEND);
 	}
 
-	void doLayoutLoop(char[] text, void delegate(int x, int y, char c) dg)
+	void doLayoutLoop(string text, void delegate(int x, int y, char c) dg)
 	{
 		int x, y;
 		foreach(c; text) {

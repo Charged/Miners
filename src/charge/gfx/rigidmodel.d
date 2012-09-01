@@ -25,7 +25,7 @@ private:
 	Material m;
 
 public:
-	static RigidModel opCall(World w, char[] name)
+	static RigidModel opCall(World w, string name)
 	{
 		auto vbo = RigidMeshVBO(name);
 		if (vbo is null) {

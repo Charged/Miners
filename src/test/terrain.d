@@ -54,7 +54,7 @@ public:
 		GfxRigidModel gfx;
 		Triangle[] tris;
 		Vertex[] verts;
-		char[] name;
+		string name;
 		int i;
 
 		tris.length = 2;
@@ -95,7 +95,7 @@ public:
 		int num_tris;
 		Triangle[] tris;
 		Vertex[] verts;
-		char[] name;
+		string name;
 		int width, depth;
 		int iv, it;
 		ubyte map[];
@@ -569,7 +569,7 @@ private:
 	 *
 	 * Return a height map to be used with mapFromHeightData.
 	 */
-	ubyte[] loadSimCity2000Level(char[] name)
+	ubyte[] loadSimCity2000Level(string name)
 	{
 		struct file_header {
 			char[4] form;
@@ -660,7 +660,7 @@ private:
 public:
 	mixin SysLogging;
 
-	this(char[][] args)
+	this(string[] args)
 	{
 		/* This will initalize Core and other important things */
 		super();

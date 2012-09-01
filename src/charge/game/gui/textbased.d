@@ -83,7 +83,7 @@ char[] makeFrame(char[] elm, uint width, uint height)
 
 }
 
-char[] makeTextGuiButton(char[] text, uint minwidth = 0)
+char[] makeTextGuiButton(string text, uint minwidth = 0)
 {
 	int width = cast(uint)text.length;
 	if (width < minwidth)
@@ -104,12 +104,12 @@ char[] makeTextGuiButton(char[] text, uint minwidth = 0)
 class Button : public Text
 {
 public:
-	char[] text;
+	string text;
 	uint minwidth;
 	Signal!(Button) pressed;
 
 public:
-	this(Container c, int x, int y, char[] text, uint minwidth = 0)
+	this(Container c, int x, int y, string text, uint minwidth = 0)
 	{
 		this.text = text;
 		this.minwidth = minwidth;
@@ -129,7 +129,7 @@ public:
 		super.breakApart();
 	}
 
-	void setText(char[] text, int minwidth = -1)
+	void setText(string text, int minwidth = -1)
 	{
 		if (minwidth >= 0)
 			this.minwidth = cast(uint)minwidth;
@@ -158,7 +158,7 @@ public:
 	Color4f headerBG;
 
 public:
-	this(Color4f bg, char[] headerText, Color4f headerBG)
+	this(Color4f bg, string headerText, Color4f headerBG)
 	{
 		super(0, 0, bg);
 		this.plane = new Container(null, 0, 0, 1, 1);

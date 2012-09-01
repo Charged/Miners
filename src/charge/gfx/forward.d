@@ -35,7 +35,7 @@ public:
 
 
 public:
-	this(char[] vert, char[] frag)
+	this(string vert, string frag)
 	{
 		GLuint id = ShaderMaker.makeShader(
 			vert, frag,
@@ -261,7 +261,7 @@ protected:
 	 * uv     - texture coordenate.
 	 */
 
-	const char[] materialFragTex = "
+	const string materialFragTex = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -291,7 +291,7 @@ void main()
 }
 ";
 
-	const char[] materialFragBlack = "
+	const string materialFragBlack = "
 #version 120
 
 varying vec3 normal;
@@ -315,7 +315,7 @@ void main()
 	 * Material vertex shader.
 	 */
 
-	const char[] materialVertMesh = "
+	const string materialVertMesh = "
 #version 120
 
 varying vec3 normal;
@@ -333,7 +333,7 @@ void main()
 }
 ";
 
-	const char[] materialVertSkel = "
+	const string materialVertSkel = "
 #version 120
 
 varying vec3 normal;

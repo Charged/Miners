@@ -40,7 +40,7 @@ void gluPushAndTransform(Point3d p, Quatd q)
 	glMultMatrixd(glRot.m.ptr.ptr);
 }
 
-void gluGetError(char[] text = null)
+void gluGetError(string text = null)
 {
 	auto err = glGetError();
 	if (err == GL_NO_ERROR)

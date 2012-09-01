@@ -34,7 +34,7 @@ class GeomSphere : public Geom
 class GeomMeshData : public Resource
 {
 public:
-	const char[] uri = "geom://";
+	const string uri = "geom://";
 
 private:
 	mixin Logging;
@@ -42,12 +42,12 @@ private:
 	dTriMeshDataID mesh;
 
 public:
-	static GeomMeshData opCall(char[] filename)
+	static GeomMeshData opCall(string filename)
 	{
 		return GeomMeshData(Pool(), filename);
 	}
 
-	static GeomMeshData opCall(Pool p, char[] filename)
+	static GeomMeshData opCall(Pool p, string filename)
 	{
 		auto r = p.resource(uri, filename);
 		auto d = cast(GeomMeshData)r;
@@ -73,7 +73,7 @@ public:
 	}
 
 protected:
-	this(Pool p, char[] filename, RigidMesh mesh)
+	this(Pool p, string filename, RigidMesh mesh)
 	{
 		super(p, uri, filename);
 
@@ -94,7 +94,7 @@ private:
 	dTriMeshDataID mesh_data;
 
 public:
-	this(char[] filename)
+	this(string filename)
 	{
 		data = GeomMeshData(filename);
 

@@ -22,7 +22,7 @@ protected:
 
 private:
 	// Server details
-	char[] hostname;
+	string hostname;
 	ushort port;
 
 	// For async
@@ -47,7 +47,7 @@ private:
 
 
 public:
-	this(char[] hostname, ushort port)
+	this(string hostname, ushort port)
 	{
 		this.contentLength = -1;
 		this.hostname = hostname;
@@ -143,19 +143,19 @@ protected:
 	 */
 
 
-	void httpGet(char[] url)
+	void httpGet(string url)
 	{
 		httpSend("GET", url, "");
 	}
 
-	void httpPost(char[] url, char[] bdy)
+	void httpPost(string url, string bdy)
 	{
 		httpSend("POST", url, bdy);
 	}
 
-	void httpSend(char[] cmd, char[] url, char[] bdy)
+	void httpSend(string cmd, string url, string bdy)
 	{
-		const char[] http =
+		const string http =
 		"%s %s HTTP/1.0\r\n"
 		"User-Agent: Charge Game Engine\r\n"
 		"Host: %s\r\n"
@@ -315,7 +315,7 @@ class ThreadedHttpConnection : public ThreadedTcpConnection
 {
 private:
 	// Server details
-	char[] hostname;
+	string hostname;
 	ushort port;
 
 	// Collected data from server
@@ -325,7 +325,7 @@ private:
 	char[] pageHeader;
 
 public:
-	this(char[] hostname, ushort port)
+	this(string hostname, ushort port)
 	{
 		this.contentLength = -1;
 		this.hostname = hostname;
@@ -343,19 +343,19 @@ protected:
 	 */
 
 
-	void httpGet(char[] url)
+	void httpGet(string url)
 	{
 		httpSend("GET", url, "");
 	}
 
-	void httpPost(char[] url, char[] bdy)
+	void httpPost(string url, string bdy)
 	{
 		httpSend("POST", url, bdy);
 	}
 
-	void httpSend(char[] cmd, char[] url, char[] bdy)
+	void httpSend(string cmd, string url, string bdy)
 	{
-		const char[] http =
+		const string http =
 		"%s %s HTTP/1.0\r\n"
 		"User-Agent: Charge Game Engine\r\n"
 		"Host: %s\r\n"

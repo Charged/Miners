@@ -32,7 +32,7 @@ import charge.gfx.zone;
 class MaterialShader : public Shader
 {
 public:
-	this(char[] vert, char[] frag)
+	this(string vert, string frag)
 	{
 		GLuint id = ShaderMaker.makeShader(
 			vert, frag,
@@ -56,7 +56,7 @@ public:
 
 
 protected:
-	this(char[] vert, char[] frag, char[][] texs)
+	this(string vert, string frag, string[] texs)
 	{
 		GLuint id = ShaderMaker.makeShader(
 			vert, frag,
@@ -86,11 +86,11 @@ public:
 
 
 protected:
-	this(char[] vert, char[] frag, char[][] texs)
+	this(string vert, string frag, string[] texs)
 	{
 		GLuint id = ShaderMaker.makeShader(
 			vert, frag,
-			cast(char[][])null, texs);
+			cast(string[])null, texs);
 
 		this(id);
 	}
@@ -167,11 +167,11 @@ public:
 
 
 protected:
-	this(char[] vert, char[] frag, char[][] texs)
+	this(string vert, string frag, string[] texs)
 	{
 		GLuint id = ShaderMaker.makeShader(
 			vert, frag,
-			cast(char[][])null, texs);
+			cast(string[])null, texs);
 
 		this(id);
 	}
@@ -1335,7 +1335,7 @@ protected:
 	 */
 
 
-	const char[] material_shader_mesh_vert = "
+	const string material_shader_mesh_vert = "
 #version 120
 
 varying vec2 uv;
@@ -1353,7 +1353,7 @@ void main()
 }
 ";
 
-	const char[] material_shader_skel_vert = "
+	const string material_shader_skel_vert = "
 #version 120
 
 varying vec3 normal;
@@ -1395,7 +1395,7 @@ void main()
 }
 ";
 
-	const char[] material_shader_tex_frag = "
+	const string material_shader_tex_frag = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -1410,7 +1410,7 @@ void main()
 }
 ";
 
-	const char[] material_shader_fake_frag = "
+	const string material_shader_fake_frag = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -1429,7 +1429,7 @@ void main()
 }
 ";
 
-	const char[] material_shader_shadow_frag = "
+	const string material_shader_shadow_frag = "
 #version 120
 
 void main()
@@ -1437,7 +1437,7 @@ void main()
 }
 ";
 
-	const char[] deferred_base_vert = "
+	const string deferred_base_vert = "
 #version 120
 
 void main()
@@ -1447,7 +1447,7 @@ void main()
 }
 ";
 
-	const char[] spotlight_shader_shadow_frag = "
+	const string spotlight_shader_shadow_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 
@@ -1513,7 +1513,7 @@ void main()
 }
 ";
 
-	const char[] spotlight_shader_frag = "
+	const string spotlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1561,7 +1561,7 @@ void main()
 }
 ";
 
-	const char[] pointlight_shader_frag = "
+	const string pointlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1605,7 +1605,7 @@ void main()
 }
 ";
 
-	const char[] pointlight_shader_geom = "
+	const string pointlight_shader_geom = "
 #version 120
 #extension GL_EXT_geometry_shader4 : require
 
@@ -1665,7 +1665,7 @@ void main() {
 }
 ";
 
-	const char[] pointlight_shader_vertex = "
+	const string pointlight_shader_vertex = "
 #version 120
 
 varying float size;
@@ -1680,7 +1680,7 @@ void main() {
 }
 ";
 
-	const char[] directionlight_shader_frag = "
+	const string directionlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1711,7 +1711,7 @@ void main()
 }
 ";
 
-	const char[] directionlight_split_shader_frag = "
+	const string directionlight_split_shader_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
@@ -1787,7 +1787,7 @@ void main()
 }
 ";
 
-	const char[] directionlight_iso_shader_frag = "
+	const string directionlight_iso_shader_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
@@ -1847,7 +1847,7 @@ void main()
 }
 ";
 
-	const char[] fog_shader_frag = "
+	const string fog_shader_frag = "
 #version 120
 
 uniform vec2 screen;

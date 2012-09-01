@@ -2,11 +2,17 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.util.base36;
 
-char[] encode(int v)
+
+/**
+ * Encodes a value into base64 encoding.
+ *
+ * XXX Optimize
+ */
+string encode(int v)
 {
-	const char[] array = "0123456789abcdefghijklmnopqrstuvwxyz";
-	char[] buf;
-	char[] sign;
+	const string array = "0123456789abcdefghijklmnopqrstuvwxyz";
+	string buf;
+	string sign;
 
 	if (v < 0) {
 		sign = "-";

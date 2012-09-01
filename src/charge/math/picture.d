@@ -13,7 +13,7 @@ import charge.util.memory;
 class Picture : public Resource
 {
 public:
-	const char[] uri = "pic://";
+	const string uri = "pic://";
 
 	Color4b *pixels;
 
@@ -24,12 +24,12 @@ private:
 	mixin Logging;
 
 public:
-	static Picture opCall(char[] filename)
+	static Picture opCall(string filename)
 	{
 		return Picture(Pool(), filename);
 	}
 
-	static Picture opCall(Pool p, char[] filename)
+	static Picture opCall(Pool p, string filename)
 	{
 		if (filename is null)
 			return null;
@@ -48,7 +48,7 @@ public:
 		return new Picture(p, filename, i);
 	}
 
-	static Picture opCall(char[] name, char[] filename)
+	static Picture opCall(string name, string filename)
 	{
 		auto i = getImage(filename);
 		if (i is null)
@@ -57,24 +57,24 @@ public:
 		return new Picture(Pool(), name, i);
 	}
 
-	static Picture opCall(char[] name, uint width, uint height)
+	static Picture opCall(string name, uint width, uint height)
 	{
 		return new Picture(Pool(), name, width, height);
 	}
 
-	static Picture opCall(char[] name, PngImage pic)
+	static Picture opCall(string name, PngImage pic)
 	{
 		return new Picture(Pool(), name, pic);
 	}
 
-	static Picture opCall(char[] name, Picture pic)
+	static Picture opCall(string name, Picture pic)
 	{
 		return new Picture(Pool(), name, pic);
 	}
 
 
 protected:
-	this(Pool p, char[] name, uint w, uint h)
+	this(Pool p, string name, uint w, uint h)
 	{
 		super(p, uri, name);
 
@@ -83,7 +83,7 @@ protected:
 		pixels = cast(Color4b*)cMalloc(w*h*Color4b.sizeof);
 	}
 
-	this(Pool p, char[] name, PngImage image)
+	this(Pool p, string name, PngImage image)
 	{
 		// Call base calss constructor
 		super(p, uri, name);
@@ -93,7 +93,7 @@ protected:
 		this.pixels = cast(Color4b*)image.pixels.steal.ptr;
 	}
 
-	this(Pool p, char[] name, Picture image)
+	this(Pool p, string name, Picture image)
 	{
 		// Allocs pixels
 		this(p, name, image.width, image.height);
@@ -107,7 +107,7 @@ protected:
 		cFree(pixels);
 	}
 
-	static PngImage getImage(char[] filename)
+	static PngImage getImage(string filename)
 	{
 		auto file = FileManager(filename);
 		if (file is null) {

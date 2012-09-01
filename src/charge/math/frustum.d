@@ -64,7 +64,7 @@ public:
 		return true;
 	}
 
-	char[] toString()
+	string toString()
 	{
 		return format("((%s, %s, %s), %s)", a, b, c, d);
 	}

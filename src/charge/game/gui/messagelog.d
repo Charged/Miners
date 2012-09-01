@@ -23,7 +23,7 @@ protected:
 	uint current;
 	DynamicTexture glyphs;
 
-	char[][] text;
+	string[] text;
 	size_t cur;
 
 	BitmapFont bf;
@@ -59,7 +59,7 @@ public:
 		glyphs.reference(&glyphs, null);
 	}
 
-	void message(char[] msg)
+	void message(string msg)
 	{
 		text[cur++] = msg;
 		if (cur >= text.length)
@@ -80,7 +80,7 @@ public:
 	}
 
 protected:
-	void drawRow(Draw d, int y, char[] row)
+	void drawRow(Draw d, int y, string row)
 	{
 		uint w = bf.width;
 		uint h = bf.height;

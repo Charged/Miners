@@ -58,7 +58,7 @@ public:
 		a = cast(ubyte)((c1.a * alpha_minus_one + c2.a * alpha) * 255);
 	}
 
-	char[] toString()
+	string toString()
 	{
 		return format("(%s, %s, %s, %s)", r, g, b, a);
 	}
@@ -82,7 +82,7 @@ public:
 
 	float* ptr() { return &r; }
 
-	char[] toString()
+	string toString()
 	{
 		return format("(%s, %s, %s)", r, g, b);
 	}
@@ -126,7 +126,7 @@ public:
 
 	float* ptr() { return &r; }
 
-	char[] toString()
+	string toString()
 	{
 		return format("(%s, %s, %s, %s)", r, g, b, a);
 	}

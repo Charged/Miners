@@ -64,7 +64,7 @@ protected:
 	/**
 	 * Connect to a remote host.
 	 */
-	void connect(char[] hostname, ushort port)
+	void connect(string hostname, ushort port)
 	{
 		auto a = new InternetAddress(hostname, port);
 		connect(a);

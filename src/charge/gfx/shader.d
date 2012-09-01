@@ -180,25 +180,25 @@ private:
 	mixin Logging;
 
 public:
-	static Shader opCall(char[] vertex, char[] fragment)
+	static Shader opCall(string vertex, string fragment)
 	{
 		return new Shader(makeShader(vertex, fragment));
 	}
 
-	static Shader opCall(char[] vertex, char[] fragment,
-			     char[][] bind_attributes,
-			     char[][] bind_textures)
+	static Shader opCall(string vertex, string fragment,
+	                     string[] bind_attributes,
+	                     string[] bind_textures)
 	{
 		return new Shader(makeShader(vertex, fragment, bind_attributes, bind_textures));
 	}
 
-	static Shader opCall(char[] vertex, char[] geom, char[] fragment,
+	static Shader opCall(string vertex, string geom, string fragment,
 	                     GLenum in_type, GLenum out_type, uint num_out)
 	{
 		return new Shader(makeShader(vertex, geom, fragment, in_type, out_type, num_out));
 	}
 
-	static GLuint makeShader(char[] vertex, char[] geom, char[] fragment,
+	static GLuint makeShader(string vertex, string geom, string fragment,
 	                         GLenum in_type, GLenum out_type, uint num_out)
 	{
 		int programShader = createAndCompileShader(vertex, geom, fragment);
@@ -216,7 +216,7 @@ public:
 		return programShader;
 	}
 
-	static GLuint makeShader(char[] vertex, char[] fragment)
+	static GLuint makeShader(string vertex, string fragment)
 	{
 		// Compile the shaders
 		auto programShader = createAndCompileShader(vertex, fragment);
@@ -231,9 +231,10 @@ public:
 
 	}
 
-	static GLuint makeShader(char[] vertex, char[] fragment,
-	                         char[][] bind_attributes,
-	                         char[][] bind_textures)
+	static GLuint makeShader(string vertex,
+	                         string fragment,
+	                         string[] bind_attributes,
+	                         string[] bind_textures)
 	{
 		int status;
 
@@ -272,7 +273,7 @@ public:
 	}
 
 private:
-	static GLuint createAndCompileShader(char[] vertex, char[] fragment)
+	static GLuint createAndCompileShader(string vertex, string fragment)
 	{
 		// Create the handels
 		uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -297,7 +298,9 @@ private:
 		return programShader;
 	}
 
-	static GLuint createAndCompileShader(char[] vertex, char[] geometry, char[] fragment)
+	static GLuint createAndCompileShader(string vertex,
+	                                     string geometry,
+	                                     string fragment)
 	{
 		// Create the handels
 		GLuint geomShader = glCreateShader(GL_GEOMETRY_SHADER_EXT);
@@ -328,7 +331,9 @@ private:
 		return programShader;
 	}
 
-	static void compileShader(GLuint shader, char[] source, char[] type)
+	static void compileShader(GLuint shader,
+	                          string source,
+	                          string type)
 	{
 		char* ptr;
 		int length;
@@ -342,7 +347,9 @@ private:
 		printDebug(shader, false, type);
 	}
 
-	private static bool printDebug(GLuint shader, bool program, char[] type)
+	private static bool printDebug(GLuint shader,
+	                               bool program,
+	                               string type)
 	{
 		// Instead of pointers, realy bothersome.
 		int status;

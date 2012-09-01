@@ -25,7 +25,7 @@ public:
 		Linear,
 		LinearNone,
 	}
-	const char[] uri = "tex://";
+	const string uri = "tex://";
 
 protected:
 	uint w;
@@ -37,13 +37,13 @@ private:
 	mixin Logging;
 
 package:
-	this(Pool p, char[] name, GLuint target)
+	this(Pool p, string name, GLuint target)
 	{
 		super(p, uri, name);
 		this.glTarget = target;
 	}
 
-	this(Pool p, char[] name, GLuint target, uint id, uint w, uint h)
+	this(Pool p, string name, GLuint target, uint id, uint w, uint h)
 	{
 		this(p, name, target);
 		this.glId = id;
@@ -62,7 +62,7 @@ public:
 		return glId;
 	}
 
-	static Texture opCall(char[] filename)
+	static Texture opCall(string filename)
 	{
 		auto p = Pool();
 		if (filename is null)
@@ -81,7 +81,7 @@ public:
 			return fromPicture(p, filename);
 	}
 
-	static Texture opCall(char[] name, Picture pic)
+	static Texture opCall(string name, Picture pic)
 	{
 		auto p = Pool();
 
@@ -151,7 +151,7 @@ public:
 	}
 
 private:
-	static Texture fromPicture(Pool p, char[] filename)
+	static Texture fromPicture(Pool p, string filename)
 	{
 		Texture t;
 		auto pic = Picture(p, filename);
@@ -197,7 +197,7 @@ private:
 		return id;
 	}
 
-	static Texture fromDdsFile(Pool p, char[] filename)
+	static Texture fromDdsFile(Pool p, string filename)
 	{
 		auto file = FileManager(filename);
 		if (file is null) {
@@ -311,7 +311,7 @@ public:
 	}
 
 protected:
-	this(Pool p, char[] str, Color4b c)
+	this(Pool p, string str, Color4b c)
 	{
 		GLuint id;
 
@@ -344,7 +344,7 @@ protected:
 class DynamicTexture : public Texture
 {
 public:
-	this(char[] name)
+	this(string name)
 	{
 		super(Pool(), name, GL_TEXTURE_2D);
 	}
@@ -366,7 +366,7 @@ private:
 	Texture tex;
 
 public:
-	this(char[] name, Texture tex)
+	this(string name, Texture tex)
 	in {
 		assert(tex !is null);
 		assert(cast(WrappedTexture)tex is null);
@@ -417,7 +417,7 @@ private:
 	GLuint fbo;
 
 public:
-	static TextureTarget opCall(char[] name, uint w, uint h)
+	static TextureTarget opCall(string name, uint w, uint h)
 	{
 		return new TextureTarget(Pool(), name, w, h);
 	}
@@ -447,7 +447,7 @@ public:
 	}
 
 protected:
-	this(Pool p, char[] name, uint w, uint h)
+	this(Pool p, string name, uint w, uint h)
 	{
 		GLuint colorTex;
 
@@ -526,7 +526,7 @@ public:
 		return true;
 	}
 
-	static TextureArray fromTileMap(char[] name, int num_w, int num_h)
+	static TextureArray fromTileMap(string name, int num_w, int num_h)
 	{
 		if (!check())
 			return null;
@@ -541,7 +541,7 @@ public:
 		return fromTileMap(name, pic, num_w, num_h);
 	}
 
-	static TextureArray fromTileMap(char[] name, Picture pic, int num_w, int num_h)
+	static TextureArray fromTileMap(string name, Picture pic, int num_w, int num_h)
 	{
 		int glFormat = GL_RGBA;
 		int glComponents = 4;
@@ -601,7 +601,7 @@ public:
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 
-		char[] new_name;
+		string new_name;
 		if (name !is null) {
 			new_name = name ~ "?array";
 			l.info("Loaded %s", new_name);
@@ -614,7 +614,7 @@ public:
 	}
 
 protected:
-	this(Pool p, char[] name, uint id, uint w, uint h, uint length)
+	this(Pool p, string name, uint id, uint w, uint h, uint length)
 	{
 		super(p, name, GL_TEXTURE_2D_ARRAY_EXT, id, w, h);
 		this.length = length;
@@ -655,7 +655,7 @@ private:
 	}
 
 private:
-	static Texture load(char[] filename)
+	static Texture load(string filename)
 	{
 		GLuint id;
 

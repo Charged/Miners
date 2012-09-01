@@ -12,7 +12,7 @@ import charge.util.zip;
 import charge.util.vector;
 import charge.util.memory;
 
-alias File delegate(char[] filename) FileLoader;
+alias File delegate(string filename) FileLoader;
 
 abstract class File
 {
@@ -36,7 +36,7 @@ class FileManager
 protected:
 	static FileManager instance;
 	Vector!(FileLoader) loaders;
-	void[][char[]] builtins;
+	void[][string] builtins;
 	mixin Logging;
 
 public:
@@ -52,7 +52,7 @@ public:
 		return instance;
 	}
 
-	static File opCall(char[] filename)
+	static File opCall(string filename)
 	{
 		return FileManager().get(filename);
 	}
@@ -67,14 +67,14 @@ public:
 		loaders.remove(dg); 
 	}
 
-	void addBuiltin(char[] filename, void[] data)
+	void addBuiltin(string filename, void[] data)
 	{
 		assert(null is (filename in builtins));
 
 		builtins[filename] = data;
 	}
 
-	void remBuiltin(char[] filename)
+	void remBuiltin(string filename)
 	{
 		assert(null !is (filename in builtins));
 
@@ -82,7 +82,7 @@ public:
 	}
 
 private:
-	File get(char[] file)
+	File get(string file)
 	{
 		// Always check if file is on disk
 		auto f = loadDisk(file);
@@ -94,7 +94,7 @@ private:
 		return f;
 	}
 
-	static File loadDisk(char[] file)
+	static File loadDisk(string file)
 	{
 		void[] data;
 
@@ -109,7 +109,7 @@ private:
 		return df;
 	}
 
-	File loadBuiltin(char[] file)
+	File loadBuiltin(string file)
 	{
 		auto data = file in builtins;
 		if (data is null)
@@ -197,7 +197,7 @@ private:
 	mixin Logging;
 	MmFile mmap;
 
-	File load(char[] filename)
+	File load(string filename)
 	{
 		void[] data;
 
@@ -226,7 +226,7 @@ private:
 	}
 
 public:
-	static ZipFile opCall(char[] filename)
+	static ZipFile opCall(string filename)
 	{
 		MmFile mmap;
 

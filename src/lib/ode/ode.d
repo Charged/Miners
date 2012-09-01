@@ -13,7 +13,7 @@ import lib.ode.space;
 import lib.ode.init;
 
 
-char[] licenseText = `
+string licenseText = `
 Open Dynamics Engine
 Copyright (c) 2001-2007, Russell L. Smith. All rights reserved.
 

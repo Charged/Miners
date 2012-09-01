@@ -21,7 +21,7 @@ static import charge.ctl.keyboard;
 alias charge.ctl.mouse.Mouse CtlMouse;
 alias charge.ctl.keyboard.Keyboard CtlKeyboard;
 
-private static char[] StructWrapperPush(char[] type)
+private static string StructWrapperPush(string type)
 {
 	return `
 	final ` ~ type ~ `* push` ~ type ~ `()
@@ -35,7 +35,7 @@ private static char[] StructWrapperPush(char[] type)
 	}`;
 }
 
-private static char[] StructWrapperRest(char[] type)
+private static string StructWrapperRest(string type)
 {
 	return `
 	final ` ~ type ~ `* check` ~ type ~`(int index = -1)
@@ -58,7 +58,7 @@ private static char[] StructWrapperRest(char[] type)
 alias lib.lua.lua.lua_State lua_State;
 alias lib.lua.state.ObjectWrapper ObjectWrapper;
 
-static char[] StructWrapper(char[] type)
+static string StructWrapper(string type)
 {
 	return StructWrapperPush(type) ~ StructWrapperRest(type);
 }
@@ -121,12 +121,12 @@ private:
 struct MovableWrapper
 {
 	const static char *namez = "d_class_charge_math_movable_Movable";
-	const static char[] name = "d_class_charge_math_movable_Movable";
+	const static string name = "d_class_charge_math_movable_Movable";
 
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto obj = s.checkClassName!(Movable)(1, false, name);
 
 		s.checkString(2);
@@ -154,7 +154,7 @@ struct MovableWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto obj = s.checkClassName!(Movable)(1, false, name);
 		s.checkString(2);
 
@@ -186,7 +186,7 @@ struct MovableWrapper
 struct QuatdWrapper
 {
 	const static char *namez = "d_struct_charge_math_quatd_Quatd";
-	const static char[] name = "d_struct_charge_math_quatd_Quatd";
+	const static string name = "d_struct_charge_math_quatd_Quatd";
 
 	extern (C) static int toString(lua_State *l)
 	{
@@ -198,7 +198,7 @@ struct QuatdWrapper
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto ud = check(s, 1);
 		s.checkString(2);
 
@@ -318,7 +318,7 @@ struct QuatdWrapper
 struct Vector3dWrapper
 {
 	const static char *namez = "d_struct_charge_math_vector3d_Vector3d";
-	const static char[] name = "d_struct_charge_math_vector3d_Vector3d";
+	const static string name = "d_struct_charge_math_vector3d_Vector3d";
 
 	extern (C) static int toString(lua_State *l)
 	{
@@ -330,7 +330,7 @@ struct Vector3dWrapper
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto ud = check(s, 1);
 		s.checkString(2);
 
@@ -358,7 +358,7 @@ struct Vector3dWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto ud = check(s, 1);
 		auto v = s.checkNumber(3);
 		s.checkString(2);
@@ -497,7 +497,7 @@ struct Vector3dWrapper
 struct Point3dWrapper
 {
 	const static char *namez = "d_struct_charge_math_point3d_Point3d";
-	const static char[] name = "d_struct_charge_math_point3d_Point3d";
+	const static string name = "d_struct_charge_math_point3d_Point3d";
 
 	extern (C) static int toString(lua_State *l)
 	{
@@ -509,7 +509,7 @@ struct Point3dWrapper
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto ud = check(s, 1);
 		s.checkString(2);
 
@@ -537,7 +537,7 @@ struct Point3dWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto ud = check(s, 1);
 		auto v = s.checkNumber(3);
 		s.checkString(2);
@@ -640,7 +640,7 @@ struct Point3dWrapper
 struct Color4fWrapper
 {
 	const static char *namez = "d_struct_charge_math_color_Color4f";
-	const static char[] name = "d_struct_charge_math_color_Color4f";
+	const static string name = "d_struct_charge_math_color_Color4f";
 
 	extern (C) static int toString(lua_State *l)
 	{
@@ -652,7 +652,7 @@ struct Color4fWrapper
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto ud = check(s, 1);
 		s.checkString(2);
 
@@ -683,7 +683,7 @@ struct Color4fWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto ud = check(s, 1);
 		auto v = s.checkNumber(3);
 		s.checkString(2);
@@ -776,12 +776,12 @@ struct Color4fWrapper
 struct MouseWrapper
 {
 	const static char *namez = "d_class_charge_ctl_mouse_Mouse";
-	const static char[] name = "d_class_charge_ctl_mouse_Mouse";
+	const static string name = "d_class_charge_ctl_mouse_Mouse";
 
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto m = s.checkClass!(CtlMouse)(1, false);
 		s.checkString(2);
 
@@ -827,7 +827,7 @@ struct MouseWrapper
 	extern (C) static int newIndex(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto m = s.checkClass!(CtlMouse)(1, false);
 		s.checkString(2);
 
@@ -863,12 +863,12 @@ struct MouseWrapper
 struct KeyboardWrapper
 {
 	const static char *namez = "d_class_charge_ctl_keyboard_Keyboard";
-	const static char[] name = "d_class_charge_ctl_keyboard_Keyboard";
+	const static string name = "d_class_charge_ctl_keyboard_Keyboard";
 
 	extern (C) static int index(lua_State *l)
 	{
 		auto s = LuaState(l);
-		char[] key;
+		string key;
 		auto kb = s.checkClass!(CtlKeyboard)(1, false);
 		s.checkString(2);
 

@@ -248,7 +248,7 @@ bool lua_isboolean(lua_State* L, int n) { return lua_type(L, n) == LUA_TBOOLEAN;
 bool lua_isthread(lua_State* L, int n) { return lua_type(L, n) == LUA_TTHREAD; }
 bool lua_isnone(lua_State* L, int n) { return lua_type(L, n) == LUA_TNONE; }
 bool lua_isnoneornil(lua_State* L, int n) { return lua_type(L, n) <= 0; }
-void lua_pushliteral(lua_State* L, char[] s) { lua_pushlstring(L, (s ~ \0).ptr, s.length);  }
+void lua_pushliteral(lua_State* L, string s) { lua_pushlstring(L, (s ~ \0).ptr, s.length);  }
 void lua_setglobal(lua_State* L, char* s) { lua_setfield(L, LUA_GLOBALSINDEX, s); }
 void lua_getglobal(lua_State* L, char* s) { lua_getfield(L, LUA_GLOBALSINDEX, s); }
 char* lua_tostring(lua_State* L, int i) { return lua_tolstring(L, i, null); }
@@ -330,7 +330,7 @@ struct lua_Debug {
 
 extern (D):
 
-char[] licenseText = `
+string licenseText = `
 Copyright (C) 1994-2008 Lua.org, PUC-Rio.  All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining

@@ -21,20 +21,20 @@ import charge.game.menu;
 class VersionTxt
 {
 public:
-	const char[] commentRegexStr = `^\s*#`;
-	const char[] nameRegexStr = `^(\S+)\s*$`;
-	const char[] md5AndNameRegexStr = `\s*([a-fA-F0-9]{32})\s+(\S+)\s*$`;
+	const string commentRegexStr = `^\s*#`;
+	const string nameRegexStr = `^(\S+)\s*$`;
+	const string md5AndNameRegexStr = `\s*([a-fA-F0-9]{32})\s+(\S+)\s*$`;
 
 	class File
 	{
 		/// Name on disk
-		char[] local;
+		string local;
 		/// Name on the server (for local files this is null)
-		char[] server;
+		string server;
 		/// Md5 sum of file
-		char[] md5;
+		string md5;
 
-		this(char[] local, char[] server, char[] md5)
+		this(string local, string server, string md5)
 		{
 			this.local = local;
 			this.server = server;
@@ -44,11 +44,11 @@ public:
 
 
 private:
-	File[char[]] store;
+	File[string] store;
 
 
 public:
-	void add(char[] local, char[] server, char[] md5)
+	void add(string local, string server, string md5)
 	{
 		store[local] = new File(local, server, md5);
 	}
@@ -57,7 +57,7 @@ public:
 	 * Removes files that we are interested in from the store
 	 * if they do not exists in the given path.
 	 */
-	void pruneNonExisting(char[] path, char[][] files)
+	void pruneNonExisting(string path, string[] files)
 	{
 		foreach(file; files) {
 			if ((file in store) !is null &&
@@ -66,7 +66,7 @@ public:
 		}
 	}
 
-	static File[] getListOfFiles(VersionTxt local, VersionTxt server, char[][] files)
+	static File[] getListOfFiles(VersionTxt local, VersionTxt server, string[] files)
 	{
 		File[] ret;
 
@@ -88,7 +88,7 @@ public:
 		return ret;
 	}
 
-	bool saveLocal(char[] filename)
+	bool saveLocal(string filename)
 	{
 		BufferedFile f;
 
@@ -107,17 +107,17 @@ public:
 		return true;
 	}
 
-	static VersionTxt fromServer(char[] file)
+	static VersionTxt fromServer(char[] text)
 	{
 		auto ver = new VersionTxt();
 		auto commentRegex = new RegExp(commentRegexStr);
 		auto nameRegex = new RegExp(nameRegexStr);
 		auto md5AndNameRegex = new RegExp(md5AndNameRegexStr);
 
-		char[] name;
+		string name;
 		bool nameFound;
 
-		foreach(int i, line; splitlines(file)) {
+		foreach(int i, line; splitlines(text)) {
 
 			// Skip the first line
 			if (i == 0)
@@ -146,16 +146,16 @@ public:
 		return ver;
 	}
 
-	static VersionTxt fromLocal(char[] file)
+	static VersionTxt fromLocal(char[] text)
 	{
 		auto ver = new VersionTxt();
 		auto commentRegex = new RegExp(commentRegexStr);
 		auto md5AndNameRegex = new RegExp(md5AndNameRegexStr);
 
-		char[] name;
+		string name;
 		bool nameFound;
 
-		foreach(int i, line; splitlines(file)) {
+		foreach(int i, line; splitlines(text)) {
 
 			// Skip empty and comments lines
 			if (line.length == 0 || commentRegex.match(line).length > 0)
@@ -179,18 +179,18 @@ public:
 class UpdateDownloader : public DownloadListener
 {
 public:
-	void delegate(int p, char[] file) updateDg;
+	void delegate(int p, string file) updateDg;
 	void delegate(Exception e) errorDg;
 	void delegate() doneDg;
 
 protected:
-	char[] hostname;
+	string hostname;
 	ushort port;
 
-	char[] localPath;
-	char[] serverPath;
-	char[] versionFilename;
-	char[][] files;
+	string localPath;
+	string serverPath;
+	string versionFilename;
+	string[] files;
 
 	VersionTxt local;
 	VersionTxt server;
@@ -198,16 +198,16 @@ protected:
 
 	// Currently downloading file.
 	VersionTxt.File thisDownload;
-	char[] thisFile;
+	string thisFile;
 
 
 	DownloadConnection dc;
 
 
 public:
-	this(char[] hostname, ushort port,
-	     char[] localPath, char[] serverPath,
-	     char[] versionFilename, char[][] files)
+	this(string hostname, ushort port,
+	     string localPath, string serverPath,
+	     string versionFilename, string[] files)
 	{
 		if (localPath !is null &&
 		    localPath[$-1] != '/')
@@ -333,9 +333,9 @@ protected:
 
 public:
 	this(TextureContainer target,
-	     char[] hostname, ushort port,
-	     char[] localPath, char[] serverPath,
-	     char[] versionFilename, char[][] files)
+	     string hostname, ushort port,
+	     string localPath, string serverPath,
+	     string versionFilename, string[] files)
 	{
 		ud = new UpdateDownloader(hostname, port,
 			localPath, serverPath,
@@ -366,7 +366,7 @@ public:
 protected:
 	abstract void done();
 	abstract void error(Exception e);
-	abstract void update(int p, char[] file);
+	abstract void update(int p, string file);
 
 
 private:

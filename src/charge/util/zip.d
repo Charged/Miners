@@ -107,8 +107,8 @@ private template ZipHelpers()
 		}
 	}
 
-	char[] getString(size_t i, size_t len) {
-		return cast(char[])data[i .. i + len];
+	string getString(size_t i, size_t len) {
+		return cast(string)data[i .. i + len];
 	}
 }
 
@@ -117,7 +117,7 @@ private template ZipHelpers()
  *
  * Return a C allocated memory array.
  */
-void[] cUncompressFromFile(void[] srcbuf, char[] name)
+void[] cUncompressFromFile(void[] srcbuf, string name)
 {
 	ubyte[] data = cast(ubyte[])srcbuf;
 	long iend;

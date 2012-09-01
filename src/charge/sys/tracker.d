@@ -8,7 +8,7 @@ import lib.sdl.sdl;
 final class TimeTracker
 {
 public:
-	char[] name;
+	string name;
 
 private:
 	long then;
@@ -21,7 +21,7 @@ private:
 	static long lastCalc;
 
 public:
-	this(char[] name)
+	this(string name)
 	{
 		this.name = name;
 		keepers ~= this;
@@ -52,7 +52,7 @@ public:
 		stack[top].then = now;
 	}
 
-	static void calcAll(void delegate(char[] name, double amount) dg)
+	static void calcAll(void delegate(string name, double amount) dg)
 	{
 		auto now = SDL_GetTicks();
 		long elapsed = now - lastCalc;

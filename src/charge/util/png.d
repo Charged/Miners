@@ -89,7 +89,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 	assert(data.length == 0);
 
 	cMemoryArray!(ubyte) decompData;
-	decompData.steal = cast(ubyte[])cUncompress(cast(char[])compressed);
+	decompData.steal = cast(ubyte[])cUncompress(compressed);
 	scope(exit)
 		decompData.free();
 	auto decomp = decompData[];

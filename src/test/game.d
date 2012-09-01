@@ -205,7 +205,7 @@ private:
 public:
 	mixin SysLogging;
 
-	this(char[][] args)
+	this(string[] args)
 	{
 		/* This will initalize Core and other important things */
 		super();

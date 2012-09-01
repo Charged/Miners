@@ -216,7 +216,7 @@ alias charge.core.coreFlag coreFlag;
 
 
 
-char[] licenseText = `
+string licenseText = `
 Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 
 This program is free software; you can redistribute it and/or

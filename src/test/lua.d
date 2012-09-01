@@ -90,7 +90,7 @@ public:
 struct GameWorldWrapper
 {
 	const static char *namez = "d_class_charge_game_world_World";
-	const static char[] name = "d_class_charge_game_world_World";
+	const static string name = "d_class_charge_game_world_World";
 
 	extern (C) static int newGameWorld(lua_State *l)
 	{
@@ -123,7 +123,7 @@ struct GameWorldWrapper
 struct GameCameraWrapper
 {
 	const static char *namez = "d_class_test_lua_GameCamera";
-	const static char[] name = "d_class_test_lua_GameCamera";
+	const static string name = "d_class_test_lua_GameCamera";
 
 	extern (C) static int newGameCamera(lua_State *l)
 	{
@@ -175,7 +175,7 @@ struct GameCameraWrapper
 struct GameCubeWrapper
 {
 	const static char *namez = "d_class_test_lua_GameCube";
-	const static char[] name = "d_class_test_lua_GameCube";
+	const static string name = "d_class_test_lua_GameCube";
 
 	extern (C) static int newGameCube(lua_State *l)
 	{
@@ -212,7 +212,7 @@ struct GameCubeWrapper
 struct GameSunLightWrapper
 {
 	const static char *namez = "d_class_test_lua_GameSunLight";
-	const static char[] name = "d_class_test_lua_GameSunLight";
+	const static string name = "d_class_test_lua_GameSunLight";
 
 	extern (C) static int newGameSunLight(lua_State *l)
 	{
@@ -254,7 +254,7 @@ private:
 	LuaState s;
 
 public:
-	this(char[][] args)
+	this(string[] args)
 	{
 		/* This will initalize Core and other important things */
 		super();

@@ -9,7 +9,7 @@ import lib.lua.lua;
 void luaL_openlibs(lua_State *L)
 {
 	struct Reg {
-		char[] name;
+		string name;
 		extern(C) int function(lua_State *L) func;
 	}
 

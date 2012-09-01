@@ -34,7 +34,7 @@ extern(C) void chargeQuit();
 class CoreOptions
 {
 public:
-	char[] title;
+	string title;
 	coreFlag flags;
 
 public:
@@ -55,7 +55,7 @@ public:
 	const int defaultHeight = 600;
 	const bool defaultFullscreen = false;
 	const bool defaultFullscreenAutoSize = true;
-	const char[] defaultTitle = "Charge Game Engine";
+	const string defaultTitle = "Charge Game Engine";
 	const bool defaultForceResizeEnable = false;
 
 	coreFlag flags;

@@ -6,6 +6,7 @@ import std.string : format;
 
 import charge.net.http;
 
+
 /**
  * Receive events from async webpage getter.
  */
@@ -47,10 +48,10 @@ private:
 	DownloadListener l;
 
 	/// Current file to download
-	char[] curPath;
+	string curPath;
 
 public:
-	this(DownloadListener l, char[] hostname, ushort port)
+	this(DownloadListener l, string hostname, ushort port)
 	{
 		this.l = l;
 
@@ -65,7 +66,7 @@ public:
 	 */
 
 
-	void getDownload(char[] path)
+	void getDownload(string path)
 	{
 		if (curPath !is null)
 			throw new Exception("Can't handle more then one request");

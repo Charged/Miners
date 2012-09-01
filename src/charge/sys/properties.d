@@ -15,16 +15,16 @@ final class Properties
 {
 	mixin Logging;
 protected:
-	char[][char[]] map;
-	char[][] order;
+	string[string] map;
+	string[] order;
 
 public:
-	bool opIn_r(char[] key)
+	bool opIn_r(string key)
 	{
 		return (key in map) !is null;
 	}
 
-	void addIfNotSet(char[] key, char[] value)
+	void addIfNotSet(string key, string value)
 	{
 		if (key in this)
 			return;
@@ -32,10 +32,10 @@ public:
 		map[key] = value;
 	}
 
-	void addIfNotSet(char[] key, bool value) { addIfNotSet(key, .toString(value)); }
-	void addIfNotSet(char[] key, double value) { addIfNotSet(key, .toString(value)); }
+	void addIfNotSet(string key, bool value) { addIfNotSet(key, .toString(value)); }
+	void addIfNotSet(string key, double value) { addIfNotSet(key, .toString(value)); }
 
-	char[] getIfNotFoundSet(char[] key, char[] value)
+	string getIfNotFoundSet(string key, string value)
 	{
 		if (key in this)
 			return map[key];
@@ -43,7 +43,7 @@ public:
 		return value;
 	}
 
-	int getIfNotFoundSet(char[] key, int def)
+	int getIfNotFoundSet(string key, int def)
 	{
 		if (key in this)
 			return toIntOrDef(map[key], def);
@@ -51,7 +51,7 @@ public:
 		return def;
 	}
 
-	uint getIfNotFoundSet(char[] key, uint def)
+	uint getIfNotFoundSet(string key, uint def)
 	{
 		if (key in this)
 			return toUintOrDef(map[key], def);
@@ -59,7 +59,7 @@ public:
 		return def;
 	}
 
-	double getIfNotFoundSet(char[] key, double def)
+	double getIfNotFoundSet(string key, double def)
 	{
 		if (key in this)
 			return toDoubleOrDef(map[key], def);
@@ -67,7 +67,7 @@ public:
 		return def;
 	}
 
-	bool getIfNotFoundSet(char[] key, bool def)
+	bool getIfNotFoundSet(string key, bool def)
 	{
 		if (key in this)
 			return toBoolOrDef(map[key], def);
@@ -75,17 +75,17 @@ public:
 		return def;
 	}
 
-	void add(char[] key, char[] value)
+	void add(string key, string value)
 	{
 		if ((key in map) is null)
 			order ~= key;
 		map[key] = value;
 	}
 
-	void add(char[] key, bool value) { add(key, .toString(value)); }
-	void add(char[] key, double value) { add(key, .toString(value)); }
+	void add(string key, bool value) { add(key, .toString(value)); }
+	void add(string key, double value) { add(key, .toString(value)); }
 
-	char[] get(char[] key, char[] def)
+	string get(string key, string def)
 	{
 		auto v = safeGet(key);
 		if (v is null)
@@ -93,22 +93,22 @@ public:
 		return v.dup;
 	}
 
-	char* getStringz(char[] key, char[] def)
+	char* getStringz(string key, string def)
 	{
 		return toStringz(get(key, def));
 	}
 
-	int getInt(char[] key, int def) { return toIntOrDef(safeGet(key), def); }
-	uint getUint(char[] key, uint def) { return toUintOrDef(safeGet(key), def); }
-	double getDouble(char[] key, double def) { return toDoubleOrDef(safeGet(key), def); }
-	bool getBool(char[] key, bool def) { return toBoolOrDef(safeGet(key), def); }
+	int getInt(string key, int def) { return toIntOrDef(safeGet(key), def); }
+	uint getUint(string key, uint def) { return toUintOrDef(safeGet(key), def); }
+	double getDouble(string key, double def) { return toDoubleOrDef(safeGet(key), def); }
+	bool getBool(string key, bool def) { return toBoolOrDef(safeGet(key), def); }
 
 	void print()
 	{
 		writefln(map);
 	}
 
-	bool save(char[] filename)
+	bool save(string filename)
 	{
 		BufferedFile f;
 
@@ -127,7 +127,7 @@ public:
 		return true;
 	}
 
-	static Properties opCall(char[] filename)
+	static Properties opCall(string filename)
 	{
 		BufferedFile f;
 
@@ -143,7 +143,7 @@ public:
 
 		auto p = new Properties();
 
-		foreach(ulong n, char[] line; f) {
+		foreach(ulong n, string line; f) {
 			if (line.length == 0)
 				continue;
 
@@ -175,7 +175,7 @@ private:
 	/**
 	 * Fixes problems with -O3.
 	 */
-	char[] safeGet(char[] key)
+	string safeGet(string key)
 	{
 		auto v = key in map;
 		if (v is null)
@@ -186,7 +186,7 @@ private:
 	/**
 	 * Helper function to add a key know to be not there.
 	 */
-	void addKeyNotFound(char[] key, char[] value)
+	void addKeyNotFound(string key, string value)
 	{
 		order ~= key;
 		map[key] = value;
@@ -200,7 +200,7 @@ private:
 	 */
 
 
-	uint toUintOrDef(char[] str, uint def)
+	uint toUintOrDef(string str, uint def)
 	{
 		try {
 			return toUint(str);
@@ -209,7 +209,7 @@ private:
 		}
 	}
 
-	double toDoubleOrDef(char[] str, double def)
+	double toDoubleOrDef(string str, double def)
 	{
 		try {
 			return toDouble(str);
@@ -218,7 +218,7 @@ private:
 		}
 	}
 
-	int toIntOrDef(char[] str, int def)
+	int toIntOrDef(string str, int def)
 	{
 		try {
 			return toInt(str);
@@ -227,7 +227,7 @@ private:
 		}
 	}
 
-	bool toBoolOrDef(char[] str, bool def)
+	bool toBoolOrDef(string str, bool def)
 	{
 		try {
 			if (str is null)

@@ -86,7 +86,7 @@ protected:
 	charge.phy.actor.Static phy;
 
 public:
-	this(World w, Point3d pos, Quatd rot, char[] gfxModel, char[] phyModel)
+	this(World w, Point3d pos, Quatd rot, string gfxModel, string phyModel)
 	{
 		super(w);
 

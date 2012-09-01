@@ -140,7 +140,7 @@ public:
 		return x * x + y * y + z * z;
 	}
 
-	char[] toString()
+	string toString()
 	{
 		return format("(%s, %s, %s)", x, y, z);
 	}

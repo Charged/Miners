@@ -48,7 +48,7 @@ struct RigidMeshStruct
 class RigidMesh : public Resource
 {
 public:
-	const char[] uri = "mesh://";
+	const string uri = "mesh://";
 	enum Types {
 		INDEXED_TRIANGLES,
 		QUADS,
@@ -63,7 +63,7 @@ private:
 	Types tp;
 
 public:
-	static RigidMesh opCall(char[] name)
+	static RigidMesh opCall(string name)
 	{
 		auto p = Pool();
 		auto r = p.resource(uri, name);
@@ -102,7 +102,7 @@ public:
 	}
 
 protected:
-	this(Pool p, char[] name, Vertex verts[], Triangle tris[], Types type)
+	this(Pool p, string name, Vertex verts[], Triangle tris[], Types type)
 	{
 		super(p, uri, name);
 		this.tp = type;
@@ -126,7 +126,7 @@ protected:
 			assert(t is null);
 	}
 
-	static RigidMesh load(Pool p, char[] filename)
+	static RigidMesh load(Pool p, string filename)
 	{
 		File file;
 		void[] f;

@@ -115,9 +115,9 @@ private:
 
 struct testFunc(alias T)
 {
-	static void opCall(char[] string) {
+	static void opCall(string str) {
 		try {
-			T = find(string, T.stringof) >= 0;
+			T = find(str, T.stringof) >= 0;
 		} catch (Exception e) {}
 	}
 }
@@ -143,7 +143,7 @@ void findCore()
 
 void findExtentions()
 {
-	char[] e = toString(glGetString(GL_EXTENSIONS));
+	string e = toString(glGetString(GL_EXTENSIONS));
 
 	testFunc!(GL_EXT_framebuffer_object)(e);
 	testFunc!(GL_ARB_texture_compression)(e);

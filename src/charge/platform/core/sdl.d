@@ -53,7 +53,7 @@ private:
 
 	CoreOptions opts;
 
-	char[] title;
+	string title;
 	int screenshotNum;
 	uint width, height; //< Current size of the main window
 	bool fullscreen; //< Should we be fullscreen
@@ -72,18 +72,18 @@ private:
 	/* name of libraries to load */
 	version(Windows)
 	{
-		const char[][] libSDLname = ["SDL.dll"];
-		const char[][] libGLUname = ["glu32.dll"];
+		const string[] libSDLname = ["SDL.dll"];
+		const string[] libGLUname = ["glu32.dll"];
 	}
 	else version(linux)
 	{
-		const char[][] libSDLname = ["libSDL.so", "libSDL-1.2.so.0"];
-		const char[][] libGLUname = ["libGLU.so", "libGLU.so.1"];
+		const string[] libSDLname = ["libSDL.so", "libSDL-1.2.so.0"];
+		const string[] libGLUname = ["libGLU.so", "libGLU.so.1"];
 	}
 	else version(darwin)
 	{
-		const char[][] libSDLname = ["SDL.framework/SDL"];
-		const char[][] libGLUname = ["OpenGL.framework/OpenGL"];
+		const string[] libSDLname = ["SDL.framework/SDL"];
+		const string[] libGLUname = ["OpenGL.framework/OpenGL"];
 	}
 
 public:
@@ -128,7 +128,7 @@ public:
 
 	void screenShot()
 	{
-		char[] filename;
+		string filename;
 		ubyte *pixels;
 
 		// Find the first free screenshot name
@@ -289,7 +289,7 @@ private:
 
 		gfxLoaded = true;
 
-		char[] str;
+		string str;
 		str = std.string.toString(glGetString(GL_VENDOR));
 		l.info(str);
 		str = std.string.toString(glGetString(GL_VERSION));
@@ -314,7 +314,7 @@ private:
 		gfxLoaded = false;
 	}
 
-	void* loadFunc(char[] c)
+	void* loadFunc(string c)
 	{
 		return SDL_GL_GetProcAddress(std.string.toStringz(c));
 	}

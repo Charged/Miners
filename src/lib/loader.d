@@ -5,7 +5,7 @@ module lib.loader;
 import std.stdio;
 import std.string;
 
-alias void* delegate(char[]) Loader;
+alias void* delegate(string) Loader;
 
 struct loadFunc(alias T)
 {
@@ -19,7 +19,7 @@ struct loadFunc(alias T)
 			writefln("Error loading function ", T.stringof);
 	}
 
-	static void opCall(char[] c, Loader l) {
+	static void opCall(string c, Loader l) {
 		try {
 			T = cast(typeof(T))l(c);
 		} catch (Exception e) {
@@ -56,7 +56,7 @@ else
 class Library
 {
 public:
-	static Library loads(char[][] files)
+	static Library loads(string[] files)
 	{
 		foreach(filename; files) {
 			auto l = load(filename);
@@ -69,7 +69,7 @@ public:
 
 	version (Windows) {
 
-		static Library load(char[] filename)
+		static Library load(string filename)
 		{
 			void *ptr = LoadLibraryA(toStringz(filename));
 
@@ -79,7 +79,7 @@ public:
 			return new Library(ptr);
 		}
 
-		void* symbol(char[] symbol)
+		void* symbol(string symbol)
 		{
 			return GetProcAddress(cast(HANDLE)ptr, toStringz(symbol));
 		}
@@ -92,7 +92,7 @@ public:
 
 	} else version (linux) {
 
-		static Library load(char[] filename)
+		static Library load(string filename)
 		{
 			const RTLD_GLOBAL = 0x00100;
 			void *ptr = dlopen(toStringz(filename), RTLD_NOW | RTLD_GLOBAL);
@@ -103,7 +103,7 @@ public:
 			return new Library(ptr);
 		}
 
-		void* symbol(char[] symbol)
+		void* symbol(string symbol)
 		{
 			return dlsym(ptr, toStringz(symbol));
 		}
@@ -116,7 +116,7 @@ public:
 
 	} else version (darwin) {
 
-		static Library load(char[] filename)
+		static Library load(string filename)
 		{
 			const RTLD_GLOBAL = 0x00100;
 			void *ptr = dlopen(toStringz(filename), RTLD_NOW | RTLD_GLOBAL);
@@ -127,7 +127,7 @@ public:
 			return new Library(ptr);
 		}
 
-		void* symbol(char[] symbol)
+		void* symbol(string symbol)
 		{
 			return dlsym(ptr, toStringz(symbol));
 		}
@@ -140,13 +140,13 @@ public:
 
 	} else {
 
-		static Library load(char[] filename)
+		static Library load(string filename)
 		{
 			writefln("Huh oh! no impementation");
 			return null;
 		}
 
-		void* symbol(char[] symbol)
+		void* symbol(string symbol)
 		{
 			return null;
 		}

@@ -18,7 +18,7 @@ enum Level
 	Fatal = 5
 }
 
-private char[][] TextLevels = [
+private string[] TextLevels = [
 	"<TT>",
 	"<DD>",
 	"<II>",
@@ -70,7 +70,7 @@ public:
 
 	void log(ClassInfo info, Level level, TypeInfo[] arguments, va_list argptr)
 	{
-		char[] name = info.name;
+		string name = info.name;
 		name = name[cast(size_t)(rfind(name, '.') + 1) .. length];
 
 		fprintf(file, "%s %.*s: ", TextLevels[level].ptr, cast(uint)name.length, name.ptr);

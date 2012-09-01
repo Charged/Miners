@@ -141,7 +141,7 @@ public:
 		return opMul(Vector3d.Left);
 	}
 
-	char[] toString()
+	string toString()
 	{
 		return format("(%s, %s, %s, %s)", w, x, y, z);
 	}

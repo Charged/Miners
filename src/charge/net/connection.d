@@ -12,7 +12,7 @@ import charge.util.fifo;
 import charge.util.vector;
 import charge.net.packet;
 
-private void dump(char[] append, uint8_t[] data)
+private void dump(string append, uint8_t[] data)
 {
 	writef(append);
 	foreach(i, c; data) {
@@ -73,7 +73,7 @@ struct AddressKey
 		}
 	}
 
-	char[] toString()
+	string toString()
 	{
 		auto a = *cast(ubyte[4]*)&addr;
 		// XXX Byte order

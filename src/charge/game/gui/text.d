@@ -17,17 +17,17 @@ import charge.game.gui.container;
 class Text : public Component
 {
 protected:
-	char[] t;
+	string t;
 	bool shaded;
 
 public:
-	this(Container c, int x, int y, char[] text, bool shaded)
+	this(Container c, int x, int y, string text, bool shaded)
 	{
 		this.shaded = shaded;
 		this(c, x, y, text);
 	}
 
-	this(Container c, int x, int y, char[] text)
+	this(Container c, int x, int y, string text)
 	{
 		super(c, x, y, 0, 0);
 		this.t = text;
@@ -35,7 +35,7 @@ public:
 		repack();
 	}
 
-	void setText(char[] text)
+	void setText(string text)
 	{
 		this.t = text;
 		repack();
@@ -64,12 +64,12 @@ public:
 class DoubleText : public Text
 {
 public:
-	this(Container c, int x, int y, char[] text, bool shaded)
+	this(Container c, int x, int y, string text, bool shaded)
 	{
 		super(c, x, y, text, shaded);
 	}
 
-	this(Container c, int x, int y, char[] text)
+	this(Container c, int x, int y, string text)
 	{
 		super(c, x, y, text);
 	}

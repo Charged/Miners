@@ -15,19 +15,19 @@ class Node
 {
 	Element parent;
 
-	abstract char[] value();
+	abstract string value();
 }
 
 class Text : public Node
 {
-	char[] data;
+	string data;
 
-	this(char[] text)
+	this(string text)
 	{
 		this.data = text;
 	}
 
-	char[] value()
+	string value()
 	{
 		return data;
 	}
@@ -36,22 +36,22 @@ class Text : public Node
 
 class Attribute
 {
-	char[] key;
-	char[] value;
+	string key;
+	string value;
 }
 
 class Element : public Node
 {
-	char[] name;
+	string name;
 	Vector!(Node) children;
-	char[][char[]] attribs;
+	string[string] attribs;
 
-	this(char[] name)
+	this(string name)
 	{
 		this.name = name;
 	}
 
-	char[] attribute(char[] name)
+	string attribute(string name)
 	{
 		auto ret = name in attribs;
 		if (ret is null)
@@ -59,7 +59,7 @@ class Element : public Node
 		return *ret;
 	}
 
-	char[] value()
+	string value()
 	{
 		return name;
 	}
@@ -101,7 +101,7 @@ class Element : public Node
 		return result;
 	}
 
-	Element first(char[] name) {
+	Element first(string name) {
 		foreach(Element e; this) {
 			if (e.name == name)
 				return e;
@@ -116,7 +116,7 @@ class Element : public Node
 		return null;
 	}
 
-	Element add(char[] name)
+	Element add(string name)
 	{
 		auto e = new Element(name);
 		e.parent = this;
@@ -134,7 +134,7 @@ class Element : public Node
 		return e;
 	}
 
-	Text addText(char[] text)
+	Text addText(string text)
 	{
 		auto t = new Text(text);
 		t.parent = this;
@@ -148,7 +148,7 @@ struct Handle
 {
 	Node node;
 
-	char[] value()
+	string value()
 	{
 		if (node is null)
 			return null;
@@ -173,7 +173,7 @@ struct Handle
 		return Handle(e.first());
 	}
 
-	Handle first(char[] name)
+	Handle first(string name)
 	{
 		auto e = cast(Element)node;
 		if (e is null)
@@ -195,7 +195,7 @@ struct Handle
 
 class XmlException : Exception
 {
-	this(char[] message)
+	this(string message)
 	{
 		super(message);
 	}
@@ -223,13 +223,13 @@ public:
 		delete xp;
 	}
 
-	static Element opCall(char[] filename)
+	static Element opCall(string filename)
 	{
 		auto dp = new DomParser();
 		return dp.parse(filename);
 	}
 
-	Element parse(char[] filename)
+	Element parse(string filename)
 	{
 		current = null;
 		root = null;
@@ -237,7 +237,7 @@ public:
 		return root;
 	}
 
-	Element parseData(char[] data)
+	Element parseData(string data)
 	{
 		current = null;
 		root = null;
@@ -247,7 +247,7 @@ public:
 
 protected:
 
-	void startNode(char[] name)
+	void startNode(string name)
 	{
 		auto parent = current;
 		current = new Element(name);
@@ -259,7 +259,7 @@ protected:
 			root = current;
 	}
 
-	void endNode(char[] name)
+	void endNode(string name)
 	{
 		if (current is null)
 			throw new XmlException(format(
@@ -273,7 +273,7 @@ protected:
 		current = current.parent;
 	}
 
-	void addAttribute(char[] key, char[] value)
+	void addAttribute(string key, string value)
 	{
 		if (current is null)
 			return;
@@ -281,7 +281,7 @@ protected:
 		current.attribs[key.dup] = value.dup;
 	}
 
-	void addData(char[] data)
+	void addData(string data)
 	{
 		if (current is null)
 			return;
@@ -295,7 +295,7 @@ protected:
 			if (result.length < 2)
 				return;
 
-			char[] text;
+			string text;
 			for (uint i = 1; i < result.length - 1; i++) {
 
 				if (i % 2) {
@@ -324,10 +324,10 @@ protected:
 
 interface Parser
 {
-	void startNode(char[] name);
-	void endNode(char[] name);
-	void addAttribute(char[] key, char[] value);
-	void addData(char[] data);
+	void startNode(string name);
+	void endNode(string name);
+	void addAttribute(string key, string value);
+	void addData(string data);
 }
 
 // This extern(C) statment has a different copyright
@@ -418,13 +418,13 @@ public:
 		parser = null;
 	}
 
-	void parse(char[] filename, Parser p)
+	void parse(string filename, Parser p)
 	{
-		char[] g = cast(char[])read(filename);
+		string g = cast(string)read(filename);
 		parseData(g, p);
 	}
 
-	void parseData(char[] data, Parser p)
+	void parseData(string data, Parser p)
 	{
 		this.p = p;
 		XML_Parse(parser, data.ptr, cast(int)data.length, true);
@@ -459,19 +459,19 @@ private:
 class Printer
 {
 private:
-	char[] indentString;
+	string indentString;
 	bool shouldIndent;
 	bool shouldAddNewLines;
 
 public:
-	this(bool should = true, char[] indent = "  ")
+	this(bool should = true, string indent = "  ")
 	{
 		this.shouldIndent = should;
 		this.shouldAddNewLines = should;
 		this.indentString = indent;
 	}
 
-	char[] print(Node n, uint i = 0)
+	string print(Node n, uint i = 0)
 	{
 		auto t = cast(Text)n;
 		auto e = cast(Element)n;
@@ -486,14 +486,14 @@ public:
 	}
 
 private:
-	char[] printText(Text t, uint i)
+	string printText(Text t, uint i)
 	{
 		return t.data;
 	}
 
-	char[] printElement(Element e, uint i)
+	string printElement(Element e, uint i)
 	{
-		char[] result = indent(i) ~ format("<%s", e.name);
+		string result = indent(i) ~ format("<%s", e.name);
 
 		foreach(a; e.attribs.keys) {
 			result ~= format(` %s="%s"`, a, e.attribs[a]);
@@ -513,12 +513,12 @@ private:
 		return result ~ indent(i) ~ format("</%s>\n", e.name);
 	}
 
-	char[] indent(uint i)
+	string indent(uint i)
 	{
 		if (!shouldIndent || indentString is null)
 			return "";
 
-		char[] a;
+		string a;
 		for(uint j; j < i; j++)
 			a ~= indentString;
 		return a;
@@ -526,7 +526,7 @@ private:
 
 }
 
-char[] licenseText = `
+string licenseText = `
 Copyright (c) 1998, 1999, 2000 Thai Open Source Software Center Ltd
                                and Clark Cooper
 Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006 Expat maintainers.

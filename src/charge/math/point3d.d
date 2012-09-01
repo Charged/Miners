@@ -96,7 +96,7 @@ public:
 		return Vector3d(*this);
 	}
 
-	char[] toString()
+	string toString()
 	{
 		return format("(%s, %s, %s)", x, y, z);
 	}

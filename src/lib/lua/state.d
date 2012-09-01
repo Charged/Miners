@@ -8,7 +8,7 @@ import lib.lua.all;
 class ObjectWrapper
 {
 	const static char* namez = "d_class_object_Object";
-	const static char[] name = "d_class_object_Object";
+	const static string name = "d_class_object_Object";
 
 	extern (C) static int toString(lua_State *l)
 	{
@@ -107,7 +107,7 @@ public:
 	{
 		TypeInfo ti = typeid(T);
 		char[tmpSize] tmp;
-		char[] check = mangleName(sformat(tmp, "d_struct_", ti.toString));
+		string check = mangleName(sformat(tmp, "d_struct_", ti.toString));
 		/* picks the wrong toString */
 		alias std.string.toString tSz;
 
@@ -309,10 +309,10 @@ public:
 		return checkInstanceName!(T)(index, nullz, getClassName(T.classinfo));
 	}
 
-	Instance* checkInstanceName(T)(int index, char[] name)
+	Instance* checkInstanceName(T)(int index, string name)
 	{
 		Instance *p;
-		char[] cnz = T.classinfo.name;
+		string cnz = T.classinfo.name;
 
 		if (!lua_isuserdata(l, index))
 			luaL_typerror(l, index, cnz.ptr);
@@ -337,7 +337,7 @@ public:
 		return checkClassName!(T)(index, nullz, name);
 	}
 
-	T checkClassName(T)(int index, bool nullz, char[] name)
+	T checkClassName(T)(int index, bool nullz, string name)
 	{
 		auto p = checkInstanceName!(T)(index, name);
 		if (p.obj is null && !nullz)
@@ -345,13 +345,13 @@ public:
 		return cast(T)p.obj;
 	}
 
-	static char[] getClassName(ClassInfo ci, char[] tmp)
+	static string getClassName(ClassInfo ci, string tmp)
 	{
 		auto name = sformat(tmp, "d_class_", ci.name);
 		return mangleName(name);
 	}
 
-	static char* getClassNamez(ClassInfo ci, char[] tmp)
+	static char* getClassNamez(ClassInfo ci, string tmp)
 	{
 		auto namez = sformat(tmp, "d_class_", ci.name, "\0");
 		return mangleName(namez).ptr;
@@ -363,7 +363,7 @@ public:
 	 */
 
 
-	static char[] mangleName(char[] str)
+	static string mangleName(string str)
 	{
 		foreach (i, c; str) {
 			if (c == '.')
@@ -396,7 +396,7 @@ public:
 	 */
 
 
-	int doFile(char[] name)
+	int doFile(string name)
 	{
 		return luaL_dofile(l, std.string.toStringz(name));
 	}
@@ -404,21 +404,21 @@ public:
 	/**
 	 * Load a string but pretend it is a file.
 	 */
-	int loadStringAsFile(char[] string, char[] filename)
+	int loadStringAsFile(string str, string filename)
 	{
 		// Make lua think this is a file.
-		auto str = "@" ~ filename;
+		auto strLua = "@" ~ filename;
 
 		// Do the actual loading into lua
-		return loadString(string, str);
+		return loadString(str, strLua);
 	}
 
-	int loadString(char[] str, char[] name)
+	int loadString(string str, string name)
 	{
 		return luaL_loadbuffer(l, str.ptr, str.length, name.ptr);
 	}
 
-	int loadFile(char[] name)
+	int loadFile(string name)
 	{
 		return luaL_loadfile(l, std.string.toStringz(name));
 	}
@@ -431,18 +431,18 @@ public:
 	State openLibs() { luaL_openlibs(l); return this; }
 
 	State setTable(int index) { lua_settable(l, index); return this; }
-	State setField(int index, char[] string) { return setFieldz(index, std.string.toStringz(string)); }
+	State setField(int index, string str) { return setFieldz(index, std.string.toStringz(str)); }
 	State setFieldz(int index, char* stringz) { lua_setfield(l, index, stringz); return this; }
 
 	State getTable(int index) { lua_gettable(l, index); return this; }
-	State getField(int index, char[] string) { return getFieldz(index, std.string.toStringz(string)); }
+	State getField(int index, string str) { return getFieldz(index, std.string.toStringz(str)); }
 	State getFieldz(int index, char* stringz) { lua_getfield(l, index, stringz); return this; }
-	State getGlobal(char[] string) { return getGlobalz(std.string.toStringz(string)); }
+	State getGlobal(string str) { return getGlobalz(std.string.toStringz(str)); }
 	State getGlobalz(char* stringz) { lua_getfield(l, lib.lua.lua.LUA_GLOBALSINDEX, stringz); return this; }
 
 	State getMetaTable(int index = -1) { lua_getmetatable(l, index); return this; }
 
-	int error(char[] error)
+	int error(string error)
 	{
 		luaL_where(l, 1);
 		pushString(error);
@@ -470,21 +470,21 @@ public:
 	State pushNil() { lua_pushnil(l); return this; }
 	State pushBool(bool v) { lua_pushboolean(l, v); return this; }
 	State pushNumber(double value) { lua_pushnumber(l, value); return this; }
-	State pushString(char[] string) { lua_pushlstring(l, string.ptr, string.length); return this; }
+	State pushString(string str) { lua_pushlstring(l, str.ptr, str.length); return this; }
 	State pushStringz(char* stringz) { lua_pushstring(l, stringz); return this; }
 	State pushTable() { lua_newtable(l); return this; }
 	State pushCFunction(lua_CFunction f) { lua_pushcfunction(l, f); return this; }
 
 	bool toBool(int index = -1) { return lua_toboolean(l, index) != 0; }
-	char[] toString(int index = -1) { size_t e; auto p = lua_tolstring(l, index, &e); return p[0 .. e]; }
+	string toString(int index = -1) { size_t e; auto p = lua_tolstring(l, index, &e); return p[0 .. e]; }
 	char* toStringz(int index = -1, size_t *e = null) { return lua_tolstring(l, index, e); }
 	double toNumber(int index = -1) { return lua_tonumber(l, index); }
 	lua_CFunction toCFunction(int index = -1) { return lua_tocfunction(l, index); }
 	void* toUserData(int index = -1) { return lua_touserdata(l, index); }
 
-	char[] checkString(int index = -1) { size_t e; auto p = luaL_checklstring(l, index, &e); return p[0 .. e]; }
+	string checkString(int index = -1) { size_t e; auto p = luaL_checklstring(l, index, &e); return p[0 .. e]; }
 	double checkNumber(int index = -1) { return luaL_checknumber(l, index); }
-	void* checkUserData(int index, char[] name) { return checkUserDataz(index, std.string.toStringz(name)); }
+	void* checkUserData(int index, string name) { return checkUserDataz(index, std.string.toStringz(name)); }
 	void* checkUserDataz(int index, char* namez) { return luaL_checkudata(l, index, namez); }
 
 	bool isNoneOrNil(int index = -1) { return lua_isnoneornil(l, index) != 0; }

@@ -22,7 +22,7 @@ class CommonCore : public Core
 protected:
 	static Logger l;
 
-	char[] settingsFile;
+	string settingsFile;
 	Properties p;
 
 	/* run time libraries */
@@ -40,21 +40,21 @@ protected:
 	/* name of libraries to load */
 	version(Windows)
 	{
-		const char[][] libODEname = ["ode.dll"];
-		const char[][] libOpenALname = ["OpenAL32.dll"];
-		const char[][] libALUTname = ["alut.dll"];
+		const string[] libODEname = ["ode.dll"];
+		const string[] libOpenALname = ["OpenAL32.dll"];
+		const string[] libALUTname = ["alut.dll"];
 	}
 	else version(linux)
 	{
-		const char[][] libODEname = ["libode.so"];
-		const char[][] libOpenALname = ["libopenal.so", "libopenal.so.1"];
-		const char[][] libALUTname = ["libalut.so"];
+		const string[] libODEname = ["libode.so"];
+		const string[] libOpenALname = ["libopenal.so", "libopenal.so.1"];
+		const string[] libALUTname = ["libalut.so"];
 	}
 	else version(darwin)
 	{
-		const char[][] libODEname = ["./libode.dylib"];
-		const char[][] libOpenALname = ["OpenAL.framework/OpenAL"];
-		const char[][] libALUTname = ["./libalut.dylib"];
+		const string[] libODEname = ["./libode.dylib"];
+		const string[] libOpenALname = ["OpenAL.framework/OpenAL"];
+		const string[] libALUTname = ["./libalut.dylib"];
 	}
 
 
@@ -133,7 +133,7 @@ protected:
 		}
 	}
 
-	void notLoaded(coreFlag mask, char[] name)
+	void notLoaded(coreFlag mask, string name)
 	{
 		if (flags & mask)
 			l.fatal("Could not load %s, crashing bye bye!", name);

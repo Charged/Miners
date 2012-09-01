@@ -17,11 +17,11 @@ class BufferManager
 private:
 	mixin Logging;
 	static BufferManager instance;
-	Buffer[char[]] map;
+	Buffer[string] map;
 
 public:
 
-	static Buffer opCall(char[] filename)
+	static Buffer opCall(string filename)
 	{
 		return get.get(filename);
 	}
@@ -33,7 +33,7 @@ public:
 		return instance;
 	}
 
-	Buffer get(char[] filename)
+	Buffer get(string filename)
 	{
 		if (filename is null)
 			return null;
@@ -45,7 +45,7 @@ public:
 	}
 
 private:
-	Buffer load(char[] filename)
+	Buffer load(string filename)
 	{
 		ALuint id;
 		SDL_AudioSpec spec;

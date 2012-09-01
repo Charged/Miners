@@ -7,10 +7,10 @@ import std.file;
 import std.stdio;
 import std.string;
 
-char[] homeFolder;
-char[] applicationConfigFolder;
-char[] chargeConfigFolder;
-char[] privateFrameworksPath;
+string homeFolder;
+string applicationConfigFolder;
+string chargeConfigFolder;
+string privateFrameworksPath;
 
 extern(C) char* macGetPrivateFrameworksPath();
 

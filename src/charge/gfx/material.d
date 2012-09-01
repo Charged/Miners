@@ -25,39 +25,39 @@ struct MaterialProperty
 		COLOR4   = 4,
 		OPTION   = 5,
 	}
-	char[] name;
+	string name;
 	int type;
 }
 
 class Material
 {
 public:
-	final bool opIndexAssign(char[] tex, char[] name)
+	final bool opIndexAssign(string tex, string name)
 	{
 		return setTexture(name, tex);
 	}
 
-	final bool opIndexAssign(Texture tex, char[] name)
+	final bool opIndexAssign(Texture tex, string name)
 	{
 		return setTexture(name, tex);
 	}
 
-	final bool opIndexAssign(Color3f color, char[] name)
+	final bool opIndexAssign(Color3f color, string name)
 	{
 		return setColor3f(name, color);
 	}
 
-	final bool opIndexAssign(Color4f color, char[] name)
+	final bool opIndexAssign(Color4f color, string name)
 	{
 		return setColor4f(name, color);
 	}
 
-	final bool opIndexAssign(bool option, char[] name)
+	final bool opIndexAssign(bool option, string name)
 	{
 		return setOption(name, option);
 	}
 
-	final bool setTexture(char[] name, char[] filename)
+	final bool setTexture(string name, string filename)
 	{
 		if (name is null)
 			return false;
@@ -73,42 +73,42 @@ public:
 		return ret;
 	}
 
-	bool setTexture(char[] name, Texture tex)
+	bool setTexture(string name, Texture tex)
 	{
 		return false;
 	}
 
-	bool setColor3f(char[] name, Color3f value)
+	bool setColor3f(string name, Color3f value)
 	{
 		return false;
 	}
 
-	bool setColor4f(char[] name, Color4f value)
+	bool setColor4f(string name, Color4f value)
 	{
 		return false;
 	}
 
-	bool setOption(char[] name, bool value)
+	bool setOption(string name, bool value)
 	{
 		return false;
 	}
 
-	bool getTexture(char[] name, out Texture tex)
+	bool getTexture(string name, out Texture tex)
 	{
 		return false;
 	}
 
-	bool getColor3f(char[] name, out Color3f value)
+	bool getColor3f(string name, out Color3f value)
 	{
 		return false;
 	}
 
-	bool getColor4f(char[] name, out Color4f value)
+	bool getColor4f(string name, out Color4f value)
 	{
 		return false;
 	}
 
-	bool getOption(char[] name, out bool value)
+	bool getOption(string name, out bool value)
 	{
 		return false;
 	}
@@ -157,7 +157,7 @@ public:
 		return list;
 	}
 
-	bool setTexture(char[] name, Texture texture)
+	bool setTexture(string name, Texture texture)
 	{
 		if (name is null)
 			return false;
@@ -181,7 +181,7 @@ public:
 		return true;
 	}
 
-	bool setColor3f(char[] name, Color3f color)
+	bool setColor3f(string name, Color3f color)
 	{
 		if (name is null)
 			return false;
@@ -199,7 +199,7 @@ public:
 		return true;
 	}
 
-	bool setOption(char[] name, bool option)
+	bool setOption(string name, bool option)
 	{
 		switch(name) {
 			case "fake":
@@ -215,7 +215,7 @@ public:
 		return true;
 	}
 
-	bool getTexture(char[] name, out Texture tex)
+	bool getTexture(string name, out Texture tex)
 	{
 		if (name is null)
 			return false;
@@ -231,7 +231,7 @@ public:
 		return true;
 	}
 
-	bool getColor3f(char[] name, out Color3f color)
+	bool getColor3f(string name, out Color3f color)
 	{
 		if (name is null)
 			return false;
@@ -247,7 +247,7 @@ public:
 		return true;
 	}
 
-	bool getOption(char[] name, out bool option)
+	bool getOption(string name, out bool option)
 	{
 		switch(name) {
 			case "fake":
@@ -284,7 +284,7 @@ public:
 		return new SimpleMaterial();
 	}
 
-	static Material opCall(char[] filename)
+	static Material opCall(string filename)
 	{
 		Element f;
 
@@ -318,24 +318,24 @@ public:
 
 			switch(prop.type) {
 				case MaterialProperty.TEXTURE:
-					char[] t = e.value;
+					string t = e.value;
 					m[prop.name] = t;
 					break;
 				case MaterialProperty.COLOR3:
 					Color3f c;
-					char[] t = e.value;
+					string t = e.value;
 					if (exColor3f(t, c))
 						m[prop.name] = c;
 					break;
 				case MaterialProperty.COLOR4:
 					Color4f c;
-					char[] t = e.value;
+					string t = e.value;
 					if (exColor4f(t, c))
 						m[prop.name] = c;
 					break;
 				case MaterialProperty.OPTION:
 					bool b;
-					char[] t = e.value;
+					string t = e.value;
 					if (exBool(t, b))
 						m[prop.name] = b;
 					break;
@@ -345,7 +345,7 @@ public:
 		}
 	}
 
-	static bool exColor3f(char[] text, out Color3f r)
+	static bool exColor3f(string text, out Color3f r)
 	{
 		auto p = value3.exec(text);
 		if (p.length < 4)
@@ -364,7 +364,7 @@ public:
 		return true;
 	}
 
-	static bool exColor4f(char[] text, out Color4f r)
+	static bool exColor4f(string text, out Color4f r)
 	{
 		auto p = value4.exec(text);
 		if (p.length < 5)
@@ -384,7 +384,7 @@ public:
 		return true;
 	}
 
-	static bool exBool(char[] text, out bool b)
+	static bool exBool(string text, out bool b)
 	{
 		if (cmp(text, "true")) {
 			b = true;

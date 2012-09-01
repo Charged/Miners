@@ -14,7 +14,7 @@ import charge.sys.resource;
 class VBO : public Resource
 {
 public:
-	const char[] uri = "vbo://";
+	const string uri = "vbo://";
 
 	GLuint vboVerts;
 	GLuint vboIndices;
@@ -51,7 +51,7 @@ public:
 	static int used() { return used_mem; }
 
 protected:
-	this(Pool p, char[] name)
+	this(Pool p, string name)
 	{
 		super(p, uri, name);
 
@@ -118,7 +118,7 @@ protected:
 		     builder.tris, builder.it);
 	}
 
-	this(Pool p, char[] name, RigidMesh model)
+	this(Pool p, string name, RigidMesh model)
 	{
 		numVerts = cast(GLuint)model.verts.length;
 		numIndices = cast(GLuint)model.tris.length;
@@ -128,7 +128,7 @@ protected:
 		     model.tris.ptr, cast(uint)model.tris.length);
 	}
 
-	this(Pool p, char[] name, RigidMesh.Types type,
+	this(Pool p, string name, RigidMesh.Types type,
 	     Vertex *verts, uint numVerts, Triangle *tris, uint numTriangles)
 	{
 		super(p, name);
@@ -137,12 +137,12 @@ protected:
 	}
 
 public:
-	static RigidMeshVBO opCall(char[] filename)
+	static RigidMeshVBO opCall(string filename)
 	{
 		return RigidMeshVBO(Pool(), filename);
 	}
 
-	static RigidMeshVBO opCall(Pool p, char[] filename)
+	static RigidMeshVBO opCall(Pool p, string filename)
 	{
 		auto r = p.resource(uri, filename);
 		auto t = cast(RigidMeshVBO)r;

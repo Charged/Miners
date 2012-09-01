@@ -11,7 +11,7 @@ module charge.util.html;
  * XXX: Not the full set of characters see:
  * http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
  */
-char[] htmlToXmlEscape(char[] text)
+string htmlToXmlEscape(string text)
 {
 	switch(text) {
 	/* XML */

@@ -24,9 +24,9 @@ bool printLicense()
 	return false;
 }
 
-bool filterArgs(inout char[][] args)
+bool filterArgs(inout string[] args)
 {
-	char[][] ret;
+	string[] ret;
 	int i;
 	ret.length = args.length;
 
@@ -48,7 +48,7 @@ bool filterArgs(inout char[][] args)
 	return true;
 }
 
-int main(char[][] args)
+int main(string[] args)
 {
 	if (!filterArgs(args))
 		return 0;

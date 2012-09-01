@@ -13,8 +13,8 @@ private:
 	Pool pool;
 	uint refcount;
 
-	char[] name;
-	char[] uri;
+	string name;
+	string uri;
 
 public:
 	static void reference(void* _oldRes, Resource newRes)
@@ -33,7 +33,7 @@ public:
 		*oldRes = newRes;
 	}
 
-	this(Pool p, char[] uri, char[] name)
+	this(Pool p, string uri, string name)
 	{
 		this.pool = p;
 		this.name = name;
@@ -44,7 +44,7 @@ public:
 			p.resource(uri, name, this);
 	}
 
-	final char[] getName()
+	final string getName()
 	{
 		return name;
 	}
@@ -76,8 +76,8 @@ class Pool
 private:
 	mixin Logging;
 	Pool parent;
-	Entry[char[]] map;
-	Resource[char[]] marked;
+	Entry[string] map;
+	Resource[string] marked;
 	uint dynamic;
 
 	static Pool instance;
@@ -95,12 +95,12 @@ public:
 		return instance;
 	}
 
-	Object resource(char[] uri, char[] name)
+	Object resource(string uri, string name)
 	{
 		if (name is null)
 			return null;
 
-		char[] full = uri~name;
+		string full = uri~name;
 
 		auto e = full in map;
 		if (!e)
@@ -137,9 +137,9 @@ public:
 	}
 
 package:
-	void mark(char[] uri, char[] name)
+	void mark(string uri, string name)
 	{
-		char[] full = uri~name;
+		string full = uri~name;
 
 		auto e = full in map;
 		if (e is null) {
@@ -157,9 +157,9 @@ package:
 		marked[full] = e.res;
 	}
 
-	void unmark(char[] uri, char[] name)
+	void unmark(string uri, string name)
 	{
-		char[] full = uri~name;
+		string full = uri~name;
 
 		debug {
 			auto e = full in map;
@@ -178,9 +178,9 @@ package:
 		marked.remove(full);
 	}
 
-	void resource(char[] uri, char[] name, Resource r)
+	void resource(string uri, string name, Resource r)
 	{
-		char[] full = uri~name;
+		string full = uri~name;
 
 		assert((full in map) is null);
 		assert(r);

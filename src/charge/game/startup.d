@@ -17,7 +17,7 @@ import charge.game.runner;
 class StartupRunner : public Runner
 {
 protected:
-	char[][] errors;
+	string[] errors;
 
 private:
 	Router r;
@@ -179,7 +179,7 @@ public:
 	 */
 
 
-	void signalError(Task task, char[][] errors)
+	void signalError(Task task, string[] errors)
 	{
 		this.errors = errors;
 		assert(signaled.find(task) < 0);
@@ -248,7 +248,7 @@ abstract class Task
 protected:
 	StartupRunner startup;
 	int completed;
-	char[] text;
+	string text;
 
 
 public:
@@ -263,7 +263,7 @@ public:
 		startup.signalDone(this);
 	}
 
-	void signalError(char[][] errors)
+	void signalError(string[] errors)
 	{
 		completed = -1;
 		startup.signalError(this, errors);
