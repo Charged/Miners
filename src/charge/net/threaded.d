@@ -2,13 +2,16 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.threaded;
 
+// Oh god why do you do this to me DMD/GDC.
 version(Unix) {
-	import std.c.unix.unix;
+	import std.c.unix.unix : EINTR;
+} else version(Posix) {
+	import std.c.posix.posix : EINTR;
 }
-import std.c.stdlib;
-
-import std.thread;
-import std.socket;
+import std.c.stdlib : malloc, free, getErrno;
+import std.thread : Thread;
+import std.socket : TcpSocket, SocketShutdown, SocketFlags,
+                    Address, InternetAddress;
 
 import charge.util.memory : OutOfMemoryException;
 
@@ -91,7 +94,7 @@ protected:
 		flags |= SocketFlags.NOSIGNAL;
 		flags |= peek ? SocketFlags.PEEK : 0;
 
-		version(Unix) {
+		version(Posix) {
 			int n;
 			while(true) {
 				n = cast(int)s.receive(buf, flags);

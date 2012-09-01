@@ -2,10 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.movers;
 
-static import std.random;
-
-import charge.util.vector;
-
 import charge.math.movable;
 
 

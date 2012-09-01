@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.network;
 
-import std.math;
+import std.math : PI;
 
 
 /**
@@ -106,8 +106,8 @@ string removeColorTags(in char[] arg)
  */
 void fromYawPitch(ubyte yaw, ubyte pitch, out double heading, out double look)
 {
-	heading = -(yaw * 2.0 * std.math.PI / 256.0);
-	look = -(pitch * 2.0 * std.math.PI / 256.0);
+	heading = -(yaw * 2.0 * PI / 256.0);
+	look = -(pitch * 2.0 * PI / 256.0);
 }
 
 /**
@@ -115,6 +115,6 @@ void fromYawPitch(ubyte yaw, ubyte pitch, out double heading, out double look)
  */
 void toYawPitch(double heading, double look, out ubyte yaw, out ubyte pitch)
 {
-	yaw = cast(ubyte)-(heading / (2.0 * std.math.PI / 256.0));
-	pitch = cast(ubyte)-(look / (2.0 * std.math.PI / 256.0));
+	yaw = cast(ubyte)-(heading / (2.0 * PI / 256.0));
+	pitch = cast(ubyte)-(look / (2.0 * PI / 256.0));
 }

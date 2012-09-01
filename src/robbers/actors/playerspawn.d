@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.actors.playerspawn;
 
-static import std.random;
+import std.random : rand;
 
 import charge.charge;
 import robbers.world;
@@ -23,7 +23,7 @@ public:
 	}
 
 	static PlayerSpawn random() {
-		return spawns[std.random.rand() % spawns.length];
+		return spawns[rand() % spawns.length];
 	}
 
 }

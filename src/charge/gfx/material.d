@@ -2,9 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.material;
 
-import std.regexp;
-import std.conv;
-import std.string;
+import std.regexp : RegExp;
+import std.conv : toFloat, ConvError, ConvOverflowError;
+import std.string : format;
 
 import lib.xml.xml;
 
@@ -386,9 +386,9 @@ public:
 
 	static bool exBool(string text, out bool b)
 	{
-		if (cmp(text, "true")) {
+		if (text == "true") {
 			b = true;
-		} else if (cmp(text, "false")) {
+		} else if (text == "false") {
 			b = false;
 		} else {
 			return false;

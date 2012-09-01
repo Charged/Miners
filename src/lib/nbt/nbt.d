@@ -12,8 +12,6 @@
 
 module lib.nbt.nbt;
 
-import std.stdint;
-
 
 extern (C):
 
@@ -83,16 +81,16 @@ struct nbt_node
     union { /* payload */
 
         /* tag_end has no payload */
-        int8_t  tag_byte;
-        int16_t tag_short;
-        int32_t tag_int;
-        int64_t tag_long;
+        byte    tag_byte;
+        short   tag_short;
+        int     tag_int;
+        long    tag_long;
         float   tag_float;
         double  tag_double;
 
         static struct nbt_byte_array_t {
             ubyte* data;
-            int32_t length;
+            int length;
         }
 	nbt_byte_array_t tag_byte_array;
 

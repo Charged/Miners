@@ -2,10 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.platform.homefolder;
 
-import std.c.stdlib;
-import std.file;
+import std.c.stdlib : getenv, free;
+import std.file : exists, mkdir;
 import std.stdio : writefln;
-import std.string;
+import std.string : toString;
 
 
 string homeFolder;
@@ -51,5 +51,5 @@ static this()
 static ~this()
 {
 	// This should be stdlib free
-	std.c.stdlib.free(privateFrameworksPath.ptr);
+	free(privateFrameworksPath.ptr);
 }

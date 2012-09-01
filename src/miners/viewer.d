@@ -2,8 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.viewer;
 
-import std.math;
-import lib.sdl.sdl;
+import std.math : PI, PI_2;
+
+import lib.sdl.keysym;
 
 import charge.charge;
 

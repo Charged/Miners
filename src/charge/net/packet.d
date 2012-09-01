@@ -2,10 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.packet;
 
-import charge.net.util;
-
-import std.stdint;
-import std.gc;
+import std.stdint : uint8_t, uint16_t, uint32_t;
+import std.gc : hasNoPointers;
 
 import charge.net.util;
 

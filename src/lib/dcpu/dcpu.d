@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module lib.dcpu.dcpu;
 
-import std.stdint;
+import std.stdint : uint8_t, uint16_t, uint32_t;
 
 
 extern(C):

@@ -3,8 +3,8 @@
 module charge.net.connection;
 
 import std.stdio : writef;
-import std.socket;
-import std.stdint;
+import std.socket : Socket, Address, InternetAddress;
+import std.stdint : uint8_t;
 
 import lib.sdl.sdl;
 

@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.info;
 
-import std.file;
-import std.string;
+import std.file : exists, DirEntry, listdir;
+import std.string : format, toString;
 
 import charge.util.vector;
 import charge.math.point3d;

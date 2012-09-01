@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.gui.textbased;
 
-import std.math;
+import std.math : fmax;
 
 import charge.util.signal;
 

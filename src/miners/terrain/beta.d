@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.terrain.beta;
 
-import std.math;
+import std.math : floor;
 
 import charge.charge;
 

@@ -2,15 +2,15 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.player;
 
-import std.math;
-
-import charge.charge;
-import robbers.world;
-import robbers.network;
-
-import robbers.actors.car;
+import std.math : fmin, acos;
 
 import lib.sdl.sdl;
+
+import charge.charge;
+
+import robbers.world;
+import robbers.network;
+import robbers.actors.car;
 
 
 class Player : GameTicker

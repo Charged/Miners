@@ -2,14 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.world;
 
-import std.math;
-
 import charge.charge;
 
 import miners.options;
-import miners.terrain.beta;
 import miners.terrain.common;
-import miners.importer.info;
 
 
 /**

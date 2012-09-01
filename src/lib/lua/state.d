@@ -1,6 +1,7 @@
 module lib.lua.state;
 
-import std.string;
+import std.string : cmp, sformat, toString, toStringz;
+import std.c.stdlib : realloc;
 
 import lib.lua.all;
 
@@ -109,7 +110,7 @@ public:
 		char[tmpSize] tmp;
 		string check = mangleName(sformat(tmp, "d_struct_", ti.toString));
 		/* picks the wrong toString */
-		alias std.string.toString tSz;
+		alias .toString tSz;
 
 		if (cmp(tSz(namez), check))
 			throw new Exception("Failed to register Struct " ~ tSz(namez) ~ " is invalid");
@@ -398,7 +399,7 @@ public:
 
 	int doFile(string name)
 	{
-		return luaL_dofile(l, std.string.toStringz(name));
+		return luaL_dofile(l, .toStringz(name));
 	}
 
 	/**
@@ -420,7 +421,7 @@ public:
 
 	int loadFile(string name)
 	{
-		return luaL_loadfile(l, std.string.toStringz(name));
+		return luaL_loadfile(l, .toStringz(name));
 	}
 
 	int call(int nargs = 0, int nresults = LUA_MULTRET)
@@ -431,13 +432,13 @@ public:
 	State openLibs() { luaL_openlibs(l); return this; }
 
 	State setTable(int index) { lua_settable(l, index); return this; }
-	State setField(int index, string str) { return setFieldz(index, std.string.toStringz(str)); }
+	State setField(int index, string str) { return setFieldz(index, .toStringz(str)); }
 	State setFieldz(int index, char* stringz) { lua_setfield(l, index, stringz); return this; }
 
 	State getTable(int index) { lua_gettable(l, index); return this; }
-	State getField(int index, string str) { return getFieldz(index, std.string.toStringz(str)); }
+	State getField(int index, string str) { return getFieldz(index, .toStringz(str)); }
 	State getFieldz(int index, char* stringz) { lua_getfield(l, index, stringz); return this; }
-	State getGlobal(string str) { return getGlobalz(std.string.toStringz(str)); }
+	State getGlobal(string str) { return getGlobalz(.toStringz(str)); }
 	State getGlobalz(char* stringz) { lua_getfield(l, lib.lua.lua.LUA_GLOBALSINDEX, stringz); return this; }
 
 	State getMetaTable(int index = -1) { lua_getmetatable(l, index); return this; }
@@ -484,7 +485,7 @@ public:
 
 	string checkString(int index = -1) { size_t e; auto p = luaL_checklstring(l, index, &e); return p[0 .. e]; }
 	double checkNumber(int index = -1) { return luaL_checknumber(l, index); }
-	void* checkUserData(int index, string name) { return checkUserDataz(index, std.string.toStringz(name)); }
+	void* checkUserData(int index, string name) { return checkUserDataz(index, .toStringz(name)); }
 	void* checkUserDataz(int index, char* namez) { return luaL_checkudata(l, index, namez); }
 
 	bool isNoneOrNil(int index = -1) { return lua_isnoneornil(l, index) != 0; }
@@ -526,6 +527,6 @@ protected:
 		memory -= oldSize;
 		memory += newSize;
 
-		return std.c.stdlib.realloc(data, newSize);
+		return realloc(data, newSize);
 	}
 }

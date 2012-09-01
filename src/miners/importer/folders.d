@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.folders;
 
-import std.math;
-import std.string;
+import std.math : floor;
+import std.string : format;
 
 import charge.util.base36;
 import charge.platform.homefolder;

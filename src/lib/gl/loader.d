@@ -2,8 +2,8 @@
 // See copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.loader;
 
-import std.conv;
-import std.string;
+import std.conv : toUint;
+import std.string : find, toString;
 
 import lib.loader;
 import lib.gl.gl;

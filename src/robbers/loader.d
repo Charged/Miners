@@ -2,9 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.loader;
 
-import std.regexp;
-import std.conv;
-import std.math;
+import std.string : tolower;
+import std.regexp : RegExp;
+import std.conv : toDouble, ConvError, ConvOverflowError;
+import std.math : PI;
 
 static import lib.xml.xml;
 
@@ -273,7 +274,7 @@ public:
 		if (text is null)
 			return false;
 
-		if (!std.string.cmp(std.string.tolower(text), "true"))
+		if (tolower(text) == "true")
 			output = true;
 
 		return true;

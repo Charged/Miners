@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.update;
 
-static import std.file;
+import std.file : read, write, exists;
 import std.regexp : RegExp;
 import std.string : splitlines, toString,format;
 import std.stream : BufferedFile, FileMode;
@@ -61,7 +61,7 @@ public:
 	{
 		foreach(file; files) {
 			if ((file in store) !is null &&
-			    !std.file.exists(path ~ file))
+			    !exists(path ~ file))
 				store.remove(file);
 		}
 	}
@@ -228,7 +228,7 @@ public:
 		this.versionFilename = versionFilename;
 
 		try {
-			auto txt = cast(char[])std.file.read(versionFilename);
+			auto txt = cast(char[])read(versionFilename);
 			local = VersionTxt.fromLocal(txt);
 
 			// Always download removed files.
@@ -297,7 +297,7 @@ protected:
 			local.add(thisDownload.local, thisDownload.server, thisDownload.md5);
 
 			// Save file
-			std.file.write(localPath ~ thisDownload.local, data);
+			write(localPath ~ thisDownload.local, data);
 		}
 
 		if (toDownload.length == 0) {

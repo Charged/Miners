@@ -2,10 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.game;
 
-import std.file;
-import std.conv;
+import std.file : isfile, isdir;
+import std.conv : toUint;
 import std.stdio : writefln;
-import std.regexp;
+import std.regexp : RegExp;
 import std.string : format;
 
 import lib.sdl.sdl;

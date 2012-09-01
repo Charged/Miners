@@ -2,10 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.sys.properties;
 
-import std.file;
-import std.conv;
-import std.stream;
-import std.regexp;
+import std.conv : toInt, toUint, toDouble;
+import std.stream : BufferedFile, FileMode;
+import std.regexp : RegExp;
 import std.string : toString, toStringz;
 
 import charge.sys.logger;

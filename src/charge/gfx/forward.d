@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.forward;
 
-import std.math;
-
 import charge.math.color;
 import charge.math.point3d;
 import charge.math.vector3d;

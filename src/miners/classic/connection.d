@@ -2,10 +2,11 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.connection;
 
-import std.socket;
-import std.string;
-private static import etc.c.zlib;
-private import std.zlib : ZlibException;
+import std.socket : Socket, SocketFlags, TcpSocket, SocketShutdown, InternetAddress;
+import std.string : format;
+import std.zlib : ZlibException;
+import etc.c.zlib : z_stream, inflate, inflateInit2, inflateEnd,
+                    Z_STREAM_END, Z_DATA_ERROR, Z_MEM_ERROR, Z_NO_FLUSH;
 
 import charge.charge;
 import charge.util.memory;
@@ -231,32 +232,32 @@ protected:
 		// Need somewhere to store the uncompressed data
 		auto ptr = cast(ubyte*)cMalloc(size);
 		if (!ptr)
-			throw new ZlibException(etc.c.zlib.Z_MEM_ERROR);
+			throw new ZlibException(Z_MEM_ERROR);
 		scope(exit)
 			cFree(ptr);
 		ubyte[] decomp = ptr[0 .. size];
 
 		// Used as arguments for zlib
-		etc.c.zlib.z_stream zs;
+		z_stream zs;
 		zs.next_in = inData.ptr;
 		zs.avail_in = cast(uint)inData.length;
 		zs.next_out = decomp.ptr;
 		zs.avail_out = cast(uint)size;
 
 		// Initialize zlib with argument struct
-		int err = etc.c.zlib.inflateInit2(&zs, 15 + 16);
+		int err = inflateInit2(&zs, 15 + 16);
 		if (err)
 			throw new ZlibException(err);
 		scope(exit)
-			cast(void)etc.c.zlib.inflateEnd(&zs);
+			cast(void)inflateEnd(&zs);
 
 		// Do the decompressing
-		err = etc.c.zlib.inflate(&zs, etc.c.zlib.Z_NO_FLUSH);
+		err = inflate(&zs, Z_NO_FLUSH);
 		switch (err) {
-		case etc.c.zlib.Z_STREAM_END:
+		case Z_STREAM_END:
 			// All ok!
 			break;
-		case etc.c.zlib.Z_DATA_ERROR:
+		case Z_DATA_ERROR:
 			// Work around checksum errors
 			if (zs.avail_out == 0 && zs.avail_in == 4)
 				break;

@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.util;
 
-import std.intrinsic;
+import std.intrinsic : bswap;
 
 
 uint ntoh(uint v)

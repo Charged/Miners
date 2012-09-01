@@ -3,7 +3,6 @@
 module test.lua;
 
 import std.stdio : writefln;
-import std.string;
 
 import lib.lua.lua : LUA_GLOBALSINDEX;
 

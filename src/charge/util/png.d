@@ -4,7 +4,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.util.png;
 
-import std.math;
+import std.math : abs;
 import charge.util.zip;
 import charge.util.memory;
 

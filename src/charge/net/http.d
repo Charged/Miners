@@ -2,9 +2,11 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.http;
 
-import std.string;
-import std.conv;
-import std.socket;
+import std.string : find, format;
+import std.conv : toInt;
+import std.socket : TcpSocket, SocketSet, SocketShutdown,
+                    SocketOption, SocketOptionLevel,
+                    Address, InternetAddress, timeval;
 import uri = std.uri;
 
 import std.c.string;

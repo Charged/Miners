@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.game;
 
-import std.string;
-import std.math;
+import std.string : format, atoi;
+import std.math : round, abs;
 
 import lib.sdl.sdl;
 

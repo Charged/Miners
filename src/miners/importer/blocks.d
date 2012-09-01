@@ -2,11 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.blocks;
 
-import std.math;
-import std.file;
-import std.string;
-import std.stream;
-import std.mmfile;
+import std.string : toStringz;
+import std.stream : File, SeekPos;
+import std.mmfile : MmFile;
+import std.c.stdlib : free;
 
 import charge.util.zip;
 import charge.util.memory;
@@ -139,8 +138,8 @@ bool getBlocksFromNode(nbt_node *file, out ubyte *blocks_out, out ubyte *data_ou
 
 err:
 	// These should be stdlib.free
-	std.c.stdlib.free(blocks_out);
-	std.c.stdlib.free(data_out);
+	free(blocks_out);
+	free(data_out);
 	blocks_out = null;
 	data_out = null;
 	return false;

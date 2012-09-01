@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.deferred;
 
-import std.math;
-static import std.string;
+import std.math : pow, tan, fmin, fmax, PI;
+import std.string : toString;
 
 import charge.math.color;
 import charge.math.movable;
@@ -1947,7 +1947,7 @@ public:
 		GLenum status = cast(GLenum)glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
-			throw new Exception("DeferredTarget framebuffer not complete " ~ std.string.toString(status));
+			throw new Exception("DeferredTarget framebuffer not complete " ~ .toString(status));
 
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 		l.bug("Created new deferred render target (%sx%s)", w, h);
@@ -2058,7 +2058,7 @@ public:
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
-			throw new Exception("DepthTarget framebuffer not complete " ~ std.string.toString(status));
+			throw new Exception("DepthTarget framebuffer not complete " ~ .toString(status));
 
 		l.bug("Created new depth target (%sx%s)", w, h);
 	}
@@ -2163,7 +2163,7 @@ public:
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
-			throw new Exception("DepthTargetArray framebuffer not complete " ~ std.string.toString(status));
+			throw new Exception("DepthTargetArray framebuffer not complete " ~ .toString(status));
 
 		l.bug("Created new depth target array (%sx%s)x%s", w, h, num);
 	}

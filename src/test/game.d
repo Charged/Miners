@@ -2,9 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module test.game;
 
-import std.math;
-import std.stdio;
-import std.string;
+import std.math : pow, fmin, acos, PI;
 
 import charge.charge;
 

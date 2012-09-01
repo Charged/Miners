@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.texture;
 
-import std.mmfile;
+import std.mmfile : MmFile;
 
 import charge.gfx.texture : Texture, TextureArray;
 import charge.util.zip;

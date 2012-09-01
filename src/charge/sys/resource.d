@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.sys.resource;
 
-import std.string;
+import std.string : format;
 
 import charge.sys.logger;
 

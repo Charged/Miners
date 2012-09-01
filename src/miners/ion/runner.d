@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.ion.runner;
 
-static import std.file;
+import std.file : read;
 
 import charge.charge;
 
@@ -39,7 +39,7 @@ public:
 		if (file is null)
 			file = "a.dcpu16";
 
-		auto mem = cast(ushort[])std.file.read(file);
+		auto mem = cast(ushort[])read(file);
 
 		super(r, opts, new ClassicWorld(opts));
 

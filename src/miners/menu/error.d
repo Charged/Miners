@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.error;
 
-import std.string;
-
 import charge.charge;
 import charge.game.gui.layout;
 import charge.game.gui.textbased;

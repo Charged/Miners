@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.sys.file;
 
-import std.file;
-import std.mmfile;
+import std.file : read;
+import std.mmfile : MmFile;
 
 import lib.sdl.rwops;
 
@@ -100,7 +100,7 @@ private:
 		void[] data;
 
 		try {
-			data = std.file.read(file);
+			data = read(file);
 		} catch (Exception e) {
 			return null;
 		}

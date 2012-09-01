@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.lua.wrappers.terrain;
 
-import std.math;
+import std.math : floor;
 
 import miners.lua.state;
 import miners.terrain.beta;

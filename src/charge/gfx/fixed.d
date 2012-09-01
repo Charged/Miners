@@ -2,9 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.gfx.fixed;
 
-import std.math;
-static import std.string;
-
 import charge.math.color;
 import charge.math.point3d;
 import charge.math.vector3d;

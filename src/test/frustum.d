@@ -2,9 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module test.frustum;
 
-import std.math;
-import std.string;
-import std.intrinsic;
+import std.math : tan, PI_4;
 
 import lib.sdl.sdl;
 

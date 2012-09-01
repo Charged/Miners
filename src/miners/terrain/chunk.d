@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.terrain.chunk;
 
-import std.math;
+import std.c.stdlib : free, malloc;
 
 import charge.charge;
 import charge.math.ints;
@@ -80,14 +80,14 @@ public:
 private:
 	static this()
 	{
-		empty_blocks = cast(ubyte*)std.c.stdlib.malloc(blocks_size);
-		std.c.string.memset(empty_blocks, 0, blocks_size);
+		empty_blocks = cast(ubyte*)malloc(blocks_size);
+		empty_blocks[0 .. blocks_size] = 0;
 		used_mem += blocks_size;
 	}
 
 	static ~this()
 	{
-		std.c.stdlib.free(empty_blocks);
+		free(empty_blocks);
 		used_mem -= blocks_size;
 	}
 
@@ -98,8 +98,8 @@ private:
 	void freeBlocksAndData()
 	{
 		if (!empty) {
-			std.c.stdlib.free(blocks);
-			std.c.stdlib.free(data);
+			free(blocks);
+			free(data);
 			used_mem -= (blocks_size + data_size);
 		}
 	}
@@ -135,10 +135,10 @@ public:
 			return;
 
 		empty = false;
-		blocks = cast(ubyte*)std.c.stdlib.malloc(blocks_size);
-		data = cast(ubyte*)std.c.stdlib.malloc(data_size);
-		std.c.string.memset(blocks, 0, blocks_size);
-		std.c.string.memset(data, 0, data_size);
+		blocks = cast(ubyte*)malloc(blocks_size);
+		data = cast(ubyte*)malloc(data_size);
+		blocks[0 .. blocks_size] = 0;
+		data[0 .. data_size] = 0;
 		used_mem += blocks_size + data_size;
 	}
 

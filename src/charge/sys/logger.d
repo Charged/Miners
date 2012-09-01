@@ -3,8 +3,10 @@
 module charge.sys.logger;
 
 import std.stdio : FILE, FPUTC, stdout, fopen, fflush, fprintf;
-import std.string;
-import std.stdarg;
+import std.string : format, rfind;
+import std.format : doFormat;
+import std.stdarg; // Oh god DMD.
+import std.utf : toUTF8;
 
 import charge.platform.homefolder;
 
@@ -95,13 +97,13 @@ public:
 				char[4] buf;
 				char[] b;
 
-				b = std.utf.toUTF8(buf, c);
+				b = toUTF8(buf, c);
 				for (size_t i = 0; i < b.length; i++)
 					FPUTC(b[i], file);
 			}
-    	}
+		}
 
-		std.format.doFormat(&putc, arguments, argptr);
+		doFormat(&putc, arguments, argptr);
 
 		if (newline)
 			FPUTC('\n', file);

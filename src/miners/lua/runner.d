@@ -2,10 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.lua.runner;
 
-import std.file;
+import lib.lua.lua;
+import lib.lua.lauxlib;
 
 import charge.charge;
-
 import charge.sys.file;
 
 import miners.world;
@@ -15,10 +15,6 @@ import miners.interfaces;
 import miners.actors.camera;
 import miners.actors.sunlight;
 import miners.lua.state;
-
-import lib.lua.lua;
-import lib.lua.lauxlib;
-
 import miners.lua.wrappers.types;
 import miners.lua.functions;
 import miners.lua.wrappers.isle;

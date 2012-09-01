@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.runner;
 
-import std.math;
-
 import charge.charge;
 
 import miners.world;

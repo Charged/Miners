@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.actors.gold;
 
-static import std.random;
+import std.random : rand;
 
 import charge.charge;
 import robbers.world;
@@ -33,7 +33,7 @@ public:
 	static GoldSpawn random()
 	{
 		if (spawns.length > 0)
-			return spawns[std.random.rand() % spawns.length];
+			return spawns[rand() % spawns.length];
 		return null;
 	}
 

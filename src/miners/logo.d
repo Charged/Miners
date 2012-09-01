@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.logo;
 
-import std.math;
+import std.math : cos, sin, PI;
 
 import charge.math.color;
 import charge.gfx.gl;

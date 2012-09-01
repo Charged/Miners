@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.net.client;
 
-import std.stdint;
-import std.socket;
+import std.stdint : uint8_t;
+import std.socket : UdpSocket, SocketFlags, InternetAddress, AddressException;
 
 import charge.sys.logger;
 

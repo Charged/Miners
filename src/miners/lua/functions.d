@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.lua.functions;
 
-import std.math;
-
 import charge.math.ints;
 import charge.charge;
 

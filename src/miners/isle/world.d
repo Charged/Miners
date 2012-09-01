@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.isle.world;
 
-import std.math;
-
 import charge.charge;
 
 import charge.math.noise;

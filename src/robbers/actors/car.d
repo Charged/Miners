@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module robbers.actors.car;
 
-import std.math;
+import std.math : pow, PI;
 
 import charge.charge;
 import robbers.network;

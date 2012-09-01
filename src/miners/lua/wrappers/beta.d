@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.lua.wrappers.beta;
 
-import std.math;
-
 import miners.lua.state;
 import miners.beta.world;
 

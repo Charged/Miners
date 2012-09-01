@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.platform.core.sdl;
 
-import std.file;
-import std.string;
+import std.file : exists;
+import std.string : format, toString, toStringz;
 
 import charge.core;
 import charge.gfx.gfx;

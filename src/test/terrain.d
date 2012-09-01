@@ -2,10 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module test.terrain;
 
-import std.math;
+import std.math : fmin, acos, pow, PI;
 import std.stdio : writefln;
-import std.string;
-import std.random;
+import std.string : toString;
+import std.random : rand, rand_seed;
 
 import lib.sdl.sdl;
 
