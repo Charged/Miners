@@ -334,9 +334,9 @@ interface Parser
 extern(C) {
 	struct XML_Parser;
 
-	typedef void function(void *userData, char *name, char **atts) XML_StartElementHandler;
-	typedef void function(void *userData, char *name) XML_EndElementHandler;
-	typedef void function(void *userData, char *data, int len) XML_CharacterDataHandler;
+	alias void function(void *userData, char *name, char **atts) XML_StartElementHandler;
+	alias void function(void *userData, char *name) XML_EndElementHandler;
+	alias void function(void *userData, char *data, int len) XML_CharacterDataHandler;
 	struct XML_Memory_Handling_Suite {
 		extern(C) void* function(size_t size) malloc_fcn;
 		extern(C) void* function(void *ptr, size_t size) realloc_fcn;

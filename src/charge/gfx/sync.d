@@ -6,7 +6,7 @@ import charge.gfx.gl;
 
 
 // Prefix already added.
-typedef void* GfxSync;
+alias void* GfxSync;
 
 bool gfxSyncWaitAndDelete(ref GfxSync sync, long timeout)
 {

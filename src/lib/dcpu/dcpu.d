@@ -58,7 +58,7 @@ struct hw_t
 	void* userdata;        /// Userdata associated with the hardware.
 }
 
-typedef void function(vm_t* vm, void* ud) hw_interrupt;
+alias void function(vm_t* vm, void* ud) hw_interrupt;
 
 
 /* dcpu.h */

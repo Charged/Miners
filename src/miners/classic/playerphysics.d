@@ -18,7 +18,7 @@ import miners.types;
 class PlayerPhysics
 {
 public:
-	typedef ubyte delegate(int x, int y, int z) BlockDg;
+	alias ubyte delegate(int x, int y, int z) BlockDg;
 
 	enum : ubyte {
 		AIR    = 0x0,

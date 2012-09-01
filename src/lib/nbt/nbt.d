@@ -226,14 +226,14 @@ void nbt_free_list(struct tag_list*);
  * stop. `aux' is an optional parameter which will be passed to your visitor
  * from the parent function.
  */
-typedef bool function(nbt_node* node, void* aux) nbt_visitor_t;
+alias bool function(nbt_node* node, void* aux) nbt_visitor_t;
 
 /*
  * A function which directs the overall algorithm with its return type.
  * `aux' is an optional parameter which will be passed to your predicate from
  * the parent function.
  */
-typedef bool function(/+const+/ nbt_node* node, void* aux) nbt_predicate_t;
+alias bool function(/+const+/ nbt_node* node, void* aux) nbt_predicate_t;
 
 /*
  * Traverses the tree until a visitor says stop or all elements are exhausted.
