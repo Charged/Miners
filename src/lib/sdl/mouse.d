@@ -8,8 +8,8 @@ import lib.sdl.types;
 version (DynamicSDL)
 {
 extern (C):
-int (*SDL_ShowCursor)(int toggle);
-void (*SDL_WarpMouse)(Uint16 x, Uint16 y);
+int function(int toggle) SDL_ShowCursor;
+void function(Uint16 x, Uint16 y) SDL_WarpMouse;
 }
 else
 {

@@ -16,7 +16,7 @@ struct SDL_AudioSpec
 	Uint16 padding;
 	Uint32 size;
 
-	extern (C) void (*callback)(void *userdata, Uint8 *stream, int len);
+	extern (C) void function(void *userdata, Uint8 *stream, int len) callback;
 	void *userdata;
 }
 
@@ -41,8 +41,8 @@ else
 version(DynamicSDL)
 {
 extern(C):
-SDL_AudioSpec* (*SDL_LoadWAV_RW)(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
-void (*SDL_FreeWAV)(Uint8 *audio_buf);
+SDL_AudioSpec* function(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len) SDL_LoadWAV_RW;
+void function(Uint8 *audio_buf) SDL_FreeWAV;
 }
 else
 {

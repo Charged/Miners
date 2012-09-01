@@ -199,18 +199,19 @@ const SDL_IGNORE  = 0;
 const SDL_DISABLE = 0;
 const SDL_ENABLE  = 1;
 
+alias int function(SDL_Event *event) SDL_EventFilter;
+
 version (DynamicSDL)
 {
 extern (C):
-void (*SDL_PumpEvents)();
-int (*SDL_PeepEvents)(SDL_Event *events, int numevents, SDL_eventaction action, Uint32 mask);
-int (*SDL_PollEvent)(SDL_Event *event);
-int (*SDL_WaitEvent)(SDL_Event *event);
-int (*SDL_PushEvent)(SDL_Event *event);
-typedef int function(SDL_Event *event) SDL_EventFilter;
-void (*SDL_SetEventFilter)(SDL_EventFilter filter);
-SDL_EventFilter (*SDL_GetEventFilter)();
-Uint8 (*SDL_EventState)(Uint8 type, int state);
+void function() SDL_PumpEvents;
+int function(SDL_Event *events, int numevents, SDL_eventaction action, Uint32 mask) SDL_PeepEvents;
+int function(SDL_Event *event) SDL_PollEvent;
+int function(SDL_Event *event) SDL_WaitEvent;
+int function(SDL_Event *event) SDL_PushEvent;
+void function(SDL_EventFilter filter) SDL_SetEventFilter;
+SDL_EventFilter function() SDL_GetEventFilter;
+Uint8 function(Uint8 type, int state) SDL_EventState;
 }
 else
 {
@@ -220,7 +221,6 @@ int SDL_PeepEvents(SDL_Event *events, int numevents, SDL_eventaction action, Uin
 int SDL_PollEvent(SDL_Event *event);
 int SDL_WaitEvent(SDL_Event *event);
 int SDL_PushEvent(SDL_Event *event);
-typedef int function(SDL_Event *event) SDL_EventFilter;
 void SDL_SetEventFilter(SDL_EventFilter filter);
 SDL_EventFilter SDL_GetEventFilter();
 Uint8 SDL_EventState(Uint8 type, int state);

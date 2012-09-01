@@ -28,11 +28,11 @@ const SDL_INIT_EVERYTHING  = 0x0000FFFF;
 version (DynamicSDL)
 {
 extern (C):
-int (*SDL_Init)(Uint32 flags);
-int (*SDL_InitSubSystem)(Uint32 flags);
-void (*SDL_QuitSubSystem)(Uint32 flags);
-Uint32 (*SDL_WasInit)(Uint32 flags);
-void (*SDL_Quit)();
+int function(Uint32 flags) SDL_Init;
+int function(Uint32 flags) SDL_InitSubSystem;
+void function(Uint32 flags) SDL_QuitSubSystem;
+Uint32 function(Uint32 flags) SDL_WasInit;
+void function() SDL_Quit;
 }
 else
 {
