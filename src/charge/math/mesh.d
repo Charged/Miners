@@ -2,12 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.math.mesh;
 
-import std.outofmemory;
-
 import charge.sys.file;
 import charge.sys.logger;
 import charge.sys.resource;
-import charge.util.memory;
+import charge.util.memory : OutOfMemoryException, cMalloc, cFree;
 
 
 struct Vertex
@@ -115,7 +113,7 @@ protected:
 		if (v is null || (t is null && tris.length != 0)) {
 			cFree(v);
 			cFree(t);
-			throw new std.outofmemory.OutOfMemoryException();
+			throw new OutOfMemoryException();
 		}
 
 		v[0 .. num_verts] = verts[0 .. $];

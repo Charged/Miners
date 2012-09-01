@@ -2,8 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.util.memory;
 
+public import std.outofmemory : OutOfMemoryException;
 
-static import std.outofmemory;
 
 debug {
 	static extern(C) void* charge_malloc_dbg(size_t size, char* file, uint line);
@@ -42,7 +42,7 @@ struct cMemoryArray(T)
 	{
 		if (len) {
 			if (!ensure(array.length))
-				throw new std.outofmemory.OutOfMemoryException();
+				throw new OutOfMemoryException();
 		} else {
 			length = array.length;
 		}
@@ -103,7 +103,7 @@ struct cMemoryArray(T)
 	size_t length(size_t newLen)
 	{
 		if (realloc(newLen) == null && newLen != 0)
-			throw new std.outofmemory.OutOfMemoryException();
+			throw new OutOfMemoryException();
 		return len;
 	}
 

@@ -9,7 +9,8 @@ import std.c.stdlib;
 
 import std.thread;
 import std.socket;
-import std.outofmemory;
+
+import charge.util.memory : OutOfMemoryException;
 
 /**
  * A TCP connection that listens in a seperate thread.
