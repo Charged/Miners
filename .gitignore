@@ -1,8 +1,8 @@
 .obj
-res2
 Charge
 Charge.map
 Charge.exe
+charge.sublime*
 .cdtproject
 .project
 .settings
@@ -13,4 +13,8 @@ Charge.exe
 *.so
 *.lnk
 *.dylib
+*.sh
+*.chz
+*.zip
+*.ver
 screenshot-*.bmp
