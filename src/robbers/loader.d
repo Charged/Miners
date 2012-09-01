@@ -26,7 +26,7 @@ import robbers.actors.primitive;
 import robbers.actors.gold;
 
 
-alias void (*LoaderFunc)(World w, XmlHandle e);
+alias void function(World w, XmlHandle e) LoaderFunc;
 
 class Loader
 {
