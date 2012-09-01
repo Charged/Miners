@@ -5,11 +5,11 @@ module lib.ode.common;
 
 alias float dReal;
 
-typedef dReal dVector3[4];
-typedef dReal dVector4[4];
-typedef dReal dMatrix3[4*3];
-typedef dReal dMatrix4[4*4];
-typedef dReal dMatrix6[8*6];
+alias dReal dVector3[4];
+alias dReal dVector4[4];
+alias dReal dMatrix3[4*3];
+alias dReal dMatrix4[4*4];
+alias dReal dMatrix6[8*6];
 alias dVector4 dQuaternion;
 
 alias void* dWorldID;
@@ -114,8 +114,8 @@ struct dJointFeedback
 version(DynamicODE)
 {
 extern (C):
-void (*dGeomMoved)(dGeomID);
-dGeomID (*dGeomGetBodyNext)(dGeomID);
+void function(dGeomID) dGeomMoved;
+dGeomID function(dGeomID) dGeomGetBodyNext;
 }
 else
 {

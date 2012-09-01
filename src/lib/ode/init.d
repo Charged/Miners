@@ -11,9 +11,9 @@ const dAllocateMaskAll = ~0U;
 version(DynamicODE)
 {
 extern(C):
-void (*dInitODE)();
-void (*dInitODE2)(uint initFlags);
-int (*dAllocateODEDataForThread)(uint uiAllocateFlags);
+void function() dInitODE;
+void function(uint initFlags) dInitODE2;
+int function(uint uiAllocateFlags) dAllocateODEDataForThread;
 }
 else
 {
