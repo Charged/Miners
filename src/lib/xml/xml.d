@@ -10,6 +10,7 @@ import std.file;
 import charge.util.vector;
 import charge.util.memory;
 
+
 class Node
 {
 	Element parent;

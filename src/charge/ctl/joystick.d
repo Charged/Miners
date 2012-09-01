@@ -7,6 +7,7 @@ import lib.sdl.sdl;
 import charge.util.signal;
 import charge.ctl.device;
 
+
 class Joystick : Device
 {
 public:

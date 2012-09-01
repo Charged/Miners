@@ -11,6 +11,7 @@ import charge.sys.file;
 import charge.sfx.buffer;
 import charge.sfx.al;
 
+
 class BufferManager
 {
 private:

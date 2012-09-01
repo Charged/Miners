@@ -15,6 +15,7 @@ import charge.math.matrix4x4d;
 
 import charge.gfx.texture;
 
+
 void gluPushAndTransform(Point3d p, Quatd q)
 {
 	glMatrixMode(GL_MODELVIEW);

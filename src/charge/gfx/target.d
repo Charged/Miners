@@ -10,6 +10,7 @@ import charge.math.color;
 import charge.sys.logger;
 import charge.gfx.gl;
 
+
 interface RenderTarget
 {
 	void setTarget();

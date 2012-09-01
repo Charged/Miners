@@ -52,7 +52,6 @@ import miners.importer.network;
 import miners.importer.texture;
 import miners.importer.classicinfo;
 
-
 static import miners.builder.classic;
 
 

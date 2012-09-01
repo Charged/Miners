@@ -5,6 +5,7 @@ module charge.game.gui.input;
 import charge.ctl.input;
 import charge.game.gui.component;
 
+
 class InputHandler
 {
 protected:

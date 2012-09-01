@@ -11,6 +11,7 @@ import charge.gfx.gl;
 import charge.sys.logger;
 import charge.sys.resource;
 
+
 class VBO : Resource
 {
 public:

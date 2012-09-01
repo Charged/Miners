@@ -16,6 +16,7 @@ import charge.gfx.light;
 import charge.gfx.texture;
 import charge.gfx.renderqueue;
 
+
 struct MaterialProperty
 {
 	enum {

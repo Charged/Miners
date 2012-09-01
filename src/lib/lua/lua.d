@@ -7,6 +7,7 @@ module lib.lua.lua;
 
 import lib.lua.luaconf;
 
+
 extern (C):
 
 const LUA_VERSION     = "Lua 5.1";

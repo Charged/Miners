@@ -25,6 +25,7 @@ import robbers.actors.playerspawn;
 import robbers.actors.primitive;
 import robbers.actors.gold;
 
+
 alias void (*LoaderFunc)(World w, XmlHandle e);
 
 class Loader

@@ -1,5 +1,6 @@
 module lib.lua.luaconf;
 
+
 alias ptrdiff_t LUA_INTEGER;
 alias size_t LUAI_UMEM;
 alias ptrdiff_t LUAI_MEM;

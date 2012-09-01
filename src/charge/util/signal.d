@@ -4,6 +4,7 @@ module charge.util.signal;
 
 import charge.util.vector;
 
+
 /*
  * This signal implementation isn't very portable using D1 phobos specific
  * hidden functionality. All this to support autoremove on delete.

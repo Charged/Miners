@@ -9,6 +9,7 @@ version(MemDump) {
 	import std.string : toString;
 }
 
+
 private struct MemHeader
 {
 private:

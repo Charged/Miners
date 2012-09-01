@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.util.fifo;
 
+
 /**
  * Small fifo class.
  * Its not the most optimal code but thats what you get when you spend ten

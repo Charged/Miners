@@ -7,6 +7,7 @@ static import std.random;
 import charge.charge;
 import robbers.world;
 
+
 class PlayerSpawn : GameActor
 {
 private:

@@ -5,7 +5,6 @@ module charge.game.runner;
 import charge.gfx.target;
 
 
-
 /**
  * A game runner often is a level logic or menu.
  */

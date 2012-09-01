@@ -7,6 +7,7 @@ import std.file;
 import std.stdio : writefln;
 import std.string;
 
+
 string homeFolder;
 string applicationConfigFolder;
 string chargeConfigFolder;

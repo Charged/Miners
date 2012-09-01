@@ -7,6 +7,7 @@ import charge.math.movable;
 import charge.gfx.world;
 import charge.phy.world;
 
+
 interface Ticker
 {
 	void tick();

@@ -20,9 +20,9 @@ import miners.classic.data;
 import miners.classic.webpage;
 import miners.importer.texture;
 
-
 alias charge.game.startup.Task GameTask;
 alias charge.game.startup.StartupRunner GameStartupRunner;
+
 
 /**
  * StartupRunner specialized for Miners,

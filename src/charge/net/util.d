@@ -4,6 +4,7 @@ module charge.net.util;
 
 import std.intrinsic;
 
+
 uint ntoh(uint v)
 {
 	return bswap(v);

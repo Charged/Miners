@@ -17,6 +17,7 @@ import charge.sys.file;
 import charge.sys.resource;
 import charge.platform.homefolder;
 
+
 class CommonCore : Core
 {
 protected:

@@ -10,6 +10,7 @@ import charge.charge;
 
 import lib.sdl.sdl;
 
+
 class Ticker : GameActor, GameTicker
 {
 protected:

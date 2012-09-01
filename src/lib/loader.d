@@ -5,6 +5,7 @@ module lib.loader;
 import std.stdio : writefln;
 import std.string;
 
+
 alias void* delegate(string) Loader;
 
 struct loadFunc(alias T)

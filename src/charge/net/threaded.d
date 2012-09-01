@@ -12,6 +12,7 @@ import std.socket;
 
 import charge.util.memory : OutOfMemoryException;
 
+
 /**
  * A TCP connection that listens in a seperate thread.
  *

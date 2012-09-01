@@ -5,6 +5,7 @@ module robbers.actors.primitive;
 import charge.charge;
 import robbers.world;
 
+
 class FixedCube : GameActor
 {
 private:

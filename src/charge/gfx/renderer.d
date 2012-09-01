@@ -24,6 +24,7 @@ import charge.gfx.material;
 import charge.gfx.world;
 import charge.gfx.zone;
 
+
 public abstract class Renderer
 {
 private:

@@ -12,6 +12,7 @@ import charge.util.zip;
 import charge.util.vector;
 import charge.util.memory;
 
+
 alias File delegate(string filename) FileLoader;
 
 abstract class File

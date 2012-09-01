@@ -15,6 +15,7 @@ import charge.gfx.vbo;
 
 import charge.sys.logger;
 
+
 class RigidModel : Actor, Renderable
 {
 private:

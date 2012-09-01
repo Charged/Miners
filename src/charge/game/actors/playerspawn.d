@@ -11,6 +11,7 @@ import charge.math.quatd;
 
 import charge.game.world;
 
+
 class PlayerSpawn : Actor
 {
 private:

@@ -4,6 +4,7 @@ module charge.phy.material;
 
 import charge.phy.actor;
 
+
 class Material
 {
 public:

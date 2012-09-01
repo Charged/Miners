@@ -13,6 +13,7 @@ public import miners.classic.interfaces : ClassicConnection = Connection;
 alias charge.game.runner.Runner Runner;
 alias charge.game.runner.Router GameRouter;
 
+
 /**
  * Specialized router for Miners.
  */

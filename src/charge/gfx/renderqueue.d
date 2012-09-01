@@ -5,6 +5,7 @@ module charge.gfx.renderqueue;
 import charge.gfx.shader;
 import charge.gfx.material;
 
+
 interface Renderable
 {
 	Material getMaterial();

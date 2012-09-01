@@ -5,6 +5,9 @@ module charge.util.memory;
 public import std.outofmemory : OutOfMemoryException;
 
 
+/**
+ * Only use more expensive debugging memory code on debug builds.
+ */
 debug {
 	static extern(C) void* charge_malloc_dbg(size_t size, char* file, uint line);
 	static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, char* file, uint line);

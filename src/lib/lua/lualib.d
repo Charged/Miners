@@ -6,6 +6,7 @@ module lib.lua.lualib;
 
 import lib.lua.lua;
 
+
 void luaL_openlibs(lua_State *L)
 {
 	struct Reg {

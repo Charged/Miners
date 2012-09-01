@@ -5,6 +5,7 @@ module robbers.actors.levelinfo;
 import charge.charge;
 import robbers.world;
 
+
 class LevelInfo : GameActor
 {
 

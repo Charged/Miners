@@ -12,6 +12,7 @@ import charge.util.fifo;
 import charge.util.vector;
 import charge.net.packet;
 
+
 private void dump(string append, uint8_t[] data)
 {
 	writef(append);

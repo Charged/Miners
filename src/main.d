@@ -17,6 +17,7 @@ static import charge.sys.memory;
 
 import license;
 
+
 bool printLicense()
 {
 	foreach(license; licenseArray)

@@ -4,6 +4,7 @@ import std.string;
 
 import lib.lua.all;
 
+
 class ObjectWrapper
 {
 	const static char* namez = "d_class_object_Object";

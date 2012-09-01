@@ -7,6 +7,7 @@ import charge.ctl.device;
 
 import lib.sdl.keysym;
 
+
 class Keyboard : Device
 {
 public:

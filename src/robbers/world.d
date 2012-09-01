@@ -7,6 +7,7 @@ import robbers.network;
 
 import robbers.actors.gold;
 
+
 class World : GameWorld
 {
 private:

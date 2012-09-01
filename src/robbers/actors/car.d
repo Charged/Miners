@@ -10,6 +10,7 @@ import robbers.world;
 
 import robbers.actors.playerspawn;
 
+
 class Car : GameActor, NetworkObject, GameTicker
 {
 private:

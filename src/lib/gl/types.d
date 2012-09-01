@@ -2,6 +2,7 @@
 // See the copyright in src/lib/gl/gl.d (BSD/MIT like).
 module lib.gl.types;
 
+
 // GL
 alias uint      GLenum;
 alias ubyte     GLboolean;

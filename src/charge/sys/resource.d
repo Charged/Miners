@@ -6,6 +6,7 @@ import std.string;
 
 import charge.sys.logger;
 
+
 abstract class Resource
 {
 private:

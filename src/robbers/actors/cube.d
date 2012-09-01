@@ -7,6 +7,7 @@ import robbers.player;
 import robbers.network;
 import robbers.world;
 
+
 class Cube : GameActor, NetworkObject, GameTicker
 {
 protected:

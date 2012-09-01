@@ -15,6 +15,7 @@ public {
 	import lib.sdl.joystick;
 }
 
+
 const SDL_INIT_TIMER       = 0x00000001;
 const SDL_INIT_AUDIO       = 0x00000010;
 const SDL_INIT_VIDEO       = 0x00000020;

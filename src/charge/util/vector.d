@@ -4,6 +4,7 @@ module charge.util.vector;
 
 import std.array;
 
+
 /**
  * Small vector class. Only works on classes and pointers.
  */

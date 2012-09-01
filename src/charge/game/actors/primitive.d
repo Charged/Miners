@@ -14,6 +14,7 @@ static import charge.phy.cube;
 
 import charge.game.world;
 
+
 class Cube : Actor, Ticker
 {
 protected:

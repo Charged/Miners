@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.util.html;
 
+
 /**
  * Turns a html escapce escape sequence into XML one.
  * In short only keeps '"', ''', '&', '>' and '<' escaped.

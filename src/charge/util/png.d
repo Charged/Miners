@@ -8,6 +8,7 @@ import std.math;
 import charge.util.zip;
 import charge.util.memory;
 
+
 class PngImage
 {
 	uint width;

@@ -7,6 +7,7 @@ import std.math;
 import charge.charge;
 import robbers.world;
 
+
 class SunLight : GameActor
 {
 private:

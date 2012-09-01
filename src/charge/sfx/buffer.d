@@ -4,6 +4,7 @@ module charge.sfx.buffer;
 
 import charge.sfx.al;
 
+
 class Buffer
 {
 private:

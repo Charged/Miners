@@ -20,6 +20,7 @@ static import charge.ctl.keyboard;
 alias charge.ctl.mouse.Mouse CtlMouse;
 alias charge.ctl.keyboard.Keyboard CtlKeyboard;
 
+
 private static string StructWrapperPush(string type)
 {
 	return `

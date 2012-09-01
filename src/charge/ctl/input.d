@@ -15,6 +15,7 @@ import charge.ctl.mouse;
 import charge.ctl.keyboard;
 import charge.ctl.joystick;
 
+
 class Input
 {
 private:

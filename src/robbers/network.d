@@ -4,6 +4,7 @@ module robbers.network;
 
 import charge.charge;
 
+
 interface NetworkObject
 {
 	/// Used by both the server and client

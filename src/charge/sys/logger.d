@@ -8,6 +8,7 @@ import std.stdarg;
 
 import charge.platform.homefolder;
 
+
 enum Level
 {
 	Trace = 0,

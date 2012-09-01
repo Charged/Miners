@@ -10,6 +10,7 @@ import charge.gfx.gl;
 import charge.gfx.cull;
 import charge.sys.logger;
 
+
 abstract class Camera : Movable
 {
 public:

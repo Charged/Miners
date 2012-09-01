@@ -3,6 +3,7 @@ module lib.lua.lauxlib;
 import lib.lua.lua;
 import lib.lua.luaconf;
 
+
 extern (C):
 
 /* extra error code for `luaL_load' */

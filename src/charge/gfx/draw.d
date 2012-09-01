@@ -8,6 +8,7 @@ import charge.gfx.texture;
 import charge.gfx.target;
 import charge.gfx.gl;
 
+
 /**
  * Provides simple 2d rendering functionallity
  */

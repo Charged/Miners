@@ -8,6 +8,7 @@ import charge.phy.ode;
 import charge.phy.actor;
 import charge.phy.world;
 
+
 class Sphere : Body
 {
 	this(World w, Point3d pos)

@@ -10,6 +10,7 @@ import charge.gfx.renderqueue;
 import charge.gfx.cull;
 import charge.gfx.light;
 
+
 abstract class Actor : Movable
 {
 private:

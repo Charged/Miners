@@ -10,6 +10,7 @@ import std.string : toString, toStringz;
 
 import charge.sys.logger;
 
+
 final class Properties
 {
 	mixin Logging;

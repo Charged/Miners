@@ -10,6 +10,7 @@ import charge.sys.logger;
 import charge.net.packet;
 import charge.net.connection;
 
+
 class Client
 {
 public:

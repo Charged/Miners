@@ -4,6 +4,7 @@ module lib.sdl.types;
 
 public import  std.stdint;
 
+
 alias int8_t	Sint8;
 alias uint8_t	Uint8;
 alias int16_t	Sint16;

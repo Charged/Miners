@@ -9,6 +9,7 @@ import charge.phy.geom;
 import charge.phy.material;
 import charge.phy.world;
 
+
 class Actor : Movable
 {
 	this(World w)

@@ -1,5 +1,6 @@
 module lib.al.types;
 
+
 // AL
 alias char ALboolean;
 alias char ALchar;
