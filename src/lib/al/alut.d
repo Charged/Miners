@@ -34,20 +34,20 @@ const ALUT_LOADER_MEMORY = 0x301;
 
 extern(C):
 
-ALboolean (*alutInit)(int *argcp, char **argv);
-ALboolean (*alutInitWithoutContext)(int *argcp, char **argv);
-ALboolean (*alutExit)();
-ALenum (*alutGetError)();
-char* (*alutGetErrorString)(ALenum error);
-ALuint (*alutCreateBufferFromFile)(char *fileName);
-ALuint (*alutCreateBufferFromFileImage)(ALvoid *data, ALsizei length);
-ALuint (*alutCreateBufferHelloWorld)();
-ALuint (*alutCreateBufferWaveform)(ALenum waveshape, ALfloat frequency, ALfloat phase, ALfloat duration);
-ALvoid* (*alutLoadMemoryFromFile)(char *fileName, ALenum *format, ALsizei *size, ALfloat *frequency);
-ALvoid* (*alutLoadMemoryFromFileImage)(ALvoid *data, ALsizei length, ALenum *format, ALsizei *size, ALfloat *frequency);
-ALvoid* (*alutLoadMemoryHelloWorld)(ALenum *format, ALsizei *size, ALfloat *frequency);
-ALvoid* (*alutLoadMemoryWaveform)(ALenum waveshape, ALfloat frequency, ALfloat phase, ALfloat duration, ALenum *format, ALsizei *size, ALfloat *freq);
-char* (*alutGetMIMETypes)(ALenum loader);
-ALint (*alutGetMajorVersion)();
-ALint (*alutGetMinorVersion)();
-ALboolean (*alutSleep)(ALfloat duration);
+ALboolean function(int *argcp, char **argv) alutInit;
+ALboolean function(int *argcp, char **argv) alutInitWithoutContext;
+ALboolean function() alutExit;
+ALenum function() alutGetError;
+char* function(ALenum error) alutGetErrorString;
+ALuint function(char *fileName) alutCreateBufferFromFile;
+ALuint function(ALvoid *data, ALsizei length) alutCreateBufferFromFileImage;
+ALuint function() alutCreateBufferHelloWorld;
+ALuint function(ALenum waveshape, ALfloat frequency, ALfloat phase, ALfloat duration) alutCreateBufferWaveform;
+ALvoid* function(char *fileName, ALenum *format, ALsizei *size, ALfloat *frequency) alutLoadMemoryFromFile;
+ALvoid* function(ALvoid *data, ALsizei length, ALenum *format, ALsizei *size, ALfloat *frequency) alutLoadMemoryFromFileImage;
+ALvoid* function(ALenum *format, ALsizei *size, ALfloat *frequency) alutLoadMemoryHelloWorld;
+ALvoid* function(ALenum waveshape, ALfloat frequency, ALfloat phase, ALfloat duration, ALenum *format, ALsizei *size, ALfloat *freq) alutLoadMemoryWaveform;
+char* function(ALenum loader) alutGetMIMETypes;
+ALint function() alutGetMajorVersion;
+ALint function() alutGetMinorVersion;
+ALboolean function(ALfloat duration) alutSleep;
