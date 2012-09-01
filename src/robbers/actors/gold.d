@@ -7,7 +7,7 @@ static import std.random;
 import charge.charge;
 import robbers.world;
 
-class Gold : public GameActor
+class Gold : GameActor
 {
 	this(World w, GoldSpawn gs)
 	{
@@ -18,7 +18,7 @@ class Gold : public GameActor
 	}
 }
 
-class GoldManager : public GameActor
+class GoldManager : GameActor
 {
 private:
 	static Vector!(GoldSpawn) spawns;
@@ -44,7 +44,7 @@ public:
 	}
 }
 
-class GoldSpawn : public GameActor
+class GoldSpawn : GameActor
 {
 protected:
 	this(World w, Point3d pos, Quatd rot)

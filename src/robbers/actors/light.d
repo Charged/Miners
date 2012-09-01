@@ -7,7 +7,7 @@ import std.math;
 import charge.charge;
 import robbers.world;
 
-class SunLight : public GameActor
+class SunLight : GameActor
 {
 private:
 	GfxSimpleLight light;

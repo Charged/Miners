@@ -311,7 +311,7 @@ private:
 /**
  * A threaded HTTP connection. 
  */
-class ThreadedHttpConnection : public ThreadedTcpConnection
+class ThreadedHttpConnection : ThreadedTcpConnection
 {
 private:
 	// Server details
@@ -453,12 +453,12 @@ protected:
 	}
 }
 
-class DisconnectedException : public Exception
+class DisconnectedException : Exception
 {
 	this() { super("Disconnected"); }
 }
 
-class ReceiveException : public Exception
+class ReceiveException : Exception
 {
 	ptrdiff_t status;
 

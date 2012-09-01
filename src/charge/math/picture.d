@@ -10,7 +10,7 @@ import charge.util.png;
 import charge.util.memory;
 
 
-class Picture : public Resource
+class Picture : Resource
 {
 public:
 	const string uri = "pic://";

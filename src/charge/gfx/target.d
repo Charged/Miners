@@ -17,7 +17,7 @@ interface RenderTarget
 	uint height();
 }
 
-class DefaultTarget : public RenderTarget
+class DefaultTarget : RenderTarget
 {
 private:
 	Color4f clearColor;
@@ -82,7 +82,7 @@ private:
 
 }
 
-class DoubleTarget : public RenderTarget
+class DoubleTarget : RenderTarget
 {
 private:
 	mixin Logging;

@@ -15,7 +15,7 @@ import charge.gfx.vbo;
 
 import charge.sys.logger;
 
-class RigidModel : public Actor, public Renderable
+class RigidModel : Actor, Renderable
 {
 private:
 	mixin Logging;

@@ -9,7 +9,7 @@ module miners.error;
  * The text should be informative as to what actions the user can
  * do to help solve the error, worst case point him to the bugzilla.
  */
-class GameException : public Exception
+class GameException : Exception
 {
 public:
 	Exception next;

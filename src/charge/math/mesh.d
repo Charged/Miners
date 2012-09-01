@@ -45,7 +45,7 @@ struct RigidMeshStruct
 }
 
 
-class RigidMesh : public Resource
+class RigidMesh : Resource
 {
 public:
 	const string uri = "mesh://";

@@ -9,11 +9,11 @@ import charge.gfx.gl;
 import charge.gfx.texture;
 
 
-class Light : public Movable
+class Light : Movable
 {
 }
 
-class SimpleLight : public Light
+class SimpleLight : Light
 {
 public:
 
@@ -31,7 +31,7 @@ public:
 
 }
 
-class PointLight : public Light
+class PointLight : Light
 {
 public:
 	Color4f diffuse;
@@ -46,7 +46,7 @@ public:
 
 }
 
-class SpotLight : public Light
+class SpotLight : Light
 {
 public:
 	Color4f diffuse;
@@ -75,7 +75,7 @@ public:
 
 }
 
-class Fog : public Movable
+class Fog : Movable
 {
 public:
 	double start;

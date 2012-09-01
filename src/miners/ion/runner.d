@@ -24,7 +24,7 @@ import charge.game.dcpu.lem1802;
 /**
  * IonRunner
  */
-class IonRunner : public ViewerRunner
+class IonRunner : ViewerRunner
 {
 private:
 	mixin SysLogging;

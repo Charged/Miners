@@ -15,7 +15,7 @@ import miners.importer.info;
 /**
  * Base class for different world types.
  */
-abstract class World : public GameWorld
+abstract class World : GameWorld
 {
 public:
 	Options opts; /** Shared with other worlds */

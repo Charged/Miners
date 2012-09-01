@@ -35,7 +35,7 @@ import miners.importer.network;
 /**
  * Classic runner
  */
-class ClassicRunner : public GameRunnerBase, public ClientListener
+class ClassicRunner : GameRunnerBase, ClientListener
 {
 private:
 	mixin SysLogging;
@@ -1161,7 +1161,7 @@ public:
 /**
  * Classic version of the console, used for text input.
  */
-class ClassicConsole : public Console
+class ClassicConsole : Console
 {
 public:
 	char[] delegate(char[], char[]) tabCompletePlayer;
@@ -1364,7 +1364,7 @@ protected:
 	}
 }
 
-class ClassicMessageLog : public MessageLog
+class ClassicMessageLog : MessageLog
 {
 public:
 	Options opts;

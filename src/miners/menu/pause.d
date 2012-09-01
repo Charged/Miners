@@ -12,7 +12,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class PauseMenu : public MenuRunnerBase
+class PauseMenu : MenuRunnerBase
 {
 private:
 	const string header = `Options`;

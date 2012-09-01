@@ -19,7 +19,7 @@ import miners.actors.otherplayer;
 /**
  * Inbuilt ViewerRunner
  */
-class ViewerRunner : public GameRunnerBase
+class ViewerRunner : GameRunnerBase
 {
 public:
 	/* Light related */

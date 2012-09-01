@@ -430,7 +430,7 @@ class CreateTiledBackground : OptionsTask
 	}
 }
 
-class ClassicGetList : public OptionsTask, public ClassicWebpageListener
+class ClassicGetList : OptionsTask, ClassicWebpageListener
 {
 private:
 	WebpageConnection wc;

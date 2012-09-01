@@ -24,7 +24,7 @@ alias charge.sys.resource.Resource.reference sysReference;
 /**
  * Base class for implementing menus.
  */
-abstract class MenuRunner : public Runner
+abstract class MenuRunner : Runner
 {
 protected:
 	TextureTarget menuTexture;

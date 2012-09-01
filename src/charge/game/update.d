@@ -176,7 +176,7 @@ public:
  * A downloader that automatically figures out which
  * files to download.
  */
-class UpdateDownloader : public DownloadListener
+class UpdateDownloader : DownloadListener
 {
 public:
 	void delegate(int p, string file) updateDg;
@@ -325,7 +325,7 @@ protected:
 /**
  * A helper runner that manages a UpdateDownloader
  */
-abstract class UpdateRunner : public MenuRunner
+abstract class UpdateRunner : MenuRunner
 {
 protected:
 	UpdateDownloader ud;

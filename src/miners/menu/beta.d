@@ -13,7 +13,7 @@ import miners.menu.base;
 import miners.importer.info;
 
 
-class LevelMenu : public MenuRunnerBase
+class LevelMenu : MenuRunnerBase
 {
 private:
 	const string header = `Select a level`;
@@ -60,7 +60,7 @@ public:
  *
  * Used with the select menu.
  */
-class LevelSelector : public VerticalContainer
+class LevelSelector : VerticalContainer
 {
 public:
 	this(Container p, int x, int y, void delegate(Button b) dg)
@@ -88,7 +88,7 @@ public:
  *
  * Used with the select menu.
  */
-class LevelButton : public Button
+class LevelButton : Button
 {
 public:
 	MinecraftLevelInfo info;

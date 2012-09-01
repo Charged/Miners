@@ -10,7 +10,7 @@ import charge.game.gui.component;
 import charge.game.gui.container;
 
 
-class MessageLog : public Component
+class MessageLog : Component
 {
 protected:
 	uint colums;

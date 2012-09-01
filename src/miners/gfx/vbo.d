@@ -12,7 +12,7 @@ import miners.defines;
 /**
  * ChunkVBO which is just the inbuilt RigidMeshVBO.
  */
-class ChunkVBORigidMesh : public charge.gfx.vbo.RigidMeshVBO
+class ChunkVBORigidMesh : charge.gfx.vbo.RigidMeshVBO
 {
 public:
 	static ChunkVBORigidMesh opCall(RigidMeshBuilder mb, int x, int y, int z)
@@ -37,7 +37,7 @@ protected:
 /**
  * A slightly more compact version of ChunkVBORigidMesh.
  */
-class ChunkVBOCompactMesh : public GfxVBO
+class ChunkVBOCompactMesh : GfxVBO
 {
 protected:
 	const void* vertOffset = null;
@@ -105,7 +105,7 @@ protected:
 /**
  * Base class for all Chunk VBO Groups, handles general managment.
  */
-abstract class ChunkVBOGroup : public GfxActor, public GfxRenderable
+abstract class ChunkVBOGroup : GfxActor, GfxRenderable
 {
 public:
 	mixin SysLogging;
@@ -190,7 +190,7 @@ public:
 /**
  * Chunk group for RigidMesh VBO's.
  */
-class ChunkVBOGroupRigidMesh : public ChunkVBOGroup
+class ChunkVBOGroupRigidMesh : ChunkVBOGroup
 {
 public:
 	this(GfxWorld w)
@@ -223,7 +223,7 @@ public:
 /**
  * Chunk group for CompactMesh VBO's.
  */
-class ChunkVBOGroupCompactMesh : public ChunkVBOGroup
+class ChunkVBOGroupCompactMesh : ChunkVBOGroup
 {
 public:
 	this(GfxWorld w)

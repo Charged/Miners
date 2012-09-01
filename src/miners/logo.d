@@ -13,7 +13,7 @@ static import charge.gfx.draw;
 private alias charge.gfx.draw.Draw GfxDraw;
 
 
-class Logo : public Component
+class Logo : Component
 {
 private:
 	const black = Color4f(Color4b(0x00_00_00_ff));
@@ -262,7 +262,7 @@ public:
 	}
 }
 
-class Cogwheel : public Component
+class Cogwheel : Component
 {
 private:
 	uint teeth;

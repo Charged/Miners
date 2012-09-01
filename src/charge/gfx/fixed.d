@@ -24,7 +24,7 @@ import charge.gfx.material;
 import charge.gfx.world;
 
 
-class FixedRenderer : public Renderer
+class FixedRenderer : Renderer
 {
 private:
 	mixin Logging;

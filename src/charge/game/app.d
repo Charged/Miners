@@ -57,7 +57,7 @@ protected:
 	}
 }
 
-abstract class SimpleApp : public App
+abstract class SimpleApp : App
 {
 protected:
 	TimeTracker networkTime;

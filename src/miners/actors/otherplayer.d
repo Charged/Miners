@@ -12,7 +12,7 @@ import miners.actors.mob;
 /**
  * Another player on the server.
  */
-class OtherPlayer : public Mob
+class OtherPlayer : Mob
 {
 public:
 	GfxSimpleSkeleton skel;

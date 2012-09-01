@@ -17,7 +17,7 @@ import charge.sys.file;
 import charge.sys.resource;
 import charge.platform.homefolder;
 
-class CommonCore : public Core
+class CommonCore : Core
 {
 protected:
 	static Logger l;

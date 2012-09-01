@@ -19,7 +19,7 @@ import miners.builder.interfaces;
  *
  * Has a minimum size of 16x128x16.
  */
-final class FiniteTerrain : public Terrain
+final class FiniteTerrain : Terrain
 {
 private:
 	mixin SysLogging;

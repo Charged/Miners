@@ -21,7 +21,7 @@ alias charge.net.util.ntoh ntoh;
 /**
  * A threaded TCP connection to a server that handles protocol parsing. 
  */
-class ClientConnection : public Connection
+class ClientConnection : Connection
 {
 private:
 	// Server details
@@ -546,7 +546,7 @@ protected:
 	}
 }
 
-private class ConnectionException : public Exception
+private class ConnectionException : Exception
 {
 	this(string str)
 	{
@@ -555,7 +555,7 @@ private class ConnectionException : public Exception
 	}
 }
 
-private class InvalidPacketException : public Exception
+private class InvalidPacketException : Exception
 {
 	this()
 	{

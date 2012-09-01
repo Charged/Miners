@@ -29,7 +29,7 @@ import miners.lua.wrappers.terrain;
 import miners.lua.wrappers.classic;
 
 
-class ScriptRunner : public GameRunnerBase
+class ScriptRunner : GameRunnerBase
 {
 public:
 	LuaState s;

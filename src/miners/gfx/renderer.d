@@ -7,7 +7,7 @@ import miners.gfx.imports;
 import miners.gfx.selector;
 
 
-class MinecraftForwardRenderer : public GfxForwardRenderer
+class MinecraftForwardRenderer : GfxForwardRenderer
 {
 private:
 	GfxForwardMaterialShader materialShader;
@@ -173,7 +173,7 @@ protected:
 	}
 }
 
-class MinecraftDeferredRenderer : public GfxDeferredRenderer
+class MinecraftDeferredRenderer : GfxDeferredRenderer
 {
 private:
 	mixin SysLogging;

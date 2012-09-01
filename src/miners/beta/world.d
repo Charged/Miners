@@ -19,7 +19,7 @@ import miners.importer.blocks;
 /**
  * World containing a infite beta world.
  */
-class BetaWorld : public World
+class BetaWorld : World
 {
 public:
 	BetaTerrain bt;

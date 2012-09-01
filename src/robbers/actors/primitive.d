@@ -5,7 +5,7 @@ module robbers.actors.primitive;
 import charge.charge;
 import robbers.world;
 
-class FixedCube : public GameActor
+class FixedCube : GameActor
 {
 private:
 	GfxCube gfx;
@@ -39,7 +39,7 @@ public:
 
 }
 
-class FixedRigid : public GameActor
+class FixedRigid : GameActor
 {
 private:
 	GfxRigidModel gfx;

@@ -128,7 +128,7 @@ private:
 /**
  * Base class for all memory based files.
  */
-abstract class BaseMemFile : public File
+abstract class BaseMemFile : File
 {
 	void[] mem;
 
@@ -151,7 +151,7 @@ abstract class BaseMemFile : public File
 /**
  * A builtin file pointing to data in memory.
  */
-class BuiltinFile : public BaseMemFile
+class BuiltinFile : BaseMemFile
 {
 	this(void[] mem)
 	{
@@ -162,7 +162,7 @@ class BuiltinFile : public BaseMemFile
 /**
  * A file backed by D memory.
  */
-class DMemFile : public BaseMemFile
+class DMemFile : BaseMemFile
 {
 	this(void[] mem)
 	{
@@ -178,7 +178,7 @@ class DMemFile : public BaseMemFile
 /**
  * A file backed by C memory.
  */
-class CMemFile : public BaseMemFile
+class CMemFile : BaseMemFile
 {
 	this(void[] mem)
 	{

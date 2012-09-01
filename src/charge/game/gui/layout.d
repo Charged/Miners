@@ -6,7 +6,7 @@ import charge.math.ints;
 import charge.game.gui.container;
 
 
-class VerticalContainer : public Container
+class VerticalContainer : Container
 {
 public:
 	uint minWidth;

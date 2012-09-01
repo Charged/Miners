@@ -58,7 +58,7 @@ static import miners.builder.classic;
 /**
  * Main hub of the minecraft game.
  */
-class Game : public GameRouterApp, public Router
+class Game : GameRouterApp, Router
 {
 private:
 	/** Regexp for extracting information out of a mc url */

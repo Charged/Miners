@@ -63,7 +63,7 @@ static string StructWrapper(string type)
 	return StructWrapperPush(type) ~ StructWrapperRest(type);
 }
 
-class LuaState : public State
+class LuaState : State
 {
 	static LuaState opCall(lua_State *l)
 	{

@@ -16,7 +16,7 @@ alias charge.sys.resource.Resource.reference sysReference;
 /**
  * Only used to display something when nothing is being runned.
  */
-class BackgroundRunner : public Runner
+class BackgroundRunner : Runner
 {
 public:
 	Color4f color;

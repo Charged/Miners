@@ -12,7 +12,7 @@ import charge.charge;
 import charge.game.lua;
 
 
-class GameCamera : public GameActor
+class GameCamera : GameActor
 {
 private:
 	GfxProjCamera c;
@@ -49,7 +49,7 @@ public:
 	void getRotation(out Quatd rot) { c.getRotation(rot); }
 }
 
-class GameCube : public GameActor
+class GameCube : GameActor
 {
 private:
 	GfxRigidModel gfx;
@@ -68,7 +68,7 @@ public:
 
 }
 
-class GameSunLight : public GameActor
+class GameSunLight : GameActor
 {
 private:
 	GfxSimpleLight gfx;
@@ -246,7 +246,7 @@ struct GameSunLightWrapper
 	}
 }
 
-class Game : public GameSimpleApp
+class Game : GameSimpleApp
 {
 private:
 	uint ticks;

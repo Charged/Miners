@@ -14,7 +14,7 @@ import charge.util.png;
 /**
  * A threaded TCP connection to the minecraft.net servers. 
  */
-class SkinDownloader : public NetHttpConnection
+class SkinDownloader : NetHttpConnection
 {
 private:
 	// Server details

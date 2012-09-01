@@ -7,7 +7,7 @@ import charge.math.movable;
 import charge.sfx.buffer;
 import charge.sfx.al;
 
-class Source : public Movable
+class Source : Movable
 {
 private:
 	ALuint source;

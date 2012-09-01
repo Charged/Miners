@@ -10,7 +10,7 @@ import robbers.player;
 import robbers.network;
 import robbers.world;
 
-class Cube : public GameActor, public NetworkObject, public GameTicker
+class Cube : GameActor, NetworkObject, GameTicker
 {
 protected:
 	uint id;

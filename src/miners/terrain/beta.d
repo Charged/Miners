@@ -13,7 +13,7 @@ import miners.terrain.common;
 import miners.builder.interfaces;
 
 
-final class BetaTerrain : public Terrain
+final class BetaTerrain : Terrain
 {
 public:
 	const int width = 16;

@@ -29,7 +29,7 @@ import charge.gfx.zone;
 /**
  * Base class for all materials.
  */
-class MaterialShader : public Shader
+class MaterialShader : Shader
 {
 public:
 	this(string vert, string frag)
@@ -48,7 +48,7 @@ public:
 	}
 }
 
-class LightShaderBase : public Shader
+class LightShaderBase : Shader
 {
 public:
 	UniformMatrix4x4d projectionMatrixInverse;
@@ -75,7 +75,7 @@ protected:
 	}
 }
 
-class SpotLightShaderBase : public LightShaderBase
+class SpotLightShaderBase : LightShaderBase
 {
 public:
 	UniformMatrix4x4d textureMatrix;
@@ -107,7 +107,7 @@ protected:
 	}
 }
 
-final class SpotLightShader : public SpotLightShaderBase
+final class SpotLightShader : SpotLightShaderBase
 {
 public:
 	this()
@@ -120,7 +120,7 @@ public:
 	}
 }
 
-final class SpotLightShadowShader : public SpotLightShaderBase
+final class SpotLightShadowShader : SpotLightShaderBase
 {
 public:
 	this()
@@ -133,7 +133,7 @@ public:
 	}
 }
 
-final class PointLightShader : public LightShaderBase
+final class PointLightShader : LightShaderBase
 {
 public:
 	UniformFloat nearClip;
@@ -158,7 +158,7 @@ public:
 	}
 }
 
-class DirectionalLightShaderBase : public LightShaderBase
+class DirectionalLightShaderBase : LightShaderBase
 {
 public:
 	UniformVector3d direction;
@@ -186,7 +186,7 @@ protected:
 	}
 }
 
-final class DirectionalLightShader : public DirectionalLightShaderBase
+final class DirectionalLightShader : DirectionalLightShaderBase
 {
 public:
 	this()
@@ -198,7 +198,7 @@ public:
 	}
 }
 
-final class DirectionalLightIsoShader : public DirectionalLightShaderBase
+final class DirectionalLightIsoShader : DirectionalLightShaderBase
 {
 public:
 	this()
@@ -210,7 +210,7 @@ public:
 	}
 }
 
-final class DirectionalLightSplitShader : public DirectionalLightShaderBase
+final class DirectionalLightSplitShader : DirectionalLightShaderBase
 {
 public:
 	UniformFloat4 slices;
@@ -228,7 +228,7 @@ public:
 	}
 }
 
-final class FogShader : public LightShaderBase
+final class FogShader : LightShaderBase
 {
 public:
 	UniformColor4f color;
@@ -251,7 +251,7 @@ public:
 	}
 }
 
-class DeferredRenderer : public Renderer
+class DeferredRenderer : Renderer
 {
 private:
 	mixin Logging;
@@ -1872,7 +1872,7 @@ void main()
 
 }
 
-private class DeferredTarget : public RenderTarget
+private class DeferredTarget : RenderTarget
 {
 private:
 	mixin Logging;
@@ -2002,7 +2002,7 @@ public:
 
 }
 
-private class DepthTarget : public RenderTarget
+private class DepthTarget : RenderTarget
 {
 private:
 	mixin Logging;
@@ -2098,7 +2098,7 @@ public:
 
 }
 
-private class DepthTargetArray : public RenderTarget
+private class DepthTargetArray : RenderTarget
 {
 private:
 	mixin Logging;

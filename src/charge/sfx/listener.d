@@ -5,7 +5,7 @@ module charge.sfx.listener;
 import charge.math.movable;
 import charge.sfx.al;
 
-class Listener : public Movable
+class Listener : Movable
 {
 private:
 	static Listener current;

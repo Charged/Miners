@@ -101,7 +101,7 @@ char[] makeTextGuiButton(string text, uint minwidth = 0)
 /**
  * A simple button.
  */
-class Button : public Text
+class Button : Text
 {
 public:
 	string text;
@@ -150,7 +150,7 @@ public:
  *
  */
 
-class HeaderContainer : public TextureContainer
+class HeaderContainer : TextureContainer
 {
 public:
 	Container plane;

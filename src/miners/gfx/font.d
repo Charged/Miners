@@ -11,7 +11,7 @@ import charge.gfx.draw;
 import miners.gfx.imports;
 
 
-class ClassicFont : public BitmapFont
+class ClassicFont : BitmapFont
 {
 public:
 	const string uri = "bfc://";

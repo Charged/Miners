@@ -11,7 +11,7 @@ import charge.gfx.gl;
 import charge.sys.logger;
 import charge.sys.resource;
 
-class VBO : public Resource
+class VBO : Resource
 {
 public:
 	const string uri = "vbo://";
@@ -96,7 +96,7 @@ protected:
 
 }
 
-class RigidMeshVBO : public VBO
+class RigidMeshVBO : VBO
 {
 protected:
 	const void *vertOffset = null;

@@ -27,7 +27,7 @@ bool collidesWith(Component c, int x, int y, uint w, uint h)
 	return false;
 }
 
-class Container : public Component
+class Container : Component
 {
 protected:
 	Vector!(Component) children;
@@ -176,7 +176,7 @@ protected:
 /**
  * Base class for containers that render into a texture.
  */
-abstract class TextureTargetContainer : public Container
+abstract class TextureTargetContainer : Container
 {
 public:
 	void delegate() repaintDg;
@@ -253,7 +253,7 @@ public:
 /**
  * Class intended to be the bottom of a rendering stack.
  */
-class TextureContainer : public TextureTargetContainer
+class TextureContainer : TextureTargetContainer
 {
 public:
 	this(uint w, uint h)
@@ -279,7 +279,7 @@ public:
  * Caches the rendering result in a texture thereby
  * stopping paint to decend to children.
  */
-class CacheContainer : public TextureTargetContainer
+class CacheContainer : TextureTargetContainer
 {
 public:
 	this(Container c, int x, int y, uint w, uint h)
@@ -303,7 +303,7 @@ public:
 /**
  * Does the same as ChacheContainer only drawing it anti-aliased.
  */
-class AntiAliasingContainer : public TextureTargetContainer
+class AntiAliasingContainer : TextureTargetContainer
 {
 public:
 	this(Container c, int x, int y, uint w, uint h)

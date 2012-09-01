@@ -7,7 +7,7 @@ import lib.sdl.sdl;
 import charge.util.signal;
 import charge.ctl.device;
 
-class Mouse : public Device
+class Mouse : Device
 {
 public:
 	int state; /**< Mask of button state, 1 == pressed */

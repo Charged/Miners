@@ -26,7 +26,7 @@ import charge.gfx.world;
 /**
  * Base class for all directional light based shaders.
  */
-class MaterialShader : public Shader
+class MaterialShader : Shader
 {
 public:
 	UniformVector3d lightDirection;
@@ -58,7 +58,7 @@ public:
 /**
  * A bog standard forward renderer using shaders.
  */
-class ForwardRenderer : public Renderer
+class ForwardRenderer : Renderer
 {
 protected:
 	static MaterialShader materialShaderMeshTex;

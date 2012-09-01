@@ -9,7 +9,7 @@ import miners.gfx.imports;
 /**
  * Base class for all Chunk VBO Groups, handles general managment.
  */
-class Selector : public GfxActor, public GfxRenderable
+class Selector : GfxActor, GfxRenderable
 {
 public:
 	bool show;

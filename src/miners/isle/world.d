@@ -20,7 +20,7 @@ import miners.importer.info;
 /**
  * World containing a infite floating island world.
  */
-class IsleWorld : public World
+class IsleWorld : World
 {
 public:
 	BetaTerrain bt;

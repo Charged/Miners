@@ -10,7 +10,7 @@ import charge.phy.ode;
 import charge.phy.actor;
 import charge.phy.world;
 
-class Cube : public Body
+class Cube : Body
 {
 	mixin Logging;
 

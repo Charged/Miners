@@ -7,7 +7,7 @@ import charge.ctl.device;
 
 import lib.sdl.keysym;
 
-class Keyboard : public Device
+class Keyboard : Device
 {
 public:
 	int mod;

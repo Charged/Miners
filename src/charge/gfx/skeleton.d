@@ -43,7 +43,7 @@ struct Bone
 /**
  * Very very simple skeleton.
  */
-class SimpleSkeleton : public Actor, public Renderable
+class SimpleSkeleton : Actor, Renderable
 {
 public:
 	cMemoryArray!(Bone) bones;
@@ -113,7 +113,7 @@ public:
 		glPopMatrix();
 	}
 
-	static class VBO : public charge.gfx.vbo.VBO
+	static class VBO : charge.gfx.vbo.VBO
 	{
 	protected:
 		const void* positionOffset = null;

@@ -171,7 +171,7 @@ static Vertex vert[24] = [
 ];
 }
 
-class Cube : public Actor, public Renderable
+class Cube : Actor, Renderable
 {
 public:
 	this(World w) {

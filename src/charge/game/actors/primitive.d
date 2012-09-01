@@ -14,7 +14,7 @@ static import charge.phy.cube;
 
 import charge.game.world;
 
-class Cube : public Actor, public Ticker
+class Cube : Actor, Ticker
 {
 protected:
 	charge.gfx.cube.Cube gfx;
@@ -46,7 +46,7 @@ public:
 
 }
 
-class StaticCube : public Actor
+class StaticCube : Actor
 {
 protected:
 	charge.gfx.cube.Cube gfx;
@@ -79,7 +79,7 @@ public:
 
 }
 
-class StaticRigid : public Actor
+class StaticRigid : Actor
 {
 protected:
 	charge.gfx.rigidmodel.RigidModel gfx;

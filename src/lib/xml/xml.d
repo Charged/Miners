@@ -18,7 +18,7 @@ class Node
 	abstract string value();
 }
 
-class Text : public Node
+class Text : Node
 {
 	string data;
 
@@ -40,7 +40,7 @@ class Attribute
 	string value;
 }
 
-class Element : public Node
+class Element : Node
 {
 	string name;
 	Vector!(Node) children;
@@ -201,7 +201,7 @@ class XmlException : Exception
 	}
 }
 
-class DomParser : protected Parser
+class DomParser : Parser
 {
 private:
 	Element current;

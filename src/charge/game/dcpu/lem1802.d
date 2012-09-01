@@ -18,7 +18,7 @@ import charge.game.dcpu.cpu;
 /**
  * Implementation of a NYA ELEKTRISKA LEM1802.
  */
-class Lem1802 : private Component, public DcpuHw
+class Lem1802 : Component, DcpuHw
 {
 public:
 	const hwId = 0x7349F615;

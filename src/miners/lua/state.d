@@ -17,7 +17,7 @@ import miners.types;
 import miners.lua.wrappers.types;
 
 
-class LuaState : public charge.game.lua.LuaState
+class LuaState : charge.game.lua.LuaState
 {
 	static LuaState opCall(lua_State *l)
 	{

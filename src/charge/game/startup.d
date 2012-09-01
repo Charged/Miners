@@ -14,7 +14,7 @@ import charge.game.runner;
  * Often used at startup to load several things at
  * the same time.
  */
-class StartupRunner : public Runner
+class StartupRunner : Runner
 {
 protected:
 	string[] errors;

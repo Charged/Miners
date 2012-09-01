@@ -10,7 +10,7 @@ import charge.gfx.gl;
 import charge.gfx.cull;
 import charge.sys.logger;
 
-abstract class Camera : public Movable
+abstract class Camera : Movable
 {
 public:
 	double near, far;
@@ -32,7 +32,7 @@ public:
 	}
 }
 
-class ProjCamera : public Camera
+class ProjCamera : Camera
 {
 public:
 	double fov, ratio;
@@ -95,7 +95,7 @@ public:
 	}
 }
 
-class OrthoCamera : public Camera
+class OrthoCamera : Camera
 {
 public:
 	double width, height;
@@ -126,7 +126,7 @@ public:
 
 }
 
-class IsoCamera : public OrthoCamera
+class IsoCamera : OrthoCamera
 {
 protected:
 	mixin Logging;

@@ -31,7 +31,7 @@ public:
 	abstract void tick();
 }
 
-class IsoCameraMover : public Mover
+class IsoCameraMover : Mover
 {
 public:
 	int x; int z;
@@ -57,7 +57,7 @@ public:
 	}
 }
 
-class ProjCameraMover : public Mover
+class ProjCameraMover : Mover
 {
 public:
 	double normalScale;

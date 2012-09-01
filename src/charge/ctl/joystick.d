@@ -7,7 +7,7 @@ import lib.sdl.sdl;
 import charge.util.signal;
 import charge.ctl.device;
 
-class Joystick : public Device
+class Joystick : Device
 {
 public:
 	Signal!(Joystick, int, int) axis;

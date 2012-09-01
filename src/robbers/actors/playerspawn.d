@@ -7,7 +7,7 @@ static import std.random;
 import charge.charge;
 import robbers.world;
 
-class PlayerSpawn : public GameActor
+class PlayerSpawn : GameActor
 {
 private:
 	static Vector!(PlayerSpawn) spawns;

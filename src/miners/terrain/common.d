@@ -14,7 +14,7 @@ import miners.builder.workspace;
 import miners.builder.interfaces;
 
 
-class Terrain : public GameActor
+class Terrain : GameActor
 {
 public:
 	ChunkVBOGroupCompactMesh[BuildMeshes] cvgcm;

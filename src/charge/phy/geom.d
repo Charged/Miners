@@ -13,7 +13,7 @@ package:
 	dGeomID geom;
 }
 
-class GeomCube : public Geom
+class GeomCube : Geom
 {
 	this(float x, float y, float z)
 	{
@@ -22,7 +22,7 @@ class GeomCube : public Geom
 	}
 }
 
-class GeomSphere : public Geom
+class GeomSphere : Geom
 {
 	this(float radius)
 	{
@@ -31,7 +31,7 @@ class GeomSphere : public Geom
 	}
 }
 
-class GeomMeshData : public Resource
+class GeomMeshData : Resource
 {
 public:
 	const string uri = "geom://";
@@ -87,7 +87,7 @@ protected:
 	}
 }
 
-class GeomMesh : public Geom
+class GeomMesh : Geom
 {
 private:
 	GeomMeshData data;

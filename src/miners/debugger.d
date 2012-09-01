@@ -20,7 +20,7 @@ static import miners.terrain.chunk;
 /**
  * A debug display overlay.
  */
-class DebugRunner : public Runner
+class DebugRunner : Runner
 {
 protected:
 	Router router;

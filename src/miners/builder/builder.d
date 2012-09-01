@@ -19,7 +19,7 @@ import miners.builder.interfaces;
  * Classic and Beta both subclass this class to
  * make it build classic or beta terrains.
  */
-abstract class MeshBuilderBuildArray : public MeshBuilder
+abstract class MeshBuilderBuildArray : MeshBuilder
 {
 public:
 	BuildFunction *buildArray;

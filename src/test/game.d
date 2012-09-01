@@ -10,7 +10,7 @@ import charge.charge;
 
 import lib.sdl.sdl;
 
-class Ticker : public GameActor, public GameTicker
+class Ticker : GameActor, GameTicker
 {
 protected:
 	GfxActor gfx;
@@ -55,7 +55,7 @@ public:
 
 }
 
-class Cube : public Ticker
+class Cube : Ticker
 {
 	this(GameWorld w, Point3d pos)
 	{
@@ -68,7 +68,7 @@ class Cube : public Ticker
 	}
 }
 
-class Sphere : public Ticker
+class Sphere : Ticker
 {
 	this(GameWorld w, Point3d pos)
 	{
@@ -81,7 +81,7 @@ class Sphere : public Ticker
 	}
 }
 
-class Car : public Ticker
+class Car : Ticker
 {
 	this(GameWorld w, Point3d pos)
 	{
@@ -179,7 +179,7 @@ class Car : public Ticker
 	PhyCar car;
 }
 
-class Game : public GameSimpleApp
+class Game : GameSimpleApp
 {
 private:
 	bool moveing;

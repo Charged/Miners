@@ -16,7 +16,7 @@ import charge.gfx.gl;
 import charge.gfx.target;
 
 
-class Texture : public Resource
+class Texture : Resource
 {
 public:
 	enum Filter {
@@ -265,7 +265,7 @@ private:
 
 }
 
-class ColorTexture : public Texture
+class ColorTexture : Texture
 {
 private:
 	mixin Logging;
@@ -341,7 +341,7 @@ protected:
 
 }
 
-class DynamicTexture : public Texture
+class DynamicTexture : Texture
 {
 public:
 	this(string name)
@@ -360,7 +360,7 @@ public:
 
 }
 
-class WrappedTexture : public Texture
+class WrappedTexture : Texture
 {
 private:
 	Texture tex;
@@ -411,7 +411,7 @@ public:
 	}
 }
 
-class TextureTarget : public Texture, public RenderTarget
+class TextureTarget : Texture, RenderTarget
 {
 private:
 	GLuint fbo;
@@ -486,7 +486,7 @@ protected:
 	}
 }
 
-class TextureArray : public Texture
+class TextureArray : Texture
 {
 public:
 	uint length;

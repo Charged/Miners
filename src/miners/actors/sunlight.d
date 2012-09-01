@@ -10,7 +10,7 @@ import miners.world;
 /**
  * Represents the minecraft sun light, also controls the fog.
  */
-class SunLight : public GameActor
+class SunLight : GameActor
 {
 public:
 	GfxSimpleLight gfx;

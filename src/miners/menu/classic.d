@@ -22,7 +22,7 @@ const uint childWidth = 424;
 const uint childHeight = 9*16;
 
 
-class CenteredText : public Container
+class CenteredText : Container
 {
 public:
 	Text text;
@@ -52,7 +52,7 @@ public:
 /**
  * Displays connection status for a Classic connection.
  */
-class ClassicConnectingMenu : public MenuRunnerBase, public ClientListener
+class ClassicConnectingMenu : MenuRunnerBase, ClientListener
 {
 private:
 	ClientConnection cc;
@@ -226,7 +226,7 @@ protected:
  */
 
 
-class WebpageInfoMenu : public MenuRunnerBase, public ClassicWebpageListener
+class WebpageInfoMenu : MenuRunnerBase, ClassicWebpageListener
 {
 private:
 	ClassicServerInfo csi;

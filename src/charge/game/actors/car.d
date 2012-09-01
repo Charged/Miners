@@ -18,7 +18,7 @@ static import charge.phy.car;
 import charge.game.world;
 import charge.game.actors.playerspawn;
 
-class Car : public Actor, public Ticker
+class Car : Actor, Ticker
 {
 private:
 	bool forward;

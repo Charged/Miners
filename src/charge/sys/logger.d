@@ -46,7 +46,7 @@ template Logging()
 	}
 }
 
-private class StdOutWriter : public Writer
+private class StdOutWriter : Writer
 {
 private:
 	FILE *file;

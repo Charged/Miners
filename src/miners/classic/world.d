@@ -16,7 +16,7 @@ import miners.importer.classic;
 /**
  * A world containing a classic level.
  */
-class ClassicWorld : public World
+class ClassicWorld : World
 {
 private:
 	mixin SysLogging;

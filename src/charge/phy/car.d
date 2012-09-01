@@ -15,7 +15,7 @@ import charge.phy.world;
 /**
  * A four wheeled car
  */
-class Car : public Body , public PhysicsTicker
+class Car : Body, PhysicsTicker
 {
 private:
 	mixin Logging;

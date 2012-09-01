@@ -60,7 +60,7 @@ interface ClassicWebpageListener
 /**
  * A threaded TCP connection to the minecraft.net servers. 
  */
-class WebpageConnection : public NetHttpConnection
+class WebpageConnection : NetHttpConnection
 {
 private:
 	// Server details

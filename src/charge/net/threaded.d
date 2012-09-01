@@ -20,7 +20,7 @@ import std.outofmemory;
  *
  * Protected functions are less safe then the public ones.
  */
-class ThreadedTcpConnection : public Thread
+class ThreadedTcpConnection : Thread
 {
 protected:
 	TcpSocket s;
@@ -103,7 +103,7 @@ protected:
 	}
 }
 
-class ThreadedPacketQueue : public ThreadedTcpConnection
+class ThreadedPacketQueue : ThreadedTcpConnection
 {
 private:
 	/* Packet list protected by synchronized (this) */

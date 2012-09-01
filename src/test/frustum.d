@@ -20,7 +20,7 @@ static import charge.gfx.vbo;
 alias charge.gfx.vbo.RigidMeshVBO GfxVBO;
 
 
-class Game : public GameSimpleApp
+class Game : GameSimpleApp
 {
 private:
 	double heading;

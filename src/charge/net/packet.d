@@ -210,7 +210,7 @@ private:
 	uint8_t t;
 }
 
-class RealiblePacket : public Packet
+class RealiblePacket : Packet
 {
 	this(size_t size)
 	{
@@ -224,7 +224,7 @@ class RealiblePacket : public Packet
 
 }
 
-class UnrealiblePacket : public Packet
+class UnrealiblePacket : Packet
 {
 	this(size_t size)
 	{
@@ -238,7 +238,7 @@ class UnrealiblePacket : public Packet
 
 }
 
-class AckPacket : public Packet
+class AckPacket : Packet
 {
 	this()
 	{
@@ -246,7 +246,7 @@ class AckPacket : public Packet
 	}
 }
 
-class ConnectPacket : public Packet
+class ConnectPacket : Packet
 {
 	this()
 	{
@@ -254,7 +254,7 @@ class ConnectPacket : public Packet
 	}
 }
 
-class PingPacket : public Packet
+class PingPacket : Packet
 {
 	this()
 	{
@@ -262,7 +262,7 @@ class PingPacket : public Packet
 	}
 }
 
-class InPacket : public Packet
+class InPacket : Packet
 {
 	this(void[] data)
 	{
@@ -270,7 +270,7 @@ class InPacket : public Packet
 	}
 }
 
-class DisconnectPacket : public Packet
+class DisconnectPacket : Packet
 {
 	this()
 	{

@@ -11,7 +11,7 @@ import miners.actors.mob;
 /**
  * Animal base mob.
  */
-class Animal : public Mob
+class Animal : Mob
 {
 public:
 	GfxCube thing;

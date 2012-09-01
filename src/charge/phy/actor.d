@@ -11,7 +11,7 @@ import charge.phy.geom;
 import charge.phy.material;
 import charge.phy.world;
 
-class Actor : public Movable
+class Actor : Movable
 {
 	this(World w)
 	{
@@ -27,7 +27,7 @@ protected:
 	Material mat;
 }
 
-class Body : public Actor
+class Body : Actor
 {
 protected:
 	dBodyID dBody;
@@ -183,7 +183,7 @@ private:
 
 }
 
-class Static : public Actor
+class Static : Actor
 {
 protected:
 	Geom geom;

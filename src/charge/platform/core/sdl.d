@@ -46,7 +46,7 @@ extern(C) void chargeQuit()
 	SDL_PushEvent(&event);
 }
 
-class CoreSDL : public CommonCore
+class CoreSDL : CommonCore
 {
 private:
 	mixin Logging;

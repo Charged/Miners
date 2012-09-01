@@ -9,7 +9,7 @@ import miners.options;
 import miners.interfaces;
 
 
-class MenuRunnerBase : public GameMenuRunner
+class MenuRunnerBase : GameMenuRunner
 {
 public:
 	Router r;
@@ -32,7 +32,7 @@ public:
 }
 
 
-class MenuBase : public HeaderContainer
+class MenuBase : HeaderContainer
 {
 public:
 	Button button;

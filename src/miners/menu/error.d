@@ -13,7 +13,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class InfoMenu : public MenuRunnerBase
+class InfoMenu : MenuRunnerBase
 {
 private:
 	Router r;
@@ -54,7 +54,7 @@ public:
 }
 
 
-class ErrorMenu : public InfoMenu
+class ErrorMenu : InfoMenu
 {
 private:
 	const string header = `Charged Miners`;

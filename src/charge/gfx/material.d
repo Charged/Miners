@@ -120,7 +120,7 @@ public:
 
 }
 
-class SimpleMaterial : public Material
+class SimpleMaterial : Material
 {
 public:
 	Color4f color;

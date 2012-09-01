@@ -9,7 +9,7 @@ import robbers.network;
 
 import robbers.actors.gold;
 
-class World : public GameWorld
+class World : GameWorld
 {
 private:
 	NetworkSender ns;

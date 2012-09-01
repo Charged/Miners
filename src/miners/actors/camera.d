@@ -10,7 +10,7 @@ import miners.world;
 import miners.actors.sunlight;
 
 
-class Camera : public GameActor
+class Camera : GameActor
 {
 protected:
 	GfxCamera c;

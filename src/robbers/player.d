@@ -13,7 +13,7 @@ import robbers.actors.car;
 
 import lib.sdl.sdl;
 
-class Player : public GameTicker
+class Player : GameTicker
 {
 public:
 

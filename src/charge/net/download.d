@@ -41,7 +41,7 @@ interface DownloadListener
 /**
  * A http connection that downloads files. 
  */
-class DownloadConnection : public HttpConnection
+class DownloadConnection : HttpConnection
 {
 private:
 	/// Receiver of packages

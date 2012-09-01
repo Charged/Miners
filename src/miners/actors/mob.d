@@ -10,7 +10,7 @@ import miners.world;
 /**
  * Base class for OtherPlayers and Mobs.
  */
-class Mob : public GameActor
+class Mob : GameActor
 {
 public:
 	World w;

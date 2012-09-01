@@ -13,7 +13,7 @@ import miners.options;
  * Used during and after startup has completed. Deals with not all resources
  * being available found via the initOptions function.
  */
-class BackgroundRunner : public GameBackgroundRunner
+class BackgroundRunner : GameBackgroundRunner
 {
 private:
 	Options opts;

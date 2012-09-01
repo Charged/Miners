@@ -14,7 +14,7 @@ import miners.interfaces;
 /**
  * Base class for lever viewers and game logic runners.
  */
-class GameRunnerBase : public Runner
+class GameRunnerBase : Runner
 {
 public:
 	Router r;

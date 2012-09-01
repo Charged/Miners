@@ -12,7 +12,7 @@ import charge.gfx.draw;
 import charge.gfx.texture;
 
 
-class BitmapFont : public Resource
+class BitmapFont : Resource
 {
 public:
 	const string uri = "bf://";

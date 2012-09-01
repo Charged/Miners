@@ -14,7 +14,7 @@ import charge.game.gui.container;
 /**
  * Baseclass for managing text.
  */
-class Text : public Component
+class Text : Component
 {
 protected:
 	string t;
@@ -61,7 +61,7 @@ public:
 /**
  * Double sized text.
  */
-class DoubleText : public Text
+class DoubleText : Text
 {
 public:
 	this(Container c, int x, int y, string text, bool shaded)

@@ -12,7 +12,7 @@ interface Ticker
 	void tick();
 }
 
-abstract class Actor : public Movable
+abstract class Actor : Movable
 {
 public:
 	World w;

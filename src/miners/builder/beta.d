@@ -19,7 +19,7 @@ import miners.builder.workspace;
  */
 
 
-class BetaMeshBuilder : public MeshBuilderBuildArray
+class BetaMeshBuilder : MeshBuilderBuildArray
 {
 	this()
 	{

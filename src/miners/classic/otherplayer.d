@@ -9,7 +9,7 @@ import miners.importer.network;
 import actors = miners.actors.otherplayer;
 
 
-class OtherPlayer : public actors.OtherPlayer
+class OtherPlayer : actors.OtherPlayer
 {
 public:
 	char[] name;

@@ -20,7 +20,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class ClassicServerListMenu : public MenuRunnerBase
+class ClassicServerListMenu : MenuRunnerBase
 {
 private:
 	ListView lv;
@@ -60,7 +60,7 @@ public:
 /**
  * Field that users can input a search term, to search for servers.
  */
-class SearchField : public Text
+class SearchField : Text
 {
 private:
 	bool inFocus; //< XXX Hack
@@ -197,7 +197,7 @@ protected:
 /**
  * Shows a list of servers.
  */
-class ListView : public Component
+class ListView : Component
 {
 private:
 	Options opts;
