@@ -21,10 +21,10 @@ const GL_COMPRESSED_TEXTURE_FORMATS_ARB = 0x86A3;
 
 extern(System):
 
-void (*glCompressedTexImage1DARB)(GLenum target, GLint level, GLenum initernalformat, GLsizei width, GLint border, GLsizei imageSize, void* data);
-void (*glCompressedTexImage2DARB)(GLenum target, GLint level, GLenum initernalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, void* data);
-void (*glCompressedTexImage3DARB)(GLenum target, GLint level, GLenum initernalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, void* data);
-void (*glCompressedTexSubImage1DARB)(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, void* data);
-void (*glCompressedTexSubImage2DARB)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, void* data);
-void (*glCompressedTexSubImage3DARB)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, void* data);
-void (*glGetCompressedTexImageARB)(GLenum target, GLint lod, void* img);
+void function(GLenum target, GLint level, GLenum initernalformat, GLsizei width, GLint border, GLsizei imageSize, void* data) glCompressedTexImage1DARB;
+void function(GLenum target, GLint level, GLenum initernalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, void* data) glCompressedTexImage2DARB;
+void function(GLenum target, GLint level, GLenum initernalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, void* data) glCompressedTexImage3DARB;
+void function(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, void* data) glCompressedTexSubImage1DARB;
+void function(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, void* data) glCompressedTexSubImage2DARB;
+void function(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, void* data) glCompressedTexSubImage3DARB;
+void function(GLenum target, GLint lod, void* img) glGetCompressedTexImageARB;

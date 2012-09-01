@@ -11,7 +11,7 @@ const GL_VERTEX_ARRAY_BINDING_APPLE = 0x85B5;
 
 extern(System):
 
-void (*glBindVertexArrayAPPLE)(GLuint array);
-void (*glDeleteVertexArraysAPPLE)(GLsizei n, GLuint *arrays);
-void (*glGenVertexArraysAPPLE)(GLsizei n, GLuint *arrays);
-GLboolean (*glIsVertexArrayAPPLE)(GLuint array);
+void function(GLuint array) glBindVertexArrayAPPLE;
+void function(GLsizei n, GLuint *arrays) glDeleteVertexArraysAPPLE;
+void function(GLsizei n, GLuint *arrays) glGenVertexArraysAPPLE;
+GLboolean function(GLuint array) glIsVertexArrayAPPLE;

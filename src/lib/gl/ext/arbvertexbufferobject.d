@@ -41,14 +41,14 @@ const GL_BUFFER_MAP_POINTER_ARB = 0x88BD;
 
 extern(System):
 
-void (*glBindBufferARB)(GLenum target, GLuint buffer);
-void (*glDeleteBuffersARB)(GLsizei n, GLuint *buffers);
-void (*glGenBuffersARB)(GLsizei n, GLuint *buffers);
-GLboolean (*glIsBufferARB)(GLuint buffer);
-void (*glBufferDataARB)(GLenum target, GLsizeiptrARB size, void *data, GLenum usage);
-void (*glBufferSubDataARB)(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void *data);
-void (*glGetBufferSubDataARB)(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void *data);
-void *(*glMapBufferARB)(GLenum target, GLenum access);
-GLboolean (*glUnmapBufferARB)(GLenum target);
-void (*glGetBufferParameterivARB)(GLenum target, GLenum pname, GLint *params);
-void (*glGetBufferPointervARB)(GLenum target, GLenum pname, void **params);
+void function(GLenum target, GLuint buffer) glBindBufferARB;
+void function(GLsizei n, GLuint *buffers) glDeleteBuffersARB;
+void function(GLsizei n, GLuint *buffers) glGenBuffersARB;
+GLboolean function(GLuint buffer) glIsBufferARB;
+void function(GLenum target, GLsizeiptrARB size, void *data, GLenum usage) glBufferDataARB;
+void function(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void *data) glBufferSubDataARB;
+void function(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void *data) glGetBufferSubDataARB;
+void *function(GLenum target, GLenum access) glMapBufferARB;
+GLboolean function(GLenum target) glUnmapBufferARB;
+void function(GLenum target, GLenum pname, GLint *params) glGetBufferParameterivARB;
+void function(GLenum target, GLenum pname, void **params) glGetBufferPointervARB;

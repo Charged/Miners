@@ -30,7 +30,7 @@ const GL_PROGRAM_POINT_SIZE_EXT = 0x8642;
 
 extern (System):
 
-void (*glProgramParameteriEXT)(GLuint program, GLenum pname, GLint value);
-void (*glFramebufferTextureEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level);
-void (*glFramebufferTextureLayerEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
-void (*glFramebufferTextureFaceEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLenum face);
+void function(GLuint program, GLenum pname, GLint value) glProgramParameteriEXT;
+void function(GLenum target, GLenum attachment, GLuint texture, GLint level) glFramebufferTextureEXT;
+void function(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer) glFramebufferTextureLayerEXT;
+void function(GLenum target, GLenum attachment, GLuint texture, GLint level, GLenum face) glFramebufferTextureFaceEXT;

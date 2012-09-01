@@ -14,6 +14,6 @@ const GL_DEPTH_BUFFER_FLOAT_MODE_NV = 0x8DAF;
 
 extern(System):
 
-void (*glDepthRangedNV)(double n, double f);
-void (*glClearDepthdNV)(double d);
-void (*glDepthBoundsdNV)(double zmin, double zmax);
+void function(double n, double f) glDepthRangedNV;
+void function(double d) glClearDepthdNV;
+void function(double zmin, double zmax) glDepthBoundsdNV;

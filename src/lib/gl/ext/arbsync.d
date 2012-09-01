@@ -25,10 +25,10 @@ const GLuint64 GL_TIMEOUT_IGNORED   = 0xFFFFFFFFFFFFFFFF;
 
 extern(System):
 
-GLsync (*glFenceSync)(GLenum condition, GLbitfield flags);
-GLboolean (*glIsSync)(GLsync sync);
-void (*glDeleteSync)(GLsync sync);
-GLenum (*glClientWaitSync)(GLsync sync, GLbitfield flags, GLuint64 timeout);
-void (*glWaitSync)(GLsync sync, GLbitfield flags, GLuint64 timeout);
-void (*glGetInteger64v)(GLenum pname, GLint64 *params);
-void (*glGetSynciv)(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values);
+GLsync function(GLenum condition, GLbitfield flags) glFenceSync;
+GLboolean function(GLsync sync) glIsSync;
+void function(GLsync sync) glDeleteSync;
+GLenum function(GLsync sync, GLbitfield flags, GLuint64 timeout) glClientWaitSync;
+void function(GLsync sync, GLbitfield flags, GLuint64 timeout) glWaitSync;
+void function(GLenum pname, GLint64 *params) glGetInteger64v;
+void function(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values) glGetSynciv;

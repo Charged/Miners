@@ -20,7 +20,7 @@ const GL_VERTEX_ARRAY_BINDING_CHARGE = 0x85B5;
 
 extern (System):
 
-void (*glBindVertexArrayCHARGE)(GLuint array);
-void (*glDeleteVertexArraysCHARGE)(GLsizei n, GLuint *arrays);
-void (*glGenVertexArraysCHARGE)(GLsizei n, GLuint *arrays);
-GLboolean (*glIsVertexArrayCHARGE)(GLuint array);
+void function(GLuint array) glBindVertexArrayCHARGE;
+void function(GLsizei n, GLuint *arrays) glDeleteVertexArraysCHARGE;
+void function(GLsizei n, GLuint *arrays) glGenVertexArraysCHARGE;
+GLboolean function(GLuint array) glIsVertexArrayCHARGE;

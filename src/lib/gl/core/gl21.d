@@ -33,9 +33,9 @@ const GL_COMPRESSED_SLUMINANCE_ALPHA = 0x8C4B;
 
 extern(System):
 
-void (*glUniformMatrix2x3fv)(GLint location, GLsizei count, GLboolean transpose, GLfloat *value);
-void (*glUniformMatrix3x2fv)(GLint location, GLsizei count, GLboolean transpose, GLfloat *value);
-void (*glUniformMatrix2x4fv)(GLint location, GLsizei count, GLboolean transpose, GLfloat *value);
-void (*glUniformMatrix4x2fv)(GLint location, GLsizei count, GLboolean transpose, GLfloat *value);
-void (*glUniformMatrix3x4fv)(GLint location, GLsizei count, GLboolean transpose, GLfloat *value);
-void (*glUniformMatrix4x3fv)(GLint location, GLsizei count, GLboolean transpose, GLfloat *value);
+void function(GLint location, GLsizei count, GLboolean transpose, GLfloat *value) glUniformMatrix2x3fv;
+void function(GLint location, GLsizei count, GLboolean transpose, GLfloat *value) glUniformMatrix3x2fv;
+void function(GLint location, GLsizei count, GLboolean transpose, GLfloat *value) glUniformMatrix2x4fv;
+void function(GLint location, GLsizei count, GLboolean transpose, GLfloat *value) glUniformMatrix4x2fv;
+void function(GLint location, GLsizei count, GLboolean transpose, GLfloat *value) glUniformMatrix3x4fv;
+void function(GLint location, GLsizei count, GLboolean transpose, GLfloat *value) glUniformMatrix4x3fv;

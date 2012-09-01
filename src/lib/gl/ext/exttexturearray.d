@@ -26,4 +26,4 @@ const GL_SAMPLER_2D_ARRAY_SHADOW_EXT = 0x8DC4;
 extern (System):
 
 // Collides with GL_EXT_geometry_shader4
-// void (*glFramebufferTextureLayerEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
+// void function(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer) glFramebufferTextureLayerEXT;

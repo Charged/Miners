@@ -61,20 +61,20 @@ const GL_RENDERBUFFER_STENCIL_SIZE_EXT = 0x8D55;
 
 extern(System):
 
-void (*glBindFramebufferEXT)(GLenum target, GLuint framebuffer);
-void (*glBindRenderbufferEXT)(GLenum target, GLuint renderbuffer);
-GLenum (*glCheckFramebufferStatusEXT)(GLenum target);
-void (*glDeleteFramebuffersEXT)(GLsizei n, GLuint* framebuffers);
-void (*glDeleteRenderbuffersEXT)(GLsizei n, GLuint* renderbuffers);
-void (*glFramebufferRenderbufferEXT)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
-void (*glFramebufferTexture1DEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
-void (*glFramebufferTexture2DEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
-void (*glFramebufferTexture3DEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset);
-void (*glGenFramebuffersEXT)(GLsizei n, GLuint* framebuffers);
-void (*glGenRenderbuffersEXT)(GLsizei n, GLuint* renderbuffers);
-void (*glGenerateMipmapEXT)(GLenum target);
-void (*glGetFramebufferAttachmentParameterivEXT)(GLenum target, GLenum attachment, GLenum pname, GLint* params);
-void (*glGetRenderbufferParameterivEXT)(GLenum target, GLenum pname, GLint* params);
-GLboolean (*glIsFramebufferEXT)(GLuint framebuffer);
-GLboolean (*glIsRenderbufferEXT)(GLuint renderbuffer);
-void (*glRenderbufferStorageEXT)(GLenum target, GLenum initernalformat, GLsizei width, GLsizei height);
+void function(GLenum target, GLuint framebuffer) glBindFramebufferEXT;
+void function(GLenum target, GLuint renderbuffer) glBindRenderbufferEXT;
+GLenum function(GLenum target) glCheckFramebufferStatusEXT;
+void function(GLsizei n, GLuint* framebuffers) glDeleteFramebuffersEXT;
+void function(GLsizei n, GLuint* renderbuffers) glDeleteRenderbuffersEXT;
+void function(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer) glFramebufferRenderbufferEXT;
+void function(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) glFramebufferTexture1DEXT;
+void function(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) glFramebufferTexture2DEXT;
+void function(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset) glFramebufferTexture3DEXT;
+void function(GLsizei n, GLuint* framebuffers) glGenFramebuffersEXT;
+void function(GLsizei n, GLuint* renderbuffers) glGenRenderbuffersEXT;
+void function(GLenum target) glGenerateMipmapEXT;
+void function(GLenum target, GLenum attachment, GLenum pname, GLint* params) glGetFramebufferAttachmentParameterivEXT;
+void function(GLenum target, GLenum pname, GLint* params) glGetRenderbufferParameterivEXT;
+GLboolean function(GLuint framebuffer) glIsFramebufferEXT;
+GLboolean function(GLuint renderbuffer) glIsRenderbufferEXT;
+void function(GLenum target, GLenum initernalformat, GLsizei width, GLsizei height) glRenderbufferStorageEXT;
