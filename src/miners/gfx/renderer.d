@@ -269,7 +269,9 @@ protected:
 		if (m.stipple && !shadow) {
 			glPolygonStipple(cast(GLubyte*)Helper.stipplePattern.ptr);
 			glEnable(GL_POLYGON_STIPPLE);
+			glDisable(GL_CULL_FACE);
 			cvgcm.drawAttrib(materialShader);
+			glEnable(GL_CULL_FACE);
 			glDisable(GL_POLYGON_STIPPLE);
 		} else {
 			cvgcm.drawAttrib(materialShader);
@@ -441,7 +443,11 @@ void main()
 	if (color.a < 0.5)
 		discard;
 
-	float nDotL = max(dot(normalize(normal), -lightDirection), 0.0);
+	vec3 n = normalize(normal);
+	if (!gl_FrontFacing)
+		n = -n;
+
+	float nDotL = max(dot(n, -lightDirection), 0.0);
 	float l = nDotL * light;
 
 	// Lighting
@@ -472,8 +478,12 @@ void main()
 	if (color.a < 0.5)
 		discard;
 
+	vec3 n = normalize(normal);
+	if (!gl_FrontFacing)
+		n = -n;
+
 	gl_FragData[0] = vec4(color.rgb * light, 1.0);
-	gl_FragData[1] = vec4(normalize(normal) * 0.5 + 0.5 , 0.0);
+	gl_FragData[1] = vec4(n * 0.5 + 0.5, 0.0);
 }
 ";
 
