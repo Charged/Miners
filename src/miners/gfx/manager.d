@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.gfx.manager;
 
+import std.stdio;
+
 import charge.charge;
 
 import miners.types;
@@ -30,6 +32,8 @@ public:
 	int num_renderers;
 	int current_renderer;
 
+	bool failsafe;
+
 	bool canDoForward;
 	bool canDoDeferred;
 	bool textureArray; /**< Is the texture array version of the terrain needed */
@@ -40,8 +44,10 @@ private:
 	mixin SysLogging;
 
 public:
-	this()
+	this(bool failsafe)
 	{
+		this.failsafe = failsafe;
+
 		auto sanity = GfxFixedRenderer.check();
 		canDoForward = MinecraftForwardRenderer.check();
 		canDoDeferred = MinecraftDeferredRenderer.check();
@@ -52,9 +58,16 @@ public:
 		defaultTarget = GfxDefaultTarget();
 		setupRenderers();
 
-		textureArray = mfr.textureArraySupported && (canDoForward || canDoDeferred);
+		// We might end up in a really weird state where we
+		// support deferred but not forward, but that is not likely.
+		textureArray = canDoDeferred || (!failsafe && canDoForward &&
+		               mfr.textureArraySupported);
+		// Need to propegate this back.
+		if (mfr !is null && mfr.textureArraySupported)
+			mfr.textureArraySupported = textureArray;
 
-		aa = true;
+		// Try to set AA.
+		setAa(true);
 	}
 
 	~this()
@@ -97,7 +110,7 @@ public:
 
 	final void setAa(bool aa)
 	{
-		this.aa = aa && GfxDoubleTarget.check;
+		this.aa = !failsafe && aa && GfxDoubleTarget.check;
 	}
 
 protected:
@@ -127,7 +140,7 @@ protected:
 			}
 		}
 
-		if (canDoDeferred) {
+		if (!failsafe && canDoDeferred) {
 			try {
 				MinecraftDeferredRenderer.init();
 

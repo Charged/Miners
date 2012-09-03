@@ -215,6 +215,9 @@ public:
 	 */
 
 
+	bool failsafe; /**< use as little as possible gfx features */
+	const string failsafeName = "mc.failsafe"; /**< config name */
+
 	bool rendererBuildIndexed; /**< support array textures */
 	string rendererString; /**< readable string for current renderer */
 	TerrainBuildTypes rendererBuildType;

@@ -161,6 +161,7 @@ public:
 		p.add(opts.fovName, opts.fov());
 		p.add(opts.fogName, opts.fog());
 		p.add(opts.shadowName, opts.shadow());
+		p.add(opts.failsafeName, opts.failsafe);
 		p.add(opts.useCmdPrefixName, opts.useCmdPrefix());
 		p.add(opts.viewDistanceName, opts.viewDistance());
 		p.add(opts.lastClassicServerName, opts.lastClassicServer());
@@ -196,8 +197,11 @@ protected:
 		// Setup the inbuilt script files
 		initLuaBuiltins();
 
+		auto p = Core().properties;
+		opts.failsafe = p.getIfNotFoundSet(opts.failsafeName, false);
+
 		// Setup the renderer manager.
-		rm = new RenderManager();
+		rm = new RenderManager(opts.failsafe);
 		opts.rendererString = rm.s;
 		opts.rendererBuildType = rm.bt;
 		opts.rendererBuildIndexed = rm.textureArray;
