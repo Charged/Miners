@@ -166,6 +166,7 @@ public:
 
 		// Save the image to disk
 		SDL_SaveBMP(temp, toStringz(filename));
+		l.info("Saving screenshot as \"%s\"", filename);
 	}
 
 	void resize(uint w, uint h)
