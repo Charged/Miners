@@ -5,6 +5,7 @@ module miners.startup;
 import std.math : fmax, fmin;
 
 import charge.charge;
+import charge.math.ints : imax, imin;
 
 import charge.platform.homefolder;
 static import charge.game.startup;
@@ -181,9 +182,14 @@ class OptionsLoader : OptionsTask
 		viewDistance = fmax(32, viewDistance);
 		viewDistance = fmin(viewDistance, short.max);
 
+		// Have to validate the fov value
+		int fov = p.getIfNotFoundSet(opts.fovName, opts.fovDefault);
+		fov = imax(40, fov);
+		fov = imin(fov, 120);
+
 		// First init options
 		opts.aa = p.getIfNotFoundSet(opts.aaName, opts.aaDefault);
-		opts.fov = p.getIfNotFoundSet(opts.fovName, opts.fovDefault);
+		opts.fov = fov;
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
 		opts.useCmdPrefix = p.getIfNotFoundSet(
