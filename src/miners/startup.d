@@ -51,7 +51,8 @@ public:
 		this.opts = opts;
 		super(r);
 
-		if (opts.playSessionCookie !is null)
+		if (opts.playSessionCookie !is null &&
+		    !opts.inhibitClassicListLoad)
 			addTask(new ClassicGetList(this, opts));
 
 		addTask(new CreateLogo(this, opts));

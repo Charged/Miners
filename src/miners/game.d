@@ -337,6 +337,7 @@ protected:
 
 		opts.isClassicNetwork = true;
 		opts.isClassicHttp = true;
+		opts.inhibitClassicListLoad = true;
 
 		l.info("Url http://minecraft.net/classic/play/%s", csi.webId);
 
@@ -363,6 +364,7 @@ protected:
 
 		opts.isClassicNetwork = true;
 		opts.isClassicHttp = true;
+		opts.inhibitClassicListLoad = true;
 
 		l.info("Url http://%s:<redacted>@mc.net/classic/play/%s",
 		       opts.username, csi.webId);
@@ -398,6 +400,7 @@ protected:
 
 		opts.isClassicNetwork = true;
 		opts.isClassicMcUrl = true;
+		opts.inhibitClassicListLoad = true;
 
 		l.info("Url mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);
@@ -431,6 +434,7 @@ protected:
 
 		opts.isClassicNetwork = true;
 		opts.isClassicMcUrl = true;
+		opts.inhibitClassicListLoad = true;
 
 		l.info("Html mc://%s:%s/%s/<redacted>",
 		       csi.hostname, csi.port, csi.username);

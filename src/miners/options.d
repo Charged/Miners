@@ -34,6 +34,7 @@ public:
 	bool isClassicNetwork;
 	bool isClassicMcUrl;
 	bool isClassicHttp;
+	bool inhibitClassicListLoad;
 
 	string playSessionCookie;
 	string username;
