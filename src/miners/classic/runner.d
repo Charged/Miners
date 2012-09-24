@@ -59,6 +59,9 @@ protected:
 	int currentSlot;
 	ubyte[9] slots;
 
+	// Mostly control admin-crate delete-ing.
+	bool isAdmin;
+
 	int chatBacklog;
 	const int chatBorder = 4;
 	const int chatBacklogSmall = 7;
@@ -206,6 +209,7 @@ public:
 	{
 		this.c = cast(ClientConnection)cc;
 		this.ml = cast(MessageLogger)cc.getMessageListener();
+		this.isAdmin = this.c.isAdmin;
 
 		assert(this.c !is null);
 		assert(this.ml !is null);
@@ -880,6 +884,10 @@ public:
 		auto pos = cam.position;
 		auto vec = cam.rotation.rotateHeading();
 
+		// Checkfor Admin-crate.
+		if (!isAdmin && slots[currentSlot] == 7)
+			return;
+
 		int xLast, yLast, zLast;
 		int numBlocks;
 
@@ -935,6 +943,10 @@ public:
 
 			if (!info.selectable)
 				return true;
+
+			// Checkfor Admin-crate.
+			if (!isAdmin && b.type == 7)
+				return false;
 
 			auto cur = slots[currentSlot];
 			w.t[x, y, z] = Block();
@@ -1155,7 +1167,8 @@ public:
 
 	void playerType(ubyte type)
 	{
-		l.info("player type changed %s.", type);
+		if (c !is null)
+			isAdmin = c.isAdmin;
 	}
 
 	void disconnect(string reason)

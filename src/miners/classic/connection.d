@@ -24,6 +24,16 @@ alias charge.net.util.ntoh ntoh;
  */
 class ClientConnection : Connection
 {
+public:
+	// Track some per connection global state.
+
+	// Mostly controls if we can delete Admin-crate.
+	bool isAdmin;
+
+	// Controls the admin flag.
+	ubyte playerType;
+
+
 private:
 	// Server details
 	string hostname;
@@ -106,6 +116,12 @@ public:
 		s.shutdown(SocketShutdown.BOTH);
 		s.close();
 		s = null;
+	}
+
+	void setPlayerType(ubyte type)
+	{
+		playerType = type;
+		isAdmin = type >= 100;
 	}
 
 
@@ -194,6 +210,8 @@ protected:
 		string name = removeTrailingSpaces(si.name);
 		string motd = removeTrailingSpaces(si.motd);
 		ubyte type = si.playerType;
+
+		setPlayerType(type);
 
 		l.indentification(ver, name, motd, type);
 	}
@@ -408,6 +426,8 @@ protected:
 	void updateType(ServerUpdateType *sut)
 	{
 		ubyte type = sut.type;
+
+		setPlayerType(type);
 
 		l.playerType(type);
 	}

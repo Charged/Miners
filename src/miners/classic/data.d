@@ -25,7 +25,7 @@ ClassicBlockInfo classicBlocks[50] = [
 	{  true,  true, "Cobblestone" },
 	{  true,  true, "Wooden plank" },
 	{  true,  true, "Sapling" },
-	{ false,  true, "Bedrock" },
+	{  true,  true, "Bedrock" },
 	{  true, false, "Water" },             // 8
 	{ false, false, "Water s." },
 	{  true, false, "Lava" },
