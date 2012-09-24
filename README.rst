@@ -5,7 +5,7 @@ Charge
 Charge game engine, but better know as Charged Miners a Classic Minecraft
 Client.
 
-.. image:: https://github.com/Wallbraker/Charged-Miners/wiki/shot-1.jpg
+.. image:: https://github.com/Charged/Miners/wiki/shot-1.jpg
 
 
 Getting started
@@ -139,5 +139,5 @@ Things to consider:
 
 
 
-.. image:: https://github.com/Wallbraker/Charged-Miners/wiki/shot-2.jpg
+.. image:: https://github.com/Charged/Miners/wiki/shot-2.jpg
 
