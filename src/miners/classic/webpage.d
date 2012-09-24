@@ -62,7 +62,7 @@ class WebpageConnection : NetHttpConnection
 {
 private:
 	// Server details
-	const string hostname = "www.minecraft.net";
+	const string hostname = "minecraft.net";
 	const ushort port = 80;
 
 	enum Op {
