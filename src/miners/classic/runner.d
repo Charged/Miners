@@ -653,19 +653,26 @@ public:
 	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
 		if (sym == 27) {
-			if (console.typing)
+			if (console.typing) {
+				grab = true;
 				return console.stopTyping();
-			else if (c !is null && opts.playSessionCookie !is null)
+			} else if (c !is null && opts.playSessionCookie !is null) {
 				return r.displayClassicPauseMenu(this);
-			else
+			} else {
 				return r.displayClassicPauseMenu(null);
+			}
 		}
 
-		if (console.typing)
-			return console.keyDown(kb, sym, unicode);
+		if (console.typing) {
+			console.keyDown(kb, sym, unicode);
+			if (!console.typing)
+				grab = true;
+			return;
+		}
 
 		if (unicode == '/') {
 			// Start entering a command when we press '/'
+			grab = false;
 			console.startTyping();
 			console.keyDown(kb, sym, unicode);
 			stopMoving();
@@ -686,8 +693,12 @@ public:
 
 	void keyUp(CtlKeyboard kb, int sym)
 	{
-		if (console.typing)
-			return console.keyUp(kb, sym);
+		if (console.typing) {
+			console.keyUp(kb, sym);
+			if (!console.typing)
+				grab = true;
+			return;
+		}
 
 		switch(sym) {
 		case SDLK_F2:
@@ -738,6 +749,7 @@ public:
 
 		} else if (sym == opts.keyChat) {
 			if (keyDown) {
+				grab = false;
 				console.startTyping();
 				stopMoving();
 			}
