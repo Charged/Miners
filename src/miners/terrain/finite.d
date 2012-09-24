@@ -360,9 +360,9 @@ public:
 	 */
 	void setCenter(int xNew, int yNew, int zNew)
 	{
-		xNew = imax(0, imin(xNumChunks, xNew));
-		yNew = imax(0, imin(yNumChunks, yNew));
-		zNew = imax(0, imin(zNumChunks, zNew));
+		xNew = imax(0, imin(xNumChunks-1, xNew));
+		yNew = imax(0, imin(yNumChunks-1, yNew));
+		zNew = imax(0, imin(zNumChunks-1, zNew));
 
 		if (xCenter == xNew &&
 		    yCenter == yNew &&
