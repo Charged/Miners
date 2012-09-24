@@ -531,7 +531,7 @@ public:
 		// We need to sort the players according
 		// to distance from camera.
 		foreach(int i, p; players) {
-			if (p is null)
+			if (p is null || p.isHidden)
 				continue;
 
 			auto pos = p.position;
@@ -1108,8 +1108,10 @@ public:
 			return;
 
 		// XXX Don't render the player model at all.
-		//if (y == -1024)
-		//	return;
+		if (y == -1024)
+			p.isHidden = true;
+		else
+			p.isHidden = false;
 
 		double offset = 52.0 / 32.0;
 		auto pos = Point3d(x, y - offset, z);

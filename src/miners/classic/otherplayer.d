@@ -15,6 +15,9 @@ public:
 	char[] name;
 	GfxDynamicTexture text;
 
+	/// fCraft likes to hide players far away.
+	bool isHidden;
+
 
 public:
 	this(World w, int id, char[] name, Point3d pos, double heading, double pitch)
