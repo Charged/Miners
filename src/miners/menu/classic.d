@@ -55,6 +55,7 @@ public:
 class ClassicConnectingMenu : MenuRunnerBase, ClientListener
 {
 private:
+	ClassicServerInfo csi;
 	ClientConnection cc;
 	MessageLogger ml;
 	MenuBase mb;
@@ -75,6 +76,7 @@ public:
 		ml = new MessageLogger();
 		cc = new ClientConnection(this, ml, csi);
 
+		this.csi = csi;
 		this(r, opts, cc, "Connecting");
 	}
 
@@ -163,6 +165,19 @@ protected:
 
 	void indentification(ubyte ver, string name, string motd, ubyte type)
 	{
+		// Save the mcUrl of a valid connection.
+		string mcUrl;
+		if (csi.verificationKey is null) {
+			mcUrl = format("mc://%s:%s/%s",
+			               csi.hostname, csi.port,
+			               csi.username);
+		} else {
+			mcUrl = format("mc://%s:%s/%s/%s",
+			               csi.hostname, csi.port,
+			               csi.username, csi.verificationKey);
+		}
+
+		opts.lastMcUrl = mcUrl;
 	}
 
 	void levelInitialize()

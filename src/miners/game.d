@@ -162,6 +162,7 @@ public:
 		p.add(opts.fogName, opts.fog());
 		p.add(opts.shadowName, opts.shadow());
 		p.add(opts.failsafeName, opts.failsafe);
+		p.add(opts.lastMcUrlName, opts.lastMcUrl());
 		p.add(opts.useCmdPrefixName, opts.useCmdPrefix());
 		p.add(opts.viewDistanceName, opts.viewDistance());
 		p.add(opts.lastClassicServerName, opts.lastClassicServer());
@@ -244,6 +245,12 @@ protected:
 			auto csi = opts.classicServerInfo;
 			if (opts.isClassicMcUrl) {
 				return connectToClassic(csi);
+			} else if (opts.isClassicResume) {
+				auto ret = tryArgMcUrl(opts.lastMcUrl());
+				if (!ret)
+					throw new GameException(
+						"Invalid mcUlr to resume from.", null, true);
+				return connectToClassic(csi);
 			} else if (opts.isClassicHttp) {
 				if (opts.playSessionCookie !is null)
 					return getClassicServerInfoAndConnect(csi);
@@ -296,6 +303,11 @@ protected:
 				writefln("   -l, --level <level>   - to specify level directory");
 				writefln("       --license         - print licenses");
 				running = false;
+				break;
+			case "--resume":
+				opts.isClassicResume = true;
+				opts.isClassicNetwork = true;
+				opts.inhibitClassicListLoad = true;
 				break;
 			}
 		}

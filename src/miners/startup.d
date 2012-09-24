@@ -199,11 +199,14 @@ class OptionsLoader : OptionsTask
 		opts.fov = fov;
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
+		opts.lastMcUrl = p.getIfNotFoundSet(
+				opts.lastMcUrlName, opts.lastMcUrlDefault);
 		opts.useCmdPrefix = p.getIfNotFoundSet(
 			opts.useCmdPrefixName, opts.useCmdPrefixDefault);
 		opts.lastClassicServer = p.getIfNotFoundSet(
 			opts.lastClassicServerName, opts.lastClassicServerDefault);
 		opts.viewDistance = viewDistance;
+
 		for (int i; i < opts.keyNames.length; i++)
 			opts.keyArray[i] =  p.getIfNotFoundSet(
 				opts.keyNames[i], opts.keyDefaults[i]);

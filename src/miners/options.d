@@ -32,6 +32,7 @@ public:
 	bool shouldBuildAll;
 
 	bool isClassicNetwork;
+	bool isClassicResume;
 	bool isClassicMcUrl;
 	bool isClassicHttp;
 	bool inhibitClassicListLoad;
@@ -54,6 +55,13 @@ public:
 	Option!(string) lastClassicServer;
 	const string lastClassicServerName = "mc.lastClassicServer";
 	const string lastClassicServerDefault = "s";
+
+	/**
+	 * Used for resume option.
+	 */
+	Option!(string) lastMcUrl;
+	const string lastMcUrlName = "mc.lastMcUrl";
+	const string lastMcUrlDefault = "--";
 
 
 	/*
