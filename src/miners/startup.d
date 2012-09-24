@@ -67,12 +67,18 @@ protected:
 			return addTask(new CreateTiledBackground(this, opts));
 		}
 
-		if (errors !is null)
+		if (errors !is null) {
 			r.displayError(errors, false);
-		else if (dg !is null)
-			dg();
-		else
+		} else if (dg !is null) {
+			try {
+				dg();
+			} catch(Exception e) {
+				r.displayError(e, true);
+			}
+		} else {
 			r.displayMainMenu();
+		}
+
 		r.deleteMe(this);
 	}
 
