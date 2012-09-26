@@ -19,6 +19,7 @@ class Text : Component
 protected:
 	string t;
 	bool shaded;
+	BitmapFont bf;
 
 public:
 	this(Container c, int x, int y, string text, bool shaded)
@@ -44,17 +45,28 @@ public:
 
 	void repack()
 	{
-		BitmapFont.defaultFont.buildSize(t, w, h);
+		if (bf is null)
+			makeResources();
+
+		bf.buildSize(t, w, h);
 	}
 
 	void paint(Draw d)
 	{
-		BitmapFont.defaultFont.draw(d, 0, 0, t, shaded);
+		if (bf is null)
+			makeResources();
+
+		bf.draw(d, 0, 0, t, shaded);
+	}
+
+	void makeResources()
+	{
+		bf.reference(&bf, BitmapFont.defaultFont);
 	}
 
 	void releaseResources()
 	{
-
+		bf.reference(&bf, null);
 	}
 }
 
