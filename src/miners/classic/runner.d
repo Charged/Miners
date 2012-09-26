@@ -156,8 +156,9 @@ public:
 		uint width, height; bool fullscreen;
 		Core().size(width, height, fullscreen);
 
-		uint temp = chatBorder * 2 + gfxDefaultFont.height * 2 + chatOffsetFromBottom;
-		chatBacklog = (height - temp) / (gfxDefaultFont.height + 1);
+		auto bf = opts.classicFont();
+		uint temp = chatBorder * 2 + bf.height * 2 + chatOffsetFromBottom;
+		chatBacklog = (height - temp) / (bf.height + 1);
 
 		chatDirty = true;
 		mlGui = new ClassicMessageLog(null, opts, chatBorder, chatBorder, chatBacklog);
@@ -564,7 +565,7 @@ public:
 
 			auto t = p.text;
 			uint width = t.width + borderSize * 2;
-			uint height = gfxDefaultFont.height + borderSize * 2;
+			uint height = t.height + borderSize * 2;
 
 			int tX = x - width / 2;
 			int tY = y - height - arrowSize;
