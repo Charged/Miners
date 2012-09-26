@@ -111,7 +111,8 @@ protected:
 		glBegin(GL_QUADS);
 
 		colorSelect = false;
-		x = startX + 1; y = startY + 1;
+		x = startX + shadowOffset;
+		y = startY + shadowOffset;
 		glColor4fv(Color4f.Black.ptr);
 		foreach(c; text) {
 			if (colorSelect) {
@@ -161,7 +162,7 @@ protected:
 			case '\n':
 				y += height;
 			case '\r':
-				x = startX + 1;
+				x = startX;
 				break;
 			default:
 				drawChar(x, y, c);

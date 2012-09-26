@@ -25,6 +25,7 @@ public:
 
 	uint width;
 	uint height;
+	uint shadowOffset;
 
 protected:
 	Texture tex;
@@ -176,6 +177,7 @@ protected:
 	{
 		glGenFramebuffersEXT(1, &fbo);
 
+		this.shadowOffset = 1;
 		this.width = tex.width / 16;
 		this.height = tex.height / 16;
 		this.tex = tex;
@@ -202,7 +204,7 @@ protected:
 			glColor4ub(0, 0, 0, 255);
 
 			void offseted(int x, int y, char c) {
-				drawChar(x+1, y+1, c);
+				drawChar(x+shadowOffset, y+shadowOffset, c);
 			}
 
 			doLayoutLoop(text, &offseted);
