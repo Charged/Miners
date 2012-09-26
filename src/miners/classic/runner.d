@@ -22,6 +22,7 @@ import miners.gfx.selector;
 import miners.actors.camera;
 import miners.actors.sunlight;
 import miners.classic.data;
+import miners.classic.text;
 import miners.classic.world;
 import miners.classic.message;
 import miners.classic.console;
@@ -160,8 +161,8 @@ public:
 
 		chatDirty = true;
 		mlGui = new ClassicMessageLog(null, opts, chatBorder, chatBorder, chatBacklog);
-		spacer = new Text(null, chatBorder, mlGui.y+mlGui.h, chatSep);
-		typedText = new Text(null, chatBorder, spacer.y+spacer.h, "", true);
+		spacer = new ClassicText(null, opts, chatBorder, mlGui.y+mlGui.h, chatSep);
+		typedText = new ClassicText(null, opts, chatBorder, spacer.y+spacer.h, "");
 
 		chatGui = new TextureContainer(
 			mlGui.w + chatBorder * 2,
