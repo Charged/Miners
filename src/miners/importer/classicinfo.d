@@ -86,9 +86,6 @@ ClassicServerInfo[] getClassicServerList(in char[] text)
 	if (null is f)
 		throw new Exception("Could not find table body");
 
-	//auto xp = new Printer();
-	//std.stdio.writefln("%s", xp.print(f));
-
 	// Loop over all the rows and get the name and url.
 	ClassicServerInfo[] list;
 	foreach(Element e; f) {
