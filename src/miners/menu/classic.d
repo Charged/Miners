@@ -178,6 +178,7 @@ protected:
 		}
 
 		opts.lastMcUrl = mcUrl;
+		opts.lastClassicServer = name;
 	}
 
 	void levelInitialize()
