@@ -12,7 +12,6 @@ import charge.charge;
 import charge.math.ints;
 import charge.game.gui.text;
 import charge.game.gui.textbased;
-import charge.game.gui.messagelog;
 
 import miners.types;
 import miners.runner;
@@ -28,6 +27,7 @@ import miners.classic.message;
 import miners.classic.console;
 import miners.classic.connection;
 import miners.classic.interfaces;
+import miners.classic.messagelog;
 import miners.classic.otherplayer;
 import miners.classic.playerphysics;
 import miners.importer.network;
@@ -1182,31 +1182,5 @@ public:
 
 		r.displayError(["Disconencted", rs], false);
 		r.deleteMe(this);
-	}
-}
-
-class ClassicMessageLog : MessageLog
-{
-public:
-	Options opts;
-
-
-public:
-	this(Container c, Options opts, int x, int y, uint rows)
-	{
-		this.opts = opts;
-		super(c, x, y, 64, rows, 0, 1);
-	}
-
-	void makeResources()
-	{
-		sysReference(&bf, opts.classicFont());
-	}
-
-
-protected:
-	void drawRow(GfxDraw d, int y, string row)
-	{
-		bf.draw(d, 0, y, row);
 	}
 }
