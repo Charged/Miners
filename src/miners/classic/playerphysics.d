@@ -2,7 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.playerphysics;
 
-import std.stdio : writefln;
 import std.math : floor, fmin, fmax;
 
 import charge.math.quatd;
