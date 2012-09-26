@@ -189,6 +189,8 @@ private:
 	bool forward;
 	bool backwards;
 
+	SysZipFile basePackage;
+
 	Car car;
 
 	GameWorld w;
@@ -208,6 +210,8 @@ public:
 	{
 		/* This will initalize Core and other important things */
 		super();
+
+		basePackage = SysZipFile("base.chz");
 
 		running = true;
 
@@ -249,6 +253,7 @@ public:
 
 	~this()
 	{
+		delete basePackage;
 		delete w;
 	}
 
