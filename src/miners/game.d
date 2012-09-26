@@ -166,6 +166,7 @@ public:
 		p.add(opts.useCmdPrefixName, opts.useCmdPrefix());
 		p.add(opts.viewDistanceName, opts.viewDistance());
 		p.add(opts.lastClassicServerName, opts.lastClassicServer());
+		p.add(opts.lastClassicServerHashName, opts.lastClassicServerHash());
 
 		delete opts;
 		delete rm;

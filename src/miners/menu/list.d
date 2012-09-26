@@ -301,7 +301,7 @@ protected:
 
 			auto csi = csis[which];
 
-			opts.lastClassicServer = csi.webName;
+			opts.lastClassicServerHash = csi.webId;
 			dg(csi);
 		} else {
 			if (y < h / 2) {
@@ -397,10 +397,10 @@ protected:
 
 		glBegin(GL_QUADS);
 
-		auto lastPlayed = opts.lastClassicServer();
+		auto lastPlayed = opts.lastClassicServerHash();
 
 		void setDefault(ClassicServerInfo csi) {
-			if (csi.webName == lastPlayed)
+			if (csi.webId == lastPlayed)
 				glColor4fv(red.ptr);
 			else
 				glColor4fv(lightGrey.ptr);

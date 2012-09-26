@@ -205,6 +205,8 @@ class OptionsLoader : OptionsTask
 			opts.useCmdPrefixName, opts.useCmdPrefixDefault);
 		opts.lastClassicServer = p.getIfNotFoundSet(
 			opts.lastClassicServerName, opts.lastClassicServerDefault);
+		opts.lastClassicServerHash = p.getIfNotFoundSet(
+			opts.lastClassicServerHashName, opts.lastClassicServerHashDefault);
 		opts.viewDistance = viewDistance;
 
 		for (int i; i < opts.keyNames.length; i++)

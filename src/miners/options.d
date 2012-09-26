@@ -57,6 +57,13 @@ public:
 	const string lastClassicServerDefault = "--";
 
 	/**
+	 * Last connected classic server name hash.
+	 */
+	Option!(string) lastClassicServerHash;
+	const string lastClassicServerHashName = "mc.lastClassicServerHash";
+	const string lastClassicServerHashDefault = "--";
+
+	/**
 	 * Used for resume option.
 	 */
 	Option!(string) lastMcUrl;
