@@ -54,7 +54,7 @@ public:
 	 */
 	Option!(string) lastClassicServer;
 	const string lastClassicServerName = "mc.lastClassicServer";
-	const string lastClassicServerDefault = "s";
+	const string lastClassicServerDefault = "--";
 
 	/**
 	 * Used for resume option.
