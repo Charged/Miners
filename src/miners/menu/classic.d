@@ -446,6 +446,8 @@ protected:
 	{
 		shutdownConnection();
 
+		opts.lastClassicServerHash = csi.webId;
+
 		r.connectToClassic(csi);
 		r.deleteMe(this);
 	}

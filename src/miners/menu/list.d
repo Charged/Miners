@@ -299,10 +299,7 @@ protected:
 			if (which >= csis.length)
 				return;
 
-			auto csi = csis[which];
-
-			opts.lastClassicServerHash = csi.webId;
-			dg(csi);
+			dg(csis[which]);
 		} else {
 			if (y < h / 2) {
 				if (y < buttonSize)
