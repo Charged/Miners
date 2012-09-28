@@ -123,13 +123,6 @@ protected:
 		rs[num_renderers++] = ifc;
 
 		if (canDoForward) {
-			ifr = new GfxForwardRenderer();
-			rsbt[num_renderers] = TerrainBuildTypes.RigidMesh;
-			rss[num_renderers]  = "Forward";
-			rs[num_renderers++] = ifr;
-		}
-
-		if (canDoForward) {
 			try {
 				mfr = new MinecraftForwardRenderer();
 				rsbt[num_renderers] = TerrainBuildTypes.CompactMesh;
