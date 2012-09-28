@@ -68,7 +68,7 @@ protected:
 		}
 
 		if (errors !is null) {
-			r.displayError(errors, false);
+			r.displayError(errors, true);
 		} else if (dg !is null) {
 			try {
 				dg();
@@ -213,9 +213,29 @@ class OptionsLoader : OptionsTask
 			opts.keyArray[i] =  p.getIfNotFoundSet(
 				opts.keyNames[i], opts.keyDefaults[i]);
 
+		if (!checkCommonErrors())
+			return false;
+
 		signalDone();
 
 		nextTask(new LoadModernTexture(startup, opts));
+
+		return true;
+	}
+
+	bool checkCommonErrors()
+	{
+		string gfxError =
+			"Your graphics card does not provide the features\n"
+			"necessary to run Charged Miners, sorry. You can\n"
+			"try to update your drivers to the latest one.\n"
+			"Even modern Intel cards are know to have problems.";
+
+		// Some cards can't support the forward renderer needed.
+		if (opts.rendererBuildType != TerrainBuildTypes.CompactMesh) {
+			signalError([gfxError]);
+			return false;
+		}
 
 		return true;
 	}
