@@ -239,17 +239,17 @@ void plants(Packer *p, int x, int y, int z, ubyte type, WorkspaceData *data)
 
 void slab(Packer *p, int x, int y, int z, ubyte type, WorkspaceData *data)
 {
-	int set = data.getSolidOrTypeSet(type, x, y, z);
 	auto dec = &tile[type];
+
+	int set = data.getSolidOrTypeSet(type, x, y, z);
+	// Bottom should not look for same type.
+	set = (set & ~sideMask.YN) | !data.filled(x, y-1, z) << sideNormal.YN;
 
 	/* all set */
 	if (set == 0)
 		return;
 
-	if (type == 44)
-		makeHalfXYZ(p, data, dec, x, y, z, set | sideMask.YP);
-	else
-		makeXYZ(p, data, dec, x, y, z, set);
+	makeHalfXYZ(p, data, dec, x, y, z, set | sideMask.YP);
 }
 
 
@@ -297,7 +297,7 @@ BuildFunction[256] buildArray = [
 	&plants,             //  40
 	&solid,
 	&solid,
-	&slab,
+	&solid,
 	&slab,               //  44
 	&solid,
 	&solid,
