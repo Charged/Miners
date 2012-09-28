@@ -142,7 +142,8 @@ protected:
 
 		// This seems to fix the view jumping issue when the mouse
 		// has moved from the center when its not grabbed.
-		if (!mouse.grab)
+		// This effect is negated on Linux.
+		version(Windows) if (!mouse.grab)
 			mouse.warp(w / 2, h / 2);
 
 		mouse.grab = val;
