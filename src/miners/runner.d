@@ -136,9 +136,24 @@ protected:
 
 	bool grab(bool val)
 	{
+		uint w, h;
+		bool fullscreen;
+		Core().size(w, h, fullscreen);
+
+		// This seems to fix the view jumping issue when the mouse
+		// has moved from the center when its not grabbed.
+		if (!mouse.grab)
+			mouse.warp(w / 2, h / 2);
+
 		mouse.grab = val;
 		mouse.show = !val;
+
+		// Center the mouse for menu/chat when ungrabbing.
+		if (!mouse.grab)
+			mouse.warp(w / 2, h / 2);
+
 		grabbed = val;
+
 		return grabbed;
 	}
 
