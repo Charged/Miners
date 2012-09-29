@@ -128,7 +128,7 @@ public:
 		}
 
 		// The speed at which we move.
-		double velSpeed = run ? 0.4 : 0.1;
+		double velSpeed = run ? 1.0 : (4.3/100);
 
 		// Normalize function is safe.
 		vel.normalize();
