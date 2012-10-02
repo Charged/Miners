@@ -9,7 +9,7 @@ import miners.importer.network;
 import actors = miners.actors.otherplayer;
 
 
-class OtherPlayer : actors.OtherPlayer
+class OtherPlayer : actors.OtherPlayer, GameTicker
 {
 public:
 	char[] name;
@@ -24,6 +24,7 @@ public:
 	{
 		this.name = name;
 		super(w, id, pos, heading, pitch);
+		w.addTicker(this);
 
 		if (text is null) {
 			text = new GfxDynamicTexture(null);
@@ -38,6 +39,17 @@ public:
 
 	~this()
 	{
+		w.remTicker(this);
 		sysReference(&text, null);
+	}
+
+	void update(Point3d pos, double heading, double pitch)
+	{
+		super.update(pos, heading, pitch);
+	}
+
+	void tick()
+	{
+
 	}
 }
