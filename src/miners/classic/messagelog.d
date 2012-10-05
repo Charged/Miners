@@ -3,7 +3,7 @@
 module miners.classic.messagelog;
 
 import charge.charge : sysReference, GfxDraw;
-import charge.game.gui.component : Container;
+import charge.game.gui.container : Container;
 import charge.game.gui.messagelog : MessageLog;
 import miners.options : Options;
 

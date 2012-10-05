@@ -3,7 +3,7 @@
 module miners.classic.text;
 
 import charge.charge : sysReference;
-import charge.game.gui.component : Container;
+import charge.game.gui.container : Container;
 import charge.game.gui.text;
 import miners.options : Options;
 
