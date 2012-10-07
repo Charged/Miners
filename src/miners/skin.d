@@ -89,13 +89,19 @@ public:
 
 	void handleResponse(char[] header, char[] res)
 	{
+		auto str = format("dl/%s.png", curSkin);
 		try {
-			auto str = format("dl/%s.png", curSkin);
 			auto img = pngDecode(res);
+
+			if (img is null)
+				throw new Exception("Image format not supported");
 
 			auto pic = Picture(str, img);
 			scope(exit)
 				sysReference(&pic, null);
+
+			if (pic is null)
+				throw new Exception("Failed create picture");
 
 			auto tex = GfxTexture(str);
 			scope(exit)
@@ -109,6 +115,7 @@ public:
 			w.update(tex);
 
 		} catch (Exception e) {
+			l.warn("Failed to load: %s", str);
 			l.warn(e.toString);
 		}
 
