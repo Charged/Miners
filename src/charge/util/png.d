@@ -44,7 +44,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 
 	// Is this a png image
 	if (data[0..8] != [cast(ubyte)137, 80, 78, 71, 13, 10, 26, 10])
-		return null;
+		throw new Exception("Not a PNG image");
 
 	// Advance
 	data = data[8..$];
@@ -87,7 +87,8 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		}
 	}
 
-	assert(data.length == 0);
+	if (data.length != 0)
+		throw new Exception("Missing PNG IEND tag");
 
 	cMemoryArray!(ubyte) decompData;
 	decompData.steal = cast(ubyte[])cUncompress(compressed);
@@ -110,7 +111,13 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		bpp = 4 * (depth / 8);
 		break;
 	default:
+		throw new Exception("Unhandled PNG color mode");
 	}
+
+	// Missing support for other depths
+	if (depth != 8)
+		throw new Exception("Unhandled PNG depth mode");
+
 
 	ubyte[][] lines;
 	lines.length = height;
@@ -171,7 +178,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 			}
 			break;
 		default:
-			assert(false);
+			throw new Exception("Unhandled PNG line encoding");
 		}
 		lines[y] = scanline;
 	}
@@ -214,7 +221,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 				}
 			}
 		} else
-			assert(false);
+			throw new Exception("Unhandled PNG color encoding");
 	// Handle Palette
 	} else if (color == 3) {
 		result = new PngImage(width, height, 3);
@@ -234,7 +241,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		else if (color == 6)
 			result = new PngImage(width, height, 4);
 		else
-			assert(false);
+			throw new Exception("Unhandled PNG color encoding");
 
 		auto target = result.pixels[];
 		foreach (line; lines) {
