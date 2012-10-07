@@ -14,6 +14,8 @@ class OtherPlayer : actors.OtherPlayer, GameTicker
 public:
 	char[] name;
 	GfxDynamicTexture text;
+	Point3d curPos;
+	int ticks;
 
 	/// fCraft likes to hide players far away.
 	bool isHidden;
@@ -23,7 +25,9 @@ public:
 	this(World w, int id, char[] name, Point3d pos, double heading, double pitch)
 	{
 		this.name = name;
+		this.curPos = pos;
 		super(w, id, pos, heading, pitch);
+
 		w.addTicker(this);
 
 		if (text is null) {
@@ -45,11 +49,29 @@ public:
 
 	void update(Point3d pos, double heading, double pitch)
 	{
-		super.update(pos, heading, pitch);
+		this.heading = heading;
+		this.pitch = pitch;
+		this.pos = pos;
+
+		vel = (this.pos - curPos);
+		vel.scale(0.2);
+		ticks = 4;
 	}
 
 	void tick()
 	{
+		if (ticks > -1) {
+			auto vel = this.vel;
+			vel.scale(ticks);
 
+			auto tmp = this.pos;
+
+			curPos = this.pos - vel;
+			super.update(curPos, heading, pitch);
+
+			this.pos = tmp;
+
+			ticks--;
+		}
 	}
 }
