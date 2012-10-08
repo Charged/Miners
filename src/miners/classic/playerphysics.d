@@ -93,6 +93,8 @@ public:
 	bool down; // Camera
 	bool jump;
 	bool crouch;
+	bool noClip;
+
 
 protected:
 	BlockDg getBlock;
@@ -101,11 +103,75 @@ protected:
 public:
 	this(BlockDg getBlock)
 	{
+		noClip = true;
+
 		this.getBlock = getBlock;
 	}
 
-
+	/**
+	 * Move the player in the given heading.
+	 */
 	Point3d movePlayer(Point3d pos, double heading)
+	{
+		if (noClip)
+			return movePlayerNoClip(pos, heading);
+		else
+			return movePlayerClip(pos, heading);
+	}
+
+	/**
+	 * Moves the player using a floating camera type mover.
+	 */
+	Point3d movePlayerNoClip(Point3d pos, double heading)
+	{
+		Vector3d vel = getMoveVector(heading);
+
+		// The speed at which we move.
+		double velSpeed = run ? 1.0 : (4.3/100);
+
+		// Scale the speed vector.
+		vel.scale(velSpeed);
+
+		if (up)
+			vel.y += velSpeed;
+
+		if (down)
+			vel.y -= velSpeed;
+
+		// No physics.
+		pos += vel;
+
+		return pos;
+	}
+
+	/**
+	 * Moves the player using physics.
+	 *
+	 * XXX: No physics yet.
+	 */
+	Point3d movePlayerClip(Point3d pos, double heading)
+	{
+		Vector3d vel = Vector3d();
+
+		// Adjust for the position being the camera.
+		pos.y -= camHeight;
+
+		// XXX Physics!
+		pos += vel;
+
+		// Adjust back.
+		pos += Vector3d(0, camHeight, 0);
+
+		return pos;
+	}
+
+
+protected:
+	/**
+	 * Returns a normalized vector combining the heading and
+	 * the left/right/forward/backward movment booleans.
+	 */
+	Vector3d getMoveVector(double heading)
 	{
 		// Create a rotation, that we can get
 		// the different vectors from.
@@ -127,39 +193,12 @@ public:
 			vel += v;
 		}
 
-		// The speed at which we move.
-		double velSpeed = run ? 1.0 : (4.3/100);
-
 		// Normalize function is safe.
 		vel.normalize();
-		// Scale the speed vector.
-		vel.scale(velSpeed);
 
-		if (up)
-			vel.y += velSpeed;
-
-		if (down)
-			vel.y -= velSpeed;
-
-		return movePlayer(pos, vel);
+		return vel;
 	}
 
-
-	Point3d movePlayer(Point3d pos, Vector3d vel)
-	{
-		// Adjust for the position being the camera.
-		pos.y -= camHeight;
-
-		// XXX Physics!
-		pos += vel;
-
-		// Adjust back.
-		pos += Vector3d(0, camHeight, 0);
-		return pos;
-	}
-
-
-protected:
 	/**
 	 * Check if we collide with this block.
 	 *
