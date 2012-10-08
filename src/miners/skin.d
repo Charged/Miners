@@ -8,6 +8,8 @@ import uri = std.uri;
 import charge.charge;
 import charge.util.png;
 
+import miners.options;
+
 
 /**
  * A threaded TCP connection to the minecraft.net servers. 
@@ -22,17 +24,16 @@ private:
 
 	GfxWrappedTexture[string] store;
 	string curSkin;
-	GfxTexture def;
 	Vector!(string) nextSkin;
+	Options opts;
 
 	mixin SysLogging;
 
 
 public:
-	this(GfxTexture def)
+	this(Options opts)
 	{
-		sysReference(&this.def, def);
-
+		this.opts = opts;
 		super(hostname, port);
 	}
 
@@ -42,7 +43,6 @@ public:
 		store = null;
 		foreach(tex; a)
 			sysReference(&tex, null);
-		sysReference(&def, null);
 
 		super.close();
 	}
@@ -70,7 +70,7 @@ public:
 
 		nextSkin ~= name;
 		auto str = format("playerSkin/%s.png", name);
-		auto ret = new GfxWrappedTexture(str, def);
+		auto ret = new GfxWrappedTexture(str, opts.defaultSkin());
 		store[name] = ret;
 		return ret;
 	}

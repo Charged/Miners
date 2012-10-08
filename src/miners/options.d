@@ -205,6 +205,8 @@ public:
 	GfxTexture blackTexture;
 	GfxTexture whiteTexture;
 
+	Option!(GfxTexture) defaultSkin;
+
 	GfxSimpleSkeleton.VBO playerSkeleton;
 	alias PlayerModelData.bones playerBones;
 
@@ -214,7 +216,6 @@ public:
 	Option!(Picture) modernTerrainPic;
 	Option!(Picture) classicTerrainPic;
 
-	Option!(GfxTexture) dirt;
 	Option!(GfxTexture) background;
 	Option!(GfxBitmapFont) classicFont;
 
@@ -288,13 +289,14 @@ public:
 		viewDistance.destruct();
 		useCmdPrefix.destruct();
 
+		defaultSkin.destruct();
+
 		backgroundTiled.destruct();
 		backgroundDoubled.destruct();
 
 		modernTerrainPic.destruct();
 		classicTerrainPic.destruct();
 
-		dirt.destruct();
 		background.destruct();
 		classicFont.destruct();
 

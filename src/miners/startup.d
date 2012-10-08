@@ -3,6 +3,7 @@
 module miners.startup;
 
 import std.math : fmax, fmin;
+import std.file : write;
 
 import charge.charge;
 import charge.math.ints : imax, imin;
@@ -220,7 +221,7 @@ class OptionsLoader : OptionsTask
 		    !opts.inhibitClassicListLoad)
 			startup.addTask(new ClassicGetList(startup, opts));
 
-		nextTask(new LoadModernTexture(startup, opts));
+		nextTask(new LoadDefaultSkin(startup, opts));
 
 		return true;
 	}
@@ -240,6 +241,101 @@ class OptionsLoader : OptionsTask
 		}
 
 		return true;
+	}
+}
+
+/**
+ * Loads and downloads the default skin.
+ */
+class LoadDefaultSkin : OptionsTask, NetDownloadListener
+{
+public:
+	const string path = "/images/char.png";
+	const string hostname = "minecraft.net";
+	const ushort port = 80;
+	const string filename = "skin.png";
+
+
+private:
+	NetDownloadConnection dl;
+
+	mixin SysLogging;
+
+
+public:
+	this(StartupRunner startup, Options opts)
+	{
+		text = "Loading default skin";
+		super(startup, opts);
+	}
+
+	void close()
+	{
+		if (dl !is null) {
+			dl.close();
+			dl = null;
+		}
+	}
+
+	bool build()
+	{
+		if (dl !is null) {
+			dl.doTick();
+			return false;
+		}
+
+		GfxTexture defSkin;
+
+		try {
+			defSkin = GfxTexture(filename);
+		} catch (Exception e) {
+			signalError(["Could not load default skin", e.toString]);
+			return false;
+		}
+
+		if (defSkin is null) {
+			dl = new NetDownloadConnection(this, hostname, port);
+			return true;
+		}
+
+		defSkin.filter = GfxTexture.Filter.NearestLinear;
+		opts.defaultSkin = defSkin;
+		sysReference(&defSkin, null);
+
+		signalDone();
+
+		nextTask(new LoadModernTexture(startup, opts));
+
+		return true;
+	}
+
+	void connected()
+	{
+		dl.getDownload(path);
+	}
+
+	void percentage(int p)
+	{
+		completed = p;
+	}
+
+	void downloaded(void[] data)
+	{
+		l.warn("D %s", data.length);
+
+		write(filename, data);
+		dl.close();
+		dl = null;
+	}
+
+	void error(Exception e)
+	{
+		signalError([e.toString]);
+	}
+
+	void disconnected()
+	{
+		signalError(["Got disconnected when downloading default skin"]);
 	}
 }
 

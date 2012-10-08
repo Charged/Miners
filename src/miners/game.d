@@ -220,7 +220,8 @@ protected:
 
 		// Setup the skin loader.
 		auto defSkin = GfxColorTexture(Color4f.White);
-		skin = new SkinDownloader(defSkin);
+		opts.defaultSkin = defSkin;
+		skin = new SkinDownloader(opts);
 		opts.getSkin = &skin.getSkin;
 		sysReference(&defSkin, null);
 
