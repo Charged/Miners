@@ -51,10 +51,6 @@ public:
 		this.opts = opts;
 		super(r);
 
-		if (opts.playSessionCookie !is null &&
-		    !opts.inhibitClassicListLoad)
-			addTask(new ClassicGetList(this, opts));
-
 		addTask(new CreateLogo(this, opts));
 	}
 
@@ -217,6 +213,12 @@ class OptionsLoader : OptionsTask
 			return false;
 
 		signalDone();
+
+		// This is done here to make sure that options are
+		// loaded before any error is raised by this task.
+		if (opts.playSessionCookie !is null &&
+		    !opts.inhibitClassicListLoad)
+			startup.addTask(new ClassicGetList(startup, opts));
 
 		nextTask(new LoadModernTexture(startup, opts));
 
