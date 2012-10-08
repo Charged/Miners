@@ -1,11 +1,11 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 
-#import <Cocoa/Cocoa.h>
+#import "mac.h"
 
 char* macGetPrivateFrameworksPath()
 {
-    NSString *frameworkPath = [[NSBundle mainBundle] privateFrameworksPath];
+    NSString *frameworkPath = [mainBundleNS privateFrameworksPath];
     const char *cstr = [frameworkPath UTF8String];
     char *ret;
     size_t len;

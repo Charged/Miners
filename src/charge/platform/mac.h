@@ -23,6 +23,12 @@ int _d_run_main(int argc, char **argv, void *func);
 int _Dmain(size_t len, void* array);
 
 /**
+ * Replacement bundles.
+ */
+extern NSBundle* mainBundleNS;
+extern CFBundleRef mainBundleCf;
+
+/**
  * Use this flag to determine whether we use SDLMain.nib or not.
  */
 #define		CHARGE_USE_NIB_FILE	0

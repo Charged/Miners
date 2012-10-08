@@ -10,6 +10,13 @@
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
 
+
+/**
+ * Storage.
+ */
+NSBundle* mainBundleNS;
+CFBundleRef mainBundleCF;
+
 /**
  * For some reaon, Apple removed setAppleMenu from the headers in 10.4,
  * but the method still is there and works. To avoid warnings, we declare
@@ -36,6 +43,7 @@ extern OSErr CPSSetFrontProcess(CPSProcessSerNum *psn);
 
 static int    gArgc;
 static char  **gArgv;
+static char   *gBundleDir = NULL;
 static BOOL   gFinderLaunch;
 static BOOL   gCalledAppMainline = FALSE;
 
@@ -45,7 +53,7 @@ static NSString *getApplicationName(void)
 	NSString *appName = 0;
 
 	/* Determine the application name */
-	dict = (NSDictionary *)CFBundleGetInfoDictionary(CFBundleGetMainBundle());
+	dict = (NSDictionary *)CFBundleGetInfoDictionary(mainBundleCF);
 	if (dict)
 		appName = [dict objectForKey: @"CFBundleName"];
 
@@ -90,7 +98,7 @@ static NSString *getApplicationName(void)
 	if (shouldChdir)
 	{
 		char parentdir[MAXPATHLEN];
-		CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+		CFURLRef url = CFBundleCopyBundleURL(mainBundleCF);
 		CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
 
 		if (CFURLGetFileSystemRepresentation(url2, true, (UInt8 *)parentdir, MAXPATHLEN))
@@ -205,6 +213,18 @@ static void CustomApplicationMain(int argc, char **argv)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	ChargeMain *chargeMain;
 
+	if (gBundleDir) {
+		NSURL *bundleURL = [NSURL fileURLWithPath:[NSString
+			stringWithCString:gBundleDir
+			encoding:NSASCIIStringEncoding]];
+
+		mainBundleNS = [NSBundle bundleWithURL:bundleURL];
+		mainBundleCF = CFBundleCreate(kCFAllocatorDefault, (CFURLRef)bundleURL);
+	} else {
+		mainBundleNS = [NSBundle mainBundle];
+		mainBundleCF = CFBundleGetMainBundle();
+	}
+
 	/* Ensure the application object is initialised */
 	[ChargeApplication sharedApplication];
 
@@ -291,6 +311,12 @@ static void CustomApplicationMain(int argc, char **argv)
 {
 	int status;
 
+	/* Ensure this is set, path used with NIB_FILE */
+	if (mainBundleNS == NULL) {
+		mainBundleNS = [NSBundle mainBundle];
+		mainBundleCF = CFBundleGetMainBundle();
+	}
+
 	/* Set the working directory to the .app's parent directory */
 	[self setupWorkingDirectory:gFinderLaunch];
 
@@ -366,6 +392,21 @@ int main(int argc, char **argv)
 		gArgv[1] = NULL;
 		gArgc = 1;
 		gFinderLaunch = YES;
+
+	/* Use a different bundle dir then the main one. */
+	} else if ( argc >= 3 && strncmp (argv[1], "--bundle", 8) == 0 ) {
+		int i;
+
+		gArgv = (char **) malloc(sizeof (char *) * (argc+1-2));
+		gArgv[0] = argv[0];
+		for(i = 3; i < argc; i++)
+			gArgv[i-2] = argv[i];
+
+		gArgv[argc-2] = NULL;
+		gArgc = argc-2;
+		gBundleDir = argv[2];
+		gFinderLaunch = NO;
+
 	} else {
 		int i;
 		gArgc = argc;
