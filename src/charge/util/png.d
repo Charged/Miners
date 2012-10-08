@@ -143,8 +143,9 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		case 2:
 			foreach (i, ref entry; scanline) {
 				ubyte up = 0;
-				if (lines.length) up = lines[y - 1][i];
-					entry = limit(entry + up);
+				if (y - 1 >= 0)
+					up = lines[y - 1][i];
+				entry = limit(entry + up);
 			}
 			break;
 		// average: (sub + up) / 2
@@ -154,7 +155,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 				if (i !< bpp)
 					left = scanline[i - bpp];
 				ubyte up = 0;
-				if (lines.length)
+				if (y - 1 >= 0)
 					up = lines[y - 1][i];
 				entry = limit(entry + (left + up) / 2);
 			}
@@ -169,7 +170,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 				if (i !< bpp)
 					left = scanline[i - bpp];
 
-				if (lines.length) {
+				if (y - 1 >= 0) {
 					up = lines[y - 1][i];
 					if (i !< bpp)
 						upleft = lines[y - 1][i - bpp];
@@ -184,11 +185,12 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		lines[y] = scanline;
 	}
 
-	assert(decomp.length == 0);
+	if (decomp.length != 0)
+		throw new Exception("Invalid PNG data block length");
 
 	PngImage result;
-	if (depth != 8)
-		return result;
+	// XXX: depth == 8 is only handled, checked above.
+	assert(depth == 8);
 
 	if (convert && color != 6) {
 		result = new PngImage(width, height, 4);
