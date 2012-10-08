@@ -266,7 +266,7 @@ private:
 
 public:
 	/**
-	 * Retrive the server list, using a new connection
+	 * Retrieve the server list, using a new connection
 	 * authenticating with the given credentials.
 	 */
 	this(Router r, Options opts, string playSession)
@@ -278,7 +278,7 @@ public:
 	}
 
 	/**
-	 * Retrive information about a server,
+	 * Retrieve information about a server,
 	 * the connection has allready be authenticated.
 	 */
 	this(Router r, Options opts, WebpageConnection wc, ClassicServerInfo csi)
@@ -287,7 +287,7 @@ public:
 	}
 
 	/**
-	 * Retrive information about a server, using a new connection
+	 * Retrieve information about a server, using a new connection
 	 * authenticating with the given credentials.
 	 */
 	this(Router r, Options opts, string playSession, ClassicServerInfo csi)
@@ -299,7 +299,7 @@ public:
 	}
 
 	/**
-	 * Retrive information about a server, using a new connection
+	 * Retrieve information about a server, using a new connection
 	 * authenticating with the given credentials.
 	 *
 	 * Should not use this versions.
@@ -392,8 +392,8 @@ protected:
 	{
 		wc.getServerList();
 
-		disString = format(disconnectString, "Retriving server list");
-		curText = "Retriving server list: %s%%";
+		disString = format(disconnectString, "Retrieving server list");
+		curText = "Retrieving server list: %s%%";
 		percentage(0);
 	}
 
@@ -401,8 +401,8 @@ protected:
 	{
 		wc.getServerInfo(csi);
 
-		disString = format(disconnectString, "Retriving server info");
-		curText = "Retriving server info: %s%%";
+		disString = format(disconnectString, "Retrieving server info");
+		curText = "Retrieving server info: %s%%";
 		percentage(0);
 	}
 
