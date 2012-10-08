@@ -43,7 +43,8 @@ PngImage pngDecode(void[] _data, bool convert = false)
 	data = cast(ubyte[])_data;
 
 	// Is this a png image
-	if (data[0..8] != [cast(ubyte)137, 80, 78, 71, 13, 10, 26, 10])
+	if (data.length < 16 ||
+	    data[0..8] != [cast(ubyte)137, 80, 78, 71, 13, 10, 26, 10])
 		throw new Exception("Not a PNG image");
 
 	// Advance
