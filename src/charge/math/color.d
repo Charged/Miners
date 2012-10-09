@@ -80,6 +80,11 @@ public:
 		return res;
 	}
 
+	static Color3f opCall(Color4b c)
+	{
+		return Color3f(c.r / 255f, c.g / 255f, c.b / 255f);
+	}
+
 	float* ptr() { return &r; }
 
 	string toString()
