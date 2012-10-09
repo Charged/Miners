@@ -9,6 +9,7 @@ import charge.gfx.gfx;
 import charge.gfx.renderqueue;
 import charge.gfx.cull;
 import charge.gfx.light;
+import charge.gfx.texture;
 
 
 abstract class Actor : Movable
@@ -43,6 +44,7 @@ public:
 	alias Vector!(Actor) ActorVector;
 	alias Vector!(Light) LightVector;
 	Fog fog;
+	Texture bg; /** Used as a background image */
 
 private:
 	ActorVector a;
@@ -68,8 +70,9 @@ public:
 
 	~this()
 	{
-		Actor actor;
+		bg.reference(&bg, null);
 
+		Actor actor;
 		/* vector not safe to traverse while removing elements */
 		while((actor = a[0]) !is null)
 			delete actor;

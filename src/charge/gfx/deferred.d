@@ -227,7 +227,7 @@ public:
 	}
 }
 
-final class FogShader : LightShaderBase
+abstract class FogShader : LightShaderBase
 {
 public:
 	UniformColor4f color;
@@ -236,6 +236,14 @@ public:
 
 
 public:
+	this(string vert, string frag, string[] texs)
+	{
+		super(vert, frag, texs);
+	}
+}
+
+final class FogColorShader : FogShader
+{
 	this()
 	{
 		super(DeferredRenderer.deferred_base_vert,
@@ -243,6 +251,23 @@ public:
 		      null);
 
 		sampler("depthTex", 2);
+		color.init("color", glId);
+		start.init("start", glId);
+		stop.init("stop", glId);
+		unbind();
+	}
+}
+
+final class FogTexShader : FogShader
+{
+	this()
+	{
+		super(DeferredRenderer.deferred_base_vert,
+		      DeferredRenderer.fog_tex_shader_frag,
+		      null);
+
+		sampler("depthTex", 2);
+		sampler("bgTex", 3);
 		color.init("color", glId);
 		start.init("start", glId);
 		stop.init("stop", glId);
@@ -275,7 +300,8 @@ private:
 	static PointLightShader pointLightShader;
 	static SpotLightShadowShader spotLightShadowShader;
 	static SpotLightShader spotLightShader;
-	static FogShader fogShader;
+	static FogColorShader fogColorShader;
+	static FogTexShader fogTexShader;
 
 	static bool checked;
 	static bool checkStatus;
@@ -355,7 +381,8 @@ public:
 		pointLightShader = new PointLightShader();
 		spotLightShadowShader = new SpotLightShadowShader();
 		spotLightShader = new SpotLightShader();
-		fogShader = new FogShader();
+		fogColorShader = new FogColorShader();
+		fogTexShader = new FogTexShader();
 
 		initialized = true;
 		return true;
@@ -484,16 +511,20 @@ protected:
 		spotLightShader.projectionMatrixInverse.transposed = projITS;
 		spotLightShader.screen = vec.ptr;
 
-		fogShader.bind();
-		fogShader.projectionMatrixInverse.transposed = projITS;
-		fogShader.screen = vec.ptr;
+		fogColorShader.bind();
+		fogColorShader.projectionMatrixInverse.transposed = projITS;
+		fogColorShader.screen = vec.ptr;
+
+		fogTexShader.bind();
+		fogTexShader.projectionMatrixInverse.transposed = projITS;
+		fogTexShader.screen = vec.ptr;
 
 		drawLights(c, w, view, proj);
 
 		drawPointLights(c, w, view);
 
 		if (w.fog !is null)
-			drawFog(w.fog);
+			drawFog(w);
 
 		glUseProgram(0);
 
@@ -1272,12 +1303,19 @@ protected:
 	}
 
 
-	void drawFog(Fog fog)
+	void drawFog(World w)
 	{
-		fogShader.bind();
-		fogShader.color = fog.color;
-		fogShader.start = fog.start;
-		fogShader.stop = fog.stop;
+		auto fog = w.fog;
+		Texture t = w.bg;
+
+		FogShader f = t is null ? fogColorShader : fogTexShader;
+		f.bind();
+		f.color = fog.color;
+		f.start = fog.start;
+		f.stop = fog.stop;
+
+		if (t !is null)
+			gluTexUnitEnableBind(GL_TEXTURE_2D, 3, t);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1289,6 +1327,8 @@ protected:
 		glVertex3f( 1.0f,  1.0f,  0.0f);
 		glVertex3f(-1.0f,  1.0f,  0.0f);
 		glEnd();
+
+		gluTexUnitDisableUnbind(GL_TEXTURE_2D, 3);
 	}
 
 
@@ -1866,6 +1906,36 @@ void main()
 
 	gl_FragData[0] = color;
 	gl_FragData[0].a = smoothstep(start, stop, dist);
+}
+";
+
+	const string fog_tex_shader_frag = "
+#version 120
+
+uniform vec2 screen;
+uniform sampler2D depthTex;
+uniform sampler2D bgTex;
+uniform mat4 projectionMatrixInverse;
+uniform vec4 color;
+uniform float start;
+uniform float stop;
+
+void main()
+{
+	vec2 coord = gl_FragCoord.xy * screen;
+	float depth = texture2D(depthTex, coord).r;
+	vec4 position = projectionMatrixInverse * vec4(coord, depth, 1.0);
+	position.xyz /= position.w;
+	float dist = distance(vec3(0.0, 0.0, 0.0), position.xyz);
+	float alpha = smoothstep(start, stop, dist);
+
+	vec3 c;
+	if (alpha == 1.0)
+		c = texture2D(bgTex, coord).rgb;
+	else
+		c = color.rgb;
+
+	gl_FragData[0] = vec4(c, alpha);
 }
 ";
 
