@@ -18,6 +18,7 @@ import miners.runner;
 import miners.options;
 import miners.console;
 import miners.interfaces;
+import miners.gfx.scene;
 import miners.gfx.selector;
 import miners.actors.camera;
 import miners.actors.sunlight;
@@ -106,6 +107,9 @@ protected:
 	/* Moves the camera */
 	PlayerPhysics pp;
 
+	/* Backgrond scene */
+	ClassicBackgroundScene bgScene;
+
 
 public:
 	this(Router r, Options opts)
@@ -116,6 +120,9 @@ public:
 			w = new ClassicWorld(opts);
 
 		super(r, opts, w);
+
+		// Background scene.
+		bgScene = new ClassicBackgroundScene(opts);
 
 		// Camera defaults
 		camHeading = 0.0;
@@ -238,6 +245,8 @@ public:
 
 	void close()
 	{
+		bgScene.close();
+
 		chatGui.breakApart();
 		chatGuiSmall.breakApart();
 		delete sel;
@@ -330,6 +339,15 @@ public:
 		placeSelector();
 
 		cam.resize(rt.width, rt.height);
+
+		auto pcam = cast(GfxProjCamera)cam.current;
+		if (pcam !is null && w.gfx.fog !is null) {
+			bgScene.render(pcam, sl.gfx, rt.width, rt.height);
+			sysReference(&w.gfx.bg, bgScene.texture);
+		} else {
+			sysReference(&w.gfx.bg, null);
+		}
+
 		r.render(w.gfx, cam.current, rt);
 
 		if (opts.hideUi())
