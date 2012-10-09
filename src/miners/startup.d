@@ -437,9 +437,6 @@ class LoadClassicIcons : OptionsTask
 		// Create the textures for the classic block selector
 		static assert(classicBlocks.length == opts.classicSides.length);
 		foreach (int i, ref outTex; opts.classicSides) {
-			if (!classicBlocks[i].placable)
-				continue;
-
 			// Get the location of the block
 			ubyte index = miners.builder.classic.tile[i].xzTex;
 			int x = index % 16;
