@@ -455,8 +455,7 @@ class LoadClassicIcons : OptionsTask
 			}
 
 			auto tex = GfxTexture(null, texPic);
-			tex.filter = tex.width <= 32 ? GfxTexture.Filter.Nearest :
-			                               GfxTexture.Filter.NearestLinear;
+			tex.filter = GfxTexture.Filter.NearestLinear;
 
 			sysReference(&outTex, tex);
 			sysReference(&tex, null);
