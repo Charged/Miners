@@ -199,6 +199,25 @@ public:
 		return true;
 	}
 
+	bool setColor4f(string name, Color4f color)
+	{
+		if (name is null)
+			return false;
+
+		switch(name) {
+			case "color":
+				this.color = color;
+				this.color.a = 1.0f;
+				// Update the color texture if set
+				setTexture("tex", tex);
+				break;
+			default:
+				return false;
+		}
+
+		return true;
+	}
+
 	bool setOption(string name, bool option)
 	{
 		switch(name) {
