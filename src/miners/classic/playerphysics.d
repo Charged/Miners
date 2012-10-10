@@ -84,6 +84,13 @@ public:
 	const double height = 1.4;
 	const double camHeight = 1.2;
 
+	const double playerSize = 0.32;
+	const double playerHeight = 1.5;
+	const double gravity = 9.8 / 2000.0;
+	const double jumpFactor = 0.12;
+
+	Vector3d oldVel;
+
 	bool forward;
 	bool backward;
 	bool left;
@@ -103,8 +110,6 @@ protected:
 public:
 	this(BlockDg getBlock)
 	{
-		noClip = true;
-
 		this.getBlock = getBlock;
 	}
 
@@ -129,9 +134,6 @@ public:
 		// The speed at which we move.
 		double velSpeed = run ? 1.0 : (4.3/100);
 
-		// Scale the speed vector.
-		vel.scale(velSpeed);
-
 		if (up)
 			vel.y += velSpeed;
 
@@ -140,6 +142,9 @@ public:
 
 		// No physics.
 		pos += vel;
+
+		// Reset
+		oldVel = Vector3d();
 
 		return pos;
 	}
@@ -151,16 +156,98 @@ public:
 	 */
 	Point3d movePlayerClip(Point3d pos, double heading)
 	{
-		Vector3d vel = Vector3d();
+		Vector3d vel = getMoveVector(heading);
 
 		// Adjust for the position being the camera.
-		pos.y -= camHeight;
+		double old, v;
+		double x = pos.x;
+		double y = pos.y - camHeight;
+		double z = pos.z;
 
-		// XXX Physics!
+		double minX = x - playerSize;
+		double minY = y;
+		double minZ = z - playerSize;
+		double maxX = x + playerSize;
+		double maxY = y + playerHeight;
+		double maxZ = z + playerSize;
+
+		bool ground;
+		{
+			double cy = getMovedBodyPosition(y, -gravity, 0, 0);
+			ground = collidesInRange(
+				minX, cy, minZ, maxX, cy, maxZ);
+		}
+
+		// Ignore the old velocity if on the ground.
+		if (ground) {
+			vel.y = ((jump || up) && ground) * jumpFactor - gravity;
+		} else {
+			vel.scale(0.02);
+			vel += oldVel;
+			vel.y = vel.y - gravity;
+		}
+
+		double limit(double val) {
+			return fmax(fmin(val, 0.8), -0.8);
+		}
+
+		v = limit(vel.x);
+		old = x;
+		if (v != 0) {
+			double cx = getMovedBodyPosition(x, v, -playerSize, playerSize);
+			if (collidesInRange(cx, minY, minZ, cx, maxY, maxZ)) {
+				if (v < 0)
+					x = cx + 1 + playerSize + 0.00001;
+				else
+					x = cx - playerSize - 0.00001;
+			} else {
+				x = x + v;
+			}
+
+			minX = x - playerSize;
+			maxX = x + playerSize;
+			vel.x = x - old;
+		}
+
+		v = limit(vel.z);
+		old = z;
+		if (v != 0) {
+			double cz = getMovedBodyPosition(z, v, -playerSize, playerSize);
+			if (collidesInRange(minX, minY, cz, maxX, maxY, cz)) {
+				if (v < 0)
+					z = cz + 1 + playerSize + 0.00001;
+				else
+					z = cz - playerSize - 0.00001;
+			} else {
+				z = z + v;
+			}
+
+			minZ = z - playerSize;
+			maxZ = z + playerSize;
+			vel.z = z - old;
+		}
+
+		v = limit(vel.y);
+		old = y;
+		if (v != 0) {
+			double cy = getMovedBodyPosition(y, v, 0, playerHeight);
+			if (collidesInRange(minX, cy, minZ, maxX, cy, maxZ)) {
+				if (v < 0)
+					y = cy + 1 + 0.00001;
+				else
+					y = cy - playerHeight - 0.00001;
+			} else {
+				y = y + v;
+			}
+
+			// Not needed.
+			//minY = y - playerSize;
+			//maxY = y + playerSize;
+			vel.y = y - old;
+		}
+
 		pos += vel;
-
-		// Adjust back.
-		pos += Vector3d(0, camHeight, 0);
+		oldVel = vel;
 
 		return pos;
 	}
@@ -196,6 +283,12 @@ protected:
 		// Normalize function is safe.
 		vel.normalize();
 
+		// The speed at which we move.
+		double velSpeed = run ? 1.0 : (4.3/100);
+
+		// Scale the speed vector.
+		vel.scale(velSpeed);
+
 		return vel;
 	}
 
@@ -212,10 +305,21 @@ protected:
 	}
 
 	/**
+	 * Simple wrapper around the int version of collidesInRange.
+	 */
+	final bool collidesInRange(double minX, double minY, double minZ,
+	                           double maxX, double maxY, double maxZ)
+	{
+		return collidesInRange(
+			cast(int)minX, cast(int)minY, cast(int)minZ,
+			cast(int)maxX, cast(int)maxY, cast(int)maxZ);
+	}
+
+	/**
 	 * Check if the player collides within a range of blocks.
 	 */
-	bool collidesInRange(int minX, int minY, int minZ,
-	                     int maxX, int maxY, int maxZ)
+	final bool collidesInRange(int minX, int minY, int minZ,
+	                           int maxX, int maxY, int maxZ)
 	{
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
@@ -226,6 +330,15 @@ protected:
 			}
 		}
 
-		return true;
+		return false;
 	}
+}
+
+double getMovedBodyPosition(
+	double pos, double v, double minVal, double maxVal)
+{
+	if (v < 0)
+		return floor(pos + v + minVal);
+	else
+		return floor(pos + v + maxVal);
 }

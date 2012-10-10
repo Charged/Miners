@@ -22,6 +22,7 @@ import miners.gfx.scene;
 import miners.gfx.selector;
 import miners.actors.camera;
 import miners.actors.sunlight;
+import miners.terrain.finite;
 import miners.classic.data;
 import miners.classic.text;
 import miners.classic.world;
@@ -129,7 +130,7 @@ public:
 		camPitch = 0.0;
 
 		centerer = cam = new Camera(w);
-		cam.position = w.spawn + Vector3d(0.5, 1.5, 0.5);
+		cam.position = w.spawn + Vector3d(0.5, 1.6, 0.5);
 
 		centerMap();
 
@@ -663,6 +664,13 @@ public:
 	 */
 	ubyte ppGetBlock(int x, int y, int z)
 	{
+		// Stop players from falling off the map.
+		if (x < 0 || y < 0 || z < 0)
+			return 1;
+		auto ft = cast(FiniteTerrain)w.t;
+		if (x >= ft.xSize || y >= ft.ySize + 2 || z >= ft.zSize)
+			return 1;
+
 		auto b = w.t[x, y, z];
 		return b.type;
 	}
