@@ -79,11 +79,7 @@ public:
 		FULL,   // Obsidian
 	];
 
-
-	const double width = 0.4;
-	const double height = 1.4;
 	const double camHeight = 1.2;
-
 	const double playerSize = 0.32;
 	const double playerHeight = 1.5;
 	const double gravity = 9.8 / 2000.0;
