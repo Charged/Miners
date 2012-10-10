@@ -33,8 +33,8 @@ public:
 			return false;
 
 		try {
-			if (!GL_VERSION_2_0)
-				throw new Exception("GL_VERSION < 2.0");
+			if (!GL_VERSION_2_1)
+				throw new Exception("GL_VERSION < 2.1");
 
 			if (!GL_ARB_vertex_buffer_object)
 				throw new Exception("ARB VBO extension not available");
@@ -200,8 +200,8 @@ public:
 		int value;
 
 		try {
-			if (!GL_VERSION_2_0)
-				throw new Exception("GL_VERSION < 2.0");
+			if (!GL_VERSION_2_1)
+				throw new Exception("GL_VERSION < 2.1");
 
 			if (!GL_ARB_vertex_buffer_object)
 				throw new Exception("ARB VBO extension not available");
