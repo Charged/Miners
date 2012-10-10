@@ -24,6 +24,9 @@ private:
 	const fogOnText = "Fog: on";
 	const fogOffText = "Fog: off";
 
+	const noClipOnText = "NoClip: on";
+	const noClipOffText = "NoClip: off";
+
 	const shadowOnText = "Shadow: on";
 	const shadowOffText = "Shadow: off";
 
@@ -56,9 +59,10 @@ public:
 		auto b4 = new Button(mb, 0, b3.y + b3.h, "", minButtonWidth);
 		auto b5 = new Button(mb, 0, b4.y + b4.h, "", minButtonWidth);
 		auto b6 = new Button(mb, 0, b5.y + b5.h, "", minButtonWidth);
-		auto b7 = new Button(mb, 0, b6.y + b6.h + 16, "", minButtonWidth);
+		auto b7 = new Button(mb, 0, b6.y + b6.h, "", minButtonWidth);
+		auto b8 = new Button(mb, 0, b7.y + b7.h + 16, "", minButtonWidth);
 
-		auto lastButton = b7;
+		auto lastButton = b8;
 		int bY = lastButton.y + lastButton.h + 16;
 
 		string otherText = part !is null ? otherPartText : otherCloseText;
@@ -89,10 +93,11 @@ public:
 		setShadowText(b3); b3.pressed ~= &shadow;
 		setViewText(b4); b4.pressed ~= &view;
 		setFovText(b5); b5.pressed ~= &fov;
-		setFullscreenText(b6); b6.pressed ~= &fullscreen;
+		setNoClipText(b6); b6.pressed ~= &noClip;
+		setFullscreenText(b7); b7.pressed ~= &fullscreen;
 
-		b7.setText("Open textures & screenshots");
-		b7.pressed ~= &openFolder;
+		lastButton.setText("Open textures & screenshots");
+		lastButton.pressed ~= &openFolder;
 	}
 
 	void quit(Button b) { r.quit(); }
@@ -179,6 +184,17 @@ public:
 	void setFogText(Button b)
 	{
 		b.setText(opts.fog() ? fogOnText : fogOffText, minButtonWidth);
+	}
+
+	void noClip(Button b)
+	{
+		opts.noClip.toggle();
+		setNoClipText(b);
+	}
+
+	void setNoClipText(Button b)
+	{
+		b.setText(opts.noClip() ? noClipOnText : noClipOffText, minButtonWidth);
 	}
 
 	void shadow(Button b)

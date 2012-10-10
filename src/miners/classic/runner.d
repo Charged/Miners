@@ -206,6 +206,7 @@ public:
 		}
 
 		pp = new PlayerPhysics(&ppGetBlock);
+		opts.noClip ~= &ppNoClip;
 	}
 
 	this(Router r, Options opts, string filename)
@@ -247,6 +248,9 @@ public:
 	void close()
 	{
 		bgScene.close();
+
+		opts.noClip -= &ppNoClip;
+		opts.noClip = false; // Reset.
 
 		chatGui.breakApart();
 		chatGuiSmall.breakApart();
@@ -468,6 +472,7 @@ public:
 		pp.jump = false;
 		pp.crouch = false;
 		pp.run = false;
+		pp.noClip = opts.noClip();
 	}
 
 	void drawSlotBar(GfxDraw d, GfxRenderTarget rt)
@@ -660,6 +665,14 @@ public:
 
 
 	/**
+	 * For options.
+	 */
+	void ppNoClip(bool val)
+	{
+		pp.noClip = val;
+	}
+
+	/**
 	 * Callback for the PlayerPhysics to get a block.
 	 */
 	ubyte ppGetBlock(int x, int y, int z)
@@ -779,6 +792,9 @@ public:
 
 		} else if (sym == opts.keyFlightMode) {
 			// XXX Fix
+
+		} else if (sym == opts.keyNoClip) {
+			pp.noClip = keyDown ^ opts.noClip();
 
 		} else if (sym == opts.keyChat) {
 			if (keyDown) {

@@ -82,6 +82,7 @@ public:
 	Option!(bool) fog; /**< should fog be drawn */
 	Option!(int) fov; /**< which fov should be used */
 	Option!(bool) hideUi; /**< hide the user interface */
+	Option!(bool) noClip; /**< can the player move trough blocks */
 	Option!(bool) shadow; /**< should advanced shadowing be used */
 	Option!(bool) showDebug; /**< should debug info be shown */
 	Option!(bool) useCmdPrefix; /**< should we use the command prefix */
@@ -109,7 +110,7 @@ public:
 	 */
 
 
-	const string[23] keyNames = [
+	const string[24] keyNames = [
 		"mc.keyForward",
 		"mc.keyBackward",
 		"mc.keyLeft",
@@ -120,6 +121,7 @@ public:
 		"mc.keyCrouch",
 		"mc.keyRun",
 		"mc.keyFlightMode",
+		"mc.keyNoClip",
 		"mc.keyChat",
 		"mc.keySelector",
 		"mc.keyScreenshot",
@@ -135,7 +137,7 @@ public:
 		"mc.keySlot8",
 	];
 
-	const int[23] keyDefaults = [
+	const int[24] keyDefaults = [
 		SDLK_w,
 		SDLK_s,
 		SDLK_a,
@@ -146,6 +148,7 @@ public:
 		SDLK_LCTRL,
 		SDLK_LSHIFT,
 		SDLK_z,
+		SDLK_x,
 		SDLK_t,
 		SDLK_b,
 		SDLK_o,
@@ -176,6 +179,7 @@ public:
 			int keyCrouch;
 			int keyRun;
 			int keyFlightMode;
+			int keyNoClip;
 			int keyChat;
 			int keySelector;
 			int keyScreenshot;
@@ -190,7 +194,7 @@ public:
 			int keySlot7;
 			int keySlot8;
 		};
-		int[23] keyArray;
+		int[24] keyArray;
 	}
 	Signal!() keyBindings;
 
