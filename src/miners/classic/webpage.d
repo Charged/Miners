@@ -61,6 +61,8 @@ interface ClassicWebpageListener
 class WebpageConnection : NetHttpConnection
 {
 private:
+	mixin SysLogging;
+
 	// Server details
 	const string hostname = "minecraft.net";
 	const ushort port = 80;
@@ -79,7 +81,7 @@ private:
 	Op curOp;
 
 	/// Receiver of packages
-	ClassicWebpageListener l;
+	ClassicWebpageListener wl;
 
 	/// Session id
 	string playSession;
@@ -90,18 +92,18 @@ private:
 
 
 public:
-	this(ClassicWebpageListener l)
+	this(ClassicWebpageListener wl)
 	{
-		this.l = l;
+		this.wl = wl;
 		this.curOp = Op.CONNECTING;
 
 		super(hostname, port);
 	}
 
-	this(ClassicWebpageListener l, string playSession)
+	this(ClassicWebpageListener wl, string playSession)
 	{
 		this.playSession = playSession;
-		this(l);
+		this(wl);
 	}
 
 
@@ -206,7 +208,8 @@ public:
 protected:
 	void handleError(Exception e)
 	{
-		l.error(e);
+		l.error("Webpage error (%s) \"%s\"", lastReturnCode, e.toString);
+		wl.error(e);
 	}
 
 	void handleResponse(char[] header, char[] res)
@@ -217,15 +220,15 @@ protected:
 		switch(tmp) {
 		case Op.POST_LOGIN:
 			playSession = getPlaySession(header);
-			l.authenticated();
+			wl.authenticated();
 			break;
 		case Op.GET_SERVER_LIST:
 			auto csis = getClassicServerList(res);
-			l.serverList(csis);
+			wl.serverList(csis);
 			break;
 		case Op.GET_SERVER_INFO:
 			getClassicServerInfo(csi, res);
-			l.serverInfo(csi);
+			wl.serverInfo(csi);
 			break;
 		default:
 			auto str = format("Unhandled operation %s", curOp);
@@ -235,13 +238,13 @@ protected:
 
 	void handleUpdate(int percentage)
 	{
-		l.percentage(percentage);
+		wl.percentage(percentage);
 	}
 
 	void handleConnected()
 	{
 		curOp = Op.NO_OP;
-		l.connected();
+		wl.connected();
 	}
 
 	void handleDisconnect()
@@ -250,7 +253,7 @@ protected:
 
 		// This becomes an error if we are trying to do something.
 		if (curOp == Op.NO_OP) {
-			l.disconnected();
+			wl.disconnected();
 		} else {
 			auto e = new Exception("Connection lost!");
 			handleError(e);
