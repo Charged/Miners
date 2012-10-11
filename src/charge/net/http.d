@@ -4,6 +4,7 @@ module charge.net.http;
 
 import std.string : find, format;
 import std.conv : toInt;
+import std.regexp : RegExp;
 import std.socket : TcpSocket, SocketSet, SocketShutdown,
                     SocketOption, SocketOptionLevel,
                     Address, InternetAddress, timeval;
@@ -21,6 +22,8 @@ class HttpConnection
 protected:
 	TcpSocket s;
 
+	/// Return code for the latest request.
+	int lastReturnCode;
 
 private:
 	// Server details
@@ -260,7 +263,10 @@ private:
 		scope(failure)
 			resetOffsets();
 
-		contentLength = getContentLength(data[0 .. pageBodyStart]);
+		char[] pageHeader = cast(char[])data[0 .. pageBodyStart];
+
+		lastReturnCode = getReturnCode(pageHeader);
+		contentLength = getContentLength(pageHeader);
 
 		size_t end = pageBodyStart + contentLength;
 		int percentage = cast(int)((dataRead * 100f) / end);
@@ -315,6 +321,10 @@ private:
  */
 class ThreadedHttpConnection : ThreadedTcpConnection
 {
+protected:
+	int lastReturnCode;
+
+
 private:
 	// Server details
 	string hostname;
@@ -325,6 +335,7 @@ private:
 	ptrdiff_t contentLength;
 	char[] pageBody;
 	char[] pageHeader;
+
 
 public:
 	this(string hostname, ushort port)
@@ -438,6 +449,7 @@ protected:
 			pageHeader = saved[0 .. pos + 2].dup;
 			saved = saved[pos + 4 .. $].dup;
 
+			lastReturnCode = getReturnCode(pageHeader);
 			contentLength = getContentLength(pageHeader);
 		}
 
@@ -469,6 +481,22 @@ class ReceiveException : Exception
 		this.status = status;
 		super(format("ReceiveException (%s)", status));
 	}
+}
+
+static RegExp headerReg;
+
+static this()
+{
+	headerReg = RegExp(`^HTTP/\d\.\d\s+(\d+)`);
+}
+
+static int getReturnCode(char[] header)
+{
+	auto m = headerReg.match(header);
+	if (m.length < 2)
+		throw new Exception("Invalid HTTP resonse");
+
+	return toInt(m[1]);
 }
 
 static ptrdiff_t getContentLength(char[] header)
