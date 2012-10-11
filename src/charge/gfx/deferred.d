@@ -1930,7 +1930,7 @@ void main()
 	float alpha = smoothstep(start, stop, dist);
 
 	vec3 c;
-	if (alpha == 1.0)
+	if (alpha > 0.0)
 		c = texture2D(bgTex, coord).rgb;
 	else
 		c = color.rgb;
