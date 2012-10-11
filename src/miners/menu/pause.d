@@ -91,9 +91,9 @@ public:
 		setAaText(b1); b1.pressed ~= &aa;
 		setFogText(b2); b2.pressed ~= &fog;
 		setShadowText(b3); b3.pressed ~= &shadow;
-		setViewText(b4); b4.pressed ~= &view;
-		setFovText(b5); b5.pressed ~= &fov;
-		setNoClipText(b6); b6.pressed ~= &noClip;
+		setNoClipText(b4); b4.pressed ~= &noClip;
+		setViewText(b5); b5.pressed ~= &view;
+		setFovText(b6); b6.pressed ~= &fov;
 		setFullscreenText(b7); b7.pressed ~= &fullscreen;
 
 		lastButton.setText("Open textures & screenshots");
