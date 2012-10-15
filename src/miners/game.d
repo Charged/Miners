@@ -206,6 +206,7 @@ protected:
 		rm = new RenderManager(opts.failsafe);
 		opts.rendererString = rm.s;
 		opts.rendererBuildType = rm.bt;
+		opts.rendererBackground = rm.canDoDeferred;
 		opts.rendererBuildIndexed = rm.textureArray;
 		opts.changeRenderer = &changeRenderer;
 		opts.aa ~= &rm.setAa;

@@ -123,7 +123,8 @@ public:
 		super(r, opts, w);
 
 		// Background scene.
-		bgScene = new ClassicBackgroundScene(opts);
+		if (opts.rendererBackground)
+			bgScene = new ClassicBackgroundScene(opts);
 
 		// Camera defaults
 		camHeading = 0.0;
@@ -247,7 +248,10 @@ public:
 
 	void close()
 	{
-		bgScene.close();
+		if (bgScene !is null) {
+			bgScene.close();
+			bgScene = null;
+		}
 		sysReference(&w.gfx.bg, null);
 
 		opts.noClip -= &ppNoClip;
@@ -347,7 +351,7 @@ public:
 		cam.resize(rt.width, rt.height);
 
 		auto pcam = cast(GfxProjCamera)cam.current;
-		if (pcam !is null && w.gfx.fog !is null) {
+		if (pcam !is null && w.gfx.fog !is null && bgScene !is null) {
 			bgScene.render(pcam, sl.gfx, rt.width, rt.height);
 			sysReference(&w.gfx.bg, bgScene.texture);
 		} else {

@@ -129,12 +129,16 @@ protected:
 				rss[num_renderers]  = "Adv. Forward";
 				rs[num_renderers++] = mfr;
 			} catch (Exception e) {
+				canDoForward = false;
 				l.warn("No fancy renderer \"%s\"", e);
 			}
 		}
 
-		if (!failsafe && canDoDeferred) {
+		if (canDoDeferred) {
 			try {
+				if (failsafe)
+					throw new Exception("Failsafe mode");
+
 				MinecraftDeferredRenderer.init();
 
 				mdr = new MinecraftDeferredRenderer();
@@ -142,6 +146,7 @@ protected:
 				rss[num_renderers]  = "Adv. Deferred";
 				rs[num_renderers++] = mdr;
 			} catch (Exception e) {
+				canDoDeferred = false;
 				l.warn("No fancy renderer \"%s\"", e);
 			}
 		}
