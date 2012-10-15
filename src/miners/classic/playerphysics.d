@@ -107,6 +107,7 @@ public:
 	this(BlockDg getBlock)
 	{
 		this.getBlock = getBlock;
+		oldVel = Vector3d();
 	}
 
 	/**
