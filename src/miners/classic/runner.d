@@ -248,6 +248,7 @@ public:
 	void close()
 	{
 		bgScene.close();
+		sysReference(&w.gfx.bg, null);
 
 		opts.noClip -= &ppNoClip;
 		opts.noClip = false; // Reset.
