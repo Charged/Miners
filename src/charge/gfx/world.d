@@ -70,7 +70,8 @@ public:
 
 	~this()
 	{
-		bg.reference(&bg, null);
+		// Ugh this needs to be done else where.
+		assert(bg is null);
 
 		Actor actor;
 		/* vector not safe to traverse while removing elements */
