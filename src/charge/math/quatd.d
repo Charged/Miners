@@ -8,12 +8,37 @@ import std.string : format;
 public import charge.math.vector3d;
 
 
+/**
+ * Representing orientations and rotations of objects in three dimensions.
+ *
+ * Why are using Quaternions instead of much simpler to understand euler-
+ * angles, because the latter suffers from gimbal and are actually quite
+ * hard to work with for anything other then very simple operations on a
+ * single body.
+ *
+ * While the internal values inside a Quaternions are not at all easy to
+ * wrap ones head around, and trying to do so can make it harder to understand
+ * how to use them Quaternion.
+ *
+ * The best thing to see them as a representation of a rotation of a object.
+ * Multiplying two together will rotate one by the other, the most important
+ * thing to take away from this is that Q1 * Q2 != Q2 * Q1, this is really
+ * important.
+ *
+ * @see http://www.cprogramming.com/tutorial/3d/quaternions.html
+ * @see http://en.wikipedia.org/wiki/Gimbal_Lock
+ * @see http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+ * @see http://en.wikipedia.org/wiki/Slerp
+ */
 struct Quatd
 {
 public:
 	double w, x, y, z;
 
 public:
+	/**
+	 * Used when loading from a external source or when you are a math wizard.
+	 */
 	static Quatd opCall(double w, double x, double y, double z)
 	{
 		Quatd q;
@@ -24,12 +49,25 @@ public:
 		return q;
 	}
 
+	/**
+	 * Unit rotation (no rotation).
+	 */
 	static Quatd opCall()
 	{
 		Quatd q = { 1.0, 0.0, 0.0, 0.0 };
 		return q;
 	}
 
+	/**
+	 * Convert from Euler (and Tait-Bryan) angles to Quaternion.
+	 *
+	 * Note in charge the Y axis is and Z points out from the screen.
+	 *
+	 * @arg heading, TB: yaw, Euler: rotation around the Y axis.
+	 * @arg pitch, TB: pitch, Euler: rotation around the X axis.
+	 * @arg roll, TB: roll, Euler: rotation around the Z axis.
+	 * @see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+	 */
 	static Quatd opCall(double heading, double pitch, double roll)
 	{
 		double sinPitch = sin(heading * 0.5);
@@ -50,6 +88,11 @@ public:
 		return q;
 	}
 
+	/**
+	 * Construct a rotation from a Euler vector and angle.
+	 *
+	 * @see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+	 */
 	static Quatd opCall(double angle, Vector3d vec)
 	{
 		Quatd q;
@@ -65,6 +108,9 @@ public:
 		return q;
 	}
 
+	/**
+	 * Return a new quat which is this rotation rotated by the given rotation.
+	 */
 	Quatd opMul(Quatd quat)
 	{
 		Quatd result;
@@ -77,6 +123,9 @@ public:
 		return result;
 	}
 
+	/**
+	 * Rotate this rotation by the given rotation.
+	 */
 	void opMulAssign(Quatd quat)
 	{
 		auto w = w*quat.w - x*quat.x - y*quat.y - z*quat.z;
@@ -90,20 +139,27 @@ public:
 		this.z = z;
 	}
 
+	/**
+	 * Return a copy of the given vector but rotated by this rotation.
+	 */
 	Vector3d opMul(Vector3d vec)
 	{
 		Quatd q = {vec.x * x + vec.y * y + vec.z * z,
-			   vec.x * w + vec.z * y - vec.y * z,
-			   vec.y * w + vec.x * z - vec.z * x,
-			   vec.z * w + vec.y * x - vec.x * y};
+		           vec.x * w + vec.z * y - vec.y * z,
+		           vec.y * w + vec.x * z - vec.z * x,
+		           vec.z * w + vec.y * x - vec.x * y};
 
 		auto v = Vector3d(w * q.x + x * q.w + y * q.z - z * q.y,
-				  w * q.y + y * q.w + z * q.x - x * q.z,
-				  w * q.z + z * q.w + x * q.y - y * q.x);
+		                  w * q.y + y * q.w + z * q.x - x * q.z,
+		                  w * q.z + z * q.w + x * q.y - y * q.x);
 
 		return v;
 	}
 
+	/**
+	 * Normalize the rotation, often not needed when using only the
+	 * inbuilt functions.
+	 */
 	void normalize()
 	{
 		double len = length;
@@ -126,16 +182,25 @@ public:
 		return w*w + x*x + y*y + z*z;
 	}
 
+	/**
+	 * Return a vector pointing forward but rotated by this rotation.
+	 */
 	Vector3d rotateHeading()
 	{
 		return opMul(Vector3d.Heading);
 	}
 
+	/**
+	 * Return a vector pointing upwards but rotated by this rotation.
+	 */
 	Vector3d rotateUp()
 	{
 		return opMul(Vector3d.Up);
 	}
 
+	/**
+	 * Return a vector pointing left but rotated by this rotation.
+	 */
 	Vector3d rotateLeft()
 	{
 		return opMul(Vector3d.Left);
