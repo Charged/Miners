@@ -335,7 +335,7 @@ public:
 				saveCamHeading = camHeading,
 				saveCamPitch = camPitch;
 			} else {
-				sentCounter = 0;
+				c.sendPing();
 			}
 		}
 	}
