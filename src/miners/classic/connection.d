@@ -192,6 +192,11 @@ public:
 		sendPacket!(cm)(s);
 	}
 
+    void sendPing()
+    {
+        ubyte b;
+        s.send((&b)[0 .. 1]);
+    }
 
 protected:
 	/*
