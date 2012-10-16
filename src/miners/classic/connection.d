@@ -2,7 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.connection;
 
-import std.socket : Socket, SocketFlags, TcpSocket, SocketShutdown, InternetAddress;
+import std.socket : Socket, SocketFlags, SocketOption, SocketOptionLevel,
+                    TcpSocket, SocketShutdown, InternetAddress;
 import std.string : format;
 import std.zlib : ZlibException;
 import etc.c.zlib : z_stream, inflate, inflateInit2, inflateEnd,
@@ -563,6 +564,7 @@ protected:
 		try {
 			s = new TcpSocket(a);
 			s.blocking = false;
+			s.setOption(SocketOptionLevel.TCP, SocketOption.TCP_NODELAY, 1);
 			sendClientIdentification(username, verificationKey);
 			return true;
 		} catch (Exception e) {

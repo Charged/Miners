@@ -339,7 +339,8 @@ public:
 				saveCamHeading = camHeading,
 				saveCamPitch = camPitch;
 			} else {
-				c.sendPing();
+				sentCounter = 0;
+				// @todo c.sendPing();
 			}
 		}
 	}
