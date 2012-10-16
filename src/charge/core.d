@@ -1,10 +1,16 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file containing Core and CoreOptions.
+ */
 module charge.core;
 
 import charge.sys.properties;
 
 
+/**
+ * Enum for selecting subsystems.
+ */
 enum coreFlag
 {
 	CTL  = (1 << 0),
@@ -25,7 +31,6 @@ extern(C) Core chargeCore(CoreOptions opts);
  * a quit event on the event queue and then returns.
  */
 extern(C) void chargeQuit();
-
 
 /**
  * Options at initialization.

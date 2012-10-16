@@ -1,11 +1,22 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright at the bottom of this file (GPLv2 only).
+
+/**
+ * Source file that includes all of charge into one namespace.
+ *
+ * Also prefixing classes due to name collision.
+ */
 module charge.charge;
 
-/*
- * Includes all of charge into one namespace.
- * Also prefixing classes for due to name collision otherwise.
- */
+
+/*!
+@mainpage @subsection start Where to start looking
+
+@ref charge.math.movable.Movable "Movable" @ref src/charge/math/movable.d "[code]" @n
+@ref charge.game.world.World "GameWorld" @ref src/charge/game/world.d "[code]" @n
+@ref miners.classic.runner.ClassicRunner "ClassicRunner" @ref src/miners/classic/runner.d "[code]"
+*/
+
 
 public
 {
@@ -202,7 +213,7 @@ alias charge.core.coreFlag coreFlag;
 
 
 
-string licenseText = `
+string licenseText = r"
 Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 
 This program is free software; you can redistribute it and/or
@@ -218,7 +229,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-`;
+";
 
 import license;
 
