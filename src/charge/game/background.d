@@ -3,14 +3,12 @@
 module charge.game.background;
 
 import charge.math.color;
-import charge.sys.resource;
+import charge.sys.resource : reference;
 import charge.gfx.draw;
 import charge.gfx.target;
 import charge.gfx.texture;
 
 import charge.game.runner;
-
-alias charge.sys.resource.Resource.reference sysReference;
 
 
 /**
@@ -48,12 +46,12 @@ public:
 
 	void close()
 	{
-		sysReference(&this.background, null);
+		reference(&this.background, null);
 	}
 
 	void newBackground(Texture background)
 	{
-		sysReference(&this.background, background);
+		reference(&this.background, background);
 	}
 
 	void render(RenderTarget rt)

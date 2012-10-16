@@ -75,7 +75,7 @@ public:
 		if (tex is null)
 			return null;
 		scope(failure)
-			reference(&tex, null);
+			sysReference(&tex, null);
 
 		if (tex.width % 16 != 0 ||
 		    tex.height % 16 != 0) {

@@ -158,7 +158,7 @@ public:
 			return null;
 		}
 		auto ret = new RigidMeshVBO(p, filename, m);
-		m.reference(&m, null);
+		reference(&m, null);
 		return ret;
 	}
 

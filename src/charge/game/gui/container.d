@@ -7,6 +7,7 @@ import charge.math.color;
 import charge.util.vector;
 import charge.gfx.draw;
 import charge.gfx.texture;
+import charge.sys.resource : reference;
 import charge.game.gui.component;
 
 
@@ -202,7 +203,7 @@ public:
 	{
 		super.releaseResources();
 
-		tt.reference(&tt, null);
+		reference(&tt, null);
 	}
 
 	void repaint(int x, int y, uint w, uint h)
@@ -228,7 +229,7 @@ public:
 	void paintTexture()
 	{
 		if (tt is null || (tt.width != w || tt.height != h)) {
-			tt.reference(&tt, null);
+			reference(&tt, null);
 			tt = TextureTarget(null, w, h);
 		}
 
@@ -328,7 +329,7 @@ public:
 		auto dH = h * 2;
 
 		if (tt is null || (tt.width != dW || tt.height != dH)) {
-			tt.reference(&tt, null);
+			reference(&tt, null);
 			tt = TextureTarget(null, dW, dH);
 			tt.filter = Texture.Filter.LinearNone;
 		}

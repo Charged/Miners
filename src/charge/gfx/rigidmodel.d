@@ -14,6 +14,7 @@ import charge.gfx.gl;
 import charge.gfx.vbo;
 
 import charge.sys.logger;
+import charge.sys.resource : reference;
 
 
 class RigidModel : Actor, Renderable
@@ -40,7 +41,7 @@ public:
 	{
 		// Take on reference because the constructor doesn't.
 		RigidMeshVBO tmp;
-		vbo.reference(&tmp, vbo);
+		reference(&tmp, vbo);
 
 		return new RigidModel(w, vbo);
 	}
@@ -75,7 +76,7 @@ protected:
 	~this()
 	{
 		delete m;
-		vbo.reference(&vbo, null);
+		reference(&vbo, null);
 	}
 
 	void cullAndPush(Cull cull, RenderQueue rq)

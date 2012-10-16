@@ -184,7 +184,7 @@ alias charge.sys.properties.Properties SysProperties;
 alias charge.sys.file.File SysFile;
 alias charge.sys.file.FileManager SysFileManager;
 alias charge.sys.file.ZipFile SysZipFile;
-alias charge.sys.resource.Resource.reference sysReference;
+alias charge.sys.resource.reference sysReference;
 
 alias charge.game.world.Ticker GameTicker;
 alias charge.game.world.Actor GameActor;

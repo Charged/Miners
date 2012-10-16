@@ -187,7 +187,7 @@ protected:
 	~this()
 	{
 		glDeleteFramebuffersEXT(1, &fbo);
-		tex.reference(&tex, null);
+		reference(&tex, null);
 	}
 
 	void drawLayoutedText(string text, bool shaded)

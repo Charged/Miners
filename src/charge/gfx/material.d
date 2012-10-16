@@ -16,6 +16,8 @@ import charge.gfx.light;
 import charge.gfx.texture;
 import charge.gfx.renderqueue;
 
+import charge.sys.resource : reference;
+
 
 struct MaterialProperty
 {
@@ -68,7 +70,7 @@ public:
 			tex = Texture(filename);
 
 		auto ret = setTexture(name, tex);
-		tex.reference(&tex, null);
+		reference(&tex, null);
 
 		return ret;
 	}
@@ -141,7 +143,7 @@ public:
 
 	~this()
 	{
-		texSafe.reference(&texSafe, null);
+		reference(&texSafe, null);
 		// Does not hold a reference
 		tex = null;
 	}
@@ -168,7 +170,7 @@ public:
 				tex = texture;
 
 				// Update the safe texture
-				texSafe.reference(&texSafe, tex);
+				reference(&texSafe, tex);
 
 				// Must always be safe to access, set to color
 				if (texSafe is null)

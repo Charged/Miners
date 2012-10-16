@@ -158,7 +158,7 @@ typedef charge::sys::properties::Properties SysProperties;
 typedef charge::sys::file::File SysFile;
 typedef charge::sys::file::FileManager SysFileManager;
 typedef charge::sys::file::ZipFile SysZipFile;
-typedef charge::sys::resource::Resource::reference sysReference;
+typedef charge::sys::resource::reference sysReference;
 
 typedef charge::game::world::Ticker GameTicker;
 typedef charge::game::world::Actor GameActor;

@@ -5,7 +5,7 @@ module charge.phy.geom;
 import charge.phy.ode;
 import charge.math.mesh;
 import charge.sys.logger;
-import charge.sys.resource;
+import charge.sys.resource : Pool, Resource, reference;
 
 
 class Geom
@@ -63,13 +63,13 @@ public:
 			return null;
 		}
 		auto ret = new GeomMeshData(p, filename, m);
-		Resource.reference(&m, null);
+		reference(&m, null);
 		return ret;
 	}
 
 	~this()
 	{
-		Resource.reference(&rigidMesh, null);
+		reference(&rigidMesh, null);
 		dGeomTriMeshDataDestroy(mesh);
 	}
 
@@ -78,7 +78,7 @@ protected:
 	{
 		super(p, uri, filename);
 
-		Resource.reference(&rigidMesh, mesh);
+		reference(&rigidMesh, mesh);
 
 		this.mesh = dGeomTriMeshDataCreate();
 		dGeomTriMeshDataBuildSingle(
@@ -109,6 +109,6 @@ public:
 	~this()
 	{
 		dGeomDestroy(geom);
-		Resource.reference(&data, null);
+		reference(&data, null);
 	}
 }

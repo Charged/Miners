@@ -66,7 +66,7 @@ public:
 	{
 		super(w);
 
-		vbo.reference(&this.vbo, vbo);
+		reference(&this.vbo, vbo);
 
 		this.bones.allocCopy(bones);
 		this.m = MaterialManager.getDefault();
@@ -76,7 +76,7 @@ public:
 	~this()
 	{
 		delete m;
-		vbo.reference(&vbo, null);
+		reference(&vbo, null);
 		bones.free();
 	}
 

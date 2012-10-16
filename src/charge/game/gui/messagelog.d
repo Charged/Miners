@@ -6,6 +6,7 @@ import charge.math.color;
 import charge.gfx.font;
 import charge.gfx.draw;
 import charge.gfx.texture;
+import charge.sys.resource : reference;
 import charge.game.gui.component;
 import charge.game.gui.container;
 
@@ -55,8 +56,8 @@ public:
 
 	void releaseResources()
 	{
-		bf.reference(&bf, null);
-		glyphs.reference(&glyphs, null);
+		reference(&bf, null);
+		reference(&glyphs, null);
 	}
 
 	void message(string msg)
@@ -97,7 +98,7 @@ protected:
 
 	void makeResources()
 	{
-		bf.reference(&bf, BitmapFont.defaultFont);
+		reference(&bf, BitmapFont.defaultFont);
 		if (glyphs !is null)
 			return;
 

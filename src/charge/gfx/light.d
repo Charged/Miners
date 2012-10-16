@@ -8,6 +8,8 @@ import charge.math.color;
 import charge.gfx.gl;
 import charge.gfx.texture;
 
+import charge.sys.resource : reference;
+
 
 class Light : Movable
 {
@@ -70,7 +72,7 @@ public:
 
 	~this()
 	{
-		texture.reference(&texture, null);
+		reference(&texture, null);
 	}
 
 }

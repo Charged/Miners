@@ -7,6 +7,25 @@ import std.string : format;
 import charge.sys.logger;
 
 
+/**
+ * Increments and decrements resource refcounts.
+ */
+void reference(void* _oldRes, Resource newRes)
+{
+	// Stupid D type system
+	auto oldRes = cast(Resource*)_oldRes;
+
+	assert(oldRes !is null);
+
+	if (newRes !is null)
+		newRes.incRef();
+
+	if (*oldRes !is null)
+		(*oldRes).decRef();
+
+	*oldRes = newRes;
+}
+
 abstract class Resource
 {
 private:
@@ -17,22 +36,6 @@ private:
 	string uri;
 
 public:
-	static void reference(void* _oldRes, Resource newRes)
-	{
-		// Stupid D type system
-		auto oldRes = cast(Resource*)_oldRes;
-
-		assert(oldRes !is null);
-
-		if (newRes !is null)
-			newRes.incRef();
-
-		if (*oldRes !is null)
-			(*oldRes).decRef();
-
-		*oldRes = newRes;
-	}
-
 	this(Pool p, string uri, string name)
 	{
 		this.pool = p;

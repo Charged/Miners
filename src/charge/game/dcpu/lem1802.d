@@ -7,6 +7,7 @@ import lib.gl.gl;
 import charge.math.color;
 import charge.gfx.draw;
 import charge.gfx.texture;
+import charge.sys.resource : reference;
 
 import charge.game.gui.component;
 import charge.game.gui.container;
@@ -176,7 +177,7 @@ protected:
 
 	void releaseResources()
 	{
-		glyphs.reference(&glyphs, null);
+		reference(&glyphs, null);
 	}
 
 	void paint(Draw d)
