@@ -6,19 +6,6 @@
  * These typedefs are here to work around Doxygen not understanding
  * d aliases at all.
  */
-typedef charge::math::mesh::RigidMesh RigidMesh;
-typedef charge::math::mesh::RigidMeshBuilder RigidMeshBuilder;
-typedef charge::math::picture::Picture Picture;
-typedef charge::math::movable::Movable Movable;
-typedef charge::math::vector3d::Vector3d Vector3d;
-typedef charge::math::point3d::Point3d Point3d;
-typedef charge::math::quatd::Quatd Quatd;
-typedef charge::math::color::Color4b Color4b;
-typedef charge::math::color::Color3f Color3f;
-typedef charge::math::color::Color4f Color4f;
-typedef charge::math::matrix3x3d::Matrix3x3d Matrix3x3d;
-typedef charge::math::matrix4x4d::Matrix4x4d Matrix4x4d;
-
 typedef charge::net::packet::Packet NetPacket;
 typedef charge::net::packet::RealiblePacket RealiblePacket;
 typedef charge::net::packet::UnrealiblePacket UnrealiblePacket;

@@ -9,19 +9,22 @@ module charge.charge;
 
 public
 {
-	static import charge.util.memory;
-	static import charge.util.vector;
+	import charge.util.memory : cMemoryArray;
+	import charge.util.vector : Vector, VectorData;
 
-	static import charge.math.mesh;
-	static import charge.math.picture;
-	static import charge.math.color;
-	static import charge.math.vector3d;
-	static import charge.math.point3d;
-	static import charge.math.quatd;
-	static import charge.math.movable;
-	static import charge.math.matrix3x3d;
-	static import charge.math.matrix4x4d;
+	import charge.math.mesh : RigidMesh, RigidMeshBuilder;
+	import charge.math.picture : Picture;
+	import charge.math.color : Color4b, Color3f, Color4f;
+	import charge.math.vector3d : Vector3d;
+	import charge.math.point3d : Point3d;
+	import charge.math.quatd : Quatd;
+	import charge.math.movable : Movable;
+	import charge.math.matrix3x3d : Matrix3x3d;
+	import charge.math.matrix4x4d : Matrix4x4d;
+}
 
+public
+{
 	static import charge.net.util;
 	static import charge.net.http;
 	static import charge.net.packet;
@@ -83,23 +86,6 @@ public
 
 	static import charge.core;
 }
-
-alias charge.util.memory.cMemoryArray cMemoryArray;
-alias charge.util.vector.Vector Vector;
-alias charge.util.vector.VectorData VectorData;
-
-alias charge.math.mesh.RigidMesh RigidMesh;
-alias charge.math.mesh.RigidMeshBuilder RigidMeshBuilder;
-alias charge.math.picture.Picture Picture;
-alias charge.math.movable.Movable Movable;
-alias charge.math.vector3d.Vector3d Vector3d;
-alias charge.math.point3d.Point3d Point3d;
-alias charge.math.quatd.Quatd Quatd;
-alias charge.math.color.Color4b Color4b;
-alias charge.math.color.Color3f Color3f;
-alias charge.math.color.Color4f Color4f;
-alias charge.math.matrix3x3d.Matrix3x3d Matrix3x3d;
-alias charge.math.matrix4x4d.Matrix4x4d Matrix4x4d;
 
 alias charge.net.packet.Packet NetPacket;
 alias charge.net.packet.RealiblePacket RealiblePacket;
