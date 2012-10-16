@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Vector3d.
+ */
 module charge.math.vector3d;
 
 import std.math : sqrt, floor;
@@ -8,6 +11,12 @@ import std.string : format;
 import charge.math.point3d;
 
 
+/**
+ * Vector in a 3D space. Charge follows the OpenGL convetion for axis
+ * so Y+ is up, X+ is right and Z- is forward.
+ *
+ * @ingroup Math
+ */
 struct Vector3d
 {
 public:

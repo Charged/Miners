@@ -1,10 +1,15 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for a 2D box.
+ */
 module charge.math.box;
 
 
 /**
  * A simple 2D box used for collision detection.
+ *
+ * @ingroup Math
  */
 struct Box(T, V)
 {

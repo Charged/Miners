@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file with functions for generating noise.
+ */
 module charge.math.noise;
 
 import std.math : floor;
@@ -10,6 +13,8 @@ import std.math : floor;
  *
  * A good reference for both Perlin- and Simplex-noise is:
  * http://webstaff.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+ *
+ * @ingroup Math
  */
 float pnoise(float x, float y, float z) 
 {

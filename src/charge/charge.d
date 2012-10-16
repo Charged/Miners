@@ -10,13 +10,25 @@ module charge.charge;
 
 
 /*!
-@mainpage @subsection start Where to start looking
-
-@ref charge.math.movable.Movable "Movable" @ref src/charge/math/movable.d "[code]" @n
-@ref charge.game.world.World "GameWorld" @ref src/charge/game/world.d "[code]" @n
-@ref miners.classic.runner.ClassicRunner "ClassicRunner" @ref src/miners/classic/runner.d "[code]"
+@mainpage
+@section start Where to start looking
+If you want to look up math related things look at the
+@link Math Math group @endlink.
+@n@n
+For Charged Miners classic a good as place as any is the
+@link miners.classic.runner.ClassicRunner ClassicRunner @endlink
+@link src/miners/classic/runner.d [code] @endlink which holds most of the
+gameplay logic for Charged Miners and links to the other parts of it.
 */
 
+/*!
+@defgroup Math Math related structs, classes and functions.
+
+Charge uses a OpenGL based convetions for axis, so Y+ is up, X+ is right and
+Z- is forward. For rotations the convention is to use Quatd to represent them,
+which might be harder to understand in the beginning but has advantages over
+other methods.
+*/
 
 public
 {

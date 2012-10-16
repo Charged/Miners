@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Frustum.
+ */
 module charge.math.frustum;
 
 import std.math : sqrt;
@@ -9,13 +12,25 @@ import charge.math.movable;
 import charge.math.matrix4x4d;
 
 
-align(16) struct Vector3f
+align(16): private void hidden(); /* doxygen is stupid */
+
+/**
+ * @struct charge.math.frustum.Vector3f
+ * 3D Vector used by the Frustum struct.
+ *
+ * @ingroup Math
+ */
+struct Vector3f
 {
 	float x, y, z;
 }
 
-
-align(16) struct ABox
+/**
+ * Axis aligned 3D box used by the Frustum struct.
+ *
+ * @ingroup Math
+ */
+struct ABox
 {
 	Vector3f min;
 	int pad1;
@@ -23,8 +38,12 @@ align(16) struct ABox
 	int pad2;
 }
 
-
-align(16) struct Planed
+/**
+ * 3D Plane used by the Frustum struct.
+ *
+ * @ingroup Math
+ */
+struct Planef
 {
 public:
 	union {
@@ -70,11 +89,18 @@ public:
 	}
 }
 
-
-align(16) struct Frustum
+/**
+ * Viewing frustum struct for use when doing Frustum
+ * culling in the rendering pipeline.
+ *
+ * @see http://en.wikipedia.org/wiki/Viewing_frustum
+ * @see http://en.wikipedia.org/wiki/Frustum_culling
+ * @ingroup Math
+ */
+struct Frustum
 {
 public:
-	Planed p[6];
+	Planef p[6];
 
 	enum Planes {
 		Left,

@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Point3d.
+ */
 module charge.math.point3d;
 
 import std.math : floor;
@@ -8,6 +11,11 @@ import std.string : string, format;
 import charge.math.vector3d;
 
 
+/**
+ * Point in 3D space.
+ *
+ * @ingroup Math
+ */
 struct Point3d
 {
 public:

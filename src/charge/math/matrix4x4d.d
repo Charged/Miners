@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Matrix4x4d.
+ */
 module charge.math.matrix4x4d;
 
 import std.math : cos, sin, PI;
@@ -10,6 +13,11 @@ import charge.math.point3d;
 import charge.math.vector3d;
 
 
+/**
+ * Often used when interacting with OpenGL.
+ *
+ * @ingroup
+ */
 struct Matrix4x4d
 {
 public:

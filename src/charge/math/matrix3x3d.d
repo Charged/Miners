@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Matrix3x3d.
+ */
 module charge.math.matrix3x3d;
 
 import charge.math.vector3d;
@@ -7,6 +10,12 @@ import charge.math.point3d;
 import charge.math.quatd;
 
 
+/**
+ * Matrix often used for rotationtion but more commonly in Charge
+ * @link charge.math.quatd.Quatd Quatd @endlink is used instead.
+ *
+ * @ingroup Math
+ */
 struct Matrix3x3d
 {
 public:

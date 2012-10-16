@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Quatd.
+ */
 module charge.math.quatd;
 
 import std.math : sin, cos, sqrt;
@@ -29,6 +32,7 @@ public import charge.math.vector3d;
  * @see http://en.wikipedia.org/wiki/Gimbal_Lock
  * @see http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
  * @see http://en.wikipedia.org/wiki/Slerp
+ * @ingroup Math
  */
 struct Quatd
 {

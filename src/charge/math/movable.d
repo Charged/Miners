@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Movable.
+ */
 module charge.math.movable;
 
 public import charge.math.point3d;
@@ -7,7 +10,9 @@ public import charge.math.quatd;
 
 
 /**
- * Base class for all movable objects
+ * Base class for all movable objects.
+ *
+ * @ingroup Math
  */
 class Movable
 {
