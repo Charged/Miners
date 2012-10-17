@@ -12,6 +12,11 @@ import charge.sys.logger;
 import charge.sys.resource;
 
 
+/**
+ * Base class for VBO meshes.
+ *
+ * @ingroup Resource
+ */
 class VBO : Resource
 {
 public:
@@ -97,6 +102,11 @@ protected:
 
 }
 
+/**
+ * Resource part backing @link charge.gfx.rigidmodel.RigidModel RigidModel @endlink.
+ *
+ * @ingroup Resource
+ */
 class RigidMeshVBO : VBO
 {
 protected:

@@ -12,6 +12,11 @@ import charge.gfx.draw;
 import charge.gfx.texture;
 
 
+/**
+ * Simple Bitmap font, doesn't handle UTF-8.
+ *
+ * @ingroup Resource
+ */
 class BitmapFont : Resource
 {
 public:

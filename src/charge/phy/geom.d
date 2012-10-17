@@ -32,6 +32,11 @@ class GeomSphere : Geom
 	}
 }
 
+/**
+ * Backing data for @link charge.phy.geom.GeomMesh GeomMesh @endlink.
+ *
+ * @ingroup Resource
+ */
 class GeomMeshData : Resource
 {
 public:

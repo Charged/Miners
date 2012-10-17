@@ -18,12 +18,10 @@ struct Vertex
 	float nx, ny, nz;
 }
 
-
 struct Triangle
 {
 	uint i1, i2, i3;
 }
-
 
 struct RigidMeshStruct
 {
@@ -45,7 +43,11 @@ struct RigidMeshStruct
 	}
 }
 
-
+/**
+ * 3D Mesh.
+ *
+ * @ingroup Resource
+ */
 class RigidMesh : Resource
 {
 public:

@@ -13,6 +13,11 @@ import charge.util.png;
 import charge.util.memory;
 
 
+/**
+ * 2D Picture.
+ *
+ * @ingroup Resource
+ */
 class Picture : Resource
 {
 public:

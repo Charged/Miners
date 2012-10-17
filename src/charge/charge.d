@@ -30,6 +30,12 @@ which might be harder to understand in the beginning but has advantages over
 other methods.
 */
 
+/*!
+@defgroup Resource The charge resource system.
+
+All resources in charge are reference counted.
+*/
+
 public
 {
 	import charge.util.memory : cMemoryArray;

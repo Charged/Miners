@@ -15,6 +15,11 @@ import charge.gfx.gl;
 import charge.gfx.target;
 
 
+/**
+ * 2D Texture with selectable filtering.
+ *
+ * @ingroup Resource
+ */
 class Texture : Resource
 {
 public:
@@ -264,6 +269,11 @@ private:
 
 }
 
+/**
+ * 2D Texture with selectable filtering.
+ *
+ * @ingroup Resource
+ */
 class ColorTexture : Texture
 {
 private:
@@ -340,6 +350,11 @@ protected:
 
 }
 
+/**
+ * 2D Texture with selectable filtering.
+ *
+ * @ingroup Resource
+ */
 class DynamicTexture : Texture
 {
 public:
@@ -359,6 +374,11 @@ public:
 
 }
 
+/**
+ * Texture that wraps another texture, used to swap out textures on the fly.
+ *
+ * @ingroup Resource
+ */
 class WrappedTexture : Texture
 {
 private:
@@ -410,6 +430,11 @@ public:
 	}
 }
 
+/**
+ * 2D Texture usable as a target as well, with selectable filtering.
+ *
+ * @ingroup Resource
+ */
 class TextureTarget : Texture, RenderTarget
 {
 private:
@@ -485,6 +510,11 @@ protected:
 	}
 }
 
+/**
+ * Texture Array with selectable filtering.
+ *
+ * @ingroup Resource
+ */
 class TextureArray : Texture
 {
 public:

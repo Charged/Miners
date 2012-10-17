@@ -9,6 +9,8 @@ import charge.sys.logger;
 
 /**
  * Increments and decrements resource refcounts.
+ *
+ * @ingroup Resource
  */
 void reference(void* _oldRes, Resource newRes)
 {
@@ -26,6 +28,11 @@ void reference(void* _oldRes, Resource newRes)
 	*oldRes = newRes;
 }
 
+/**
+ * Reference base class for all Resources.
+ *
+ * @ingroup Resource
+ */
 abstract class Resource
 {
 private:
@@ -74,6 +81,11 @@ private:
 	}
 }
 
+/**
+ * Pool for named resources.
+ *
+ * @ingroup Resource
+ */
 class Pool
 {
 private:

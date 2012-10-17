@@ -114,6 +114,11 @@ public:
 		glPopMatrix();
 	}
 
+	/**
+	 * SimpleSkeleton mesh vbo.
+	 *
+	 * @ingroup Resource
+	 */
 	static class VBO : charge.gfx.vbo.VBO
 	{
 	protected:
