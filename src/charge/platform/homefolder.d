@@ -3,7 +3,7 @@
 module charge.platform.homefolder;
 
 import std.c.stdlib : getenv, free;
-import std.file : exists, mkdir;
+import std.file : exists, mkdir, chdir;
 import std.stdio : writefln;
 import std.string : toString;
 
@@ -42,6 +42,9 @@ static this()
 	try {
 		if (!exists(chargeConfigFolder))
 			mkdir(chargeConfigFolder);
+
+		// Change working directory to the config folder.
+		chdir(chargeConfigFolder);
 	} catch (Exception e) {
 		// Can't do any logging since the logging module looks for the homeFolder.
 		writefln("Could not create config folder (%s)", chargeConfigFolder);
@@ -52,4 +55,5 @@ static ~this()
 {
 	// This should be stdlib free
 	free(privateFrameworksPath.ptr);
+	privateFrameworksPath = null;
 }
