@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for logging class Logger and helpers.
+ */
 module charge.sys.logger;
 
 import std.stdio : FILE, FPUTC, stdout, fopen, fflush, fprintf;

@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Actor, Body and Static.
+ */
 module charge.phy.actor;
 
 import charge.math.movable;

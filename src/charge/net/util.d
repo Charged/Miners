@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for network helpers.
+ */
 module charge.net.util;
 
 import std.intrinsic : bswap;

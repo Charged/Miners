@@ -1,13 +1,23 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for syncing with the gpu.
+ */
 module charge.gfx.sync;
 
 import charge.gfx.gl;
 
 
-// Prefix already added.
+/**
+ * Sync object.
+ *
+ * Prefix already added.
+ */
 alias void* GfxSync;
 
+/**
+ * Sync with the gpu and delete sync object or timeout happens, in milliseconds.
+ */
 bool gfxSyncWaitAndDelete(ref GfxSync sync, long timeout)
 {
 	if (sync is null)
@@ -32,6 +42,9 @@ bool gfxSyncWaitAndDelete(ref GfxSync sync, long timeout)
 	}
 }
 
+/**
+ * Delete a sync object.
+ */
 void gfxSyncDelete(ref GfxSync sync)
 {
 	if (sync !is null)
@@ -39,6 +52,9 @@ void gfxSyncDelete(ref GfxSync sync)
 	sync = null;
 }
 
+/**
+ * Insert a sync object into the GPU command stream.
+ */
 GfxSync gfxSyncInsert()
 {
 	if (!GL_ARB_sync)

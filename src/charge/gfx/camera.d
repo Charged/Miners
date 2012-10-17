@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Camera (s).
+ */
 module charge.gfx.camera;
 
 import std.math : sin, atan, asin, PI, PI_4;

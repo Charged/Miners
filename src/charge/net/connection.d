@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for upd base Connection, see also Server and Client.
+ */
 module charge.net.connection;
 
 import std.stdio : writef;

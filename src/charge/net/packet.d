@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for udp based Packet.
+ */
 module charge.net.packet;
 
 import std.stdint : uint8_t, uint16_t, uint32_t;

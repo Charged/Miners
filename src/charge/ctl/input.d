@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for main Input processing and interface.
+ */
 module charge.ctl.input;
 
 import std.utf : toUTF8;

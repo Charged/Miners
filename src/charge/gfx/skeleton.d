@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for SimpleSkeleton.
+ */
 module charge.gfx.skeleton;
 
 import charge.util.memory;

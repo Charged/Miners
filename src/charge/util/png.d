@@ -2,6 +2,9 @@
 // mangled by Jakob Bornecrantz and upgraded to GPLv2 only.
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for PngImage loading.
+ */
 module charge.util.png;
 
 import std.math : abs;

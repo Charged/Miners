@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Dds image loader functions.
+ */
 module charge.util.dds;
 
 import charge.math.ints;

@@ -1,6 +1,9 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // Code heavily based on code in phobos that was in Public Domain.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for Zip file and zlib functions.
+ */
 module charge.util.zip;
 
 private import etc.c.zlib;
