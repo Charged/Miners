@@ -9,17 +9,17 @@ import charge.util.vector;
 import charge.math.movable;
 import charge.gfx.world;
 import charge.phy.world;
+import charge.sys.resource : Pool;
 
 
-interface Ticker
-{
-	void tick();
-}
-
+/**
+ * Base class for all actors inside a World.
+ */
 abstract class Actor : Movable
 {
 public:
 	World w;
+
 
 public:
 	this(World world)
@@ -35,31 +35,39 @@ public:
 
 }
 
+/**
+ * When added to World recieves a tick ever logic step.
+ */
+interface Ticker
+{
+	void tick();
+}
+
+/**
+ * Container object for other sub system Worlds and actors.
+ */
 class World
 {
-private:
-	charge.gfx.world.World gfxWorld;
-	charge.phy.world.World phyWorld;
-
 public:
-
-	alias charge.gfx.world.World GfxWorld;
-	alias charge.phy.world.World PhyWorld;
-
 	alias Vector!(Actor) ActorVector;
 	alias Vector!(Ticker) TickerVector;
 
 	ActorVector actors;
 	TickerVector tickers;
 
+	charge.gfx.world.World gfx;
+	charge.phy.world.World phy;
+
+
+public:
 	this()
 	{
 		if (charge.gfx.gfx.gfxLoaded) {
-			gfxWorld = new GfxWorld();
+			gfx = new charge.gfx.world.World();
 		}
 
 		if (charge.phy.phy.phyLoaded) {
-			phyWorld = new PhyWorld();
+			phy = new charge.phy.world.World();
 			phy.setStepLength(10);
 		}
 	}
@@ -81,13 +89,15 @@ public:
 			t.tick();
 	}
 
+
 	/*
 	 * Vector access
 	 */
 
+
 	void add(Actor a)
 	{
-		actors.add = a;
+		actors.add(a);
 	}
 
 	void addTicker(Ticker t)
@@ -104,19 +114,4 @@ public:
 	{
 		tickers.remove(t);
 	}
-
-	/*
-	 * Misc
-	 */
-
-	GfxWorld gfx()
-	{
-		return gfxWorld;
-	}
-
-	PhyWorld phy()
-	{
-		return phyWorld;
-	}
-
 }
