@@ -53,8 +53,11 @@ public:
 		this.uri = uri;
 		this.refcount = 1;
 
-		if (name !is null)
+		if (name !is null) {
 			p.resource(uri, name, this);
+		} else {
+			assert(p is null);
+		}
 	}
 
 	final string getName()
