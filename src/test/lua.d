@@ -75,8 +75,7 @@ public:
 	this(GameWorld w)
 	{
 		super(w);
-		gfx = new GfxSimpleLight();
-		w.gfx.add(gfx);
+		gfx = new GfxSimpleLight(w.gfx);
 	}
 
 	void setPosition(ref Point3d pos) { gfx.setPosition(pos); }

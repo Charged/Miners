@@ -670,7 +670,7 @@ public:
 		GfxRenderer.init();
 
 		w = new GameWorld();
-		sl = new GfxSimpleLight();
+		sl = new GfxSimpleLight(w.gfx);
 		projcam = new GfxProjCamera();
 		isocam = new GfxIsoCamera(400, 300, -500, 500);
 		terrain = new Terrain(w, 0);
@@ -679,15 +679,12 @@ public:
 		projcam.position = Point3d(0.0, 5.0, 15.0);
 		sl.rotation = Quatd(PI / 4, Vector3d.Up) * Quatd(-PI / 4, Vector3d.Left);
 
-		w.gfx.add(sl);
-		auto pl = new GfxPointLight();
+		auto pl = new GfxPointLight(w.gfx);
 		pl.position = Point3d(0.0, 0.0, 0.0);
 		pl.size = 20;
-		w.gfx.add(pl);
-		spl = new GfxSpotLight();
+		spl = new GfxSpotLight(w.gfx);
 		spl.position = Point3d(0.0, 5.0, 15.0);
 		spl.far = 150;
-		w.gfx.add(spl);
 
 		w.phy.setStepLength(10);
 

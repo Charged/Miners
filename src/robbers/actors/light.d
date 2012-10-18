@@ -16,11 +16,10 @@ public:
 	{
 		super(w);
 
-		light = new GfxSimpleLight();
+		light = new GfxSimpleLight(w.gfx);
 		light.position = pos;
 		light.rotation = rot;
 		light.shadow = shadow;
-		w.gfx.add(light);
 	}
 
 }

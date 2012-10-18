@@ -218,7 +218,7 @@ public:
 		GfxRenderer.init();
 
 		w = new GameWorld();
-		sl = new GfxSimpleLight();
+		sl = new GfxSimpleLight(w.gfx);
 		GfxDefaultTarget rt = GfxDefaultTarget();
 		cam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, 1, 150);
 		r = GfxRenderer.create();
@@ -227,15 +227,12 @@ public:
 		sl.rotation = Quatd(PI/3, -PI/4, 0.0);//Quatd(PI, Vector3d.Up) * sl.rotation;
 		sl.shadow = true;
 
-		w.gfx.add(sl);
-		auto pl = new GfxPointLight();
+		auto pl = new GfxPointLight(w.gfx);
 		pl.position = Point3d(0.0, 0.0, 0.0);
 		pl.size = 20;
-		w.gfx.add(pl);
-		spl = new GfxSpotLight();
+		spl = new GfxSpotLight(w.gfx);
 		spl.position = Point3d(0.0, 5.0, 15.0);
 		spl.far = 150;
-		w.gfx.add(spl);
 
 		w.phy.setStepLength(10);
 

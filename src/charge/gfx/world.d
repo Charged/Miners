@@ -15,6 +15,9 @@ import charge.gfx.light;
 import charge.gfx.texture;
 
 
+/**
+ * Base class for all graphics actors.
+ */
 abstract class Actor : Movable
 {
 private:
@@ -41,6 +44,35 @@ public:
 	abstract void cullAndPush(Cull cull, RenderQueue rq);
 }
 
+/**
+ * Base class for all lights.
+ */
+abstract class Light : Movable
+{
+public:
+	World w;
+
+
+public:
+	this(World w)
+	{
+		assert(w !is null);
+		this.w = w;
+		w.add(this);
+	}
+
+	~this()
+	{
+		if (w !is null) {
+			w.remove(this);
+			w = null;
+		}
+	}
+}
+
+/**
+ * Container for graphics actors and lights.
+ */
 class World
 {
 public:
@@ -49,20 +81,11 @@ public:
 	Fog fog;
 	Texture bg; /** Used as a background image */
 
+
 private:
 	ActorVector a;
 	LightVector l;
 
-protected:
-	void add(Actor a)
-	{
-		this.a.add(a);
-	}
-
-	void remove(Actor a)
-	{
-		this.a.remove(a);
-	}
 
 public:
 	this()
@@ -80,6 +103,11 @@ public:
 		/* vector not safe to traverse while removing elements */
 		while((actor = a[0]) !is null)
 			delete actor;
+
+		Light light;
+		/* vector not safe to traverse while removing elements */
+		while((light = l[0]) !is null)
+			delete light;
 	}
 
 	/**
@@ -92,16 +120,6 @@ public:
 		return a;
 	}
 
-	void add(Light l)
-	{
-		this.l.add(l);
-	}
-
-	void remove(Light l)
-	{
-		this.l.remove(l);
-	}
-
 	/**
 	 * Returns the actors vector.
 	 * In some regards i is a copy.
@@ -112,4 +130,25 @@ public:
 		return l;
 	}
 
+
+protected:
+	void add(Light l)
+	{
+		this.l.add(l);
+	}
+
+	void remove(Light l)
+	{
+		this.l.remove(l);
+	}
+
+	void add(Actor a)
+	{
+		this.a.add(a);
+	}
+
+	void remove(Actor a)
+	{
+		this.a.remove(a);
+	}
 }

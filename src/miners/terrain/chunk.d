@@ -231,7 +231,6 @@ public:
 	void unbuild()
 	{
 		foreach(l; lights) {
-			w.gfx.remove(l);
 			delete l;
 		}
 		lights = null;

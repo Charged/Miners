@@ -49,8 +49,7 @@ public:
 		d = new GfxDraw();
 		lem = new Lem1802(c);
 
-		sl = new GfxSpotLight();
-		w.gfx.add(sl);
+		sl = new GfxSpotLight(w.gfx);
 	}
 
 	~this()
@@ -62,7 +61,6 @@ public:
 
 	void close()
 	{
-		w.gfx.remove(sl);
 		delete sl;
 		if (c !is null) {
 			c.close();

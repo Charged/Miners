@@ -24,8 +24,7 @@ public:
 	this(World w)
 	{
 		super(w);
-		gfx = new GfxSimpleLight();
-		w.gfx.add(gfx);
+		gfx = new GfxSimpleLight(w.gfx);
 
 		fog = new GfxFog();
 		fog.stop = w.opts.viewDistance();
@@ -43,7 +42,6 @@ public:
 
 	~this()
 	{
-		w.gfx.remove(gfx);
 		w.gfx.fog = null;
 
 		delete gfx;

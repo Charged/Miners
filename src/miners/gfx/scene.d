@@ -81,13 +81,11 @@ public:
 		super(opts);
 		this.camera = new GfxProjCamera();
 		this.fog = new GfxFog();
-		this.light = new GfxSimpleLight();
+		this.light = new GfxSimpleLight(world);
 
 		fog.color = Color4f(Color4b(0xaacbffff));
 		fog.start = 128;
 		fog.stop = 1024;
-
-		world.add(light);
 		world.fog = fog;
 
 		Triangle[2] tris;
