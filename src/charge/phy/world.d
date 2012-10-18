@@ -11,6 +11,7 @@ import charge.phy.phy;
 import charge.phy.ode;
 import charge.phy.actor;
 import charge.phy.material;
+import charge.sys.resource : Pool;
 
 
 interface PhysicsTicker
@@ -20,8 +21,10 @@ interface PhysicsTicker
 
 class World
 {
-package:
+public:
+	Pool pool;
 
+package:
 	dWorldID world;
 	dSpaceID body_space;
 	dSpaceID static_space;
@@ -39,6 +42,8 @@ public:
 	{
 		if (!phyLoaded)
 			throw new Exception("phy module not loaded");
+
+		this.pool = Pool();
 
 		world = dWorldCreate();
 		body_space = dSimpleSpaceCreate(null);

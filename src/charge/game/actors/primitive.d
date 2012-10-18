@@ -95,7 +95,7 @@ public:
 		gfx.position = pos;
 		gfx.rotation = rot;
 
-		phy = new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomMesh(phyModel));
+		phy = new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomMesh(w.phy.pool, phyModel));
 		phy.position = pos;
 		phy.rotation = rot;
 	}

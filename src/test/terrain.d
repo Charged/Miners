@@ -140,7 +140,7 @@ public:
 		name = rm.getName();
 
 		gfx = GfxRigidModel(w.gfx, name);
-		phy = new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomMesh(name));
+		phy = new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomMesh(w.phy.pool, name));
 
 		gfx.position = Point3d(16 * -64, 0, 16 * -64);
 		phy.position = gfx.position;

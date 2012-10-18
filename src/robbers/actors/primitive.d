@@ -56,7 +56,7 @@ public:
 		gfx.position = pos;
 		gfx.rotation = rot;
 
-		phy = new PhyStatic(w.phy, new PhyGeomMesh(phyModel));
+		phy = new PhyStatic(w.phy, new PhyGeomMesh(w.phy.pool, phyModel));
 		phy.position = pos;
 		phy.rotation = rot;
 	}

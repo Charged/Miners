@@ -51,11 +51,6 @@ private:
 	dTriMeshDataID mesh;
 
 public:
-	static GeomMeshData opCall(string filename)
-	{
-		return GeomMeshData(Pool(), filename);
-	}
-
 	static GeomMeshData opCall(Pool p, string filename)
 	{
 		auto r = p.resource(uri, filename);
@@ -103,9 +98,9 @@ private:
 	dTriMeshDataID mesh_data;
 
 public:
-	this(string filename)
+	this(Pool p, string filename)
 	{
-		data = GeomMeshData(filename);
+		data = GeomMeshData(p, filename);
 
 		if (data is null)
 			throw new Exception("Model not found!");
