@@ -9,8 +9,9 @@ static import gcstats;
 static import lib.sdl.sdl;
 
 import charge.charge;
-import charge.sys.tracker : TimeTracker;
 import charge.sys.memory : MemHeader;
+import charge.sys.tracker : TimeTracker;
+import charge.sys.resource : Pool;
 
 import miners.interfaces;
 
@@ -42,7 +43,7 @@ public:
 
 		d = new GfxDraw();
 
-		debugText = new GfxDynamicTexture("mc/debugText");
+		debugText = GfxDynamicTexture(Pool(), "mc/debugText");
 	}
 
 	~this()

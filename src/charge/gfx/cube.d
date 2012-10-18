@@ -182,7 +182,7 @@ public:
 		super(w);
 		pos = Point3d();
 		rot = Quatd();
-		m = MaterialManager.getDefault();
+		m = MaterialManager.getDefault(w.pool);
 
 		x = y = z = 1;
 	}

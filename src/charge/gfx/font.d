@@ -143,9 +143,12 @@ public:
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, 0, 0);
 	}
 
-	static BitmapFont opCall(string filename)
-	{
-		auto p = Pool();
+	static BitmapFont opCall(Pool p, string filename)
+	in {
+		assert(p !is null);
+		assert(filename !is null);
+	}
+	body {
 		if (filename is null)
 			return null;
 
@@ -156,7 +159,7 @@ public:
 			return bf;
 		}
 
-		auto tex = Texture(filename);
+		auto tex = Texture(p, filename);
 		// Error reporting already taken care of.
 		if (tex is null)
 			return null;
@@ -291,7 +294,7 @@ private:
 	static void initFunc()
 	{
 		if (gfxLoaded)
-			defaultFont = BitmapFont("res/font.png");
+			defaultFont = BitmapFont(Pool(), "res/font.png");
 	}
 
 	static void closeFunc()

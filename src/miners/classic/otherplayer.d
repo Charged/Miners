@@ -31,7 +31,7 @@ public:
 		w.addTicker(this);
 
 		if (text is null) {
-			text = new GfxDynamicTexture(null);
+			text = GfxDynamicTexture();
 			w.opts.classicFont().render(text, name);
 		}
 

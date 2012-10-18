@@ -13,6 +13,7 @@ import charge.gfx.renderqueue;
 import charge.gfx.cull;
 import charge.gfx.light;
 import charge.gfx.texture;
+import charge.sys.resource : Pool;
 
 
 /**
@@ -80,6 +81,7 @@ public:
 	alias Vector!(Light) LightVector;
 	Fog fog;
 	Texture bg; /** Used as a background image */
+	Pool pool;
 
 
 private:
@@ -90,6 +92,7 @@ private:
 public:
 	this()
 	{
+		pool = Pool();
 		if (!charge.gfx.gfx.gfxLoaded)
 			throw new Exception("gfx module not loaded");
 	}

@@ -167,13 +167,13 @@ TerrainTextures createTextures(Picture pic, bool doArray)
 	Texture t;
 	TextureArray ta;
 
-	t = Texture(null, pic);
+	t = Texture(pic);
 	// Or we get errors near the block edges
 	t.filter = Texture.Filter.Nearest;
 	texs.t = t;
 
 	if (doArray) {
-		ta = TextureArray.fromTileMap(null, pic, 16, 16);
+		ta = TextureArray.fromTileMap(pic, 16, 16);
 		ta.filter = Texture.Filter.NearestLinear;
 		texs.ta = ta;
 	}

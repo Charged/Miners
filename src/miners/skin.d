@@ -7,6 +7,7 @@ import uri = std.uri;
 
 import charge.charge;
 import charge.util.png;
+import charge.sys.resource : Pool;
 
 import miners.options;
 
@@ -70,7 +71,7 @@ public:
 
 		nextSkin ~= name;
 		auto str = format("playerSkin/%s.png", name);
-		auto ret = new GfxWrappedTexture(str, opts.defaultSkin());
+		auto ret = GfxWrappedTexture(Pool(), str, opts.defaultSkin());
 		store[name] = ret;
 		return ret;
 	}
@@ -103,7 +104,7 @@ public:
 			if (pic is null)
 				throw new Exception("Failed create picture");
 
-			auto tex = GfxTexture(str);
+			auto tex = GfxTexture(pic);
 			scope(exit)
 				sysReference(&tex, null);
 

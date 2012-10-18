@@ -105,7 +105,7 @@ protected:
 		if (glyphs !is null)
 			return;
 
-		glyphs = new DynamicTexture(null);
+		glyphs = DynamicTexture();
 
 		char[256] text;
 		foreach(int i, t; text)

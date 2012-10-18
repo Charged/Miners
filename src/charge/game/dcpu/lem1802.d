@@ -293,7 +293,7 @@ protected:
 		}
 
 		if (glyphs is null)
-			glyphs = new DynamicTexture(null);
+			glyphs = DynamicTexture();
 
 		GLint id = glyphs.id;
 

@@ -72,7 +72,7 @@ public:
 		reference(&this.vbo, vbo);
 
 		this.bones.allocCopy(bones);
-		this.m = MaterialManager.getDefault();
+		this.m = MaterialManager.getDefault(w.pool);
 		(cast(SimpleMaterial)this.m).skel = true;
 	}
 
@@ -132,12 +132,12 @@ public:
 	public:
 		static VBO opCall(Vertex verts[])
 		{
-			return new VBO(Pool(), verts);
+			return new VBO(verts);
 		}
 
-		this(Pool p, Vertex verts[])
+		this(Vertex verts[])
 		{
-			super(p, null);
+			super(null, null);
 
 			update(verts.ptr, verts.length * Vertex.sizeof,
 			       cast(uint)verts.length, null, 0, 0);

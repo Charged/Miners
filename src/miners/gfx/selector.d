@@ -3,6 +3,7 @@
 module miners.gfx.selector;
 
 import charge.math.mesh;
+import charge.sys.resource : Pool;
 import miners.gfx.imports;
 
 
@@ -27,7 +28,7 @@ public:
 	this(GfxWorld w)
 	{
 		super(w);
-		m = new GfxSimpleMaterial();
+		m = GfxMaterialManager.getDefault(Pool());
 		m["color"] = Color3f(0, 0, 0);
 		vbo = GfxRigidMeshVBO(RigidMesh.Types.QUADS, vert, null);
 	}

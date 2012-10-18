@@ -119,7 +119,7 @@ class CreateLogo : OptionsTask
 
 	bool build()
 	{
-		auto tex = GfxTexture("background.png");
+		auto tex = GfxTexture(Pool(), "background.png");
 		if (tex !is null) {
 			setBackground(tex);
 			sysReference(&tex, null);
@@ -287,7 +287,7 @@ public:
 		GfxTexture defSkin;
 
 		try {
-			defSkin = GfxTexture(filename);
+			defSkin = GfxTexture(Pool(), filename);
 		} catch (Exception e) {
 			signalError(["Could not load default skin", e.toString]);
 			return false;
@@ -451,7 +451,7 @@ class LoadClassicIcons : OptionsTask
 				d[0 .. $ / 2] = Color4b(0, 0, 0, 0);
 			}
 
-			auto tex = GfxTexture(null, texPic);
+			auto tex = GfxTexture(texPic);
 			tex.filter = GfxTexture.Filter.NearestLinear;
 
 			sysReference(&outTex, tex);
@@ -485,7 +485,7 @@ class LoadClassicFont : OptionsTask
 	bool build()
 	{
 		// Install the classic font handler.
-		auto cf = ClassicFont("res/font.png");
+		auto cf = ClassicFont(Pool(), "res/font.png");
 		opts.classicFont = cf;
 		sysReference(&cf, null);
 
@@ -513,7 +513,7 @@ class CreateTiledBackground : OptionsTask
 	bool build()
 	{
 		// See if the user has overridden the background.
-		auto tex = GfxTexture("background.tiled.png");
+		auto tex = GfxTexture(Pool(), "background.tiled.png");
 		if (tex !is null) {
 			setBackground(tex, true);
 			sysReference(&tex, null);
@@ -521,7 +521,7 @@ class CreateTiledBackground : OptionsTask
 		}
 
 		// Try the other one as well.
-		tex = GfxTexture("background.png");
+		tex = GfxTexture(Pool(), "background.png");
 		if (tex !is null) {
 			setBackground(tex, false);
 			sysReference(&tex, null);

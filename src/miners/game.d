@@ -220,7 +220,7 @@ protected:
 		debug { opts.showDebug = true; }
 
 		// Setup the skin loader.
-		auto defSkin = GfxColorTexture(Color4f.White);
+		auto defSkin = GfxColorTexture(Pool(), Color4f.White);
 		opts.defaultSkin = defSkin;
 		skin = new SkinDownloader(opts);
 		opts.getSkin = &skin.getSkin;

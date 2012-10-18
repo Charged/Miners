@@ -62,7 +62,7 @@ protected:
 			renderer.target = null;
 			sysReference(&texture, null);
 
-			texture = target = GfxTextureTarget(null, w, h);
+			texture = target = GfxTextureTarget(w, h);
 		}
 	}
 }

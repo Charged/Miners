@@ -53,7 +53,7 @@ public:
 
 		cam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, 1, 500);
 
-		sphere = GfxVBO("res/sphere.bin");
+		sphere = GfxVBO(w.gfx.pool, "res/sphere.bin");
 	}
 
 	~this()

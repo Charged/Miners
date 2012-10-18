@@ -69,7 +69,7 @@ public:
 		ratio = 1.0;
 		angle = 20.0;
 
-		texture = Texture("res/spotlight.png");
+		texture = Texture(w.pool, "res/spotlight.png");
 	}
 
 	~this()

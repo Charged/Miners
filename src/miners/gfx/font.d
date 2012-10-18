@@ -57,9 +57,8 @@ public:
 		height = (y + 1) * this.height;
 	}
 
-	static ClassicFont opCall(string filename)
+	static ClassicFont opCall(Pool p, string filename)
 	{
-		auto p = Pool();
 		if (filename is null)
 			return null;
 
@@ -70,7 +69,7 @@ public:
 			return cf;
 		}
 
-		auto tex = Texture(filename);
+		auto tex = Texture(p, filename);
 		// Error reporting already taken care of.
 		if (tex is null)
 			return null;

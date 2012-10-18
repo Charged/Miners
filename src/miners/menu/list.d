@@ -442,7 +442,7 @@ protected:
 		if (glyphs !is null)
 			return;
 
-		glyphs = new GfxDynamicTexture(null);
+		glyphs = GfxDynamicTexture();
 
 		char[256] text;
 		foreach(int i, t; text)

@@ -233,7 +233,7 @@ public:
 	{
 		if (tt is null || (tt.width != w || tt.height != h)) {
 			reference(&tt, null);
-			tt = TextureTarget(null, w, h);
+			tt = TextureTarget(w, h);
 		}
 
 		auto d = new Draw();
@@ -333,7 +333,7 @@ public:
 
 		if (tt is null || (tt.width != dW || tt.height != dH)) {
 			reference(&tt, null);
-			tt = TextureTarget(null, dW, dH);
+			tt = TextureTarget(dW, dH);
 			tt.filter = Texture.Filter.LinearNone;
 		}
 

@@ -83,7 +83,7 @@ public:
 		gfx = GfxRigidModel(w.gfx, name);
 		gfx.position = Point3d(16 * -64, 0.1, 16 * -64);
 
-		gfx.setMaterial(new GfxSimpleMaterial());
+		gfx.setMaterial(new GfxSimpleMaterial(w.gfx.pool));
 		gfx.getMaterial()["tex"] = "res/water_tile.png";
 		sysReference(&rm, null);
 	}
@@ -146,7 +146,7 @@ public:
 		phy.position = gfx.position;
 		phy.rotation = gfx.rotation;
 
-		gfx.setMaterial(new GfxSimpleMaterial());
+		gfx.setMaterial(new GfxSimpleMaterial(w.gfx.pool));
 		gfx.getMaterial().setTexture("tex", "res/dirt_tile.png");
 		sysReference(&rm, null);
 

@@ -22,7 +22,7 @@ import charge.sys.resource;
  */
 class VBO : Resource
 {
-public:
+protected:
 	const string uri = "vbo://";
 
 	GLuint vboVerts;
@@ -35,12 +35,10 @@ public:
 	size_t verteciesSize;
 	size_t indicesSize;
 
-protected:
 	static int used_mem;
 
 private:
 	mixin Logging;
-
 
 public:
 	~this()
@@ -123,41 +121,13 @@ protected:
 private:
 	mixin Logging;
 
-
-protected:
-	this(Pool p, RigidMeshBuilder builder)
-	{
-		this(p, null, builder.type,
-		     builder.verts, builder.iv,
-		     builder.tris, builder.it);
-	}
-
-	this(Pool p, string name, RigidMesh model)
-	{
-		numVerts = cast(GLuint)model.verts.length;
-		numIndices = cast(GLuint)model.tris.length;
-
-		this(p, name, model.type,
-		     model.verts.ptr, cast(uint)model.verts.length,
-		     model.tris.ptr, cast(uint)model.tris.length);
-	}
-
-	this(Pool p, string name, RigidMesh.Types type,
-	     Vertex *verts, uint numVerts, Triangle *tris, uint numTriangles)
-	{
-		super(p, name);
-
-		update(type, verts, numVerts, tris, numTriangles);
-	}
-
 public:
-	static RigidMeshVBO opCall(string filename)
-	{
-		return RigidMeshVBO(Pool(), filename);
-	}
-
 	static RigidMeshVBO opCall(Pool p, string filename)
-	{
+	in {
+		assert(p !is null);
+		assert(filename !is null);
+	}
+	body {
 		auto r = p.resource(uri, filename);
 		auto t = cast(RigidMeshVBO)r;
 		if (r !is null) {
@@ -177,24 +147,16 @@ public:
 
 	static RigidMeshVBO opCall(RigidMeshBuilder builder)
 	{
-		return RigidMeshVBO(Pool(), builder);
-	}
-
-	static RigidMeshVBO opCall(Pool p, RigidMeshBuilder builder)
-	{
-		return new RigidMeshVBO(p, builder);
+		return new RigidMeshVBO(
+			null, null, builder.type,
+			builder.verts, builder.iv,
+			builder.tris, builder.it);
 	}
 
 	static RigidMeshVBO opCall(RigidMesh.Types type,
 	                           Vertex[] verts, Triangle[] tris)
 	{
-		return RigidMeshVBO(Pool(), type, verts, tris);
-	}
-
-	static RigidMeshVBO opCall(Pool p, RigidMesh.Types type,
-	                           Vertex[] verts, Triangle[] tris)
-	{
-		return new RigidMeshVBO(p, null, type,
+		return new RigidMeshVBO(null, null, type,
 		                        verts.ptr, cast(uint)verts.length,
 		                        tris.ptr, cast(uint)tris.length);
 	}
@@ -336,6 +298,25 @@ public:
 		glBindVertexArrayCHARGE(0);
 	}
 
+protected:
+	this(Pool p, string name, RigidMesh model)
+	{
+		numVerts = cast(GLuint)model.verts.length;
+		numIndices = cast(GLuint)model.tris.length;
+
+		this(p, name, model.type,
+		     model.verts.ptr, cast(uint)model.verts.length,
+		     model.tris.ptr, cast(uint)model.tris.length);
+	}
+
+	this(Pool p, string name, RigidMesh.Types type,
+	     Vertex *verts, uint numVerts, Triangle *tris, uint numTriangles)
+	{
+		super(p, name);
+
+		update(type, verts, numVerts, tris, numTriangles);
+	}
+
 private:
 	final static void setup()
 	{
@@ -375,5 +356,4 @@ private:
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisable(GL_NORMALIZE);
 	}
-
 }

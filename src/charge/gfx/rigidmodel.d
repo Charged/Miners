@@ -32,7 +32,7 @@ private:
 public:
 	static RigidModel opCall(World w, string name)
 	{
-		auto vbo = RigidMeshVBO(name);
+		auto vbo = RigidMeshVBO(w.pool, name);
 		if (vbo is null) {
 			l.warn("failed to load %s", name);
 			return null;
@@ -71,7 +71,7 @@ protected:
 		super(w);
 		pos = Point3d();
 		rot = Quatd();
-		m = MaterialManager.getDefault();
+		m = MaterialManager.getDefault(w.pool);
 		x = y = z = 1;
 		this.vbo = vbo;
 	}
