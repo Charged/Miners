@@ -1,5 +1,8 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for version handling of files.
+ */
 module charge.game.update;
 
 import std.file : read, write, exists;

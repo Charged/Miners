@@ -1,5 +1,8 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
+/**
+ * Source file for text based gui elements.
+ */
 module charge.game.gui.textbased;
 
 import std.math : fmax;

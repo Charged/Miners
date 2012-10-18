@@ -72,3 +72,9 @@
  *
  * Folder for higher level classes and functions using other subsystems.
  */
+
+/**
+ * @package charge.game.gui
+ *
+ * Folder for higher level gui classes.
+ */
