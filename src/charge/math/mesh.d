@@ -66,9 +66,8 @@ private:
 	Types tp;
 
 public:
-	static RigidMesh opCall(string name)
+	static RigidMesh opCall(Pool p, string name)
 	{
-		auto p = Pool();
 		auto r = p.resource(uri, name);
 		auto t = cast(RigidMesh)r;
 		if (r !is null) {
@@ -80,7 +79,7 @@ public:
 
 	static RigidMesh opCall(Vertex verts[], Triangle tris[], Types type)
 	{
-		return new RigidMesh(Pool(), null, verts, tris, type);
+		return new RigidMesh(null, null, verts, tris, type);
 	}
 
 	~this()

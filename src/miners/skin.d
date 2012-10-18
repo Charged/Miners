@@ -97,7 +97,7 @@ public:
 			if (img is null)
 				throw new Exception("Image format not supported");
 
-			auto pic = Picture(str, img);
+			auto pic = Picture(img);
 			scope(exit)
 				sysReference(&pic, null);
 
@@ -114,6 +114,8 @@ public:
 			tex.filter = GfxTexture.Filter.Nearest;
 			auto w = store[curSkin];
 			w.update(tex);
+
+			l.info("Downloaded %s", str);
 
 		} catch (Exception e) {
 			l.warn("Failed to load: %s", str);

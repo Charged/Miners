@@ -32,16 +32,12 @@ private:
 	mixin Logging;
 
 public:
-	static Picture opCall(string filename)
-	{
-		return Picture(Pool(), filename);
-	}
-
 	static Picture opCall(Pool p, string filename)
-	{
-		if (filename is null)
-			return null;
-		
+	in {
+		assert(p !is null);
+		assert(filename !is null);
+	}
+	body {
 		auto r = p.resource(uri, filename);
 		auto pic = cast(Picture)r;
 		if (r !is null) {
@@ -56,28 +52,59 @@ public:
 		return new Picture(p, filename, i);
 	}
 
-	static Picture opCall(string name, string filename)
-	{
+	static Picture opCall(Pool p, string name, string filename)
+	in {
+		assert(p !is null);
+		assert(name !is null);
+	}
+	body {
 		auto i = getImage(filename);
 		if (i is null)
 			return null;
 
-		return new Picture(Pool(), name, i);
+		return new Picture(p, name, i);
 	}
 
-	static Picture opCall(string name, uint width, uint height)
+	static Picture opCall(PngImage pic)
 	{
-		return new Picture(Pool(), name, width, height);
+		return new Picture(null, null, pic);
 	}
 
-	static Picture opCall(string name, PngImage pic)
+	static Picture opCall(Picture pic)
 	{
-		return new Picture(Pool(), name, pic);
+		return new Picture(null, null, pic);
 	}
 
-	static Picture opCall(string name, Picture pic)
+	static Picture opCall(uint width, uint height)
 	{
-		return new Picture(Pool(), name, pic);
+		return new Picture(null, null, width, height);
+	}
+
+	static Picture opCall(Pool p, string name, uint width, uint height)
+	in {
+		assert(p !is null);
+		assert(name !is null);
+	}
+	body {
+		return new Picture(p, name, width, height);
+	}
+
+	static Picture opCall(Pool p, string name, PngImage pic)
+	in {
+		assert(p !is null);
+		assert(name !is null);
+	}
+	body {
+		return new Picture(p, name, pic);
+	}
+
+	static Picture opCall(Pool p, string name, Picture pic)
+	in {
+		assert(p !is null);
+		assert(name !is null);
+	}
+	body {
+		return new Picture(p, name, pic);
 	}
 
 

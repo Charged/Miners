@@ -60,7 +60,7 @@ public:
 			return d;
 		}
 
-		auto m = RigidMesh(filename);
+		auto m = RigidMesh(p, filename);
 		if (m is null) {
 			l.warn("failed to load %s", filename);
 			return null;

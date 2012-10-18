@@ -639,7 +639,7 @@ public:
 		if (!check())
 			return null;
 
-		auto pic = Picture(name);
+		auto pic = Picture(p, name);
 		/* Error printing already taken care of */
 		if (pic is null)
 			return null;

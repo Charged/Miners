@@ -400,7 +400,7 @@ class LoadClassicTexture : OptionsTask
 		auto pic = getClassicTerrainTexture();
 		if (pic is null) {
 			// Copy and manipulate
-			pic = Picture(null, opts.modernTerrainPic());
+			pic = Picture(opts.modernTerrainPic());
 			manipulateTextureClassic(pic);
 		}
 		opts.classicTerrainPic = pic;
@@ -442,7 +442,7 @@ class LoadClassicIcons : OptionsTask
 			int x = index % 16;
 			int y = index / 16;
 
-			auto texPic = getTileAsSeperate(pic, null, x, y);
+			auto texPic = getTileAsSeperate(pic, x, y);
 
 			// XXX Hack for half slabs
 			if (i == 44) {

@@ -5,6 +5,7 @@ module miners.importer.texture;
 import std.mmfile : MmFile;
 
 import charge.gfx.texture : Texture, TextureArray;
+import charge.sys.resource : sysReference = reference;
 import charge.util.zip;
 import charge.math.color;
 import charge.math.picture;
@@ -31,9 +32,13 @@ Picture getModernTerrainTexture()
 	];
 
 	foreach(l; locations) {
-		auto pic = Picture(cast(string)null, l);
-		if (pic !is null)
-			return pic;
+		auto pic = Picture(Pool(), l);
+		// Make sure we do a copy.
+		if (pic is null)
+			continue;
+		scope(exit)
+			sysReference(&pic, null);
+		return Picture(pic);
 	}
 
 	return null;
@@ -82,9 +87,13 @@ Picture getClassicTerrainTexture()
 	];
 
 	foreach(l; locations) {
-		auto pic = Picture(cast(string)null, l);
-		if (pic !is null)
-			return pic;
+		auto pic = Picture(Pool(), l);
+		// Make sure we do a copy.
+		if (pic is null)
+			continue;
+		scope(exit)
+			sysReference(&pic, null);
+		return Picture(pic);
 	}
 
 	return null;
@@ -184,11 +193,11 @@ TerrainTextures createTextures(Picture pic, bool doArray)
 /**
  * Extract one tile form the given picture.
  */
-Picture getTileAsSeperate(Picture src, string name, int tile_x, int tile_y)
+Picture getTileAsSeperate(Picture src, int tile_x, int tile_y)
 {
 	uint tile_size = src.width / 16;
 
-	Picture dst = Picture(name, tile_size, tile_size);
+	Picture dst = Picture(tile_size, tile_size);
 
 	tile_x *= tile_size;
 	tile_y *= tile_size;
