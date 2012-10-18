@@ -4,10 +4,10 @@
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="pages" visible="yes" title="" intro=""/>
-    <tab type="modules" visible="yes" title="" intro=""/>
-    <tab type="namespaces" visible="yes" title="">
-      <tab type="namespacelist" visible="yes" title="" intro=""/>
-      <tab type="namespacemembers" visible="yes" title="" intro=""/>
+    <tab type="modules" visible="yes" title="Articles" intro="Here is a list of articles"/>
+    <tab type="namespaces" visible="yes" title="Modules">
+      <tab type="namespacelist" visible="yes" title="Module list" intro="Here is a list of all modules and folders"/>
+      <tab type="namespacemembers" visible="yes" title="Module members" intro="Here is a list of all module members"/>
     </tab>
     <tab type="classes" visible="yes" title="">
       <tab type="classlist" visible="yes" title="" intro=""/>
