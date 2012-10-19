@@ -219,6 +219,7 @@ public:
 
 	Option!(Picture) modernTerrainPic;
 	Option!(Picture) classicTerrainPic;
+	Option!(Picture) borrowedTerrainPic;
 
 	Option!(GfxTexture) background;
 	Option!(GfxBitmapFont) classicFont;
@@ -301,6 +302,7 @@ public:
 
 		modernTerrainPic.destruct();
 		classicTerrainPic.destruct();
+		borrowedTerrainPic.destruct();
 
 		background.destruct();
 		classicFont.destruct();

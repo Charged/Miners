@@ -11,6 +11,7 @@ import std.mmfile : MmFile;
 import lib.sdl.rwops;
 
 import charge.sys.logger;
+import charge.sys.builtins;
 import charge.util.zip;
 import charge.util.vector;
 import charge.util.memory;
@@ -163,7 +164,6 @@ class FileManager
 protected:
 	static FileManager instance;
 	Vector!(FileLoader) loaders;
-	void[][string] builtins;
 	mixin Logging;
 
 public:
@@ -192,20 +192,6 @@ public:
 	void rem(FileLoader dg)
 	{
 		loaders.remove(dg);
-	}
-
-	void addBuiltin(string filename, void[] data)
-	{
-		assert(null is (filename in builtins));
-
-		builtins[filename] = data;
-	}
-
-	void remBuiltin(string filename)
-	{
-		assert(null !is (filename in builtins));
-
-		builtins.remove(filename);
 	}
 
 private:

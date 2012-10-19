@@ -13,6 +13,7 @@ import lib.sdl.sdl;
 import charge.charge;
 import charge.sys.file;
 import charge.sys.memory;
+import charge.util.png;
 import charge.util.memory;
 import charge.platform.homefolder;
 
@@ -30,7 +31,6 @@ import miners.interfaces;
 import miners.background;
 import miners.ion.runner;
 import miners.lua.runner;
-import miners.lua.builtin;
 import miners.gfx.font;
 import miners.gfx.manager;
 import miners.beta.world;
@@ -185,9 +185,6 @@ protected:
 		// so errors messages can be displayed.
 		BackgroundRunner br = new BackgroundRunner(opts);
 		push(br);
-
-		// Setup the inbuilt script files
-		initLuaBuiltins();
 
 		auto p = Core().properties;
 		opts.failsafe = p.getIfNotFoundSet(opts.failsafeName, false);

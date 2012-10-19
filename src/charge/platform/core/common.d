@@ -76,7 +76,6 @@ protected:
 		const phyFlags = coreFlag.PHY | coreFlag.AUTO;
 		const sfxFlags = coreFlag.SFX | coreFlag.AUTO;
 
-		initBuiltins();
 		initSettings();
 
 		resizeSupported = p.getBool("forceResizeEnable", defaultForceResizeEnable);
@@ -195,19 +194,6 @@ protected:
 			l.info("ALUT not found, this is not an error.");
 		else
 			loadALUT(&alut.symbol);
-	}
-
-	void initBuiltins()
-	{
-		auto fm = FileManager();
-
-		void[] spotlightPicture = import("spotlight.png");
-		void[] defaultPicture = import("default.png");
-		void[] fontPicture = import("font.png");
-
-		fm.addBuiltin("res/spotlight.png", spotlightPicture);
-		fm.addBuiltin("res/default.png", defaultPicture);
-		fm.addBuiltin("res/font.png", fontPicture);
 	}
 
 	void initSettings()
