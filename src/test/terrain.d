@@ -10,7 +10,6 @@ import std.random : rand, rand_seed;
 import lib.sdl.sdl;
 
 import charge.charge;
-
 import charge.math.mesh;
 
 
@@ -669,7 +668,7 @@ public:
 
 		GfxRenderer.init();
 
-		w = new GameWorld();
+		w = new GameWorld(SysPool());
 		sl = new GfxSimpleLight(w.gfx);
 		projcam = new GfxProjCamera();
 		isocam = new GfxIsoCamera(400, 300, -500, 500);

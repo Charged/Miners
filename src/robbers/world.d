@@ -29,7 +29,7 @@ public:
 
 	this(NetworkSender ns, bool server)
 	{
-		super();
+		super(SysPool());
 		this.isServer = server;
 		phy.setStepLength(10);
 		this.ns = ns;

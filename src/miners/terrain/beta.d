@@ -382,8 +382,6 @@ public:
 		}
 
 		resetBuild();
-
-		charge.sys.resource.Pool().collect();
 	}
 
 	/**

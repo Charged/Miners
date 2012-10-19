@@ -38,12 +38,15 @@ protected:
 
 public:
 
-	this()
-	{
+	this(Pool p)
+	in {
+		assert(p !is null);
+	}
+	body {
 		if (!phyLoaded)
 			throw new Exception("phy module not loaded");
 
-		this.pool = Pool();
+		this.pool = p;
 
 		world = dWorldCreate();
 		body_space = dSimpleSpaceCreate(null);

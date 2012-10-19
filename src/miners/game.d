@@ -220,7 +220,7 @@ protected:
 		debug { opts.showDebug = true; }
 
 		// Setup the skin loader.
-		auto defSkin = GfxColorTexture(Pool(), Color4f.White);
+		auto defSkin = GfxColorTexture(SysPool(), Color4f.White);
 		opts.defaultSkin = defSkin;
 		skin = new SkinDownloader(opts);
 		opts.getSkin = &skin.getSkin;
@@ -633,7 +633,7 @@ protected:
 
 			for (int i; i < times; i++) {
 				w.t.unbuildAll();
-				charge.sys.resource.Pool().collect();
+				SysPool().collect();
 
 				auto t1 = SDL_GetTicks();
 				while(w.t.buildOne()) { }

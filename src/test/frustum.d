@@ -44,7 +44,7 @@ public:
 		
 		rt = GfxDefaultTarget();
 
-		w = new GameWorld();
+		w = new GameWorld(SysPool());
 		view_cam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, 1, 1000);
 		m = new GameProjCameraMover(view_cam);
 		view_cam.position = Point3d(0.0, 0.0, 5.0);

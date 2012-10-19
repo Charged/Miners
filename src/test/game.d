@@ -217,7 +217,7 @@ public:
 
 		GfxRenderer.init();
 
-		w = new GameWorld();
+		w = new GameWorld(SysPool());
 		sl = new GfxSimpleLight(w.gfx);
 		GfxDefaultTarget rt = GfxDefaultTarget();
 		cam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, 1, 150);

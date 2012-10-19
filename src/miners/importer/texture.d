@@ -5,7 +5,7 @@ module miners.importer.texture;
 import std.mmfile : MmFile;
 
 import charge.gfx.texture : Texture, TextureArray;
-import charge.sys.resource : sysReference = reference;
+import charge.sys.resource : sysReference = reference, SysPool = Pool;
 import charge.util.zip;
 import charge.math.color;
 import charge.math.picture;
@@ -32,7 +32,7 @@ Picture getModernTerrainTexture()
 	];
 
 	foreach(l; locations) {
-		auto pic = Picture(Pool(), l);
+		auto pic = Picture(SysPool(), l);
 		// Make sure we do a copy.
 		if (pic is null)
 			continue;
@@ -87,7 +87,7 @@ Picture getClassicTerrainTexture()
 	];
 
 	foreach(l; locations) {
-		auto pic = Picture(Pool(), l);
+		auto pic = Picture(SysPool(), l);
 		// Make sure we do a copy.
 		if (pic is null)
 			continue;

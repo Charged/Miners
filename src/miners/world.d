@@ -24,7 +24,7 @@ private:
 public:
 	this(Options opts)
 	{
-		super();
+		super(SysPool());
 		this.opts = opts;
 	}
 

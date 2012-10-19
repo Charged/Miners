@@ -90,11 +90,15 @@ private:
 
 
 public:
-	this()
-	{
-		pool = Pool();
+	this(Pool p)
+	in {
+		assert(p !is null);
+	}
+	body {
 		if (!charge.gfx.gfx.gfxLoaded)
 			throw new Exception("gfx module not loaded");
+
+		this.pool = p;
 	}
 
 	~this()

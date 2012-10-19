@@ -8,7 +8,6 @@ import std.math : round, abs;
 import lib.sdl.sdl;
 
 import charge.charge;
-import charge.sys.resource : Pool;
 
 import robbers.world;
 import robbers.player;
@@ -107,10 +106,10 @@ public:
 		r = GfxRenderer.create();
 		d = new GfxDraw();
 		//sidebar = GfxTexture("res/test.bmp");
-		sidebar = GfxTexture(Pool(), "res/sidebar.png");
+		sidebar = GfxTexture(SysPool(), "res/sidebar.png");
 
-		sb_header = GfxDynamicTexture(Pool(), "sb_header");
-		sb_dyn = GfxDynamicTexture(Pool(), "sb_speed");
+		sb_header = GfxDynamicTexture(SysPool(), "sb_header");
+		sb_dyn = GfxDynamicTexture(SysPool(), "sb_speed");
 
 		gfxDefaultFont.render(sb_header, "Information");
 

@@ -95,7 +95,7 @@ struct GameWorldWrapper
 		GameWorld w;
 
 		try {
-			w = new GameWorld();
+			w = new GameWorld(SysPool());
 		} catch (Exception e) {
 			s.error(e);
 		}

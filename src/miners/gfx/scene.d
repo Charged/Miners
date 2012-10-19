@@ -25,7 +25,7 @@ protected:
 	this(Options opts)
 	{
 		this.opts = opts;
-		this.world = new GfxWorld();
+		this.world = new GfxWorld(SysPool());
 		this.renderer = new GfxForwardRenderer();
 	}
 

@@ -7,7 +7,6 @@ import uri = std.uri;
 
 import charge.charge;
 import charge.util.png;
-import charge.sys.resource : Pool;
 
 import miners.options;
 
@@ -71,7 +70,7 @@ public:
 
 		nextSkin ~= name;
 		auto str = format("playerSkin/%s.png", name);
-		auto ret = GfxWrappedTexture(Pool(), str, opts.defaultSkin());
+		auto ret = GfxWrappedTexture(SysPool(), str, opts.defaultSkin());
 		store[name] = ret;
 		return ret;
 	}

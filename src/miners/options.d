@@ -6,7 +6,6 @@ import lib.sdl.keysym;
 
 import charge.util.signal;
 import charge.charge;
-import charge.sys.resource : Pool;
 
 import miners.types;
 
@@ -318,8 +317,8 @@ public:
 		       whiteTexture is null);
 
 		playerSkeleton = GfxSimpleSkeleton.VBO(PlayerModelData.verts);
-		blackTexture = GfxColorTexture(Pool(), Color4f.Black);
-		whiteTexture = GfxColorTexture(Pool(), Color4f.White);
+		blackTexture = GfxColorTexture(SysPool(), Color4f.Black);
+		whiteTexture = GfxColorTexture(SysPool(), Color4f.White);
 	}
 
 	void setRenderer(TerrainBuildTypes bt, string s)

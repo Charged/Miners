@@ -49,6 +49,8 @@ interface Ticker
 class World
 {
 public:
+	Pool pool;
+
 	alias Vector!(Actor) ActorVector;
 	alias Vector!(Ticker) TickerVector;
 
@@ -60,14 +62,19 @@ public:
 
 
 public:
-	this()
-	{
+	this(Pool p)
+	in {
+		assert(p !is null);
+	}
+	body {
+		this.pool = p;
+
 		if (charge.gfx.gfx.gfxLoaded) {
-			gfx = new charge.gfx.world.World();
+			gfx = new charge.gfx.world.World(pool);
 		}
 
 		if (charge.phy.phy.phyLoaded) {
-			phy = new charge.phy.world.World();
+			phy = new charge.phy.world.World(pool);
 			phy.setStepLength(10);
 		}
 	}
