@@ -7,6 +7,8 @@ import std.file : write;
 
 import charge.charge;
 import charge.math.ints : imax, imin;
+import charge.util.png : pngDecode;
+import charge.util.memory : cFree;
 
 import charge.platform.homefolder;
 static import charge.game.startup;
@@ -16,6 +18,7 @@ import miners.logo;
 import miners.types;
 import miners.runner;
 import miners.options;
+import miners.defines;
 import miners.interfaces;
 import miners.gfx.font;
 import miners.classic.data;
@@ -356,9 +359,13 @@ class LoadModernTexture : OptionsTask
 
 	bool build()
 	{
+		if (opts.borrowedTerrainPic() is null)
+			borrowModernTerrainTexture();
+
 		auto pic = getModernTerrainTexture();
 		if (pic is null) {
-			signalError(["Could not load terrain.png"]);
+			auto text = format(terrainNotFoundText, chargeConfigFolder);
+			signalError([text]);
 			return false;
 		} else {
 			l.info("Found terrain.png please ignore above warnings");
@@ -377,6 +384,42 @@ class LoadModernTexture : OptionsTask
 
 		return true;
 	}
+
+	/**
+	 * Borrow the modern terrain.png form minecraft.jar.
+	 */
+	void borrowModernTerrainTexture()
+	{
+		// Try and load the terrain png file from minecraft.jar.
+		try {
+			auto data = extractMinecraftTexture();
+			scope(exit)
+				cFree(data.ptr);
+
+			auto img = pngDecode(data);
+			scope(exit)
+				delete img;
+
+			auto pic = Picture(SysPool(), borrowedModernTerrainTexture, img);
+			scope(exit)
+				sysReference(&pic, null);
+
+			opts.borrowedTerrainPic = pic;
+			l.info("Found terrain.png in minecraft.jar, might use it.");
+		} catch (Exception e) {
+			l.info("Could not extract terrain.png from minecraft.jar because:");
+			l.info(e.classinfo.name, " ", e);
+			return;
+		}
+	}
+
+	const string terrainNotFoundText =
+`Could not find terrain.png! You have a couple of options, easiest is just to
+install Minecraft and Charged Miners will get it from there. Another option is
+to get one from a texture pack and place it in either the working directory of
+the executable. Or in the Charged Miners config folder located here:
+
+%s`;
 }
 
 /**

@@ -85,10 +85,6 @@ private:
 
 	GfxDraw d;
 
-	// Extracted files from minecraft
-	void[] terrainFile;
-
-
 public:
 	mixin SysLogging;
 
@@ -172,12 +168,6 @@ public:
 		delete rm;
 		delete d;
 
-		if (terrainFile !is null) {
-			auto fm = FileManager();
-			fm.remBuiltin(borrowedModernTerrainTexture);
-			cFree(terrainFile.ptr);
-		}
-
 		super.close();
 	}
 
@@ -225,18 +215,6 @@ protected:
 		skin = new SkinDownloader(opts);
 		opts.getSkin = &skin.getSkin;
 		sysReference(&defSkin, null);
-
-		// Do this always.
-		borrowModernTerrainTexture();
-
-		// Most common problem people have is missing terrain.png
-		// XXX Still does this here :-/
-		Picture pic = getModernTerrainTexture();
-		if (pic is null) {
-			auto text = format(terrainNotFoundText, chargeConfigFolder);
-			throw new GameException(text, null, true);
-		}
-		sysReference(&pic, null);
 
 		return push(new StartupRunner(this, opts, &doneStartup));
 	}
@@ -491,26 +469,6 @@ protected:
 		return true;
 	}
 
-	/**
-	 * Borrow the modern terrain.png form minecraft.jar.
-	 */
-	void borrowModernTerrainTexture()
-	{
-		// Try and load the terrain png file from minecraft.jar.
-		try {
-			terrainFile = extractMinecraftTexture();
-			assert(terrainFile !is null);
-			l.info("Using borrowed terrain.png from minecraft.jar");
-		} catch (Exception e) {
-			l.info("Could not extract terrain.png from minecraft.jar because:");
-			l.info(e.classinfo.name, " ", e);
-			return;
-		}
-
-		auto fm = FileManager();
-		fm.addBuiltin(borrowedModernTerrainTexture, terrainFile);
-	}
-
 	bool checkLevel(string level)
 	{
 		auto ni = checkMinecraftLevel(level);
@@ -666,22 +624,6 @@ protected:
 
 		push(r);
 	}
-
-
-	/*
-	 *
-	 * Error messages.
-	 *
-	 */
-
-
-	const string terrainNotFoundText =
-`Could not find terrain.png! You have a couple of options, easiest is just to
-install Minecraft and Charged Miners will get it from there. Another option is
-to get one from a texture pack and place it in either the working directory of
-the executable. Or in the Charged Miners config folder located here:
-
-%s`;
 
 
 	/*
