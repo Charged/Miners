@@ -16,8 +16,9 @@ import charge.util.vector;
 import charge.util.memory;
 
 
-alias File delegate(string filename) FileLoader;
-
+/**
+ * A loaded file.
+ */
 abstract class File
 {
 	/**
@@ -34,100 +35,6 @@ abstract class File
 	 */
 	void[] peekMem() { return null; }
 }
-
-class FileManager
-{
-protected:
-	static FileManager instance;
-	Vector!(FileLoader) loaders;
-	void[][string] builtins;
-	mixin Logging;
-
-public:
-	this()
-	{
-		loaders ~= &this.loadBuiltin;
-	}
-
-	static FileManager opCall()
-	{
-		if (instance is null)
-			instance = new FileManager();
-		return instance;
-	}
-
-	static File opCall(string filename)
-	{
-		return FileManager().get(filename);
-	}
-
-	void add(FileLoader dg)
-	{
-		loaders ~= dg; 
-	}
-
-	void rem(FileLoader dg)
-	{
-		loaders.remove(dg); 
-	}
-
-	void addBuiltin(string filename, void[] data)
-	{
-		assert(null is (filename in builtins));
-
-		builtins[filename] = data;
-	}
-
-	void remBuiltin(string filename)
-	{
-		assert(null !is (filename in builtins));
-
-		builtins.remove(filename);
-	}
-
-private:
-	File get(string file)
-	{
-		// Always check if file is on disk
-		auto f = loadDisk(file);
-
-		int len = cast(int)loaders.length - 1;
-		for(int i = len; i >= 0 && f is null; --i)
-			f = loaders[i](file);
-
-		return f;
-	}
-
-	static File loadDisk(string file)
-	{
-		void[] data;
-
-		try {
-			data = read(file);
-		} catch (Exception e) {
-			return null;
-		}
-
-		auto df = new DMemFile(data);
-
-		return df;
-	}
-
-	File loadBuiltin(string file)
-	{
-		auto data = file in builtins;
-		if (data is null)
-			return null;
-
-		return new BuiltinFile(*data);
-	}
-}
-
-
-/*
- * Implementation of different file types.
- */
-
 
 /**
  * Base class for all memory based files.
@@ -195,12 +102,31 @@ class CMemFile : BaseMemFile
 	}
 }
 
+/**
+ * ZipFile for loading files out of a ZipFile.
+ */
 class ZipFile
 {
 private:
 	mixin Logging;
 	MmFile mmap;
 
+public:
+	static ZipFile opCall(string filename)
+	{
+		MmFile mmap;
+
+		try {
+			mmap = new MmFile(filename);
+		} catch (Exception e) {
+			return null;
+		}
+
+		auto f = new ZipFile(mmap);
+		return f;
+	}
+
+private:
 	File load(string filename)
 	{
 		void[] data;
@@ -228,19 +154,94 @@ private:
 		FileManager().rem(&this.load);
 		delete mmap;
 	}
+}
+
+alias File delegate(string filename) FileLoader;
+
+class FileManager
+{
+protected:
+	static FileManager instance;
+	Vector!(FileLoader) loaders;
+	void[][string] builtins;
+	mixin Logging;
 
 public:
-	static ZipFile opCall(string filename)
+	this()
 	{
-		MmFile mmap;
+		loaders ~= &this.loadBuiltin;
+	}
+
+	static FileManager opCall()
+	{
+		if (instance is null)
+			instance = new FileManager();
+		return instance;
+	}
+
+	static File opCall(string filename)
+	{
+		return FileManager().get(filename);
+	}
+
+	void add(FileLoader dg)
+	{
+		loaders ~= dg;
+	}
+
+	void rem(FileLoader dg)
+	{
+		loaders.remove(dg);
+	}
+
+	void addBuiltin(string filename, void[] data)
+	{
+		assert(null is (filename in builtins));
+
+		builtins[filename] = data;
+	}
+
+	void remBuiltin(string filename)
+	{
+		assert(null !is (filename in builtins));
+
+		builtins.remove(filename);
+	}
+
+private:
+	File get(string file)
+	{
+		// Always check if file is on disk
+		auto f = loadDisk(file);
+
+		int len = cast(int)loaders.length - 1;
+		for(int i = len; i >= 0 && f is null; --i)
+			f = loaders[i](file);
+
+		return f;
+	}
+
+	static File loadDisk(string file)
+	{
+		void[] data;
 
 		try {
-			mmap = new MmFile(filename);
+			data = read(file);
 		} catch (Exception e) {
 			return null;
 		}
 
-		auto f = new ZipFile(mmap);
-		return f;
+		auto df = new DMemFile(data);
+
+		return df;
+	}
+
+	File loadBuiltin(string file)
+	{
+		auto data = file in builtins;
+		if (data is null)
+			return null;
+
+		return new BuiltinFile(*data);
 	}
 }
