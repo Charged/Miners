@@ -377,8 +377,11 @@ private:
 				glGetProgramInfoLog(shader, length, &length, buffer.ptr);
 			else
 				glGetShaderInfoLog(shader, length, &length, buffer.ptr);
+
 			assert(buffer.length >= length);
 			buffer.length = length;
+		} else {
+			length = 0;
 		}
 
 		switch (status) {
