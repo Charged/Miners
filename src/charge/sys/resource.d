@@ -7,7 +7,9 @@ module charge.sys.resource;
 
 import std.string : format;
 
+import charge.sys.file;
 import charge.sys.logger;
+import charge.sys.builtins;
 
 
 /**
@@ -94,27 +96,140 @@ private:
  */
 class Pool
 {
+public:
+	enum Mode {
+		ONDISK_FIRST = 0,
+		ONDISK_LAST = 1,
+		ZIP_FIRST = ONDISK_LAST,
+		ZIP_LAST = ONDISK_FIRST,
+		ZIP_ONLY = 2,
+	}
+
 private:
-	mixin Logging;
 	Pool parent;
+
+	Mode fileMode;
+	ZipFile[] zips;
+
 	Entry[string] map;
 	Resource[string] marked;
-	uint dynamic;
-
-	static Pool instance;
 
 	static struct Entry {
 		Resource res;
 		uint refcount;
 	};
 
+	static Pool instance;
+
+	mixin Logging;
+
 public:
+	this(Pool parent, ZipFile[] zips, Mode fileMode = Mode.ONDISK_FIRST)
+	{
+		this.zips = zips;
+		this.parent = parent;
+		this.fileMode = fileMode;
+	}
+
 	static Pool opCall()
 	{
 		if (instance is null)
-			instance = new Pool();
+			instance = new Pool(null, null);
 		return instance;
 	}
+
+
+	/*
+	 *
+	 * File related functions.
+	 *
+	 */
+
+
+	/**
+	 * Loads a file checks all available sources.
+	 *
+	 * The order is this:
+	 * @li Ondisk file if mode is set to @p ONDISK_FIRST.
+	 * @li From zip files from this first and then any parent.
+	 * @li Ondisk file if mode is set to @p ONDISK_LAST.
+	 * @li Any inbuilt file.
+	 */
+	File load(string filename)
+	{
+		File f;
+
+		if (fileMode == Mode.ONDISK_FIRST &&
+		    (f = loadDisk(filename)) !is null)
+			return f;
+
+		// Load zip files from this or any parent.
+		Pool p = this;
+		while (p is null) {
+			f = p.loadZip(filename);
+			if (f !is null)
+				return f;
+			p = p.parent;
+		}
+
+		if (fileMode == Mode.ONDISK_LAST &&
+		    (f = loadDisk(filename)) !is null)
+				return f;
+
+		return loadBuiltin(filename);
+	}
+
+	/**
+	 * Loads a file from only this Pool's zip files.
+	 */
+	File loadZip(string filename)
+	{
+		File f;
+		foreach(zip; zips) {
+			f = zip.load(filename);
+			if (f !is null)
+				return f;
+		}
+		return null;
+	}
+
+	/**
+	 * Loads a file from disk.
+	 */
+	File loadDisk(string filename)
+	{
+		void[] data;
+
+		try {
+			data = read(filename);
+		} catch (Exception e) {
+			return null;
+		}
+
+		auto df = new DMemFile(data);
+
+		return df;
+	}
+
+	/**
+	 * Loads a file from the inbuilt files.
+	 */
+	File loadBuiltin(string filename)
+	{
+		auto data = filename in builtins;
+		if (data is null)
+			return null;
+
+		return new BuiltinFile(*data);
+	}
+
+
+	/*
+	 *
+	 * Resource related functions.
+	 *
+	 */
+
 
 	Object resource(string uri, string name)
 	{

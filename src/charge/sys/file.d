@@ -10,8 +10,7 @@ import std.mmfile : MmFile;
 
 import lib.sdl.rwops;
 
-import charge.sys.logger;
-import charge.sys.builtins;
+import charge.sys.resource;
 import charge.util.zip;
 import charge.util.vector;
 import charge.util.memory;
@@ -109,7 +108,6 @@ class CMemFile : BaseMemFile
 class ZipFile
 {
 private:
-	mixin Logging;
 	MmFile mmap;
 
 public:
@@ -127,7 +125,6 @@ public:
 		return f;
 	}
 
-private:
 	File load(string filename)
 	{
 		void[] data;
@@ -142,17 +139,15 @@ private:
 		return new CMemFile(data);
 	}
 
+private:
 	this(MmFile mmap)
 	{
 		// XXX Preparse header.
 		this.mmap = mmap;
-
-		FileManager().add(&this.load);
 	}
 
 	~this()
 	{
-		FileManager().rem(&this.load);
 		delete mmap;
 	}
 }
@@ -164,14 +159,8 @@ class FileManager
 protected:
 	static FileManager instance;
 	Vector!(FileLoader) loaders;
-	mixin Logging;
 
 public:
-	this()
-	{
-		loaders ~= &this.loadBuiltin;
-	}
-
 	static FileManager opCall()
 	{
 		if (instance is null)
@@ -181,53 +170,6 @@ public:
 
 	static File opCall(string filename)
 	{
-		return FileManager().get(filename);
-	}
-
-	void add(FileLoader dg)
-	{
-		loaders ~= dg;
-	}
-
-	void rem(FileLoader dg)
-	{
-		loaders.remove(dg);
-	}
-
-private:
-	File get(string file)
-	{
-		// Always check if file is on disk
-		auto f = loadDisk(file);
-
-		int len = cast(int)loaders.length - 1;
-		for(int i = len; i >= 0 && f is null; --i)
-			f = loaders[i](file);
-
-		return f;
-	}
-
-	static File loadDisk(string file)
-	{
-		void[] data;
-
-		try {
-			data = read(file);
-		} catch (Exception e) {
-			return null;
-		}
-
-		auto df = new DMemFile(data);
-
-		return df;
-	}
-
-	File loadBuiltin(string file)
-	{
-		auto data = file in builtins;
-		if (data is null)
-			return null;
-
-		return new BuiltinFile(*data);
+		return Pool().load(filename);
 	}
 }
