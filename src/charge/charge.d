@@ -199,7 +199,6 @@ alias charge.ctl.input.Joystick CtlJoystick;
 alias charge.sys.logger.Logger SysLogger;
 alias charge.sys.logger.Logging SysLogging;
 alias charge.sys.file.File SysFile;
-alias charge.sys.file.FileManager SysFileManager;
 alias charge.sys.file.ZipFile SysZipFile;
 alias charge.sys.resource.reference sysReference;
 alias charge.sys.resource.Resource SysResource;

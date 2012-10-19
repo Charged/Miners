@@ -136,7 +136,7 @@ protected:
 		Vertex verts[];
 		Triangle tris[];
 
-		file = FileManager(filename);
+		file = p.load(filename);
 		if (file is null) {
 			l.warn("file %s not found", filename);
 			return null;

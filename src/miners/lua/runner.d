@@ -50,7 +50,7 @@ public:
 
 	this(Router r, Options opts, World w, string filename)
 	{
-		auto file = FileManager(filename);
+		auto file = w.pool.load(filename);
 		if (file is null) {
 			l.warn("No such file (%s) (this is not a error)", filename);
 			throw new Exception("Error initalizing lua script");
@@ -256,7 +256,9 @@ protected:
 		s.checkString(1);
 
 		auto filename = s.toString(1);
-		auto file = FileManager(filename);
+
+		/// @todo use world pool.
+		auto file = SysPool().load(filename);
 		if (file is null)
 			s.error("could not find file " ~ filename);
 
@@ -284,7 +286,8 @@ protected:
 		auto pkg = s.toString(1);
 		auto filename = "script/" ~ pkg ~ ".lua";
 
-		auto file = FileManager(filename);
+		/// @todo use world pool.
+		auto file = SysPool().load(filename);
 		if (file is null) {
 			// Special format for require
 			s.pushString("\n\tno file '" ~ filename ~ "'");

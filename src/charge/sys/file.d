@@ -1,7 +1,7 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 /**
- * Source file for File and FileManager.
+ * Source file for File and ZipFile.
  */
 module charge.sys.file;
 
@@ -149,27 +149,5 @@ private:
 	~this()
 	{
 		delete mmap;
-	}
-}
-
-alias File delegate(string filename) FileLoader;
-
-class FileManager
-{
-protected:
-	static FileManager instance;
-	Vector!(FileLoader) loaders;
-
-public:
-	static FileManager opCall()
-	{
-		if (instance is null)
-			instance = new FileManager();
-		return instance;
-	}
-
-	static File opCall(string filename)
-	{
-		return Pool().load(filename);
 	}
 }

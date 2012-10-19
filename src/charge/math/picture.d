@@ -45,7 +45,7 @@ public:
 			return pic;
 		}
 
-		auto i = getImage(filename);
+		auto i = getImage(p, filename);
 		if (i is null)
 			return null;
 
@@ -58,7 +58,7 @@ public:
 		assert(name !is null);
 	}
 	body {
-		auto i = getImage(filename);
+		auto i = getImage(p, filename);
 		if (i is null)
 			return null;
 
@@ -142,9 +142,9 @@ protected:
 		cFree(pixels);
 	}
 
-	static PngImage getImage(string filename)
+	static PngImage getImage(Pool p, string filename)
 	{
-		auto file = FileManager(filename);
+		auto file = p.load(filename);
 		if (file is null) {
 			l.warn("Failed to load %s: file not found", filename);
 			return null;

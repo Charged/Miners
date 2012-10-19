@@ -221,7 +221,7 @@ private:
 
 	static Texture fromDdsFile(Pool p, string filename)
 	{
-		auto file = FileManager(filename);
+		auto file = p.load(filename);
 		if (file is null) {
 			l.warn("Failed to load %s: file not found", filename);
 			return null;

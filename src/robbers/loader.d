@@ -56,7 +56,7 @@ public:
 	{
 		XmlElement level;
 
-		auto f = SysFileManager(filename);
+		auto f = w.pool.load(filename);
 		if (f is null)
 			return l.error("could not load %s", filename);
 		scope (exit)
