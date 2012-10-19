@@ -87,7 +87,6 @@ typedef charge::ctl::input::Joystick CtlJoystick;
 
 typedef charge::sys::logger::Logger SysLogger;
 typedef charge::sys::logger::Logging SysLogging;
-typedef charge::sys::properties::Properties SysProperties;
 typedef charge::sys::file::File SysFile;
 typedef charge::sys::file::FileManager SysFileManager;
 typedef charge::sys::file::ZipFile SysZipFile;

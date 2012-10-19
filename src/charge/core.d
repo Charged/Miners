@@ -5,7 +5,7 @@
  */
 module charge.core;
 
-import charge.sys.properties;
+import charge.util.properties;
 
 
 /**

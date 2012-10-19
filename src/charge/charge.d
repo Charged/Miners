@@ -39,6 +39,7 @@ All resources in charge are reference counted.
 public
 {
 	import charge.util.memory : cMemoryArray;
+	import charge.util.properties : Properties;
 	import charge.util.vector : Vector, VectorData;
 
 	import charge.math.mesh : RigidMesh, RigidMeshBuilder;
@@ -98,7 +99,6 @@ public
 	static import charge.ctl.joystick;
 
 	static import charge.sys.logger;
-	static import charge.sys.properties;
 	static import charge.sys.resource;
 
 	static import charge.game.world;
@@ -198,7 +198,6 @@ alias charge.ctl.input.Joystick CtlJoystick;
 
 alias charge.sys.logger.Logger SysLogger;
 alias charge.sys.logger.Logging SysLogging;
-alias charge.sys.properties.Properties SysProperties;
 alias charge.sys.file.File SysFile;
 alias charge.sys.file.FileManager SysFileManager;
 alias charge.sys.file.ZipFile SysZipFile;

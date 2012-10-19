@@ -15,9 +15,9 @@ import charge.core;
 import charge.sfx.sfx;
 import charge.phy.phy;
 import charge.sys.logger;
-import charge.sys.properties;
 import charge.sys.file;
 import charge.sys.resource;
+import charge.util.properties;
 import charge.platform.homefolder;
 
 

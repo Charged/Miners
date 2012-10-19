@@ -3,20 +3,20 @@
 /**
  * Source file for Properties.
  */
-module charge.sys.properties;
+module charge.util.properties;
 
 import std.conv : toInt, toUint, toDouble;
 import std.stream : BufferedFile, FileMode;
 import std.regexp : RegExp;
 import std.string : toString, toStringz;
 
-import charge.sys.logger;
 
-
+/**
+ * Parsers and saves to java like properties files.
+ */
 final class Properties
 {
-	mixin Logging;
-protected:
+private:
 	string[string] map;
 	string[] order;
 
@@ -160,9 +160,6 @@ public:
 				p.add(m[1].dup, m[2].dup);
 				continue;
 			}
-
-			l.warn("Could not parse line: ", n, " in file ", filename);
-			l.warn(line);
 		}
 
 		return p;

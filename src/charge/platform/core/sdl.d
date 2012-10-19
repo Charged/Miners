@@ -13,8 +13,8 @@ import charge.gfx.gfx;
 import charge.gfx.target;
 import charge.sys.logger;
 import charge.sys.resource;
-import charge.sys.properties;
 import charge.util.memory;
+import charge.util.properties;
 import charge.platform.homefolder;
 import charge.platform.core.common;
 
