@@ -217,11 +217,6 @@ public:
 			light_moveing = false;
 	}
 
-	void resize(uint w, uint h)
-	{
-		cam.resize(w, h);
-	}
-
 	void logic()
 	{
 		m.tick();
@@ -230,6 +225,7 @@ public:
 
 	void render(GfxRenderTarget rt)
 	{
+		cam.resize(rt.width, rt.height);
 		r.render(w.gfx, cam.current, rt);
 	}
 

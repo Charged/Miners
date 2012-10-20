@@ -428,11 +428,6 @@ public:
 		}
 	}
 
-	void resize(uint w, uint h)
-	{
-		cam.resize(w, h);
-	}
-
 	void dropControl()
 	{
 		stopMoving();

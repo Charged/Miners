@@ -41,11 +41,6 @@ public:
 	}
 
 	/**
-	 * Called to notify that the screen has changed resolution.
-	 */
-	abstract void resize(uint w, uint h);
-
-	/**
 	 * Step the game logic one step.
 	 */
 	abstract void logic();

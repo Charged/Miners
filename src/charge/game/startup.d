@@ -135,11 +135,6 @@ public:
 		keyboard.down -= &this.keyDown;
 	}
 
-	void resize(uint w, uint h)
-	{
-
-	}
-
 	bool build()
 	{
 		// The last mangeTasks took care of

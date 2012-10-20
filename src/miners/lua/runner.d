@@ -91,17 +91,6 @@ public:
 	 */
 
 
-	void resize(uint w, uint h)
-	{
-		s.getGlobalz("resize");
-		s.pushNumber(w);
-		s.pushNumber(h);
-
-		if (s.call(2) == 2) {
-			l.warn(s.toString(-1));
-		}
-	}
-
 	void logic()
 	{
 		s.getGlobalz("logic");
@@ -113,6 +102,7 @@ public:
 
 	void render(GfxRenderTarget rt)
 	{
+		c.resize(rt.width, rt.height);
 		r.render(w.gfx, c.current, rt);
 /*
 		s.getGlobalz("render");
@@ -239,10 +229,6 @@ protected:
 
 			throw new Exception("Error initalizing lua script");
 		}
-
-		// Make sure the script has the right screen size.
-		auto rt = GfxDefaultTarget();
-		resize(rt.width, rt.height);
 
 		initialized = true;
 	}

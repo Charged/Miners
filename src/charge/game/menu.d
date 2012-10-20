@@ -93,10 +93,6 @@ public:
 		menu.repaintDg = &triggerRepaint;
 	}
 
-	void resize(uint w, uint h)
-	{
-	}
-
 	void logic()
 	{
 	}
