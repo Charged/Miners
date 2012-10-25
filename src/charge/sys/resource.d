@@ -174,7 +174,7 @@ public:
 
 		if (fileMode == Mode.ONDISK_LAST &&
 		    (f = loadDisk(filename)) !is null)
-				return f;
+			return f;
 
 		return loadBuiltin(filename);
 	}
