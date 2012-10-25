@@ -4,9 +4,10 @@ module charge.game.actors.car;
 
 import std.math : pow, PI;
 
-import charge.math.point3d;
-import charge.math.vector3d;
 import charge.math.quatd;
+import charge.math.point3d;
+import charge.math.movable;
+import charge.math.vector3d;
 
 static import charge.gfx.rigidmodel;
 static import charge.phy.material;
@@ -120,13 +121,20 @@ public:
 
 	~this()
 	{
-		foreach(wheel; wheels)
-			delete wheel;
+		assert(c is null);
+		assert(car is null);
+	}
 
-		delete c;
-		delete car;
-
+	void breakApart()
+	{
 		w.remTicker(this);
+		breakApartAndNull(c);
+		breakApartAndNull(car);
+
+		foreach(ref wheel; wheels)
+			breakApartAndNull(wheel);
+
+		super.breakApart();
 	}
 
 	void resetCar()

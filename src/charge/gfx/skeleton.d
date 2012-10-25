@@ -11,6 +11,7 @@ import charge.util.vector;
 import charge.math.quatd;
 import charge.math.point3d;
 import charge.math.vector3d;
+import charge.math.movable;
 
 import charge.sys.logger;
 import charge.sys.resource;
@@ -78,9 +79,16 @@ public:
 
 	~this()
 	{
-		delete m;
+		assert(m is null);
+		assert(vbo is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(m);
 		reference(&vbo, null);
 		bones.free();
+		super.breakApart();
 	}
 
 	void cullAndPush(Cull cull, RenderQueue rq)

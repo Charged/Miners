@@ -49,6 +49,19 @@ public:
 		return new RigidModel(w, vbo);
 	}
 
+	~this()
+	{
+		assert(m is null);
+		assert(vbo is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(m);
+		reference(&vbo, null);
+		super.breakApart();
+	}
+
 	void setSize(double sx, double sy, double sz)
 	{
 		x = sx;
@@ -74,12 +87,6 @@ protected:
 		m = MaterialManager.getDefault(w.pool);
 		x = y = z = 1;
 		this.vbo = vbo;
-	}
-
-	~this()
-	{
-		delete m;
-		reference(&vbo, null);
 	}
 
 	void cullAndPush(Cull cull, RenderQueue rq)

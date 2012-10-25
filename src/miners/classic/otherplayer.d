@@ -41,10 +41,11 @@ public:
 		}
 	}
 
-	~this()
+	void breakApart()
 	{
 		w.remTicker(this);
 		sysReference(&text, null);
+		super.breakApart();
 	}
 
 	void update(Point3d pos, double heading, double pitch)

@@ -39,7 +39,13 @@ public:
 
 	~this()
 	{
-		delete skel;
+		assert(skel is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(skel);
+		super.breakApart();
 	}
 
 	void update(Point3d pos, double heading, double pitch)

@@ -2,8 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.actors.primitive;
 
-import charge.math.point3d;
 import charge.math.quatd;
+import charge.math.movable;
+import charge.math.point3d;
 
 static import charge.gfx.cube;
 static import charge.gfx.rigidmodel;
@@ -34,9 +35,16 @@ public:
 
 	~this()
 	{
+		assert(gfx is null);
+		assert(phy is null);
+	}
+
+	void breakApart()
+	{
 		w.remTicker(this);
-		delete phy;
-		delete gfx;
+		breakApartAndNull(gfx);
+		breakApartAndNull(phy);
+		super.breakApart();
 	}
 
 	void tick()
@@ -74,10 +82,16 @@ public:
 
 	~this()
 	{
-		delete gfx;
-		delete phy;
+		assert(gfx is null);
+		assert(phy is null);
 	}
 
+	void breakApart()
+	{
+		breakApartAndNull(gfx);
+		breakApartAndNull(phy);
+		super.breakApart();
+	}
 }
 
 class StaticRigid : Actor
@@ -102,8 +116,14 @@ public:
 
 	~this()
 	{
-		delete gfx;
-		delete phy;
+		assert(gfx is null);
+		assert(phy is null);
 	}
 
+	void breakApart()
+	{
+		breakApartAndNull(gfx);
+		breakApartAndNull(phy);
+		super.breakApart();
+	}
 }

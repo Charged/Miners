@@ -79,11 +79,6 @@ class DMemFile : BaseMemFile
 	{
 		super(mem);
 	}
-
-	~this()
-	{
-		delete mem;
-	}
 }
 
 /**
@@ -144,10 +139,5 @@ private:
 	{
 		// XXX Preparse header.
 		this.mmap = mmap;
-	}
-
-	~this()
-	{
-		delete mmap;
 	}
 }

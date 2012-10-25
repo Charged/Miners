@@ -27,7 +27,13 @@ public:
 
 	~this()
 	{
-		delete thing;
+		assert(thing is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(thing);
+		super.breakApart();
 	}
 
 	void update(Point3d pos, double heading, double pitch)

@@ -248,31 +248,27 @@ public:
 
 	void close()
 	{
-		if (bgScene !is null) {
-			bgScene.close();
-			bgScene = null;
-		}
-		sysReference(&w.gfx.bg, null);
-
 		opts.noClip -= &ppNoClip;
 		opts.noClip = false; // Reset.
 
-		chatGui.breakApart();
-		chatGuiSmall.breakApart();
-		delete sel;
+		breakApartAndNull(sel);
+		breakApartAndNull(bgScene);
+		breakApartAndNull(chatGui);
+		breakApartAndNull(chatGuiSmall);
+		sysReference(&w.gfx.bg, null);
 
-		foreach(p; players) {
+		foreach(ref p; players) {
 			if (p is null)
 				continue;
-			delete p;
+			breakApartAndNull(p);
 		}	
 
 		if (ml !is null)
 			ml.message = null;
 
-		delete cam;
-		delete sl;
-		delete w;
+		breakApartAndNull(cam);
+		breakApartAndNull(sel);
+		breakApartAndNull(w);
 
 		super.close();
 
@@ -1123,7 +1119,7 @@ public:
 
 		// Should not happen, but we arn't trusting the servers.
 		if (players[index] !is null)
-			delete players[index];
+			breakApartAndNull(players[index]);
 
 		double offset = 52.0 / 32.0;
 		auto pos = Point3d(x, y - offset, z);
@@ -1209,8 +1205,7 @@ public:
 		if (index == 255)
 			return;
 
-		delete players[index];
-		players[index] = null;
+		breakApartAndNull(players[index]);
 	}
 
 	void playerType(ubyte type)

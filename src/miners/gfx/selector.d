@@ -35,7 +35,13 @@ public:
 
 	~this()
 	{
-		delete m;
+		assert(m is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(m);
+		super.breakApart();
 	}
 
 	void setBlock(int x, int y, int z)

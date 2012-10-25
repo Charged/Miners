@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.gfx.vbo;
 
+import charge.math.movable;
 import charge.math.frustum;
 import charge.sys.resource;
 
@@ -128,10 +129,15 @@ public:
 
 	~this()
 	{
-		delete m;
-		m = null;
+		assert(m is null);
 		delete array;
 		delete resultVbo;
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(m);
+		super.breakApart();
 	}
 
 	GfxMaterial getMaterial()

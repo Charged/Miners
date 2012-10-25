@@ -48,7 +48,7 @@ public
 	import charge.math.vector3d : Vector3d;
 	import charge.math.point3d : Point3d;
 	import charge.math.quatd : Quatd;
-	import charge.math.movable : Movable;
+	import charge.math.movable : Movable, breakApartAndNull;
 	import charge.math.matrix3x3d : Matrix3x3d;
 	import charge.math.matrix4x4d : Matrix4x4d;
 }

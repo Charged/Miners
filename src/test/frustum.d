@@ -60,7 +60,13 @@ public:
 	{
 	}
 
-protected:
+	void close()
+	{
+		breakApartAndNull(w);
+		sysReference(&sphere, null);
+		super.close();
+	}
+
 	void input()
 	{
 		SDL_Event e;
@@ -278,9 +284,4 @@ protected:
 	void network()
 	{
 	}
-
-	void close()
-	{
-	}
-
 }

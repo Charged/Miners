@@ -52,6 +52,7 @@ public:
 
 	void close()
 	{
+		breakApartAndNull(w);
 		r.removeBuilder(&this.build);
 	}
 

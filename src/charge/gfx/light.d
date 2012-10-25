@@ -31,7 +31,6 @@ public:
 		diffuse = Color4f(0.8, 0.8, 0.8);
 		specular = Color4f();
 	}
-
 }
 
 class PointLight : Light
@@ -74,7 +73,13 @@ public:
 
 	~this()
 	{
+		assert(texture is null);
+	}
+
+	void breakApart()
+	{
 		reference(&texture, null);
+		super.breakApart();
 	}
 }
 
@@ -90,5 +95,9 @@ public:
 		color = Color4f.White;
 		start = 100000.0;
 		stop = 100000.0;
+	}
+
+	void breakApart()
+	{
 	}
 }

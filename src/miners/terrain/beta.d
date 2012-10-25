@@ -45,10 +45,17 @@ public:
 		setCenter(0, 0, 0);
 	}
 
-	~this() {
-		foreach(row; region)
-			foreach(r; row)
-				delete r;
+	~this()
+	{
+
+	}
+
+	void breakApart()
+	{
+		foreach(ref row; region)
+			foreach(ref r; row)
+				breakApartAndNull(r);
+		super.breakApart();
 	}
 
 
@@ -533,7 +540,8 @@ protected:
 				int rxPos = r.xPos - rxNewOff;
 				int rzPos = r.zPos - rzNewOff;
 				if (rxPos < 0 || rzPos < 0 || rxPos >= width || rzPos >= depth) {
-					delete r;
+					if (r !is null)
+						r.breakApart();
 				} else {
 					copy[rxPos][rzPos] = r;
 				}
@@ -597,9 +605,13 @@ public:
 
 	~this()
 	{
-		foreach(row; chunk)
-			foreach(c; row)
-				delete c;
+	}
+
+	void breakApart()
+	{
+		foreach(ref row; chunk)
+			foreach(ref c; row)
+				breakApartAndNull(c);
 	}
 
 

@@ -67,3 +67,16 @@ public:
 		this.rot = rot;
 	}
 }
+
+/**
+ * Helper function to for nulling and breaking apart actor like objects.
+ * A common pattern in Charge is to breakApart a object/actor instead of
+ * deleting it, to avoid memory corruption.
+ */
+void breakApartAndNull(T)(ref T t)
+{
+	if (t !is null) {
+		t.breakApart();
+		t = null;
+	}
+}

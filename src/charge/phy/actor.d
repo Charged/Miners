@@ -15,18 +15,34 @@ import charge.phy.world;
 
 class Actor : Movable
 {
+protected:
+	World w;
+	Material mat;
+
+public:
 	this(World w)
 	{
 		this.w = w;
+		w.add(this);
 		mat = Material();
+	}
+
+	~this()
+	{
+		assert(w is null);
+	}
+
+	void breakApart()
+	{
+		if (w !is null) {
+			w.remove(this);
+			w = null;
+		}
 	}
 
 	Material material() { return mat; }
 	void material(Material mat) { this.mat = mat; }
 
-protected:
-	World w;
-	Material mat;
 }
 
 class Body : Actor
@@ -54,9 +70,21 @@ public:
 
 	~this()
 	{
-		for(int i; i < num_geoms; i++)
+
+	}
+
+	void breakApart()
+	{
+		if (dBody !is null) {
+			dBodyDestroy(dBody);
+		}
+
+		for(int i; i < num_geoms; i++) {
 			dGeomDestroy(geoms[i]);
-		dBodyDestroy(dBody);
+			geoms[i] = null;
+		}
+		num_geoms = 0;
+		super.breakApart();
 	}
 
 	/*
@@ -208,7 +236,13 @@ public:
 
 	~this()
 	{
-		delete geom;
+		assert(geom is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(geom);
+		super.breakApart();
 	}
 
 	void setPosition(ref Point3d pos)

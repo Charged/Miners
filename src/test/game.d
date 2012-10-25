@@ -24,9 +24,16 @@ public:
 
 	~this()
 	{
+		assert(gfx is null);
+		assert(phy is null);
+	}
+
+	void breakApart()
+	{
 		w.remTicker(this);
-		delete gfx;
-		delete phy;
+		breakApartAndNull(gfx);
+		breakApartAndNull(phy);
+		super.breakApart();
 	}
 
 	void tick()
@@ -148,8 +155,14 @@ class Car : Ticker
 
 	~this()
 	{
-		foreach(w; wheels)
-			delete w;
+		assert(wheels[0] is null);
+	}
+
+	void breakApart()
+	{
+		foreach(ref w; wheels)
+			breakApartAndNull(w);
+		super.breakApart();
 	}
 
 	void tick()
@@ -173,7 +186,6 @@ class Car : Ticker
 		}
 	}
 
-	GfxCube coll;
 	GfxActor wheels[4];
 	PhyCar car;
 }
@@ -250,8 +262,12 @@ public:
 
 	~this()
 	{
-		delete basePackage;
-		delete w;
+	}
+
+	void close()
+	{
+		breakApartAndNull(w);
+		super.close();
 	}
 
 protected:
@@ -375,7 +391,7 @@ protected:
 				}
 				if (e.key.keysym.sym == SDLK_o) {
 					foreach(r; removable)
-						delete r;
+						r.breakApart();
 					removable.length = 0;
 				}
 			}
@@ -453,9 +469,4 @@ protected:
 	void network()
 	{
 	}
-
-	void close()
-	{
-	}
-
 }

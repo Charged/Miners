@@ -15,6 +15,20 @@ class Geom
 {
 package:
 	dGeomID geom;
+
+public:
+	~this()
+	{
+		assert(geom is null);
+	}
+
+	void breakApart()
+	{
+		if (geom !is null) {
+			dGeomDestroy(geom);
+			geom = null;
+		}
+	}
 }
 
 class GeomCube : Geom
@@ -111,7 +125,12 @@ public:
 
 	~this()
 	{
-		dGeomDestroy(geom);
+		assert(data is null);
+	}
+
+	void breakApart()
+	{
 		reference(&data, null);
+		super.breakApart();
 	}
 }

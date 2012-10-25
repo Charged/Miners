@@ -30,7 +30,12 @@ public:
 
 	~this()
 	{
-		delete t;
-		t = null;
+		assert(t is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(t);
+		super.breakApart();
 	}
 }

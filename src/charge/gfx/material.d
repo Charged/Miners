@@ -45,6 +45,8 @@ public:
 		this.pool = p;
 	}
 
+	abstract void breakApart();
+
 	final bool opIndexAssign(string tex, string name)
 	{
 		return setTexture(name, tex);
@@ -130,7 +132,6 @@ public:
 	{
 		return [];
 	}
-
 }
 
 class SimpleMaterial : Material
@@ -155,6 +156,12 @@ public:
 	}
 
 	~this()
+	{
+		assert(tex is null);
+		assert(texSafe is null);
+	}
+
+	void breakApart()
 	{
 		reference(&texSafe, null);
 		// Does not hold a reference
@@ -429,5 +436,4 @@ public:
 		}
 		return true;
 	}
-
 }

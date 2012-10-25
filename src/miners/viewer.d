@@ -85,10 +85,10 @@ public:
 
 	void close()
 	{
-		delete cam;
-		delete sl;
 		delete m;
-		delete w;
+		breakApartAndNull(cam);
+		breakApartAndNull(sl);
+		breakApartAndNull(w);
 
 		super.close();
 	}

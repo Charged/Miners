@@ -37,11 +37,11 @@ protected:
 		assert(renderer is null);
 	}
 
-	void close()
+	void breakApart()
 	{
 		releaseResources();
 
-		delete world;
+		breakApartAndNull(world);
 		delete renderer;
 	}
 
@@ -128,13 +128,13 @@ public:
 		m["color"] = Color4f(Color4b(0x80b1ffff));
 	}
 
-	void close()
+	void breakApart()
 	{
-		light = null;
+		breakApartAndNull(light);
 		camera = null;
 		fog = null;
 
-		super.close();
+		super.breakApart();
 	}
 
 	void render(GfxProjCamera origCam, GfxSimpleLight origSl,

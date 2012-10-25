@@ -30,9 +30,16 @@ public:
 
 	~this()
 	{
-		w.rem(this);
+		assert(w is null);
 	}
 
+	void breakApart()
+	{
+		if (w !is null) {
+			w.remove(this);
+			w = null;
+		}
+	}
 }
 
 /**
@@ -81,10 +88,19 @@ public:
 
 	~this()
 	{
-		Actor a;
+		assert(actors.length == 0);
+		assert(gfx is null);
+		assert(phy is null);
+	}
 
+	void breakApart()
+	{
+		Actor a;
 		while((a = actors[0]) !is null)
-			delete a;
+			a.breakApart();
+
+		breakApartAndNull(gfx);
+		breakApartAndNull(phy);
 	}
 
 	void tick()
@@ -112,7 +128,7 @@ public:
 		tickers.add(t);
 	}
 
-	void rem(Actor a)
+	void remove(Actor a)
 	{
 		actors.remove = a;
 	}

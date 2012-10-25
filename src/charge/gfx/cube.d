@@ -189,7 +189,13 @@ public:
 
 	~this()
 	{
-		delete m;
+		assert(m is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(m);
+		super.breakApart();
 	}
 
 	void setSize(double sx, double sy, double sz)

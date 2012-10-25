@@ -85,12 +85,21 @@ public:
 
 	~this()
 	{
+		assert(pcam is null);
+		assert(icam is null);
+	}
+
+	void breakApart()
+	{
 		auto w = cast(World)w;
-		w.opts.fov -= &fov;
-		w.opts.viewDistance -= &far;
+		if (w !is null) {
+			w.opts.fov -= &fov;
+			w.opts.viewDistance -= &far;
+		}
 
 		delete icam;
 		delete pcam;
+		super.breakApart();
 	}
 
 	void resize(uint width, uint height)

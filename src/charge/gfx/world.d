@@ -35,12 +35,18 @@ public:
 
 	~this()
 	{
-		if (w !is null)
-			w.remove(this);
-		w = null;
+		assert(w is null);
 	}
 
 	void build() {}
+
+	void breakApart()
+	{
+		if (w !is null) {
+			w.remove(this);
+			w = null;
+		}
+	}
 
 	abstract void cullAndPush(Cull cull, RenderQueue rq);
 }
@@ -63,6 +69,11 @@ public:
 	}
 
 	~this()
+	{
+		assert(w is null);
+	}
+
+	void breakApart()
 	{
 		if (w !is null) {
 			w.remove(this);
@@ -105,16 +116,21 @@ public:
 	{
 		// Ugh this needs to be done else where.
 		assert(bg is null);
+		assert(a.length == 0);
+		assert(l.length == 0);
+	}
 
+	void breakApart()
+	{
 		Actor actor;
 		/* vector not safe to traverse while removing elements */
 		while((actor = a[0]) !is null)
-			delete actor;
+			actor.breakApart();
 
 		Light light;
 		/* vector not safe to traverse while removing elements */
 		while((light = l[0]) !is null)
-			delete light;
+			light.breakApart();
 	}
 
 	/**

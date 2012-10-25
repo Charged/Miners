@@ -188,6 +188,7 @@ public:
 
 protected:
 	TextureTarget tt;
+	Draw d;
 
 public:
 	this(Container c, int x, int y, uint w, uint h,
@@ -195,6 +196,7 @@ public:
 	{
 		super(c, x, y, w, h);
 		this.bg = bg;
+		this.d = new Draw();
 	}
 
 	~this()
@@ -236,15 +238,13 @@ public:
 			tt = TextureTarget(w, h);
 		}
 
-		auto d = new Draw();
+		// Field not argument.
 		d.target = tt;
 		d.start();
 
 		super.paint(d);
 
 		d.stop();
-
-		delete d;
 	}
 
 	void paint(Draw d)
@@ -337,7 +337,7 @@ public:
 			tt.filter = Texture.Filter.LinearNone;
 		}
 
-		auto d = new Draw();
+		// Field not argument.
 		d.target = tt;
 		d.start();
 
@@ -346,8 +346,6 @@ public:
 		Container.paint(d);
 
 		d.stop();
-
-		delete d;
 	}
 
 	void paint(Draw d)

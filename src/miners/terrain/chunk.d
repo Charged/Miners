@@ -67,11 +67,17 @@ public:
 		static assert(height >= BuildHeight);
 
 		// Setup pointers
+		blocks = empty_blocks;
+		data = empty_blocks;
 		this.empty = true;
-		emptyChunk();
 	}
 
 	~this()
+	{
+		assert(empty);
+	}
+
+	void breakApart()
 	{
 		unbuild();
 		freeBlocksAndData();
@@ -93,15 +99,26 @@ private:
 
 	/**
 	 * If the chunk is not empty free the blocks and data
-	 * arrays that where given to us.
+	 * arrays that where given to us and mark the chunk as empty.
+	 *
+	 * Read access is still possible but will only return 0 (air)
+	 * and for pointer access pointers to a shared array empty array.
+	 *
+	 * So make sure to not write to a emptied chunk. Newly allocated
+	 * chunks are empty, call allocBlocksAndData to alloc writable data.
 	 */
 	void freeBlocksAndData()
 	{
-		if (!empty) {
-			free(blocks);
-			free(data);
-			used_mem -= (blocks_size + data_size);
-		}
+		if (empty)
+			return;
+
+		free(blocks);
+		free(data);
+		used_mem -= (blocks_size + data_size);
+
+		blocks = empty_blocks;
+		data = empty_blocks;
+		empty = true;
 	}
 
 public:
@@ -140,24 +157,6 @@ public:
 		blocks[0 .. blocks_size] = 0;
 		data[0 .. data_size] = 0;
 		used_mem += blocks_size + data_size;
-	}
-
-	/**
-	 * Free any data allocated and mark the chunk as empty.
-	 *
-	 * Read access is still possible but will only return 0 (air)
-	 * and for pointer access pointers to a shared array empty array.
-	 *
-	 * So make sure to not write to a emptied chunk. Newly allocated
-	 * chunks are empty, call allocBlocksAndData to alloc writable data.
-	 */
-	void emptyChunk()
-	{
-		freeBlocksAndData();
-
-		blocks = empty_blocks;
-		data = empty_blocks;
-		empty = true;
 	}
 
 	/**

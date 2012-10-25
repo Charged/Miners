@@ -74,10 +74,11 @@ public:
 	void close()
 	{
 		if (initialized) {
+			breakApartAndNull(c);
+			breakApartAndNull(sl);
+			breakApartAndNull(w);
+			// Needs to be done last.
 			delete s;
-			delete c;
-			delete sl;
-			delete w;
 			initialized = false;
 		}
 		super.close();

@@ -48,9 +48,14 @@ public:
 
 	~this()
 	{
-		foreach(g; cvgcm)
-			delete g;
+	}
+
+	void breakApart()
+	{
+		foreach(ref g; cvgcm)
+			breakApartAndNull(g);
 		delete builder;
+		super.breakApart();
 	}
 
 	abstract void setCenter(int xNew, int yNew, int zNew);

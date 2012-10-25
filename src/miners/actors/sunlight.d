@@ -42,10 +42,16 @@ public:
 
 	~this()
 	{
-		w.gfx.fog = null;
+		assert(fog is null);
+		assert(gfx is null);
+	}
 
-		delete gfx;
-		delete fog;
+	void breakApart()
+	{
+		w.gfx.fog = null;
+		breakApartAndNull(fog);
+		breakApartAndNull(gfx);
+		super.breakApart();
 	}
 
 	final void shadow(bool shadow)

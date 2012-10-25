@@ -117,9 +117,10 @@ public:
 		carSlip2Limit = 0.04;
 	}
 
-	~this()
+	void breakApart()
 	{
 		w.removePostColl(this);
+		super.breakApart();
 	}
 
 	size_t getSyncDataLength()
