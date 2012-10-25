@@ -6,9 +6,9 @@ import charge.core;
 
 static import test.lua;
 static import test.game;
+static import test.frustum;
 static import test.terrain;
 
-static import robbers.game;
 static import miners.game;
 
 // For memory tracking
@@ -55,10 +55,9 @@ int main(string[] args)
 		return 0;
 
 //	auto g = new test.lua.Game(args);
-//	auto g = new test.bill.Game(args);
 //	auto g = new test.game.Game(args);
+//	auto g = new test.frustum.Game(args);
 //	auto g = new test.terrain.Game(args);
-//	auto g = new robbers.game.Game(args);
 	auto g = new miners.game.Game(args);
 
 	g.loop();
