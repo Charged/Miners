@@ -5,6 +5,7 @@
  */
 module charge.sys.resource;
 
+import std.file : read;
 import std.string : format;
 
 import charge.sys.file;

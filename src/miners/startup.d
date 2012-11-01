@@ -2,6 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.startup;
 
+import std.string : format;
 import std.math : fmax, fmin;
 import std.file : write;
 
