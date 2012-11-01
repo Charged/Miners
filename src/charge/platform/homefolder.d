@@ -6,6 +6,7 @@
 module charge.platform.homefolder;
 
 import std.c.stdlib : getenv, free;
+import std.utf : toUTF8;
 import std.file : exists, mkdir, chdir;
 import std.stdio : writefln;
 import std.string : toString;
@@ -15,8 +16,6 @@ string homeFolder;
 string applicationConfigFolder;
 string chargeConfigFolder;
 string privateFrameworksPath;
-
-extern(C) char* macGetPrivateFrameworksPath();
 
 static this()
 {
@@ -29,8 +28,8 @@ static this()
 		applicationConfigFolder = homeFolder ~ "/Library/Application Support";
 		chargeConfigFolder = applicationConfigFolder ~ "/charge";
 	} else version(Windows) {
-		homeFolder = toString(getenv("USERPROFILE"));
-		applicationConfigFolder = toString(getenv("APPDATA"));
+		homeFolder = wgetenv("USERPROFILE"w);
+		applicationConfigFolder = wgetenv("APPDATA"w);
 		chargeConfigFolder = applicationConfigFolder ~ "\\charge";
 	} else {
 		static assert(false);
@@ -59,4 +58,25 @@ static ~this()
 	// This should be stdlib free
 	free(privateFrameworksPath.ptr);
 	privateFrameworksPath = null;
+}
+
+version(Windows) {
+
+	extern(C) wchar* _wgetenv(wchar*);
+
+	char[] wgetenv(wchar[] str)
+	{
+		auto ptr = _wgetenv(str.ptr);
+		if (!ptr)
+			return null;
+
+		for(int i;; i++)
+			if (!ptr[i])
+				return toUTF8(ptr[0 .. i]);
+	}
+
+} else version(darwin) {
+
+	extern(C) char* macGetPrivateFrameworksPath();
+
 }
