@@ -788,7 +788,8 @@ public:
 			pp.run = keyDown;
 
 		} else if (sym == opts.keyFlightMode) {
-			// XXX Fix
+			if (keyDown)
+				pp.flying = !pp.flying;
 
 		} else if (sym == opts.keyNoClip) {
 			pp.noClip = keyDown ^ opts.noClip();

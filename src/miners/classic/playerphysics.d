@@ -96,6 +96,7 @@ public:
 	bool down; // Camera
 	bool jump;
 	bool crouch;
+	bool flying;
 	bool noClip;
 
 
@@ -128,14 +129,9 @@ public:
 	{
 		Vector3d vel = getMoveVector(heading);
 
-		// The speed at which we move.
-		double velSpeed = run ? 1.0 : (4.3/100);
-
-		if (up)
-			vel.y += velSpeed;
-
-		if (down)
-			vel.y -= velSpeed;
+		// Moving up and down.
+		if ((jump || up) ^ down)
+			vel.y += down ? -velSpeed : velSpeed;
 
 		// No physics.
 		pos += vel;
@@ -176,8 +172,11 @@ public:
 		}
 
 		// Ignore the old velocity if on the ground.
-		if (ground) {
-			vel.y = ((jump || up) && ground) * jumpFactor - gravity;
+		if (flying) {
+			if ((jump || up) ^ down)
+				vel.y += down ? -velSpeed : velSpeed;
+		} else if (ground) {
+			vel.y = (jump || up) * jumpFactor - gravity;
 		} else {
 			vel.scale(0.02);
 			vel += oldVel;
@@ -287,6 +286,14 @@ protected:
 		vel.scale(velSpeed);
 
 		return vel;
+	}
+
+	/**
+	 * The speed at which we move.
+	 */
+	final double velSpeed()
+	{
+		return run ? 1.0 : (4.3/100);
 	}
 
 	/**
