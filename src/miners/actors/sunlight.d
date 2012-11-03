@@ -48,7 +48,15 @@ public:
 
 	void breakApart()
 	{
-		w.gfx.fog = null;
+		auto w = cast(World)w;
+		if (w !is null) {
+			w.opts.fog -= &setFog;
+			w.opts.shadow -= &shadow;
+			w.opts.viewDistance -= &setViewDistance;
+
+			w.gfx.fog = null;
+		}
+
 		breakApartAndNull(fog);
 		breakApartAndNull(gfx);
 		super.breakApart();
@@ -83,12 +91,14 @@ public:
 private:
 	void setViewDistance(double dist)
 	{
+		assert(fog !is null);
 		fog.stop = dist;
 		procent = _procent;
 	}
 
 	void setFog(bool b)
 	{
+		assert(fog !is null);
 		w.gfx.fog = b ? fog : null;
 	}
 
