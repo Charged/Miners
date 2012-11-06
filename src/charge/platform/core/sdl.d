@@ -11,6 +11,7 @@ import std.string : format, toString, toStringz;
 import charge.core;
 import charge.gfx.gfx;
 import charge.gfx.target;
+import charge.gfx.renderer;
 import charge.sys.logger;
 import charge.sys.resource;
 import charge.util.memory;
@@ -314,6 +315,9 @@ private:
 		// Check for minimum version.
 		if (!GL_VERSION_2_1)
 			panic(format("OpenGL 2.1 not supported, can not run %s", opts.title));
+
+		if (!Renderer.init())
+			panic(format("Missing graphics features, can not run %s", opts.title));
 	}
 
 	void closeGfx()

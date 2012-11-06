@@ -36,12 +36,13 @@ protected:
 	static bool forward;
 
 public:
-	static void init()
+	static bool init()
 	{
 		forward = ForwardRenderer.init();
 		deferred = DeferredRenderer.init();
 
 		initilized = true;
+		return forward || deferred;
 	}
 
 	this()
