@@ -441,54 +441,53 @@ protected:
 	void packet(ubyte *pkg)
 	{
 		switch(*pkg) {
-		case 0x00:
+		case ServerIdentification.constId:
 			serverIdentification(&packets.identification);
 			break;
-		case 0x01:
+		case ServerPing.constId:
 			if (l !is null)
 				l.ping();
 			break;
-		case 0x02:
+		case ServerLevelInitialize.constId:
 			if (l !is null)
 				l.levelInitialize();
 			if (ml !is null)
 				ml.removeAllPlayers();
 			break;
-		case 0x03:
+		case ServerLevelDataChunk.constId:
 			levelDataChunk(&packets.levelDataChunk);
 			break;
-		case 0x04:
+		case ServerLevelFinalize.constId:
 			levelFinalize(&packets.levelFinalize);
 			break;
-		//se 0x05: // Ignore
-		case 0x06:
+		case ServerSetBlock.constId:
 			setBlock(&packets.setBlock);
 			break;
-		case 0x07:
+		case ServerPlayerSpawn.constId:
 			playerSpawn(&packets.playerSpawn);
 			break;
-		case 0x08:
+		case ServerPlayerTeleport.constId:
 			playerTeleport(&packets.playerTeleport);
 			break;
-		case 0x09:
+		case ServerPlayerUpdatePosOri.constId:
 			playerUpdatePosOri(&packets.playerUpdatePosOri);
 			break;
-		case 0x0a:
+		case ServerPlayerUpdatePos.constId:
 			playerUpdatePos(&packets.playerUpdatePos);
 			break;
-		case 0x0b:
+		case ServerPlayerUpdateOri.constId:
 			playerUpdateOri(&packets.playerUpdateOri);
 			break;
-		case 0x0c:
+		case ServerPlayerDespawn.constId:
 			playerDespawn(&packets.playerDespawn);
 			break;
-		case 0x0d:
+		case ServerMessage.constId:
 			message(&packets.message);
 			break;
-		case 0x0e:
+		case ServerDisconnect.constId:
 			disconnect(&packets.disconnect);
 			break;
-		case 0x0f:
+		case ServerUpdateType.constId:
 			updateType(&packets.updateType);
 			break;
 		default: // Error 
