@@ -106,6 +106,8 @@ public:
 		ZIP_ONLY = 2,
 	}
 
+	bool suppress404;
+
 private:
 	Pool parent;
 
@@ -177,7 +179,11 @@ public:
 		    (f = loadDisk(filename)) !is null)
 			return f;
 
-		return loadBuiltin(filename);
+		f = loadBuiltin(filename);
+		if (f is null && !suppress404)
+			l.warn("File not found %s", filename);
+
+		return f;
 	}
 
 	/**

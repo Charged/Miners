@@ -137,10 +137,8 @@ protected:
 		Triangle tris[];
 
 		file = p.load(filename);
-		if (file is null) {
-			l.warn("file %s not found", filename);
+		if (file is null)
 			return null;
-		}
 
 		f = file.peekMem();
 		scope(exit) delete file;
