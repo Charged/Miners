@@ -71,6 +71,10 @@ protected:
 	static void function()[] closeFuncs;
 
 
+private:
+	static Core instance;
+
+
 public:
 	static Core opCall()
 	{
@@ -86,8 +90,7 @@ public:
 		assert(opts.title !is null);
 	}
 	body {
-		instance = chargeCore(opts);
-		return instance;
+		return chargeCore(opts);
 	}
 
 	/**
@@ -147,12 +150,11 @@ public:
 
 	abstract Properties properties();
 
+
 protected:
 	this(coreFlag flags)
 	{
 		this.flags = flags;
+		instance = this;
 	}
-
-private:
-	static Core instance;
 }
