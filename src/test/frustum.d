@@ -256,7 +256,7 @@ public:
 		glTranslated(center.x, center.y, center.z);
 		glScaled(size*2, size*2, size*2);
 		glColor4d(1.0, 0.2, 0.2, 0.5);
-		sphere.drawFixed();
+		//sphere.drawFixed();
 		glPopMatrix();
 
 		glPushMatrix();
@@ -264,7 +264,7 @@ public:
 		glTranslated(center.x, center.y, center.z);
 		glScaled(size*2, size*2, size*2);
 		glColor4d(0.2, 1.0, 0.2, 0.5);
-		sphere.drawFixed();
+		//sphere.drawFixed();
 		glPopMatrix();
 
 		glPushMatrix();
@@ -272,7 +272,7 @@ public:
 		glTranslated(center.x, center.y, center.z);
 		glScaled(size*2, size*2, size*2);
 		glColor4d(0.2, 0.2, 1.0, 0.5);
-		sphere.drawFixed();
+		//sphere.drawFixed();
 		glPopMatrix();
 
 		glDisable(GL_BLEND);

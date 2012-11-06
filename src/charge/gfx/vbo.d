@@ -228,33 +228,6 @@ public:
 	}
 
 	/**
-	 * Draws the vbo using fixed vertex inputs.
-	 */
-	final void drawFixed()
-	{
-		setup();
-		doDraw();
-		cleanup();
-	}
-
-	/**
-	 * Draws a array of vbos using fixed vertex inputs.
-	 */
-	static void drawArrayFixed(RigidMeshVBO[] vbos)
-	{
-		if (!vbos.length)
-			return;
-
-		setup();
-		
-		foreach(vbo; vbos) {
-			vbo.doDraw();
-		}
-
-		cleanup();
-	}
-
-	/**
 	 * Draws a the vbo using VertexAttribArrays as inputs.
 	 *
 	 * Where the attribute index to name mapping follows the order
@@ -315,45 +288,5 @@ protected:
 		super(p, name);
 
 		update(type, verts, numVerts, tris, numTriangles);
-	}
-
-private:
-	final static void setup()
-	{
-		glEnable(GL_NORMALIZE);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glClientActiveTexture(GL_TEXTURE0);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-
-	final void doDraw()
-	{
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vboVerts);
-		glVertexPointer(3, GL_FLOAT, Vertex.sizeof, vertOffset);
-		glNormalPointer(GL_FLOAT, Vertex.sizeof, normalOffset);
-		glTexCoordPointer(2, GL_FLOAT, Vertex.sizeof, texOffset);
-		if (indexed) {
-			glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, vboIndices);
-			glDrawElements(primType, numIndices, GL_UNSIGNED_INT, null);
-		} else {
-			glDrawArrays(primType, 0, numVerts);
-		}
-	}
-
-	final static void cleanup()
-	{
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glClientActiveTexture(GL_TEXTURE2);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glClientActiveTexture(GL_TEXTURE1);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glClientActiveTexture(GL_TEXTURE0);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisable(GL_NORMALIZE);
 	}
 }

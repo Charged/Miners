@@ -20,7 +20,6 @@ public:
 	GfxDoubleTarget dt;
 
 	GfxRenderer r; // Current renderer
-	GfxRenderer ifc; // Inbuilt fixed func
 	GfxRenderer ifr; // Inbuilt forward renderer
 	MinecraftDeferredRenderer mdr; // Special deferred renderer
 	MinecraftForwardRenderer mfr; // Special forward renderer
@@ -48,11 +47,10 @@ public:
 	{
 		this.failsafe = failsafe;
 
-		auto sanity = GfxFixedRenderer.check();
 		canDoForward = MinecraftForwardRenderer.check();
 		canDoDeferred = MinecraftDeferredRenderer.check();
 
-		if (!sanity && !canDoForward && !canDoDeferred)
+		if (!canDoForward && !canDoDeferred)
 			throw new Exception("Can not run any renderer!");
 
 		defaultTarget = GfxDefaultTarget();
@@ -72,7 +70,6 @@ public:
 
 	~this()
 	{
-		delete ifc;
 		delete ifr;
 		delete mfr;
 		delete mdr;
@@ -117,10 +114,6 @@ protected:
 	void setupRenderers()
 	{
 		GfxRenderer.init();
-		ifc = new GfxFixedRenderer();
-		rsbt[num_renderers] = TerrainBuildTypes.RigidMesh;
-		rss[num_renderers]  = "Fixed";
-		rs[num_renderers++] = ifc;
 
 		if (canDoForward) {
 			try {

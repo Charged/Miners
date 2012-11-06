@@ -102,10 +102,6 @@ public:
 		return m;
 	}
 
-	void drawFixed()
-	{
-	}
-
 	void drawAttrib(Shader s)
 	{
 		gluPushAndTransform(pos, rot);

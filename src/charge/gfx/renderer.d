@@ -16,7 +16,6 @@ import charge.gfx.cull;
 import charge.gfx.renderqueue;
 import charge.gfx.deferred;
 import charge.gfx.forward;
-import charge.gfx.fixed;
 import charge.gfx.target;
 import charge.gfx.shader;
 import charge.gfx.texture;
@@ -35,12 +34,10 @@ protected:
 	static bool initilized;
 	static bool deferred;
 	static bool forward;
-	static bool fixed;
 
 public:
 	static void init()
 	{
-		fixed = FixedRenderer.init();
 		forward = ForwardRenderer.init();
 		deferred = DeferredRenderer.init();
 
@@ -60,7 +57,7 @@ public:
 		else if (forward)
 			return new ForwardRenderer();
 		else
-			return new FixedRenderer();
+			assert(false);
 	}
 
 	RenderTarget target()

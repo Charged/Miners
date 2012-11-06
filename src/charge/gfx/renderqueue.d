@@ -12,7 +12,6 @@ import charge.gfx.material;
 interface Renderable
 {
 	Material getMaterial();
-	void drawFixed();
 	void drawAttrib(Shader s);
 }
 

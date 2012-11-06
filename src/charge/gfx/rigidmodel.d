@@ -95,16 +95,6 @@ protected:
 		rq.push(v.lengthSqrd, this);
 	}
 
-	void drawFixed()
-	{
-		gluPushAndTransform(pos, rot);
-		glScaled(x, y, z);
-
-		vbo.drawFixed();
-
-		glPopMatrix();
-	}
-
 	void drawAttrib(Shader s)
 	{
 		gluPushAndTransform(pos, rot);

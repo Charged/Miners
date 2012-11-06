@@ -84,23 +84,6 @@ public:
 	 */
 
 
-	void drawFixed()
-	{
-		gluPushAndTransform(pos, rot);
-
-		glLineWidth(4);
-		glDepthFunc(GL_LEQUAL);
-		glPolygonMode(GL_FRONT, GL_LINE);
-
-		vbo.drawFixed();
-
-		glPolygonMode(GL_FRONT, GL_FILL);
-		glDepthFunc(GL_LESS);
-		glLineWidth(1);
-
-		glPopMatrix();
-	}
-
 	void drawAttrib(GfxShader s)
 	{
 		gluPushAndTransform(pos, rot);

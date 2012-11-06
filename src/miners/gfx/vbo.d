@@ -202,16 +202,6 @@ public:
 		super(w);
 	}
 
-	void drawFixed()
-	{
-		gluPushAndTransform(pos, rot);
-
-		ChunkVBORigidMesh.drawArrayFixed(
-			cast(ChunkVBORigidMesh[])resultVbo[0 .. result_num]);
-
-		glPopMatrix();
-	}
-
 	void drawAttrib(GfxShader s)
 	{
 		gluPushAndTransform(pos, rot);
@@ -233,11 +223,6 @@ public:
 	this(GfxWorld w)
 	{
 		super(w);
-	}
-
-	void drawFixed()
-	{
-
 	}
 
 	void drawAttrib(GfxShader s)
