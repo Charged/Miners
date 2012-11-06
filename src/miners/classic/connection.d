@@ -36,6 +36,8 @@ public:
 
 
 private:
+	mixin SysLogging;
+
 	// Server details
 	string hostname;
 	ushort port;
@@ -50,7 +52,7 @@ private:
 	ubyte[] inData;
 
 	/// Receiver of packages
-	ClientListener l;
+	ClientListener cl;
 
 	/// Receiver of messages.
 	ClientMessageListener ml;
@@ -64,9 +66,9 @@ private:
 	TcpSocket s;
 
 public:
-	this(ClientListener l, ClientMessageListener ml, ClassicServerInfo csi)
+	this(ClientListener cl, ClientMessageListener ml, ClassicServerInfo csi)
 	{
-		this.l = l;
+		this.cl = cl;
 		this.ml = ml;
 
 		this.hostname = csi.hostname;
@@ -84,7 +86,7 @@ public:
 
 	void setListener(ClientListener l)
 	{
-		this.l = l;
+		this.cl = l;
 	}
 
 	void setMessageListener(ClientMessageListener ml)
@@ -219,7 +221,7 @@ protected:
 
 		setPlayerType(type);
 
-		l.indentification(ver, name, motd, type);
+		cl.indentification(ver, name, motd, type);
 	}
 
 	/*
@@ -238,7 +240,7 @@ protected:
 
 		inData ~= sldc.data[0 .. len];
 
-		l.levelLoadUpdate(sldc.percent);
+		cl.levelLoadUpdate(sldc.percent);
 	}
 
 	/**
@@ -296,7 +298,7 @@ protected:
 		// Skip the size in the begining
 		auto d = decomp[4 .. $];
 
-		l.levelFinalize(xSize, ySize, zSize, d);
+		cl.levelFinalize(xSize, ySize, zSize, d);
 	}
 
 	/**
@@ -309,8 +311,8 @@ protected:
 		short z = ntoh(ssb.z);
 		ubyte type = ssb.type;
 
-		if (l !is null)
-			l.setBlock(x, y, z, type);
+		if (cl !is null)
+			cl.setBlock(x, y, z, type);
 	}
 
 	/**
@@ -326,8 +328,8 @@ protected:
 		double heading, pitch;
 		fromYawPitch(sps.yaw, sps.pitch, heading, pitch);
 
-		if (l !is null)
-			l.playerSpawn(id, name, x, y, z, heading, pitch);
+		if (cl !is null)
+			cl.playerSpawn(id, name, x, y, z, heading, pitch);
 		if (ml !is null)
 			ml.addPlayer(id, name);
 	}
@@ -344,8 +346,8 @@ protected:
 		double heading, pitch;
 		fromYawPitch(spt.yaw, spt.pitch, heading, pitch);
 
-		if (l !is null)
-			l.playerMoveTo(id, x, y, z, heading, pitch);
+		if (cl !is null)
+			cl.playerMoveTo(id, x, y, z, heading, pitch);
 	}
 
 	/**
@@ -360,8 +362,8 @@ protected:
 		double heading, pitch;
 		fromYawPitch(spupo.yaw, spupo.pitch, heading, pitch);
 
-		if (l !is null)
-			l.playerMove(id, x, y, z, heading, pitch);
+		if (cl !is null)
+			cl.playerMove(id, x, y, z, heading, pitch);
 	}
 
 	/**
@@ -374,8 +376,8 @@ protected:
 		double y = spup.y / 32.0;
 		double z = spup.z / 32.0;
 
-		if (l !is null)
-			l.playerMove(id, x, y, z);
+		if (cl !is null)
+			cl.playerMove(id, x, y, z);
 	}
 
 	/**
@@ -387,8 +389,8 @@ protected:
 		double heading, pitch;
 		fromYawPitch(spuo.yaw, spuo.pitch, heading, pitch);
 
-		if (l !is null)
-			l.playerMove(id, heading, pitch);
+		if (cl !is null)
+			cl.playerMove(id, heading, pitch);
 	}
 
 	/**
@@ -398,8 +400,8 @@ protected:
 	{
 		auto id = spd.playerId;
 
-		if (l !is null)
-			l.playerDespawn(id);
+		if (cl !is null)
+			cl.playerDespawn(id);
 		if (ml !is null)
 			ml.removePlayer(id);
 	}
@@ -423,7 +425,7 @@ protected:
 	{
 		string reason = removeTrailingSpaces(sd.reason);
 
-		l.disconnect(reason);
+		cl.disconnect(reason);
 	}
 
 	/**
@@ -435,7 +437,7 @@ protected:
 
 		setPlayerType(type);
 
-		l.playerType(type);
+		cl.playerType(type);
 	}
 
 	void packet(ubyte *pkg)
@@ -445,12 +447,12 @@ protected:
 			serverIdentification(&packets.identification);
 			break;
 		case ServerPing.constId:
-			if (l !is null)
-				l.ping();
+			if (cl !is null)
+				cl.ping();
 			break;
 		case ServerLevelInitialize.constId:
-			if (l !is null)
-				l.levelInitialize();
+			if (cl !is null)
+				cl.levelInitialize();
 			if (ml !is null)
 				ml.removeAllPlayers();
 			break;
@@ -567,7 +569,7 @@ protected:
 			sendClientIdentification(username, verificationKey);
 			return true;
 		} catch (Exception e) {
-			l.disconnect(e.toString);
+			cl.disconnect(e.toString);
 			return false;
 		}
 	}
