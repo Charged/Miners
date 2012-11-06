@@ -54,17 +54,21 @@ int main(string[] args)
 	if (!filterArgs(args))
 		return 0;
 
-//	auto g = new test.lua.Game(args);
-//	auto g = new test.game.Game(args);
-//	auto g = new test.frustum.Game(args);
-//	auto g = new test.terrain.Game(args);
-	auto g = new miners.game.Game(args);
+	try {
+//		auto g = new test.lua.Game(args);
+//		auto g = new test.game.Game(args);
+//		auto g = new test.frustum.Game(args);
+//		auto g = new test.terrain.Game(args);
+		auto g = new miners.game.Game(args);
 
-	g.loop();
+		g.loop();
 
-	delete g;
+		delete g;
 
-	accountMemory();
+		accountMemory();
+	} catch (Exception e) {
+		Core().panic(e.toString());
+	}
 
 	return 0;
 }

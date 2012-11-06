@@ -120,6 +120,12 @@ public:
 			closeFuncs ~= close;
 	}
 
+	/**
+	 * Display a panic message, usually a dialogue box, then
+	 * calls exit(-1), so this function does not return.
+	 */
+	abstract void panic(string message);
+
 
 	/*
 	 *

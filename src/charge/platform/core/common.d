@@ -5,6 +5,9 @@
  */
 module charge.platform.core.common;
 
+import std.stdio : writefln;
+import std.c.stdlib : exit;
+
 import lib.loader;
 import lib.al.al;
 import lib.al.loader;
@@ -134,6 +137,13 @@ protected:
 			flags &= ~coreFlag.SFX;
 			throw new Exception("Could not load SFX");
 		}
+	}
+
+	void panic(string msg)
+	{
+		l.fatal("Core Panic!\n%s", msg);
+		writefln("Core Panic!\n%s", msg);
+		exit(-1);
 	}
 
 	void notLoaded(coreFlag mask, string name)
