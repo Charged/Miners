@@ -208,6 +208,9 @@ public:
 
 		pp = new PlayerPhysics(&ppGetBlock);
 		opts.noClip ~= &ppNoClip;
+		opts.flying ~= &ppFlying;
+		ppNoClip(opts.noClip());
+		ppFlying(opts.flying());
 	}
 
 	this(Router r, Options opts, string filename)
@@ -249,7 +252,7 @@ public:
 	void close()
 	{
 		opts.noClip -= &ppNoClip;
-		opts.noClip = false; // Reset.
+		opts.flying -= &ppFlying;
 
 		breakApartAndNull(sel);
 		breakApartAndNull(bgScene);
@@ -670,6 +673,14 @@ public:
 	}
 
 	/**
+	 * For options.
+	 */
+	void ppFlying(bool val)
+	{
+		pp.flying = val;
+	}
+
+	/**
 	 * Callback for the PlayerPhysics to get a block.
 	 */
 	ubyte ppGetBlock(int x, int y, int z)
@@ -789,7 +800,7 @@ public:
 
 		} else if (sym == opts.keyFlightMode) {
 			if (keyDown)
-				pp.flying = !pp.flying;
+				opts.flying.toggle();
 
 		} else if (sym == opts.keyNoClip) {
 			pp.noClip = keyDown ^ opts.noClip();

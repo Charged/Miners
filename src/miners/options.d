@@ -83,6 +83,7 @@ public:
 	Option!(int) fov; /**< which fov should be used */
 	Option!(bool) hideUi; /**< hide the user interface */
 	Option!(bool) noClip; /**< can the player move trough blocks */
+	Option!(bool) flying; /**< gravity doesn't effect the player */
 	Option!(bool) shadow; /**< should advanced shadowing be used */
 	Option!(bool) showDebug; /**< should debug info be shown */
 	Option!(bool) useCmdPrefix; /**< should we use the command prefix */
