@@ -123,7 +123,12 @@ class CreateLogo : OptionsTask
 
 	bool build()
 	{
-		auto tex = GfxTexture(SysPool(), "background.png");
+		auto p = SysPool();
+		p.suppress404 = true;
+		scope(exit)
+			p.suppress404 = false;
+
+		auto tex = GfxTexture(p, "background.png");
 		if (tex !is null) {
 			setBackground(tex);
 			sysReference(&tex, null);
@@ -360,16 +365,19 @@ class LoadModernTexture : OptionsTask
 
 	bool build()
 	{
+		auto p = SysPool();
+		p.suppress404 = true;
+		scope(exit)
+			p.suppress404 = false;
+
 		if (opts.borrowedTerrainPic() is null)
 			borrowModernTerrainTexture();
 
-		auto pic = getModernTerrainTexture();
+		auto pic = getModernTerrainTexture(p);
 		if (pic is null) {
 			auto text = format(terrainNotFoundText, chargeConfigFolder);
 			signalError([text]);
 			return false;
-		} else {
-			l.info("Found terrain.png please ignore above warnings");
 		}
 
 		// Do the manipulation of the texture to fit us
@@ -440,13 +448,21 @@ class LoadClassicTexture : OptionsTask
 
 	bool build()
 	{
+		auto p = SysPool();
+		p.suppress404 = true;
+		scope(exit)
+			p.suppress404 = false;
+
 		// Get a texture that works with classic
-		auto pic = getClassicTerrainTexture();
+		auto pic = getClassicTerrainTexture(p);
 		if (pic is null) {
 			// Copy and manipulate
 			pic = Picture(opts.modernTerrainPic());
 			manipulateTextureClassic(pic);
+
+			l.info("Using a modified modern terrain.png for classic terrain.");
 		}
+
 		opts.classicTerrainPic = pic;
 		opts.classicTextures = createTextures(pic, opts.rendererBuildIndexed);
 
@@ -556,8 +572,13 @@ class CreateTiledBackground : OptionsTask
 
 	bool build()
 	{
+		auto p = SysPool();
+		p.suppress404 = true;
+		scope(exit)
+			p.suppress404 = false;
+
 		// See if the user has overridden the background.
-		auto tex = GfxTexture(SysPool(), "background.tiled.png");
+		auto tex = GfxTexture(p, "background.tiled.png");
 		if (tex !is null) {
 			setBackground(tex, true);
 			sysReference(&tex, null);
@@ -565,7 +586,7 @@ class CreateTiledBackground : OptionsTask
 		}
 
 		// Try the other one as well.
-		tex = GfxTexture(SysPool(), "background.png");
+		tex = GfxTexture(p, "background.png");
 		if (tex !is null) {
 			setBackground(tex, false);
 			sysReference(&tex, null);

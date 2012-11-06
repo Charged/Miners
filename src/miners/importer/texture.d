@@ -9,7 +9,6 @@ import charge.sys.resource : sysReference = reference, SysPool = Pool;
 import charge.util.zip;
 import charge.math.color;
 import charge.math.picture;
-import charge.platform.homefolder;
 
 import miners.options;
 import miners.defines;
@@ -23,16 +22,15 @@ import miners.importer.folders;
 /**
  * Load the modern terrain.png file.
  */
-Picture getModernTerrainTexture()
+Picture getModernTerrainTexture(SysPool p)
 {
 	string[] locations = [
 		"terrain.png",
-		chargeConfigFolder ~ "/terrain.png",
 		borrowedModernTerrainTexture,
 	];
 
 	foreach(l; locations) {
-		auto pic = Picture(SysPool(), l);
+		auto pic = Picture(p, l);
 		// Make sure we do a copy.
 		if (pic is null)
 			continue;
@@ -79,15 +77,14 @@ void manipulateTextureModern(Picture pic)
 /**
  * Load the classic terrain.classic.png file.
  */
-Picture getClassicTerrainTexture()
+Picture getClassicTerrainTexture(SysPool p)
 {
 	string[] locations = [
 		"terrain.classic.png",
-		chargeConfigFolder ~ "/terrain.classic.png",
 	];
 
 	foreach(l; locations) {
-		auto pic = Picture(SysPool(), l);
+		auto pic = Picture(p, l);
 		// Make sure we do a copy.
 		if (pic is null)
 			continue;
