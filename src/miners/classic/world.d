@@ -61,11 +61,6 @@ public:
 
 	~this()
 	{
-		// Incase super class decieded to deleted t
-		if (t is null)
-			ft = null;
-
-		delete ft;
 		t = ft = null;
 	}
 
@@ -74,8 +69,8 @@ public:
 	 */
 	void newLevel(uint x, uint y, uint z)
 	{
-		delete ft;
-		t = ft = null;
+		breakApartAndNull(t);
+		breakApartAndNull(ft);
 
 		auto builder = new ClassicMeshBuilder();
 
