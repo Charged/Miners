@@ -313,8 +313,8 @@ private:
 			l.info("   %s", .toString(SDL_JoystickName(i)));
 
 		// Check for minimum version.
-		if (!GL_VERSION_2_1)
-			panic(format("OpenGL 2.1 not supported, can not run %s", opts.title));
+		if (!GL_VERSION_2_0)
+			panic(format("OpenGL 2.0 not supported, can not run %s", opts.title));
 
 		if (!Renderer.init())
 			panic(format("Missing graphics features, can not run %s", opts.title));

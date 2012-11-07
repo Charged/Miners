@@ -33,8 +33,8 @@ public:
 			return false;
 
 		try {
-			if (!GL_VERSION_2_1)
-				throw new Exception("GL_VERSION < 2.1");
+			if (!GL_VERSION_2_0)
+				throw new Exception("GL_VERSION < 2.0");
 
 			if (!GL_ARB_vertex_buffer_object)
 				throw new Exception("ARB VBO extension not available");
@@ -200,8 +200,8 @@ public:
 		int value;
 
 		try {
-			if (!GL_VERSION_2_1)
-				throw new Exception("GL_VERSION < 2.1");
+			if (!GL_VERSION_2_0)
+				throw new Exception("GL_VERSION < 2.0");
 
 			if (!GL_ARB_vertex_buffer_object)
 				throw new Exception("ARB VBO extension not available");
@@ -392,7 +392,7 @@ public:
 	 */
 
 	const char[] materialFragForward = "
-#version 120
+#version 110
 
 uniform sampler2D diffuseTex;
 
@@ -430,7 +430,7 @@ void main()
 ";
 
 	const char[] materialFragForwardIndexed = "
-#version 120
+#version 110
 #extension GL_EXT_texture_array : require
 
 uniform sampler2DArray diffuseTex;
@@ -469,7 +469,7 @@ void main()
 ";
 
 	const char[] materialFragDeferred = "
-#version 120
+#version 110
 #extension GL_EXT_texture_array : require
 
 uniform sampler2DArray diffuseTex;
@@ -500,7 +500,7 @@ void main()
 	 */
 
 	const char[] materialVertCompactMesh = "
-#version 120
+#version 110
 
 uniform vec4 normals[10];
 uniform vec4 uv_mixs[10];
@@ -527,7 +527,7 @@ void main()
 ";
 
 	const char[] materialVertCompactMeshIndexed = "
-#version 120
+#version 110
 
 varying vec3 normal;
 varying float light;
