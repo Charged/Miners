@@ -82,6 +82,7 @@ struct ClientIdentification
 {
 	const constId = 0x00;
 
+align(1):
 	ubyte packetId;
 	ubyte protocolVersion;
 	char[64] username;
@@ -93,6 +94,7 @@ struct ClientSetBlock
 {
 	const constId = 0x05;
 
+align(1):
 	ubyte packetId;
 	short x;
 	short y;
@@ -105,6 +107,7 @@ struct ClientPlayerUpdatePosOri
 {
 	const constId = 0x08;
 
+align(1):
 	ubyte packetId;
 	byte playerId; // Allways 255
 	short x;
@@ -118,6 +121,7 @@ struct ClientMessage
 {
 	const constId = 0x0d;
 
+align(1):
 	ubyte packetId;
 	ubyte pad;
 	char[64] message;
@@ -135,6 +139,7 @@ struct ServerIdentification
 {
 	const constId = 0x00;
 
+align(1):
 	ubyte packetId;
 	ubyte protocolVersion;
 	char[64] name;
@@ -146,6 +151,7 @@ struct ServerPing
 {
 	const constId = 0x01;
 
+align(1):
 	ubyte packetId;
 }
 
@@ -153,6 +159,7 @@ struct ServerLevelInitialize
 {
 	const constId = 0x02;
 
+align(1):
 	ubyte packetId;
 }
 
@@ -160,6 +167,7 @@ struct ServerLevelDataChunk
 {
 	const constId = 0x03;
 
+align(1):
 	ubyte packetId;
 	short length;
 	ubyte[1024] data;
@@ -170,6 +178,7 @@ struct ServerLevelFinalize
 {
 	const constId = 0x04;
 
+align(1):
 	ubyte packetId;
 	short x;
 	short y;
@@ -180,6 +189,7 @@ struct ServerSetBlock
 {
 	const constId = 0x06;
 
+align(1):
 	ubyte packetId;
 	short x;
 	short y;
@@ -191,6 +201,7 @@ struct ServerPlayerSpawn
 {
 	const constId = 0x07;
 
+align(1):
 	ubyte packetId;
 	byte playerId;
 	char[64] playerName;
@@ -205,6 +216,7 @@ struct ServerPlayerTeleport
 {
 	const constId = 0x08;
 
+align(1):
 	ubyte packetId;
 	byte playerId;
 	short x;
@@ -218,6 +230,7 @@ struct ServerPlayerUpdatePosOri
 {
 	const constId = 0x09;
 
+align(1):
 	ubyte packetId;
 	byte playerId;
 	byte x;
@@ -231,6 +244,7 @@ struct ServerPlayerUpdatePos
 {
 	const constId = 0x0a;
 
+align(1):
 	ubyte packetId;
 	byte playerId;
 	byte x;
@@ -242,6 +256,7 @@ struct ServerPlayerUpdateOri
 {
 	const constId = 0x0b;
 
+align(1):
 	ubyte packetId;
 	byte playerId;
 	ubyte yaw;
@@ -252,6 +267,7 @@ struct ServerPlayerDespawn
 {
 	const constId = 0x0c;
 
+align(1):
 	ubyte packetId;
 	byte playerId;
 }
@@ -260,6 +276,7 @@ struct ServerMessage
 {
 	const constId = 0x0d;
 
+align(1):
 	ubyte packetId;
 	byte playerId;
 	char[64] message;
@@ -269,6 +286,7 @@ struct ServerDisconnect
 {
 	const constId = 0x0e;
 
+align(1):
 	ubyte packetId;
 	char[64] reason;
 }
@@ -277,6 +295,7 @@ struct ServerUpdateType
 {
 	const constId = 0x0f;
 
+align(1):
 	ubyte packetId;
 	ubyte type;
 }
