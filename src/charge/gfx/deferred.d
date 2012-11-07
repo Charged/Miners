@@ -321,7 +321,7 @@ public:
 
 		try {
 			if (!GL_VERSION_2_1)
-				throw new Exception("GL_VERSION < 2.0");
+				throw new Exception("GL_VERSION < 2.1");
 
 			if (!GL_EXT_geometry_shader4)
 				throw new Exception("GL_EXT_geometry_shader4 not supported");
@@ -1378,7 +1378,7 @@ protected:
 
 
 	const string material_shader_mesh_vert = "
-#version 110
+#version 120
 
 varying vec2 uv;
 varying vec3 normal;
@@ -1396,7 +1396,7 @@ void main()
 ";
 
 	const string material_shader_skel_vert = "
-#version 110
+#version 120
 
 varying vec3 normal;
 varying vec2 uv;
@@ -1438,7 +1438,7 @@ void main()
 ";
 
 	const string material_shader_tex_frag = "
-#version 110
+#version 120
 
 uniform sampler2D diffuseTex;
 
@@ -1453,7 +1453,7 @@ void main()
 ";
 
 	const string material_shader_fake_frag = "
-#version 110
+#version 120
 
 uniform sampler2D diffuseTex;
 
@@ -1472,7 +1472,7 @@ void main()
 ";
 
 	const string material_shader_shadow_frag = "
-#version 110
+#version 120
 
 void main()
 {
@@ -1480,7 +1480,7 @@ void main()
 ";
 
 	const string deferred_base_vert = "
-#version 110
+#version 120
 
 void main()
 {
@@ -1490,7 +1490,7 @@ void main()
 ";
 
 	const string spotlight_shader_shadow_frag = "
-#version 110
+#version 120
 #extension GL_EXT_gpu_shader4 : require
 
 uniform vec2 screen;
@@ -1556,7 +1556,7 @@ void main()
 ";
 
 	const string spotlight_shader_frag = "
-#version 110
+#version 120
 
 uniform vec2 screen;
 uniform sampler2D colorTex;
@@ -1604,7 +1604,7 @@ void main()
 ";
 
 	const string pointlight_shader_frag = "
-#version 110
+#version 120
 
 uniform vec2 screen;
 uniform sampler2D colorTex;
@@ -1648,7 +1648,7 @@ void main()
 ";
 
 	const string pointlight_shader_geom = "
-#version 110
+#version 120
 #extension GL_EXT_geometry_shader4 : require
 
 uniform float near_clip;
@@ -1708,7 +1708,7 @@ void main() {
 ";
 
 	const string pointlight_shader_vertex = "
-#version 110
+#version 120
 
 varying float size;
 varying vec3 position;
@@ -1723,7 +1723,7 @@ void main() {
 ";
 
 	const string directionlight_shader_frag = "
-#version 110
+#version 120
 
 uniform vec2 screen;
 uniform sampler2D colorTex;
@@ -1754,7 +1754,7 @@ void main()
 ";
 
 	const string directionlight_split_shader_frag = "
-#version 110
+#version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
 
@@ -1801,7 +1801,7 @@ float shadowCoff(vec4 position)
 	// XXX The scale at the end should go away
 	vec4 depthCoords = (gl_TextureMatrix[index] * vec4(position.xyz, 1.0)) * .5 + .5;
 	depthCoords.w = depthCoords.z;
-	depthCoords.z = float(index);
+	depthCoords.z = index;
 
 	// Make pixels realy far away less detailed
 	if (index < 3)
@@ -1830,7 +1830,7 @@ void main()
 ";
 
 	const string directionlight_iso_shader_frag = "
-#version 110
+#version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
 
@@ -1865,7 +1865,7 @@ float shadowCoff(vec4 position)
 	// XXX The scale at the end should go away
 	vec4 depthCoords = (gl_TextureMatrix[index] * vec4(position.xyz, 1.0)) * .5 + .5;
 	depthCoords.w = depthCoords.z;
-	depthCoords.z = float(index);
+	depthCoords.z = index;
 
 	return getCoffGuass(depthCoords);
 }
@@ -1890,7 +1890,7 @@ void main()
 ";
 
 	const string fog_shader_frag = "
-#version 110
+#version 120
 
 uniform vec2 screen;
 uniform sampler2D depthTex;
@@ -1913,7 +1913,7 @@ void main()
 ";
 
 	const string fog_tex_shader_frag = "
-#version 110
+#version 120
 
 uniform vec2 screen;
 uniform sampler2D depthTex;
