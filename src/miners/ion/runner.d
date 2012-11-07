@@ -61,7 +61,7 @@ public:
 
 	void close()
 	{
-		delete sl;
+		breakApartAndNull(sl);
 		if (c !is null) {
 			c.close();
 			c = null;

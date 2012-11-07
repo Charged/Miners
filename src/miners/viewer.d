@@ -85,7 +85,7 @@ public:
 
 	void close()
 	{
-		delete m;
+		breakApartAndNull(m);
 		breakApartAndNull(cam);
 		breakApartAndNull(sl);
 		breakApartAndNull(w);

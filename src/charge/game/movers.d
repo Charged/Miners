@@ -27,6 +27,16 @@ public:
 		this.m = m;
 	}
 
+	~this()
+	{
+		assert(m is null);
+	}
+
+	void breakApart()
+	{
+		m = null;
+	}
+
 	abstract void tick();
 }
 
