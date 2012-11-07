@@ -97,8 +97,8 @@ public:
 			w.opts.viewDistance -= &far;
 		}
 
-		delete icam;
-		delete pcam;
+		breakApartAndNull(icam);
+		breakApartAndNull(pcam);
 		super.breakApart();
 	}
 

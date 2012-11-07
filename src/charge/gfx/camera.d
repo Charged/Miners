@@ -28,6 +28,11 @@ public:
 		rot = Quatd();
 	}
 
+	void breakApart()
+	{
+
+	}
+
 	abstract void transform();
 
 	Cull cull()
