@@ -1801,7 +1801,7 @@ float shadowCoff(vec4 position)
 	// XXX The scale at the end should go away
 	vec4 depthCoords = (gl_TextureMatrix[index] * vec4(position.xyz, 1.0)) * .5 + .5;
 	depthCoords.w = depthCoords.z;
-	depthCoords.z = index;
+	depthCoords.z = float(index);
 
 	// Make pixels realy far away less detailed
 	if (index < 3)
@@ -1865,7 +1865,7 @@ float shadowCoff(vec4 position)
 	// XXX The scale at the end should go away
 	vec4 depthCoords = (gl_TextureMatrix[index] * vec4(position.xyz, 1.0)) * .5 + .5;
 	depthCoords.w = depthCoords.z;
-	depthCoords.z = index;
+	depthCoords.z = float(index);
 
 	return getCoffGuass(depthCoords);
 }
