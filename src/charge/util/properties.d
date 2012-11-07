@@ -136,7 +136,7 @@ public:
 
 		auto comment = RegExp(`^\s*#`);
 		auto setting = RegExp(`^\s*(\S*)\s*=\s*(\S*)`);
-		auto semsett = RegExp(`^\s*(\S*)\s*=?\s*:(.*)`);
+		auto semsett = RegExp(`^\s*([^:\s]*)\s*=?\s*:(.*)$`);
 
 		auto p = new Properties();
 
