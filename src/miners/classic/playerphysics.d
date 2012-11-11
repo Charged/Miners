@@ -150,6 +150,8 @@ public:
 	Point3d movePlayerClip(Point3d pos, double heading)
 	{
 		Vector3d vel = getMoveVector(heading);
+		Aabb current, test;
+		Aabb[64] stack;
 
 		// Adjust for the position being the camera.
 		double old, v;
@@ -157,18 +159,20 @@ public:
 		double y = pos.y - camHeight;
 		double z = pos.z;
 
-		double minX = x - playerSize;
-		double minY = y;
-		double minZ = z - playerSize;
-		double maxX = x + playerSize;
-		double maxY = y + playerHeight;
-		double maxZ = z + playerSize;
+		current.minX = x - playerSize;
+		current.maxX = x + playerSize;
+		current.minY = y;
+		current.maxY = y + playerHeight;
+		current.minZ = z - playerSize;
+		current.maxZ = z + playerSize;
+
 
 		bool ground;
 		{
-			double cy = getMovedBodyPosition(y, -gravity, 0, 0);
-			ground = collidesInRange(
-				minX, cy, minZ, maxX, cy, maxZ);
+			test = current;
+			test.minY -= gravity;
+			if (getColliders(test, current, stack) > 0)
+				ground = true;
 		}
 
 		// Ignore the old velocity if on the ground.
@@ -187,58 +191,79 @@ public:
 			return fmax(fmin(val, 0.8), -0.8);
 		}
 
+
 		v = limit(vel.x);
 		old = x;
 		if (v != 0) {
-			double cx = getMovedBodyPosition(x, v, -playerSize, playerSize);
-			if (collidesInRange(cx, minY, minZ, cx, maxY, maxZ)) {
-				if (v < 0)
-					x = cx + 1 + playerSize + 0.00001;
-				else
-					x = cx - playerSize - 0.00001;
+			test = current;
+			x = x + v;
+			if (v < 0)
+				test.minX += v;
+			else
+				test.maxX += v;
+
+			auto num = getColliders(test, current, stack);
+			if (v < 0) {
+				foreach(ref b; stack[0 .. num]) {
+					x = fmax(x, b.maxX + playerSize + 0.00001);
+				}
 			} else {
-				x = x + v;
+				foreach(ref b; stack[0 .. num])
+					x = fmin(x, b.minX - playerSize - 0.00001);
 			}
 
-			minX = x - playerSize;
-			maxX = x + playerSize;
+			current.minX = x - playerSize;
+			current.maxX = x + playerSize;
 			vel.x = x - old;
 		}
 
 		v = limit(vel.z);
 		old = z;
 		if (v != 0) {
-			double cz = getMovedBodyPosition(z, v, -playerSize, playerSize);
-			if (collidesInRange(minX, minY, cz, maxX, maxY, cz)) {
-				if (v < 0)
-					z = cz + 1 + playerSize + 0.00001;
-				else
-					z = cz - playerSize - 0.00001;
+			test = current;
+			z = z + v;
+			if (v < 0)
+				test.minZ += v;
+			else
+				test.maxZ += v;
+
+			auto num = getColliders(test, current, stack);
+			if (v < 0) {
+				foreach(ref b; stack[0 .. num]) {
+					z = fmax(z, b.maxZ + playerSize + 0.00001);
+				}
 			} else {
-				z = z + v;
+				foreach(ref b; stack[0 .. num])
+					z = fmin(z, b.minZ - playerSize - 0.00001);
 			}
 
-			minZ = z - playerSize;
-			maxZ = z + playerSize;
+			current.minZ = z - playerSize;
+			current.maxZ = z + playerSize;
 			vel.z = z - old;
 		}
 
 		v = limit(vel.y);
 		old = y;
 		if (v != 0) {
-			double cy = getMovedBodyPosition(y, v, 0, playerHeight);
-			if (collidesInRange(minX, cy, minZ, maxX, cy, maxZ)) {
-				if (v < 0)
-					y = cy + 1 + 0.00001;
-				else
-					y = cy - playerHeight - 0.00001;
+			test = current;
+			y = y + v;
+			if (v < 0)
+				test.minY += v;
+			else
+				test.maxY += v;
+
+			auto num = getColliders(test, current, stack);
+			if (v < 0) {
+				foreach(ref b; stack[0 .. num]) {
+					y = fmax(y, b.maxY + 0.00001);
+				}
 			} else {
-				y = y + v;
+				foreach(ref b; stack[0 .. num])
+					y = fmin(y, b.minY - playerHeight - 0.00001);
 			}
 
-			// Not needed.
-			//minY = y - playerSize;
-			//maxY = y + playerSize;
+			//current.minY = y;
+			//current.maxY = y + playerHeight;
 			vel.y = y - old;
 		}
 
@@ -296,53 +321,55 @@ protected:
 		return run ? 1.0 : (4.3/100);
 	}
 
-	/**
-	 * Check if we collide with this block.
-	 *
-	 * XXX Treats half blocks as full.
-	 */
-	final bool collides(int x, int y, int z)
+	static align(16) struct Aabb
 	{
-		auto block = getBlock(x, y, z);
-		auto type = blockType[block];
-		return cast(bool)(type & 0x1);
-	}
+		double minX, minY, minZ;
+		double maxX, maxY, maxZ;
 
-	/**
-	 * Simple wrapper around the int version of collidesInRange.
-	 */
-	final bool collidesInRange(double minX, double minY, double minZ,
-	                           double maxX, double maxY, double maxZ)
-	{
-		return collidesInRange(
-			cast(int)minX, cast(int)minY, cast(int)minZ,
-			cast(int)maxX, cast(int)maxY, cast(int)maxZ);
-	}
-
-	/**
-	 * Check if the player collides within a range of blocks.
-	 */
-	final bool collidesInRange(int minX, int minY, int minZ,
-	                           int maxX, int maxY, int maxZ)
-	{
-		for (int x = minX; x <= maxX; x++) {
-			for (int y = minY; y <= maxY; y++) {
-				for (int z = minZ; z <= maxZ; z++) {
-					if (collides(x, y, z))
+		bool collides(ref Aabb c)
+		{
+			if (minX <= c.maxX && maxX > c.minX)
+				if (minZ <= c.maxZ && maxZ > c.minZ)
+					if (minY <= c.maxY && maxY > c.minY)
 						return true;
+			return false;
+		}
+	}
+
+	final int getColliders(ref Aabb inc, ref Aabb excluding, Aabb[] result)
+	{
+		int num;
+		Aabb test;
+		int minX = cast(int)floor(inc.minX), minY = cast(int)floor(inc.minY), minZ = cast(int)floor(inc.minZ);
+		int maxX = cast(int)floor(inc.maxX), maxY = cast(int)floor(inc.maxY), maxZ = cast(int)floor(inc.maxZ);
+
+		for (int x = minX; x <= maxX; x++) {
+			test.minX = x;
+			test.maxX = x + 1;
+			for (int z = minZ; z <= maxZ; z++) {
+				test.minZ = z;
+				test.maxZ = z + 1;
+				for (int y = minY; y <= maxY; y++) {
+					auto t = blockType[getBlock(x, y, z)];
+					if (t == HALF) {
+						test.maxY = y + .5;
+					} else if (t == FULL) {
+						test.maxY = y + 1;
+					} else {
+						continue;
+					}
+					test.minY = y;
+
+					if (!test.collides(inc))
+						continue;
+
+					if (excluding.collides(test))
+						continue;
+
+					result[num++] = test;
 				}
 			}
 		}
-
-		return false;
+		return num;
 	}
-}
-
-double getMovedBodyPosition(
-	double pos, double v, double minVal, double maxVal)
-{
-	if (v < 0)
-		return floor(pos + v + minVal);
-	else
-		return floor(pos + v + maxVal);
 }
