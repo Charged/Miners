@@ -147,33 +147,20 @@ public:
 	 *
 	 * XXX: No physics yet.
 	 */
-	Point3d movePlayerClip(Point3d pos, double heading)
+	Point3d movePlayerClip(Point3d posIn, double heading)
 	{
 		Vector3d vel = getMoveVector(heading);
 		Aabb current, test;
-		Aabb[64] stack;
 
+		auto pos = posIn;
 		// Adjust for the position being the camera.
-		double old, v;
-		double x = pos.x;
-		double y = pos.y - camHeight;
-		double z = pos.z;
+		pos.y -= camHeight;
 
-		current.minX = x - playerSize;
-		current.maxX = x + playerSize;
-		current.minY = y;
-		current.maxY = y + playerHeight;
-		current.minZ = z - playerSize;
-		current.maxZ = z + playerSize;
+		// Get the current bounding box.
+		getCollisionBox(pos, current);
 
-
-		bool ground;
-		{
-			test = current;
-			test.minY -= gravity;
-			if (getColliders(test, current, stack) > 0)
-				ground = true;
-		}
+		// Ground status
+		bool ground = getIsOnGround(current);
 
 		// Ignore the old velocity if on the ground.
 		if (flying) {
@@ -187,90 +174,12 @@ public:
 			vel.y = vel.y - gravity;
 		}
 
-		double limit(double val) {
-			return fmax(fmin(val, 0.8), -0.8);
-		}
+		doCollisions(vel, pos, current);
 
-
-		v = limit(vel.x);
-		old = x;
-		if (v != 0) {
-			test = current;
-			x = x + v;
-			if (v < 0)
-				test.minX += v;
-			else
-				test.maxX += v;
-
-			auto num = getColliders(test, current, stack);
-			if (v < 0) {
-				foreach(ref b; stack[0 .. num]) {
-					x = fmax(x, b.maxX + playerSize + 0.00001);
-				}
-			} else {
-				foreach(ref b; stack[0 .. num])
-					x = fmin(x, b.minX - playerSize - 0.00001);
-			}
-
-			current.minX = x - playerSize;
-			current.maxX = x + playerSize;
-			vel.x = x - old;
-		}
-
-		v = limit(vel.z);
-		old = z;
-		if (v != 0) {
-			test = current;
-			z = z + v;
-			if (v < 0)
-				test.minZ += v;
-			else
-				test.maxZ += v;
-
-			auto num = getColliders(test, current, stack);
-			if (v < 0) {
-				foreach(ref b; stack[0 .. num]) {
-					z = fmax(z, b.maxZ + playerSize + 0.00001);
-				}
-			} else {
-				foreach(ref b; stack[0 .. num])
-					z = fmin(z, b.minZ - playerSize - 0.00001);
-			}
-
-			current.minZ = z - playerSize;
-			current.maxZ = z + playerSize;
-			vel.z = z - old;
-		}
-
-		v = limit(vel.y);
-		old = y;
-		if (v != 0) {
-			test = current;
-			y = y + v;
-			if (v < 0)
-				test.minY += v;
-			else
-				test.maxY += v;
-
-			auto num = getColliders(test, current, stack);
-			if (v < 0) {
-				foreach(ref b; stack[0 .. num]) {
-					y = fmax(y, b.maxY + 0.00001);
-				}
-			} else {
-				foreach(ref b; stack[0 .. num])
-					y = fmin(y, b.minY - playerHeight - 0.00001);
-			}
-
-			//current.minY = y;
-			//current.maxY = y + playerHeight;
-			vel.y = y - old;
-		}
-
-		pos += vel;
 		oldVel = vel;
+		posIn += vel;
 
-		return pos;
+		return posIn;
 	}
 
 
@@ -319,6 +228,124 @@ protected:
 	final double velSpeed()
 	{
 		return run ? 1.0 : (4.3/100);
+	}
+
+	/**
+	 * Limit the top speed.
+	 */
+	final double limit(double val)
+	{
+		return fmax(fmin(val, 0.8), -0.8);
+	}
+
+	/**
+	 * Returns the player collision AABB.
+	 */
+	final void getCollisionBox(ref Point3d pos, ref Aabb current)
+	{
+		current.minX = pos.x - playerSize;
+		current.maxX = pos.x + playerSize;
+		current.minY = pos.y;
+		current.maxY = pos.y + playerHeight;
+		current.minZ = pos.z - playerSize;
+		current.maxZ = pos.z + playerSize;
+	}
+
+	/**
+	 * Adjusts vel according to collisions, current is also changed.
+	 */
+	final void doCollisions(ref Vector3d vel, ref Point3d pos, ref Aabb current)
+	{
+		Aabb stack[64] = void;
+		Aabb test;
+		double v, old;
+
+		v = limit(vel.x);
+		old = pos.x;
+		if (v != 0) {
+			test = current;
+			double x = old + v;
+			if (v < 0)
+				test.minX += v;
+			else
+				test.maxX += v;
+
+			auto num = getColliders(test, current, stack);
+			if (v < 0) {
+				foreach(ref b; stack[0 .. num])
+					x = fmax(x, b.maxX + playerSize + 0.00001);
+			} else {
+				foreach(ref b; stack[0 .. num])
+					x = fmin(x, b.minX - playerSize - 0.00001);
+			}
+
+			current.minX = x - playerSize;
+			current.maxX = x + playerSize;
+			vel.x = x - old;
+		}
+
+		v = limit(vel.z);
+		old = pos.z;
+		if (v != 0) {
+			test = current;
+			double z = old + v;
+			if (v < 0)
+				test.minZ += v;
+			else
+				test.maxZ += v;
+
+			auto num = getColliders(test, current, stack);
+			if (v < 0) {
+				foreach(ref b; stack[0 .. num])
+					z = fmax(z, b.maxZ + playerSize + 0.00001);
+			} else {
+				foreach(ref b; stack[0 .. num])
+					z = fmin(z, b.minZ - playerSize - 0.00001);
+			}
+
+			current.minZ = z - playerSize;
+			current.maxZ = z + playerSize;
+			vel.z = z - old;
+		}
+
+		v = limit(vel.y);
+		old = pos.y;
+		if (v != 0) {
+			test = current;
+			double y = old + v;
+			if (v < 0)
+				test.minY += v;
+			else
+				test.maxY += v;
+
+			auto num = getColliders(test, current, stack);
+			if (v < 0) {
+				foreach(ref b; stack[0 .. num])
+					y = fmax(y, b.maxY + 0.00001);
+			} else {
+				foreach(ref b; stack[0 .. num])
+					y = fmin(y, b.minY - playerHeight - 0.00001);
+			}
+
+			//current.minY = y;
+			//current.maxY = y + playerHeight;
+			vel.y = y - old;
+		}
+	}
+
+	/**
+	 * Checks if the player will touch the ground this frame.
+	 */
+	bool getIsOnGround(ref Aabb current)
+	{
+		Aabb[64] stack = void;
+		Aabb test;
+
+		test = current;
+		test.minY -= gravity;
+		if (getColliders(test, current, stack) > 0)
+			return true;
+		return false;
 	}
 
 	static align(16) struct Aabb
