@@ -86,6 +86,7 @@ public:
 	const double jumpFactor = 0.12;
 
 	Vector3d oldVel;
+	double ySlideOffset;
 
 	bool forward;
 	bool backward;
@@ -109,6 +110,7 @@ public:
 	{
 		this.getBlock = getBlock;
 		oldVel = Vector3d();
+		ySlideOffset = 0;
 	}
 
 	/**
@@ -145,13 +147,18 @@ public:
 	/**
 	 * Moves the player using physics.
 	 *
-	 * XXX: No physics yet.
+	 * XXX: No water/lava physics yet.
 	 */
 	Point3d movePlayerClip(Point3d posIn, double heading)
 	{
 		Vector3d vel = getMoveVector(heading);
-		Aabb current, test;
+		bool collidesX, collidesY, collidesZ;
+		Aabb current;
 
+		// Adjust before copying or we forget about things.
+		posIn.y += ySlideOffset;
+
+		// Copy so we can adjust it.
 		auto pos = posIn;
 		// Adjust for the position being the camera.
 		pos.y -= camHeight;
@@ -167,17 +174,49 @@ public:
 			if ((jump || up) ^ down)
 				vel.y += down ? -velSpeed : velSpeed;
 		} else if (ground) {
-			vel.y = (jump || up) * jumpFactor - gravity;
+			vel.y = -gravity;
+			if (jump || up) {
+				vel.y += jumpFactor;
+				ySlideOffset = 0;
+				ground = false;
+			}
 		} else {
 			vel.scale(0.02);
 			vel += oldVel;
 			vel.y = vel.y - gravity;
 		}
 
-		doCollisions(vel, pos, current);
+		auto fullVel = vel;
+		doCollisions(vel, pos, current, collidesX, collidesY, collidesZ);
 
+		if (ground && ySlideOffset < 0.01 && (collidesX || collidesZ)) {
+			pos.y += 0.5;
+			getCollisionBox(pos, current);
+
+			auto tmp = fullVel;
+			doCollisions(tmp, pos, current, collidesX, collidesY, collidesZ);
+
+			// Something smarter.
+			if (vel.x != tmp.x ||
+			    vel.z != tmp.z) {
+				vel.x = tmp.x;
+				vel.z = tmp.z;
+				vel.y += 0.5;
+				ySlideOffset += 0.5;
+			}
+		}
+
+		if (ground && (jump || up) && ySlideOffset < 0.05)
+			ySlideOffset += 0.5;
+
+		ySlideOffset *= 0.9;
 		oldVel = vel;
 		posIn += vel;
+
+		// Adjust for ySlide when stepping up half steps.
+		if (ySlideOffset < 0.05)
+			ySlideOffset = 0;
+		posIn.y -= ySlideOffset;
 
 		return posIn;
 	}
@@ -254,7 +293,8 @@ protected:
 	/**
 	 * Adjusts vel according to collisions, current is also changed.
 	 */
-	final void doCollisions(ref Vector3d vel, ref Point3d pos, ref Aabb current)
+	final void doCollisions(ref Vector3d vel, ref Point3d pos, ref Aabb current,
+	                        out bool colX, out bool colY, out bool colZ)
 	{
 		Aabb stack[64] = void;
 		Aabb test;
@@ -271,17 +311,20 @@ protected:
 				test.maxX += v;
 
 			auto num = getColliders(test, current, stack);
-			if (v < 0) {
-				foreach(ref b; stack[0 .. num])
-					x = fmax(x, b.maxX + playerSize + 0.00001);
-			} else {
-				foreach(ref b; stack[0 .. num])
-					x = fmin(x, b.minX - playerSize - 0.00001);
-			}
+			if (num > 0) {
+				if (v < 0) {
+					foreach(ref b; stack[0 .. num])
+						x = fmax(x, b.maxX + playerSize + 0.00001);
+				} else {
+					foreach(ref b; stack[0 .. num])
+						x = fmin(x, b.minX - playerSize - 0.00001);
+				}
 
+				colX = true;
+				vel.x = x - old;
+			}
 			current.minX = x - playerSize;
 			current.maxX = x + playerSize;
-			vel.x = x - old;
 		}
 
 		v = limit(vel.z);
@@ -295,17 +338,20 @@ protected:
 				test.maxZ += v;
 
 			auto num = getColliders(test, current, stack);
-			if (v < 0) {
-				foreach(ref b; stack[0 .. num])
-					z = fmax(z, b.maxZ + playerSize + 0.00001);
-			} else {
-				foreach(ref b; stack[0 .. num])
-					z = fmin(z, b.minZ - playerSize - 0.00001);
-			}
+			if (num > 0) {
+				if (v < 0) {
+					foreach(ref b; stack[0 .. num])
+						z = fmax(z, b.maxZ + playerSize + 0.00001);
+				} else {
+					foreach(ref b; stack[0 .. num])
+						z = fmin(z, b.minZ - playerSize - 0.00001);
+				}
 
+				colZ = true;
+				vel.z = z - old;
+			}
 			current.minZ = z - playerSize;
 			current.maxZ = z + playerSize;
-			vel.z = z - old;
 		}
 
 		v = limit(vel.y);
@@ -319,17 +365,20 @@ protected:
 				test.maxY += v;
 
 			auto num = getColliders(test, current, stack);
-			if (v < 0) {
-				foreach(ref b; stack[0 .. num])
-					y = fmax(y, b.maxY + 0.00001);
-			} else {
-				foreach(ref b; stack[0 .. num])
-					y = fmin(y, b.minY - playerHeight - 0.00001);
-			}
+			if (num > 0) {
+				if (v < 0) {
+					foreach(ref b; stack[0 .. num])
+						y = fmax(y, b.maxY + 0.00001);
+				} else {
+					foreach(ref b; stack[0 .. num])
+						y = fmin(y, b.minY - playerHeight - 0.00001);
+				}
 
-			//current.minY = y;
-			//current.maxY = y + playerHeight;
-			vel.y = y - old;
+				colY = true;
+				vel.y = y - old;
+			}
+			current.minY = y;
+			current.maxY = y + playerHeight;
 		}
 	}
 
