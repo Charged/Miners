@@ -44,6 +44,39 @@ int nblocks(int size, int blockSize)
 }
 
 /**
+ * Encodes a int into a uint where lower absulte values
+ * corresponds to lower values of uints.
+ *
+ * -4 -- 1101  --  0101
+ * -2 -- 1110  --  0011
+ * -1 -- 1111  --  0001
+ *  0 -- 0000  --  0000
+ *  1 -- 0001  --  0010
+ *  2 -- 0010  --  0100
+ *  3 -- 0011  --  0110
+ *
+ * @ingroup Math
+ */
+uint toDiffCode(int diff)
+{
+	// x86 does replicating shifts.
+	int replicate = diff >> 31;
+	return ((~diff & replicate) | (diff & ~replicate)) << 1 | (replicate & 1);
+}
+
+/**
+ * Decodes a value encoded by toDiffCode.
+ *
+ * @ingroup Math
+ */
+int fromDiffCode(uint diffCode)
+{
+	bool minus = cast(bool)(diffCode & 1);
+	uint shifted = diffCode >> 1;
+	return (~shifted * minus) | (shifted * !minus);
+}
+
+/**
  * Step from the point start in the vector given by heading dist long.
  *
  * Calls the given delegate for each integer unit that we step.
