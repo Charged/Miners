@@ -688,8 +688,10 @@ public:
 		// Stop players from falling off the map.
 		if (x < 0 || y < 0 || z < 0)
 			return 1;
+
+		// Can go over the map.
 		auto ft = cast(FiniteTerrain)w.t;
-		if (x >= ft.xSize || y >= ft.ySize + 2 || z >= ft.zSize)
+		if (x >= ft.xSize || z >= ft.zSize)
 			return 1;
 
 		auto b = w.t[x, y, z];
