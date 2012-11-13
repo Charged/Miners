@@ -65,6 +65,8 @@ private:
 
 	coreFlag flags;
 
+	bool noVideo;
+
 	/* surface for window */
 	SDL_Surface *s;
 
@@ -105,7 +107,12 @@ public:
 
 		loadLibraries();
 
-		initGfx(p);
+		const gfxFlags = coreFlag.GFX | coreFlag.AUTO;
+
+		if (opts.flags & gfxFlags)
+			initGfx(p);
+		else
+			initNoVideo(p);
 
 		foreach(init; initFuncs)
 			init();
@@ -122,16 +129,26 @@ public:
 
 		closeSfx();
 		closePhy();
-		closeGfx();
+
+		if (!noVideo)
+			closeGfx();
+		else
+			closeNoVideo();
 	}
 
 	string getClipboardText()
 	{
+		if (noVideo)
+			throw new Exception("Gfx not initialized!");
+
 		return .getClipboardText();
 	}
 
 	void screenShot()
 	{
+		if (noVideo)
+			throw new Exception("Gfx not initialized!");
+
 		string filename;
 		ubyte *pixels;
 
@@ -183,6 +200,9 @@ public:
 		if (!resizeSupported)
 			return;
 
+		if (noVideo)
+			throw new Exception("Gfx not initialized!");
+
 		l.info("Resizing window (%s, %s) %s", w, h,
 			fullscreen ? "fullscren" : "windowed");
 		this.fullscreen = fullscreen;
@@ -208,6 +228,9 @@ public:
 
 	void size(out uint w, out uint h, out bool fullscreen)
 	{
+		if (noVideo)
+			throw new Exception("Gfx not initialized!");
+
 		w = this.width;
 		h = this.height;
 		fullscreen = this.fullscreen;
@@ -242,6 +265,23 @@ private:
 	 *
 	 */
 
+
+	void initNoVideo(Properties p)
+	{
+		version (DynamicSDL)
+			loadSDL(&sdl.symbol);
+
+		noVideo = true;
+		SDL_Init(SDL_INIT_JOYSTICK);
+	}
+
+	void closeNoVideo()
+	{
+		if (!noVideo)
+			return;
+
+		SDL_Quit();
+	}
 
 	void initGfx(Properties p)
 	{
@@ -322,6 +362,9 @@ private:
 
 	void closeGfx()
 	{
+		if (!gfxLoaded)
+			return;
+
 		SDL_Quit();
 		gfxLoaded = false;
 	}
