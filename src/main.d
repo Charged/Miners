@@ -9,6 +9,7 @@ static import test.game;
 static import test.frustum;
 static import test.terrain;
 
+static import box.game;
 static import miners.game;
 
 // For memory tracking
@@ -59,6 +60,7 @@ int main(string[] args)
 //		auto g = new test.game.Game(args);
 //		auto g = new test.frustum.Game(args);
 //		auto g = new test.terrain.Game(args);
+//		auto g = new box.game.Game(args);
 		auto g = new miners.game.Game(args);
 
 		g.loop();
