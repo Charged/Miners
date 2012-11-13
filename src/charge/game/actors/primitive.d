@@ -53,6 +53,10 @@ public:
 		gfx.rotation = phy.rotation;
 	}
 
+	void setPosition(ref Point3d pos) { phy.setPosition(pos); gfx.setPosition(pos); }
+	void getPosition(out Point3d pos) { phy.getPosition(pos); }
+	void setRotation(ref Quatd rot) { phy.setRotation(rot); gfx.setRotation(rot); }
+	void getRotation(out Quatd rot) { phy.getRotation(rot); }
 }
 
 class StaticCube : Actor
