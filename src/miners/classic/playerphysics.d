@@ -201,7 +201,7 @@ public:
 			    vel.z != tmp.z) {
 				vel.x = tmp.x;
 				vel.z = tmp.z;
-				vel.y += 0.5;
+				posIn.y += 0.5;
 				ySlideOffset += 0.5;
 			}
 		}
@@ -270,14 +270,6 @@ protected:
 	}
 
 	/**
-	 * Limit the top speed.
-	 */
-	final double limit(double val)
-	{
-		return fmax(fmin(val, 0.8), -0.8);
-	}
-
-	/**
 	 * Returns the player collision AABB.
 	 */
 	final void getCollisionBox(ref Point3d pos, ref Aabb current)
@@ -300,7 +292,7 @@ protected:
 		Aabb test;
 		double v, old;
 
-		v = limit(vel.x);
+		v = vel.x;
 		old = pos.x;
 		if (v != 0) {
 			test = current;
@@ -327,7 +319,7 @@ protected:
 			current.maxX = x + playerSize;
 		}
 
-		v = limit(vel.z);
+		v = vel.z;
 		old = pos.z;
 		if (v != 0) {
 			test = current;
@@ -354,7 +346,7 @@ protected:
 			current.maxZ = z + playerSize;
 		}
 
-		v = limit(vel.y);
+		v = vel.y;
 		old = pos.y;
 		if (v != 0) {
 			test = current;
