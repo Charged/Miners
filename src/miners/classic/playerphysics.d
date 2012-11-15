@@ -84,6 +84,8 @@ public:
 	const double playerHeight = 1.62;
 	const double gravity = 9.8 / 2000.0;
 	const double jumpFactor = 0.12;
+	const double waterGravity = gravity / 4;
+	const double waterJumpFactor = waterGravity * 1.8;
 
 	Vector3d oldVel;
 	double ySlideOffset;
@@ -169,10 +171,32 @@ public:
 		// Ground status
 		bool ground = getIsOnGround(current);
 
+		// Do we touch liquid.
+		bool liquid = getTouchLiquid(current);
+
+
 		// Ignore the old velocity if on the ground.
 		if (flying) {
 			if ((jump || up) ^ down)
 				vel.y += down ? -velSpeed : velSpeed;
+		} else if (liquid) {
+			ground = false;
+			vel.scale(0.02);
+			vel += oldVel;
+			vel.y = vel.y - waterGravity;
+
+			if (jump || up) {
+				ySlideOffset = 0;
+
+				auto test = current;
+				test.minY += 0.2;
+				if (getTouchLiquid(test))
+					vel.y += waterJumpFactor;
+				else
+					vel.y += jumpFactor / 2;
+			}
+
+			vel.scale(0.8);
 		} else if (ground) {
 			vel.y = -gravity;
 			if (jump || up) {
@@ -439,5 +463,34 @@ protected:
 			}
 		}
 		return num;
+	}
+
+	final bool getTouchLiquid(ref Aabb inc)
+	{
+		Aabb test;
+		int minX = cast(int)floor(inc.minX), minY = cast(int)floor(inc.minY), minZ = cast(int)floor(inc.minZ);
+		int maxX = cast(int)floor(inc.maxX), maxY = cast(int)floor(inc.maxY), maxZ = cast(int)floor(inc.maxZ);
+
+		for (int x = minX; x <= maxX; x++) {
+			test.minX = x;
+			test.maxX = x + 1;
+			for (int z = minZ; z <= maxZ; z++) {
+				test.minZ = z;
+				test.maxZ = z + 1;
+				for (int y = minY; y <= maxY; y++) {
+					if (blockType[getBlock(x, y, z)] != LIQUID)
+						continue;
+
+					test.minY = y;
+					test.maxY = y + 1;
+
+					if (!test.collides(inc))
+						continue;
+
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
