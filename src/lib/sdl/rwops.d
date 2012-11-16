@@ -2,7 +2,7 @@
 // See copyright in src/lib/sdl/sdl.d (LGPLv2+).
 module lib.sdl.rwops;
 
-import std.c.stdio;
+import std.c.stdio : FILE;
 
 import lib.sdl.types;
 

@@ -23,7 +23,7 @@ debug {
 	alias charge_realloc cRealloc;
 	alias charge_free cFree;
 } else {
-	private static import std.c.stdlib;
+	static import std.c.stdlib;
 
 	alias std.c.stdlib.malloc cMalloc;
 	alias std.c.stdlib.realloc cRealloc;

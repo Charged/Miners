@@ -13,7 +13,7 @@ import std.socket : TcpSocket, SocketSet, SocketShutdown,
                     Address, InternetAddress, timeval;
 import uri = std.uri;
 
-import std.c.string;
+import std.c.string : memset;
 
 import charge.sys.logger;
 import charge.net.threaded;

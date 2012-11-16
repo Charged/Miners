@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.gfx.manager;
 
-import std.stdio;
-
 import charge.charge;
 
 import miners.types;

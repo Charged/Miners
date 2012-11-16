@@ -8,7 +8,7 @@ module charge.sys.logger;
 import std.stdio : FILE, FPUTC, stdout, fopen, fflush, fprintf;
 import std.string : format, rfind;
 import std.format : doFormat;
-import std.stdarg; // Oh god DMD.
+import std.stdarg : va_list;
 import std.utf : toUTF8;
 
 import charge.platform.homefolder;

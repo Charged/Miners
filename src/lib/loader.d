@@ -37,7 +37,7 @@ version(Windows)
 }
 else version(linux)
 {
-	import std.c.linux.linux;
+	import std.c.linux.linux : dlopen, dlclose, dlsym, dlerror, RTLD_NOW;
 }
 else
 {
