@@ -205,6 +205,8 @@ class OptionsLoader : OptionsTask
 		opts.fov = fov;
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
+		opts.speedRun = p.getIfNotFoundSet(opts.speedRunName, opts.speedRunDefault);
+		opts.speedWalk = p.getIfNotFoundSet(opts.speedWalkName, opts.speedWalkDefault);
 		opts.lastMcUrl = p.getIfNotFoundSet(
 				opts.lastMcUrlName, opts.lastMcUrlDefault);
 		opts.useCmdPrefix = p.getIfNotFoundSet(

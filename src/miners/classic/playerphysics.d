@@ -79,6 +79,10 @@ public:
 		FULL,   // Obsidian
 	];
 
+
+	int speedRun = 43;
+	int speedWalk = 1000;
+
 	const double camHeight = 1.505;
 	const double playerSize = 0.32;
 	const double playerHeight = 1.62;
@@ -276,11 +280,8 @@ protected:
 		// Normalize function is safe.
 		vel.normalize();
 
-		// The speed at which we move.
-		double velSpeed = run ? 1.0 : (4.3/100);
-
 		// Scale the speed vector.
-		vel.scale(velSpeed);
+		vel.scale(velSpeed());
 
 		return vel;
 	}
@@ -290,7 +291,7 @@ protected:
 	 */
 	final double velSpeed()
 	{
-		return run ? 1.0 : (4.3/100);
+		return (run ? speedRun : speedWalk) / 1000.0;
 	}
 
 	/**

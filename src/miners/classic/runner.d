@@ -207,6 +207,8 @@ public:
 		}
 
 		pp = new PlayerPhysics(&ppGetBlock);
+		pp.speedRun = opts.speedRun();
+		pp.speedWalk = opts.speedWalk();
 		opts.noClip ~= &ppNoClip;
 		opts.flying ~= &ppFlying;
 		ppNoClip(opts.noClip());

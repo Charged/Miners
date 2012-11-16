@@ -157,6 +157,8 @@ public:
 		p.add(opts.fovName, opts.fov());
 		p.add(opts.fogName, opts.fog());
 		p.add(opts.shadowName, opts.shadow());
+		p.add(opts.speedRunName, opts.speedRun());
+		p.add(opts.speedWalkName, opts.speedWalk());
 		p.add(opts.failsafeName, opts.failsafe);
 		p.add(opts.lastMcUrlName, opts.lastMcUrl());
 		p.add(opts.useCmdPrefixName, opts.useCmdPrefix());

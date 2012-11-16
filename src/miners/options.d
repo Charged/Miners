@@ -85,6 +85,8 @@ public:
 	Option!(bool) noClip; /**< can the player move trough blocks */
 	Option!(bool) flying; /**< gravity doesn't effect the player */
 	Option!(bool) shadow; /**< should advanced shadowing be used */
+	Option!(int) speedRun; /**< classic running speed */
+	Option!(int) speedWalk; /**< classic walking speed */
 	Option!(bool) showDebug; /**< should debug info be shown */
 	Option!(bool) useCmdPrefix; /**< should we use the command prefix */
 	Option!(double) viewDistance; /**< the view distance */
@@ -93,6 +95,8 @@ public:
 	const string fogName = "mc.fog";
 	const string fovName = "mc.fov";
 	const string shadowName = "mc.shadow";
+	const string speedRunName = "mc.speedRun";
+	const string speedWalkName = "mc.speedWalk";
 	const string useCmdPrefixName = "mc.useCmdPrefix";
 	const string viewDistanceName = "mc.viewDistance";
 
@@ -100,6 +104,8 @@ public:
 	const bool fogDefault = true;
 	const int fovDefault = 45;
 	const bool shadowDefault = true;
+	const int speedRunDefault = 1000;
+	const int speedWalkDefault = 43;
 	const bool useCmdPrefixDefault = true;
 	const double viewDistanceDefault = 256;
 
