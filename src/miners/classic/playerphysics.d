@@ -79,9 +79,9 @@ public:
 		FULL,   // Obsidian
 	];
 
-
-	int speedRun = 43;
-	int speedWalk = 1000;
+	// Initial values not really used and overwritten by ClassicRunner.
+	int speedRun = 1000;
+	int speedWalk = 43;
 
 	const double camHeight = 1.505;
 	const double playerSize = 0.32;
