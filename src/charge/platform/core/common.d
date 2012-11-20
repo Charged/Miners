@@ -24,6 +24,7 @@ import charge.platform.homefolder;
 class CommonCore : Core
 {
 protected:
+	// Not using mixin, because we are pretending to be Core.
 	static Logger l;
 
 	string settingsFile;

@@ -56,8 +56,6 @@ extern(C) void chargeQuit()
 class CoreSDL : CommonCore
 {
 private:
-	mixin Logging;
-
 	CoreOptions opts;
 
 	string title;
