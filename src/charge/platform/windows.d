@@ -7,6 +7,7 @@ module charge.platform.windows;
 
 version(Windows):
 
+import std.string : toStringz;
 import std.c.windows.windows;
 
 
@@ -79,4 +80,10 @@ char[] getClipboardText()
 	}
 
 	return src[0 .. size].dup;
+}
+
+void panicMessage(string str)
+{
+	auto ptr = toStringz(str);
+	MessageBoxA(null, ptr, "Core Panic!", MB_OK);
 }

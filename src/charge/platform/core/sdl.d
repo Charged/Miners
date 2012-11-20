@@ -6,7 +6,9 @@
 module charge.platform.core.sdl;
 
 import std.file : exists;
+import std.stdio : writefln;
 import std.string : format, toString, toStringz;
+import std.c.stdlib : exit;
 
 import charge.core;
 import charge.gfx.gfx;
@@ -23,6 +25,7 @@ version(Windows) {
 	import charge.platform.windows;
 } else {
 	string getClipboardText() { return null; }
+	void panicMessage(string str) {}
 }
 
 import lib.loader;
@@ -134,6 +137,14 @@ public:
 			closeGfx();
 		else
 			closeNoVideo();
+	}
+
+	void panic(string msg)
+	{
+		l.fatal("Core Panic!\n%s", msg);
+		writefln("Core Panic!\n%s", msg);
+		.panicMessage(msg);
+		exit(-1);
 	}
 
 	string getClipboardText()
