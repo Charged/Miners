@@ -150,6 +150,47 @@ public:
 	}
 
 	/*
+	 * Sync functions.
+	 */
+
+	/**
+	 * Sets the given array with the location and velocity data.
+	 *
+	 * Rotation comes first since that is 4, and may be delt with
+	 * seperatly from the other 3.
+	 */
+	void getRotPosVel(float[] data)
+	{
+		debug if (data.length < (4 + 3 + 3 + 3))
+			throw new Exception("Array is to small");
+
+		data[ 0 ..  4] = *cast(float[4]*)dBodyGetQuaternion(dBody);
+		data[ 4 ..  7] = *cast(float[3]*)dBodyGetPosition(dBody);
+		data[ 7 .. 10] = *cast(float[3]*)dBodyGetLinearVel(dBody);
+		data[10 .. 13] = *cast(float[3]*)dBodyGetAngularVel(dBody);
+	}
+
+	/**
+	 * Gets location and velocity data from the array and sets it
+	 * to this object.
+	 *
+	 * Rotation comes first since that is 4, and may be delt with
+	 * seperatly from the other 3.
+	 */
+	void setRotPosVel(float[] data)
+	{
+		debug if (data.length < (4 + 3 + 3 + 3))
+			throw new Exception("Array is to small");
+
+		// Need to do this due to weird DMD bug.
+		float[4] rot = data[0 .. 4];
+		dBodySetQuaternion(dBody, rot);
+		dBodySetPosition(dBody, data[4], data[5], data[6]);
+		dBodySetLinearVel(dBody, data[7], data[8], data[9]);
+		dBodySetAngularVel(dBody, data[10], data[11], data[12]);
+	}
+
+	/*
 	 * Force functions
 	 */
 	
