@@ -77,6 +77,75 @@ int fromDiffCode(uint diffCode)
 }
 
 /**
+ * Reads a compacted diffCode from buffer. Returns the read value, index
+ * is incremented by the number of bytes used. Reads from the location
+ * indicated by index. The format closely reminds of UTF-8 incoding.
+ *
+ * @ingroup Math
+ */
+uint readDiffCode(void[] src_, ref int index)
+{
+	auto src = cast(ubyte[])src_;
+
+	uint diff;
+	auto c = src[index];
+
+	if (!(0x80 & c)) {
+		diff = cast(uint)c;
+		index++;
+	} else if ((c & 0xE0) == 0xC0) {
+		diff = ((src[index++] & 0x01F) << 6) |
+		       (src[index++] & 0x3F);
+	} else if ((c & 0xF0) == 0xE0) {
+		diff = ((src[index++] & 0x0F) << 12) |
+		       ((src[index++] & 0x3F) << 6) |
+		       (src[index++] & 0x3F);
+	} else if ((c & 0xF8) == 0xF0) {
+		diff = ((src[index++] & 0x07) << 18) |
+		       ((src[index++] & 0x3F) << 12) |
+		       ((src[index++] & 0x3F) << 6) |
+		       (src[index++] & 0x3F);
+	} else {
+		throw new Exception("To large value to decode");
+	}
+
+	return diff;
+}
+
+/**
+ * Writes a diffCode in a compacted format to the buffer, returns the number
+ * of bytes used. The format closely reminds of UTF-8 incoding.
+ *
+ * @ingroup Math
+ */
+int writeDiffCode(void[] dst_, uint v)
+{
+	auto dst = cast(ubyte[])dst_;
+
+	if (v <= 0x0000_007F) {
+		dst[0] = cast(ubyte)v;
+		return 1;
+	} else if (v <= 0x0000_07FF) {
+                dst[0] = cast(ubyte)(0xC0 | (v >> 6));
+                dst[1] = cast(ubyte)(0x80 | (v & 0x3F));
+		return 2;
+	} else if (v <= 0x0000_FFFF) {
+                dst[0] = cast(ubyte)(0xE0 | (v >> 12));
+                dst[1] = cast(ubyte)(0x80 | ((v >> 6) & 0x3F));
+                dst[2] = cast(ubyte)(0x80 | (v & 0x3F));
+		return 3;
+	} else if (v <= 0x001F_FFFF) {
+                dst[0] = cast(ubyte)(0xF0 | (v >> 18));
+                dst[1] = cast(ubyte)(0x80 | ((v >> 12) & 0x3F));
+                dst[2] = cast(ubyte)(0x80 | ((v >> 6) & 0x3F));
+                dst[3] = cast(ubyte)(0x80 | (v & 0x3F));
+		return 4;
+	} else {
+		throw new Exception("To large value to encode");
+	}
+}
+
+/**
  * Step from the point start in the vector given by heading dist long.
  *
  * Calls the given delegate for each integer unit that we step.
