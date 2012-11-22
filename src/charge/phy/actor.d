@@ -158,6 +158,11 @@ public:
 		dBodyAddForce(dBody, vec.x, vec.y, vec.z);
 	}
 
+	void velocity(Vector3d vec)
+	{
+		dBodySetLinearVel(dBody, vec.x, vec.y, vec.z);
+	}
+
 	Vector3d velocity()
 	{
 		// Stupid gdc bug
