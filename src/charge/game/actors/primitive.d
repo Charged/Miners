@@ -29,8 +29,7 @@ public:
 		w.addTicker(this);
 
 		gfx = new charge.gfx.cube.Cube(w.gfx);
-		phy = new charge.phy.cube.Cube(w.phy, Point3d(0.0, 1.0, 0.0));
-
+		phy = new charge.phy.cube.Cube(w.phy);
 	}
 
 	~this()

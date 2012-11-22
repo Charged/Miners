@@ -70,7 +70,8 @@ class Cube : Ticker
 		gfx = GfxRigidModel(w.gfx, "res/cube.bin");
 		gfx.position = pos;
 
-		phy = new PhyCube(w.phy, pos);
+		phy = new PhyCube(w.phy);
+		phy.position = pos;
 	}
 }
 

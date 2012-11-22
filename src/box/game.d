@@ -221,9 +221,8 @@ public:
 		cube = new PhyStatic(w.phy, new PhyGeomCube(200.0, 10.0, 200.0));
 		cube.position = Point3d(0.0, -5.0, 0.0);
 
-		c1 = new PhyCube(w.phy, Point3d(0, 10, 0));
-
-		c2 = new PhyCube(w.phy, Point3d(.3, 16, .4));
+		c1 = new PhyCube(w.phy);
+		c2 = new PhyCube(w.phy);
 	}
 
 	void close()
