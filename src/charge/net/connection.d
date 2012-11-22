@@ -265,7 +265,7 @@ private:
 	{
 		auto h = cast(Header*)data.ptr;
 
-		if (h.orderId <= unrealibleNumIn)
+		if (h.orderId < unrealibleNumIn)
 			return;
 
 		unrealibleNumIn = h.orderId;
@@ -351,6 +351,7 @@ private:
 		Packet p;
 	}
 
+public:
 	int state;
 
 	Socket s;
