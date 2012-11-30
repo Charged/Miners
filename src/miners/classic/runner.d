@@ -140,8 +140,8 @@ public:
 		lightPitch = -PI/6;
 
 		sl = new SunLight(w);
-		sl.gfx.diffuse = Color4f(200.0/255, 200.0/255, 200.0/255);
-		sl.gfx.ambient = Color4f(65.0/255, 65.0/255, 65.0/255);
+		sl.gfx.diffuse = Color4f(0.2, 0.2, 0.2);
+		sl.gfx.ambient = Color4f(0.85, 0.85, 0.85);
 		sl.rotation = Quatd(lightHeading, lightPitch, 0);
 
 		// Show which block is selected.
