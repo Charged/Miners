@@ -224,6 +224,8 @@ protected:
 			break;
 		case Op.GET_SERVER_LIST:
 			auto csis = getClassicServerList(res);
+			if (csis.length == 0)
+				l.warn("No servers found in list:\n%s\n\n%s", header, res);
 			wl.serverList(csis);
 			break;
 		case Op.GET_SERVER_INFO:
