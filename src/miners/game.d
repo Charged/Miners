@@ -242,7 +242,7 @@ protected:
 			} else if (opts.classicServerList !is null) {
 				return displayClassicList(opts.classicServerList);
 			} else {
-				assert(false, "Classic arguments in wrong state");
+				throw new GameException("Classic arguments in wrong state", null, true);
 			}
 		}
 
