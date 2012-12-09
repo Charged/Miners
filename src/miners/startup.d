@@ -731,6 +731,12 @@ public:
 	{
 		shutdownConnection();
 
+		if (csis.length == 0)
+			return signalError([
+				"Did not get any servers from server list!",
+				"Probably failed to parse the list.",
+				"Or you didn't supply the correct PLAY_SESSION cookie."]);
+
 		opts.classicServerList = csis;
 		signalDone();
 	}
