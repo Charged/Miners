@@ -81,6 +81,7 @@ public:
 	Option!(bool) aa; /**< should anti-aliasing be used */
 	Option!(bool) fog; /**< should fog be drawn */
 	Option!(int) fov; /**< which fov should be used */
+	Option!(int) uiSize; /**< which size should the ui be */
 	Option!(bool) hideUi; /**< hide the user interface */
 	Option!(bool) noClip; /**< can the player move trough blocks */
 	Option!(bool) flying; /**< gravity doesn't effect the player */
@@ -94,6 +95,7 @@ public:
 	const string aaName = "mc.aa";
 	const string fogName = "mc.fog";
 	const string fovName = "mc.fov";
+	const string uiSizeName = "mc.uiSize";
 	const string shadowName = "mc.shadow";
 	const string speedRunName = "mc.speedRun";
 	const string speedWalkName = "mc.speedWalk";
@@ -103,6 +105,7 @@ public:
 	const bool aaDefault = true;
 	const bool fogDefault = true;
 	const int fovDefault = 45;
+	const int uiSizeDefault = 1;
 	const bool shadowDefault = true;
 	const int speedRunDefault = 1000;
 	const int speedWalkDefault = 43;
@@ -297,6 +300,7 @@ public:
 		}
 
 		renderer.destruct();
+		uiSize.destruct();
 		shadow.destruct();
 		showDebug.destruct();
 		viewDistance.destruct();

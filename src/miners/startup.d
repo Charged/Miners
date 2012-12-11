@@ -200,11 +200,16 @@ class OptionsLoader : OptionsTask
 		fov = imax(40, fov);
 		fov = imin(fov, 120);
 
+		int uiSize = p.getIfNotFoundSet(opts.uiSizeName, opts.uiSizeDefault);
+		uiSize = imax(1, uiSize);
+		uiSize = imin(uiSize, 4);
+
 		// First init options
 		opts.aa = p.getIfNotFoundSet(opts.aaName, opts.aaDefault);
 		opts.fov = fov;
 		opts.fog = p.getIfNotFoundSet(opts.fogName, opts.fogDefault);
 		opts.shadow = p.getIfNotFoundSet(opts.shadowName, opts.shadowDefault);
+		opts.uiSize = uiSize;
 		opts.speedRun = p.getIfNotFoundSet(opts.speedRunName, opts.speedRunDefault);
 		opts.speedWalk = p.getIfNotFoundSet(opts.speedWalkName, opts.speedWalkDefault);
 		opts.lastMcUrl = p.getIfNotFoundSet(
@@ -536,6 +541,19 @@ class LoadClassicFont : OptionsTask
 {
 	int pos;
 
+	static class ClassicFontHandler
+	{
+		Options opts;
+
+		final void newUiSize(int size)
+		{
+			// Install the classic font.
+			auto cf = ClassicFont(SysPool(), "res/font.png", opts.uiSize());
+			opts.classicFont = cf;
+			sysReference(&cf, null);
+		}
+	}
+
 	this(StartupRunner startup, Options opts)
 	{
 		text = "Loading Classic Font";
@@ -546,10 +564,12 @@ class LoadClassicFont : OptionsTask
 
 	bool build()
 	{
+		auto cfh = new ClassicFontHandler();
+		cfh.opts = opts;
+		cfh.newUiSize(opts.uiSize());
+
 		// Install the classic font handler.
-		auto cf = ClassicFont(SysPool(), "res/font.png", 1);
-		opts.classicFont = cf;
-		sysReference(&cf, null);
+		opts.uiSize ~= &cfh.newUiSize;
 
 		signalDone();
 
