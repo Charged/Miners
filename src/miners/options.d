@@ -285,28 +285,37 @@ public:
 public:
 	~this()
 	{
-		sysReference(&playerSkeleton, null);
+
+	}
+
+	void breakApart()
+	{
+		lastClassicServer.destruct();
+		lastClassicServerHash.destruct();
+		lastMcUrl.destruct();
+
+		aa.destruct();
+		fog.destruct();
+		fov.destruct();
+		uiSize.destruct();
+		hideUi.destruct();
+		noClip.destruct();
+		flying.destruct();
+		shadow.destruct();
+		speedRun.destruct();
+		speedWalk.destruct();
+		showDebug.destruct();
+		useCmdPrefix.destruct();
+		viewDistance.destruct();
+
+		keyBindings.destruct();
+
 		sysReference(&blackTexture, null);
 		sysReference(&whiteTexture, null);
 
-		if (modernTextures !is null) {
-			modernTextures.breakApart();
-			modernTextures = null;
-		}
-
-		if (classicTextures !is null) {
-			classicTextures.breakApart();
-			classicTextures = null;
-		}
-
-		renderer.destruct();
-		uiSize.destruct();
-		shadow.destruct();
-		showDebug.destruct();
-		viewDistance.destruct();
-		useCmdPrefix.destruct();
-
 		defaultSkin.destruct();
+
+		sysReference(&playerSkeleton, null);
 
 		backgroundTiled.destruct();
 		backgroundDoubled.destruct();
@@ -321,6 +330,11 @@ public:
 		foreach (ref tex; classicSides) {
 			sysReference(&tex, null);
 		}
+
+		breakApartAndNull(modernTextures);
+		breakApartAndNull(classicTextures);
+
+		renderer.destruct();
 	}
 
 	void allocateResources()

@@ -167,7 +167,8 @@ public:
 		p.add(opts.lastClassicServerName, opts.lastClassicServer());
 		p.add(opts.lastClassicServerHashName, opts.lastClassicServerHash());
 
-		delete opts;
+		breakApartAndNull(opts);
+
 		delete rm;
 		delete d;
 
