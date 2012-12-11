@@ -57,7 +57,7 @@ public:
 		height = (y + 1) * this.height;
 	}
 
-	static ClassicFont opCall(Pool p, string filename)
+	static ClassicFont opCall(Pool p, string filename, int magnification)
 	{
 		if (filename is null)
 			return null;
@@ -84,7 +84,7 @@ public:
 		}
 
 		tex.filter = Texture.Filter.Nearest;
-		return new ClassicFont(p, filename, tex);
+		return new ClassicFont(tex, magnification);
 	}
 
 
@@ -205,8 +205,17 @@ protected:
 
 
 private:
-	this(Pool p, string name, Texture tex)
-	{
-		super(p, uri, name, tex);
+	this(Texture tex, int magnification)
+	in {
+		assert(magnification >= 1);
+	}
+	body {
+		super(null, uri, null, tex);
+
+		if (magnification) {
+			width = tex.width / 16 * magnification;
+			height = tex.height / 16 * magnification;
+			shadowOffset = magnification;
+		}
 	}
 }

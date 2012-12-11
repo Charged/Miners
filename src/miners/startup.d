@@ -547,7 +547,7 @@ class LoadClassicFont : OptionsTask
 	bool build()
 	{
 		// Install the classic font handler.
-		auto cf = ClassicFont(SysPool(), "res/font.png");
+		auto cf = ClassicFont(SysPool(), "res/font.png", 1);
 		opts.classicFont = cf;
 		sysReference(&cf, null);
 
