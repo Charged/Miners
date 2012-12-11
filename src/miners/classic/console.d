@@ -14,7 +14,7 @@ import miners.importer.network : removeColorTags;
 class ClassicConsole : Console
 {
 public:
-	char[] delegate(char[], char[]) tabCompletePlayer;
+	string delegate(string, string) tabCompletePlayer;
 	string lastTabComplete;
 	string tabCompleteText; //< what the user actually typed in
 
@@ -43,8 +43,8 @@ protected:
 		if (tabCompletePlayer is null)
 			return;
 
-		char[] search;
-		char[] tabbing;
+		string search;
+		string tabbing;
 
 		// If we completed last, remove what we added
 		if (lastTabComplete !is null) {
@@ -134,7 +134,7 @@ protected:
 		lastTabComplete = null;
 	}
 
-	void doCommand(char[][] cmds, char[] str)
+	void doCommand(string[] cmds, string str)
 	{
 		switch(cmds[0]) {
 		case "help":
@@ -204,7 +204,7 @@ protected:
 			"&eNo command given type &a%shelp", cmdPrefix));
 	}
 
-	void msgNoSuchCommand(char[] cmd)
+	void msgNoSuchCommand(string cmd)
 	{
 		doMessage(format(
 			"&eUnknown command \"&c%s&e\" type &a%shelp",

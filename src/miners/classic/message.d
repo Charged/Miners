@@ -73,7 +73,7 @@ public:
 	 */
 
 
-	string tabCompletePlayer(in char[] searchIn, string lastIn)
+	string tabCompletePlayer(string searchIn, string lastIn)
 	{
 		auto search = tolower(searchIn);
 		auto last = tolower(lastIn);
