@@ -114,8 +114,7 @@ protected:
 			if (showing.length >= maxChars)
 				return;
 
-			incArrays();
-			typed[$-1] = c;
+			incArrays(c);
 		}
 	}
 

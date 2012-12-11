@@ -19,8 +19,8 @@ public:
 	const typingCursor = 219;
 	size_t maxChars;
 
-	char[] typed; /**< Typed text. */
-	char[] showing; /**< Text including the cursor. */
+	string typed; /**< Typed text. */
+	string showing; /**< Text including the cursor. */
 
 	/**
 	 * Command prefix, this is subtracted from all input when doing
@@ -65,7 +65,7 @@ public:
 	void startTyping()
 	{
 		typing = true;
-		incArrays();
+		incArrays(typingCursor);
 	}
 
 	void stopTyping()
@@ -136,8 +136,7 @@ public:
 
 		doUserInputed();
 
-		incArrays();
-		typed[$-1] = cast(char)unicode;
+		incArrays(cast(char)unicode);
 	}
 
 	void keyUp(CtlKeyboard kb, uint sym)
@@ -243,10 +242,18 @@ protected:
 	}
 
 protected:
-	void incArrays()
+	void incArrays(char v)
 	{
-		showing = typedBuffer[0 .. showing.length + 1];
-		showing[$-1] = typingCursor;
+		// Instead of using flow control to make sure we set
+		// the right index with the given var, we carefully
+		// use typed.length.
+		assert(typed.length <= showing.length);
+
+		auto tmp = typedBuffer[0 .. showing.length + 1];
+		tmp[typed.length] = v;
+		tmp[$-1] = typingCursor;
+
+		showing = tmp.dup;
 		typed = showing[0 .. $-1];
 
 		update(showing);
@@ -254,8 +261,10 @@ protected:
 
 	void decArrays()
 	{
-		showing = typedBuffer[0 .. showing.length - 1];
-		showing[$-1] = typingCursor;
+		auto tmp = typedBuffer[0 .. showing.length - 1];
+		tmp[$-1] = typingCursor;
+
+		showing = tmp.dup;
 		typed = showing[0 .. $-1];
 
 		update(showing);
