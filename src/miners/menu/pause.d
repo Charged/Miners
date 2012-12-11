@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.pause;
 
+import std.string : format;
+
 import charge.charge;
 import charge.game.gui.layout;
 import charge.game.gui.textbased;
@@ -10,6 +12,7 @@ import charge.platform.homefolder;
 import miners.options;
 import miners.interfaces;
 import miners.menu.base;
+import miners.gfx.font;
 
 
 class PauseMenu : MenuRunnerBase
@@ -29,6 +32,8 @@ private:
 
 	const shadowOnText = "Shadow: on";
 	const shadowOffText = "Shadow: off";
+
+	const uiSizeText = "Ui Size: %sx";
 
 	const fullscreenOnText = "Fullscreen: on";
 	const fullscreenOffText = "Fullscreen: off";
@@ -60,9 +65,10 @@ public:
 		auto b5 = new Button(mb, 0, b4.y + b4.h, "", minButtonWidth);
 		auto b6 = new Button(mb, 0, b5.y + b5.h, "", minButtonWidth);
 		auto b7 = new Button(mb, 0, b6.y + b6.h, "", minButtonWidth);
-		auto b8 = new Button(mb, 0, b7.y + b7.h + 16, "", minButtonWidth);
+		auto b8 = new Button(mb, 0, b7.y + b7.h, "", minButtonWidth);
+		auto b9 = new Button(mb, 0, b8.y + b8.h + 16, "", minButtonWidth);
 
-		auto lastButton = b8;
+		auto lastButton = b9;
 		int bY = lastButton.y + lastButton.h + 16;
 
 		string otherText = part !is null ? otherPartText : otherCloseText;
@@ -94,7 +100,8 @@ public:
 		setNoClipText(b4); b4.pressed ~= &noClip;
 		setViewText(b5); b5.pressed ~= &view;
 		setFovText(b6); b6.pressed ~= &fov;
-		setFullscreenText(b7); b7.pressed ~= &fullscreen;
+		setUiSizeText(b7); b7.pressed ~= &uiSize;
+		setFullscreenText(b8); b8.pressed ~= &fullscreen;
 
 		lastButton.setText("Open textures & screenshots");
 		lastButton.pressed ~= &openFolder;
@@ -206,6 +213,27 @@ public:
 	void setShadowText(Button b)
 	{
 		b.setText(opts.shadow() ? shadowOnText : shadowOffText, minButtonWidth);
+	}
+
+	void uiSize(Button b)
+	{
+		int mag = opts.uiSize() + 1;
+
+		if (mag < 1 || mag > 4)
+			mag = 1;
+
+		opts.uiSize = mag;
+
+		auto cf = ClassicFont(SysPool(), "res/font.png", mag);
+		opts.classicFont = cf;
+		sysReference(&cf, null);
+
+		setUiSizeText(b);
+	}
+
+	void setUiSizeText(Button b)
+	{
+		b.setText(format(uiSizeText, opts.uiSize()));
 	}
 
 	void fullscreen(Button b)
