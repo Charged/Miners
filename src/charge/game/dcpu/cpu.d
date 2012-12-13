@@ -33,6 +33,7 @@ final class Dcpu
 public:
 	vm_t* vm;
 	DcpuHw[] hws;
+	hw_t[] hwStructs;
 
 
 public:
@@ -84,7 +85,7 @@ public:
 	 */
 	ushort[] getSliceSafe(ushort offset, size_t size, ushort[] def)
 	{
-		if (offset + size > RAM_SIZE)
+		if (offset + size > VM_RAM_SIZE)
 			return def;
 
 		return vm.ram[offset .. offset + size];
@@ -115,19 +116,16 @@ public:
 		hwStruct.userdata = cast(void*)hw;
 
 		hws ~= hw;
+		hwStructs ~= hwStruct;
 
-		info.index = vm_hw_register(vm, hwStruct);
-	}
-
-	void unregister(DcpuHw hw)
-	{
-		vm_hw_unregister(vm, hw.getHwInfo().index);
-		hw.notifyUnregister();
+		info.index = vm_hw_register(vm, &hwStructs[$-1]);
 	}
 
 	private static extern(C) void handler(vm_t* vm, void* ud)
 	{
 		auto hw = cast(DcpuHw)ud;
+		if (hw is null)
+			throw new Exception("Oh god");
 		hw.interupt();
 	}
 }

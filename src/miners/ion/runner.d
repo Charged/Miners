@@ -44,7 +44,8 @@ public:
 		super(r, opts, new ClassicWorld(opts));
 
 		c = new Dcpu();
-		c.ram[0 .. mem.length] = mem;
+		foreach(int i, m; mem)
+			c.ram[i] = cast(ushort)((m << 8) | (m >> 8));
 
 		d = new GfxDraw();
 		lem = new Lem1802(c);
