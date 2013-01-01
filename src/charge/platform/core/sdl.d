@@ -11,6 +11,7 @@ import std.string : format, toString, toStringz;
 import std.c.stdlib : exit;
 
 import charge.core;
+import charge.math.ints;
 import charge.gfx.gfx;
 import charge.gfx.target;
 import charge.gfx.renderer;
@@ -159,7 +160,18 @@ public:
 			throw new Exception("Gfx not initialized!");
 
 		string filename;
-		ubyte *pixels;
+
+		uint srcWidth = width;
+		uint srcHeight = height;
+		size_t srcPitch = 4 * srcWidth;
+		size_t srcSize = srcPitch * height;
+		ubyte* srcPixels;
+
+		uint dstWidth = width;
+		uint dstHeight = height;
+		size_t dstPitch;
+		size_t dstSize;
+		ubyte* dstPixels;
 
 		// Find the first free screenshot name
 		do {
@@ -168,35 +180,45 @@ public:
 
 		// Surface where we will store the fliped image and save from.
 		auto temp = SDL_CreateRGBSurface(
-			SDL_SWSURFACE, width, height, 24,
-			0x000000FF, 0x0000FF00, 0x00FF0000, 0);
-
+			SDL_SWSURFACE, dstWidth, dstHeight, 32,
+			0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		if (temp == null)
 			return;
 		scope(exit)
 			SDL_FreeSurface(temp);
 
-		pixels = cast(ubyte*)cMalloc(3 * width * height);
-		if (pixels == null)
+		// Calculate dervied info.
+		dstPitch = temp.pitch;
+		dstSize = temp.pitch * temp.h;
+		dstPixels = cast(ubyte*)temp.pixels;
+
+		// Alloc temporary storage.
+		srcPixels = cast(ubyte*)cMalloc(srcSize);
+		if (srcPixels == null)
 			return;
 		scope(exit)
-			cFree(pixels);
+			cFree(srcPixels);
 
 		// Read the image from GL
-		glReadPixels(0, 0, width, height,
-			     GL_RGB, GL_UNSIGNED_BYTE, pixels);
+		glPixelStorei(GL_PACK_ROW_LENGTH, cast(int)(srcPitch / 4));
+		glReadPixels(0, 0, srcWidth, srcHeight,
+		             GL_RGBA, GL_UNSIGNED_BYTE, srcPixels);
+		glPixelStorei(GL_PACK_ROW_LENGTH, 0);
 
 		// Flip image
-		for (int i = 0; i < height; i++) {
-			size_t len = width * 3;
-			auto dst = cast(ubyte*)temp.pixels + temp.pitch * i;
-			auto src = pixels + 3 * width * (height - i - 1);
+		auto len = imin(cast(int)srcPitch, cast(int)temp.pitch);
+		auto h = imin(cast(int)srcHeight, cast(int)dstHeight);
+		for (int i = 0; i < h; i++) {
+			auto dst = dstPixels + dstPitch * i;
+			auto src = srcPixels + srcPitch * (srcHeight - i - 1);
 			dst[0 .. len] = src[0 .. len];
 		}
 
+		// Log
+		l.info("Saving screenshot as \"%s\" (%sx%s)", filename, temp.w, temp.h);
+
 		// Save the image to disk
 		SDL_SaveBMP(temp, toStringz(filename));
-		l.info("Saving screenshot as \"%s\"", filename);
 	}
 
 	void resize(uint w, uint h)
@@ -212,8 +234,8 @@ public:
 		if (noVideo)
 			throw new Exception("Gfx not initialized!");
 
-		l.info("Resizing window (%s, %s) %s", w, h,
-			fullscreen ? "fullscren" : "windowed");
+		l.info("Resizing window (%sx%s) %s", w, h,
+		       fullscreen ? "fullscren" : "windowed");
 		this.fullscreen = fullscreen;
 		width = w; height = h;
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
