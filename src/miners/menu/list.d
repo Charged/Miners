@@ -273,8 +273,9 @@ public:
 		oldSearch = search;
 		csis.length = i;
 
-		if (start > i - rows)
-			start = imax(i - rows, 0);
+		int myRows = rows;
+		if (start >= i - myRows)
+			start = imax(i - myRows, 0);
 
 		repaint();
 	}
