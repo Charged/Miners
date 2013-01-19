@@ -245,9 +245,10 @@ void slab(Packer *p, int x, int y, int z, ubyte type, WorkspaceData *data)
 	// Bottom should not look for same type.
 	set = (set & ~sideMask.YN) | !data.filled(x, y-1, z) << sideNormal.YN;
 
-	/* all set */
-	if (set == 0)
-		return;
+	/*
+	 * Always emit the top quad, there is one case where we don't
+	 * need to (all around are solid) but its not worth checking for.
+	 */
 
 	makeHalfXYZ(p, data, dec, x, y, z, set | sideMask.YP);
 }
