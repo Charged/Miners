@@ -36,7 +36,29 @@ string getMinecraftSaveFolder(string dir = null)
 	if (dir is null)
 		dir = getMinecraftFolder();
 
-	return format("%s/saves", dir);
+	return dir ~ "/saves";
+}
+
+/**
+ * Returns the bin folder for Minecraft.
+ */
+string getMinecraftBinFolder(string dir = null)
+{
+	if (dir is null)
+		dir = getMinecraftFolder();
+
+	return dir ~ "/bin";
+}
+
+/**
+ * Returns the bin folder for Minecraft.
+ */
+string getMinecraftJarFilePath(string dir = null)
+{
+	if (dir is null)
+		dir = getMinecraftBinFolder();
+
+	return dir ~ "/minecraft.jar";
 }
 
 /**
