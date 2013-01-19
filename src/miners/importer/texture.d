@@ -45,14 +45,22 @@ Picture getModernTerrainTexture(SysPool p)
 /**
  * Locate minecraft.jar and extract terrain.png.
  *
- * Returns the terrain.png file a C allocated array.
+ * Returns the terrain.png file as a C allocated array.
  */
-void[] extractMinecraftTexture(string dir = null)
+void[] extractModernMinecraftTexture(string file = null)
 {
-	if (dir is null)
-		dir = getMinecraftFolder();
+	if (file is null)
+		file = getMinecraftJarFilePath();
 
-	auto file = dir ~ "/bin/minecraft.jar";
+	return extractTerrainDotPng(file);
+}
+
+/**
+ * Returns the terrain.png file as a C allocated array. 
+ * The given file is treated as a Zip/Jar file.
+ */
+void[] extractTerrainDotPng(string file)
+{
 	void[] data;
 
 	auto mmap = new MmFile(file);

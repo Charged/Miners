@@ -408,7 +408,7 @@ class LoadModernTexture : OptionsTask
 	{
 		// Try and load the terrain png file from minecraft.jar.
 		try {
-			auto data = extractMinecraftTexture();
+			auto data = extractModernMinecraftTexture();
 			scope(exit)
 				cFree(data.ptr);
 
