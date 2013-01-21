@@ -56,12 +56,17 @@ PngImage pngDecode(void[] _data, bool convert = false)
 	while (data.length) {
 		auto len = chip!(uint, true)(data);
 
+		if (data.length < len + 4)
+			throw new Exception("Unexpected end of PNG file (while chunking)");
+
 		char[4] type = cast(char[])data[0 .. 4];
 
 		len += 4;
 		auto chunk = data[4 .. len];
 		data = data[len .. $];
+
 		auto crc = chip!(uint)(data);
+
 		switch (type) {
 		case "IDAT":
 			compressed ~= chunk;
@@ -129,7 +134,10 @@ PngImage pngDecode(void[] _data, bool convert = false)
 
 	for (int y = 0; y < height; ++y) {
 		ubyte filter = chip!(ubyte)(decomp);
-		auto scanline = decomp[0 .. scanwidth]; decomp = decomp[scanwidth .. $];
+		if (scanwidth > decomp.length)
+			throw new Exception("Unexpected end of PNG file (while scanning)");
+		auto scanline = decomp[0 .. scanwidth];
+		decomp = decomp[scanwidth .. $];
 		switch (filter) {
 		case 0:
 			break;
@@ -194,6 +202,9 @@ PngImage pngDecode(void[] _data, bool convert = false)
 	PngImage result;
 	// XXX: depth == 8 is only handled, checked above.
 	assert(depth == 8);
+
+	if (color == 3 && palette.length < 256)
+		throw new Exception("Missing or malformed PNG pallette");
 
 	if (convert && color != 6) {
 		result = new PngImage(width, height, 4);
@@ -264,6 +275,8 @@ private:
 T chip(T, bool reverse = false)(ref ubyte[] data)
 {
 	T ret;
+	if (data.length < T.sizeof)
+		throw new Exception("Unexpected end of PNG file (while chipping)");
 
 	// Reverse
 	static if (reverse) {
