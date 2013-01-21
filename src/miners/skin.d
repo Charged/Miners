@@ -90,9 +90,9 @@ public:
 	void handleResponse(char[] header, char[] res)
 	{
 		auto str = format("dl/%s.png", curSkin);
+		l.info("%s", str);
 		try {
 			auto img = pngDecode(res);
-
 			if (img is null)
 				throw new Exception("Image format not supported");
 
@@ -114,11 +114,8 @@ public:
 			auto w = store[curSkin];
 			w.update(tex);
 
-			l.info("Downloaded %s", str);
-
 		} catch (Exception e) {
-			l.warn("Failed to load: %s", str);
-			l.warn(e.toString);
+			l.warn("%s", e.toString());
 		}
 
 		curSkin = null;
