@@ -123,6 +123,10 @@ protected:
 		// Call base calss constructor
 		super(p, uri, name);
 
+		if (image.channels != 4) {
+			throw new Exception("png image must have 4 channels or be converted.");
+		}
+
 		this.width = image.width;
 		this.height = image.height;
 		this.pixels = cast(Color4b*)image.pixels.steal.ptr;
