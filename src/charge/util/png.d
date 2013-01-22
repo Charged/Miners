@@ -130,7 +130,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 
 	ubyte[][] lines;
 	lines.length = height;
-	auto scanwidth = width * bpp;
+	size_t scanwidth = cast(size_t)(width * bpp);
 
 	for (int y = 0; y < height; ++y) {
 		ubyte filter = chip!(ubyte)(decomp);
@@ -145,7 +145,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		case 1:
 			foreach (i, ref entry; scanline) {
 				ubyte left = 0;
-				if (i !< bpp)
+				if (i >= bpp)
 					left = scanline[i - bpp];
 				entry = limit(entry + left);
 			}
@@ -154,7 +154,7 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		case 2:
 			foreach (i, ref entry; scanline) {
 				ubyte up = 0;
-				if (y - 1 >= 0)
+				if (y >= 1)
 					up = lines[y - 1][i];
 				entry = limit(entry + up);
 			}
@@ -163,10 +163,10 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		case 3:
 			foreach (i, ref entry; scanline) {
 				ubyte left = 0;
-				if (i !< bpp)
+				if (i >= bpp)
 					left = scanline[i - bpp];
 				ubyte up = 0;
-				if (y - 1 >= 0)
+				if (y >= 1)
 					up = lines[y - 1][i];
 				entry = limit(entry + (left + up) / 2);
 			}
@@ -178,12 +178,12 @@ PngImage pngDecode(void[] _data, bool convert = false)
 				ubyte left = 0;
 				ubyte upleft = 0;
 
-				if (i !< bpp)
+				if (i >= bpp)
 					left = scanline[i - bpp];
 
-				if (y - 1 >= 0) {
+				if (y >= 1) {
 					up = lines[y - 1][i];
-					if (i !< bpp)
+					if (i >= bpp)
 						upleft = lines[y - 1][i - bpp];
 				}
 
@@ -232,13 +232,14 @@ PngImage pngDecode(void[] _data, bool convert = false)
 		} else if (color == 3) {
 			foreach (y, line; lines) {
 				foreach (x, pixel; line) {
-					auto i = (y*width + x) * 4;
+					auto i = (y * width + x) * 4;
 					ptr[i .. i + 3] = palette[pixel];
 					ptr[i + 3] = 255;
 				}
 			}
-		} else
+		} else {
 			throw new Exception("Unhandled PNG color encoding");
+		}
 	// Handle Palette
 	} else if (color == 3) {
 		result = new PngImage(width, height, 3);
@@ -251,14 +252,15 @@ PngImage pngDecode(void[] _data, bool convert = false)
 			}
 		}
 	} else {
-		if (color == 0)
+		if (color == 0) {
 			result = new PngImage(width, height, 1);
-		else if (color == 2)
+		} else if (color == 2) {
 			result = new PngImage(width, height, 3);
-		else if (color == 6)
+		} else if (color == 6) {
 			result = new PngImage(width, height, 4);
-		else
+		} else {
 			throw new Exception("Unhandled PNG color encoding");
+		}
 
 		auto target = result.pixels[];
 		foreach (line; lines) {
