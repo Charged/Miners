@@ -115,7 +115,7 @@ protected:
 
 		width = w;
 		height = h;
-		pixels = cast(Color4b*)cMalloc(w*h*Color4b.sizeof);
+		pixels = cast(Color4b*)cMalloc(calcImageSize());
 	}
 
 	this(Pool p, string name, PngImage image)
@@ -129,6 +129,11 @@ protected:
 
 		this.width = image.width;
 		this.height = image.height;
+
+		if (image.pixels.length != calcImageSize()) {
+			throw new Exception("png image storage is not large enough");
+		}
+
 		this.pixels = cast(Color4b*)image.pixels.steal.ptr;
 	}
 
@@ -155,5 +160,10 @@ protected:
 			delete file;
 
 		return pngDecode(file.peekMem, true);
+	}
+
+	size_t calcImageSize()
+	{
+		return width * height * Color4b.sizeof;
 	}
 }
