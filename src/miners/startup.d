@@ -412,7 +412,7 @@ class LoadModernTexture : OptionsTask
 			scope(exit)
 				cFree(data.ptr);
 
-			auto img = pngDecode(data);
+			auto img = pngDecode(data, true);
 			scope(exit)
 				delete img;
 

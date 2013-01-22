@@ -92,7 +92,7 @@ public:
 		auto str = format("dl/%s.png", curSkin);
 		l.info("%s", str);
 		try {
-			auto img = pngDecode(res);
+			auto img = pngDecode(res, true);
 			if (img is null)
 				throw new Exception("Image format not supported");
 
