@@ -35,6 +35,8 @@ public:
 	const int blocks_size = width * height * depth;
 	const int data_size = blocks_size;
 
+	static int used_mem;
+
 protected:
 	GameWorld w;
 	BetaTerrain bt;
@@ -46,8 +48,6 @@ protected:
 	static ubyte *empty_blocks; /**< so we don't need to allocate data for empty chunks */
 	ubyte *blocks;
 	ubyte *data;
-
-	static int used_mem;
 
 	GfxPointLight lights[];
 

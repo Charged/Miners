@@ -109,8 +109,14 @@ public:
 
 		parseArgs(args);
 
-		if (!running)
+		if (!running) {
+			auto opts = new CoreOptions();
+			opts.title = "Charged Miners";
+			opts.flags = coreFlag.CTL;
+			super(opts);
+			running = false;
 			return;
+		}
 
 		/* This will initalize Core and other important things */
 		auto opts = new CoreOptions();
