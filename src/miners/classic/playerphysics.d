@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.playerphysics;
 
-import std.math : floor, fmin, fmax;
+import std.math : floor, fmin, fmax, abs;
 
 import charge.math.quatd;
 import charge.math.point3d;
@@ -224,9 +224,9 @@ public:
 			auto tmp = fullVel;
 			doCollisions(tmp, pos, current, collidesX, collidesY, collidesZ);
 
-			// Something smarter.
-			if (vel.x != tmp.x ||
-			    vel.z != tmp.z) {
+			// Is kinda smart now, maybe something smarter isn't needed.
+			if (abs(vel.x) < abs(tmp.x) ||
+			    abs(vel.z) < abs(tmp.z)) {
 				vel.x = tmp.x;
 				vel.z = tmp.z;
 				posIn.y += 0.5;
