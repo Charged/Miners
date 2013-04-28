@@ -50,7 +50,7 @@ Picture getModernTerrainTexture(SysPool p)
 void[] extractModernMinecraftTexture(string file = null)
 {
 	if (file is null)
-		file = getMinecraftJarFilePath();
+		file = getModernMinecraftJarFilePath();
 
 	return extractTerrainDotPng(file);
 }
@@ -89,6 +89,7 @@ Picture getClassicTerrainTexture(SysPool p)
 {
 	string[] locations = [
 		"terrain.classic.png",
+		borrowedClassicTerrainTexture,
 	];
 
 	foreach(l; locations) {
@@ -102,6 +103,19 @@ Picture getClassicTerrainTexture(SysPool p)
 	}
 
 	return null;
+}
+
+/**
+ * Locate minecraft.jar and extract terrain.png.
+ *
+ * Returns the terrain.png file as a C allocated array.
+ */
+void[] extractClassicMinecraftTexture(string file = null)
+{
+	if (file is null)
+		file = getClassicMinecraftJarFilePath();
+
+	return extractTerrainDotPng(file);
 }
 
 /**

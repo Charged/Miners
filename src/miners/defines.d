@@ -23,6 +23,11 @@ const int BuildMeshes = 2;
 const string borrowedPath = "borrowed/";
 
 /**
- * Where the borrowed terrain.png is saved.
+ * Where the borrowed modern terrain.png is saved.
  */
 const string borrowedModernTerrainTexture = borrowedPath ~ "terrain.png";
+
+/**
+ * Where the borrowed classic terrain.png is saved.
+ */
+const string borrowedClassicTerrainTexture = borrowedPath ~ "terrain.classic.png";

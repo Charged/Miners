@@ -377,7 +377,7 @@ class LoadModernTexture : OptionsTask
 		scope(exit)
 			p.suppress404 = false;
 
-		if (opts.borrowedTerrainPic() is null)
+		if (opts.borrowedModernTerrainPic() is null)
 			borrowModernTerrainTexture();
 
 		auto pic = getModernTerrainTexture(p);
@@ -420,7 +420,7 @@ class LoadModernTexture : OptionsTask
 			scope(exit)
 				sysReference(&pic, null);
 
-			opts.borrowedTerrainPic = pic;
+			opts.borrowedModernTerrainPic = pic;
 			l.info("Found terrain.png in minecraft.jar, might use it.");
 		} catch (Exception e) {
 			l.info("Could not extract terrain.png from minecraft.jar because:");
@@ -460,9 +460,18 @@ class LoadClassicTexture : OptionsTask
 		scope(exit)
 			p.suppress404 = false;
 
+		if (opts.borrowedClassicTerrainPic() is null)
+			borrowClassicTerrainTexture();
+
 		// Get a texture that works with classic
 		auto pic = getClassicTerrainTexture(p);
 		if (pic is null) {
+			if (opts.modernTerrainPic() is null) {
+					auto text = format(terrainNotFoundText, chargeConfigFolder);
+					signalError([text]);
+					return false;
+			}
+
 			// Copy and manipulate
 			pic = Picture(opts.modernTerrainPic());
 			manipulateTextureClassic(pic);
@@ -480,6 +489,42 @@ class LoadClassicTexture : OptionsTask
 
 		return true;
 	}
+
+	/**
+	 * Borrow the modern terrain.png form minecraft.jar.
+	 */
+	void borrowClassicTerrainTexture()
+	{
+		// Try and load the terrain png file from minecraft.jar.
+		try {
+			auto data = extractClassicMinecraftTexture();
+			scope(exit)
+				cFree(data.ptr);
+
+			auto img = pngDecode(data, true);
+			scope(exit)
+				delete img;
+
+			auto pic = Picture(SysPool(), borrowedClassicTerrainTexture, img);
+			scope(exit)
+				sysReference(&pic, null);
+
+			opts.borrowedClassicTerrainPic = pic;
+			l.info("Found terrain.png in minecraft.jar, might use it.");
+		} catch (Exception e) {
+			l.info("Could not extract terrain.png from minecraft.jar because:");
+			l.info(e.classinfo.name, " ", e);
+			return;
+		}
+	}
+
+	const string terrainNotFoundText =
+`Could not find terrain.png! You have a couple of options, easiest is just to
+install Minecraft and Charged Miners will get it from there. Another option is
+to get one from a texture pack and place it in either the working directory of
+the executable. Or in the Charged Miners config folder located here:
+
+%s`;
 }
 
 /**
