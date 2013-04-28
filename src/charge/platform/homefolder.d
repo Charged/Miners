@@ -12,6 +12,7 @@ import std.stdio : writefln;
 import std.string : toString;
 
 
+string tempFolder;
 string homeFolder;
 string applicationConfigFolder;
 string chargeConfigFolder;
@@ -21,13 +22,16 @@ static this()
 {
 	version(linux) {
 		homeFolder = toString(getenv("HOME"));
+		tempFolder = toString(getenv("TEMP"));
 		applicationConfigFolder = homeFolder ~ "/.config";
 		chargeConfigFolder = applicationConfigFolder ~ "/charge";
 	} else version(darwin) {
 		homeFolder = toString(getenv("HOME"));
+		tempFolder = toString(getenv("TEMP"));
 		applicationConfigFolder = homeFolder ~ "/Library/Application Support";
 		chargeConfigFolder = applicationConfigFolder ~ "/charge";
 	} else version(Windows) {
+		tempFolder = wgetenv("TEMP");
 		homeFolder = wgetenv("USERPROFILE"w);
 		applicationConfigFolder = wgetenv("APPDATA"w);
 		chargeConfigFolder = applicationConfigFolder ~ "\\charge";
