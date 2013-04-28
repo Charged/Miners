@@ -382,9 +382,10 @@ class LoadModernTexture : OptionsTask
 
 		auto pic = getModernTerrainTexture(p);
 		if (pic is null) {
-			auto text = format(terrainNotFoundText, chargeConfigFolder);
-			signalError([text]);
-			return false;
+			l.info("Found no modern terrain.png, trying to load classic ones.");
+			signalDone();
+			nextTask(new LoadClassicTexture(startup, opts));
+			return true;
 		}
 
 		// Do the manipulation of the texture to fit us
@@ -428,14 +429,6 @@ class LoadModernTexture : OptionsTask
 			return;
 		}
 	}
-
-	const string terrainNotFoundText =
-`Could not find terrain.png! You have a couple of options, easiest is just to
-install Minecraft and Charged Miners will get it from there. Another option is
-to get one from a texture pack and place it in either the working directory of
-the executable. Or in the Charged Miners config folder located here:
-
-%s`;
 }
 
 /**
