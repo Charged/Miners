@@ -87,9 +87,13 @@ public:
 	const double playerSize = 0.32;
 	const double playerHeight = 1.62;
 	const double gravity = 9.8 / 2000.0;
-	const double jumpFactor = 0.12;
+	const double jumpFactor = 0.12 - gravity;
+	const double jumpDoubleFactor = jumpFactor * 1.2;
 	const double waterGravity = gravity / 4;
 	const double waterJumpFactor = waterGravity * 1.8;
+
+	bool doubleOk;
+	bool doubleJumped;
 
 	Vector3d oldVel;
 	double ySlideOffset;
@@ -183,8 +187,12 @@ public:
 		if (flying) {
 			if ((jump || up) ^ down)
 				vel.y += down ? -velSpeed : velSpeed;
+			doubleOk = false;
+			doubleJumped = true;
 		} else if (liquid) {
 			ground = false;
+			doubleOk = false;
+			doubleJumped = true;
 			vel.scale(0.02);
 			vel += oldVel;
 			vel.y = vel.y - waterGravity;
@@ -194,24 +202,44 @@ public:
 
 				auto test = current;
 				test.minY += 0.2;
-				if (getTouchLiquid(test))
+				if (getTouchLiquid(test)) {
 					vel.y += waterJumpFactor;
-				else
+				} else {
 					vel.y += jumpFactor / 2;
+				}
 			}
 
 			vel.scale(0.8);
 		} else if (ground) {
 			vel.y = -gravity;
+			doubleOk = false;
+			// To stop people from double jump when falling off cliffs.
+			doubleJumped = true;
+
 			if (jump || up) {
-				vel.y += jumpFactor;
+				vel.y = jumpFactor;
 				ySlideOffset = 0;
 				ground = false;
+				doubleJumped = false;
 			}
 		} else {
 			vel.scale(0.02);
 			vel += oldVel;
 			vel.y = vel.y - gravity;
+
+			// Implements double jump.
+			if (jump || up) {
+				if (vel.y < 0 && !doubleJumped && doubleOk) {
+					vel.y = jumpDoubleFactor;
+					ySlideOffset = 0;
+					doubleJumped = true;
+					doubleOk = false;
+				}
+			} else {
+				// Only double jump after the player
+				// has released the jump button.
+				doubleOk = true;
+			}
 		}
 
 		auto fullVel = vel;
