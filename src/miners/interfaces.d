@@ -32,19 +32,6 @@ interface Router : GameRouter
 	void render(GfxWorld w, GfxCamera c, GfxRenderTarget rt);
 
 	/**
-	 * Start the Ion Runner.
-	 */
-	void chargeIon();
-
-	/**
-	 * Load a level, name should be a level
-	 * directory containing level.dat.
-	 *
-	 * If name is null it opens a random level.
-	 */
-	void loadLevelModern(string name);
-
-	/**
 	 * Load a level, name should be a classic level filename.
 	 *
 	 * If name is null it generates a simple flatland.
@@ -80,11 +67,6 @@ interface Router : GameRouter
 	 * See above, but specialized for classic.
 	 */
 	void displayClassicPauseMenu(Runner part);
-
-	/**
-	 * See above.
-	 */
-	void displayLevelSelector();
 
 	/**
 	 * Display a generic info menu.

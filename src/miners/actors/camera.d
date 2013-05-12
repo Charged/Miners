@@ -5,7 +5,6 @@ module miners.actors.camera;
 import charge.charge;
 
 import miners.world;
-import miners.actors.sunlight;
 
 
 class Camera : GameActor

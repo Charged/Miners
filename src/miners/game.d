@@ -22,32 +22,23 @@ import miners.types;
 import miners.error;
 import miners.world;
 import miners.runner;
-import miners.viewer;
 import miners.defines;
 import miners.startup;
 import miners.options;
 import miners.debugger;
 import miners.interfaces;
 import miners.background;
-import miners.ion.runner;
-import miners.lua.runner;
 import miners.gfx.font;
 import miners.gfx.manager;
-import miners.beta.world;
-import miners.isle.world;
 import miners.menu.base;
 import miners.menu.main;
-import miners.menu.beta;
 import miners.menu.list;
 import miners.menu.error;
 import miners.menu.pause;
 import miners.menu.classic;
 import miners.menu.blockselector;
-import miners.terrain.beta;
-import miners.terrain.chunk;
 import miners.classic.world;
 import miners.classic.runner;
-import miners.importer.info;
 import miners.importer.network;
 import miners.importer.texture;
 import miners.importer.classicinfo;
@@ -253,9 +244,6 @@ protected:
 				throw new GameException("Classic arguments in wrong state", null, true);
 			}
 		}
-
-		if (opts.levelPath !is null)
-			return loadLevelModern(opts.levelPath);
 
 		return displayMainMenu();
 	}
@@ -476,27 +464,6 @@ protected:
 		return true;
 	}
 
-	bool checkLevel(string level)
-	{
-		auto ni = checkMinecraftLevel(level);
-
-		if (ni is null) {
-			l.fatal("Could not find level.dat in the level directory");
-			l.fatal("This probably isn't a level, exiting the viewer.");
-			l.fatal("looked in this folder %s", level);
-			return false;
-		}
-
-		if (!ni.beta) {
-			l.fatal("Could not find the region folder in the level directory");
-			l.fatal("This probably isn't a beta level, exiting the viewer.");
-			l.fatal("looked in this folder %s", level);
-			return false;
-		}
-
-		return true;
-	}
-
 
 	/*
 	 *
@@ -540,81 +507,9 @@ protected:
 	 */
 
 
-	void chargeIon()
-	{
-		Runner r;
-
-		try {
-			r = new IonRunner(this, opts, null);
-		} catch (Exception e) {
-			displayError(e, false);
-			return;
-		}
-
-		push(r);
-	}
-
 	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
 	{
 		auto r = new ClassicRunner(this, opts, cc, x, y, z, data);
-		push(r);
-	}
-
-	void loadLevelModern(string level)
-	{
-		Runner r;
-		World w;
-
-		if (level is null) {
-			w = new IsleWorld(opts);
-		} else if (isdir(level)) {
-			auto info = checkMinecraftLevel(level);
-
-			// XXX Better warning
-			if (!info || !info.beta)
-				throw new GameException("Invalid Level Given", null, false);
-
-			w = new BetaWorld(info, opts);
-		} else {
-			throw new GameException("Level needs to be a directory", null, false);
-		}
-
-		auto scriptName = "script/main-level.lua";
-		try {
-			r = new ScriptRunner(this, opts, w, scriptName);
-		} catch (Exception e) {
-			l.fatal("Could not find or run \"%s\" (%s)", scriptName, e);
-		}
-
-		if (r is null)
-			r = new ViewerRunner(this, opts, w);
-
-		if (opts.shouldBuildAll) {
-			int times = 5;
-			ulong total;
-
-			l.info("Building all %s times, please wait...", times);
-			writefln("Building all %s times, please wait...", times);
-
-			for (int i; i < times; i++) {
-				w.t.unbuildAll();
-				SysPool().collect();
-
-				auto t1 = SDL_GetTicks();
-				while(w.t.buildOne()) { }
-				auto t2 = SDL_GetTicks();
-
-				auto diff = t2 - t1;
-				total += i > 0 ? diff : 0;
-
-				l.info("Build time: %s seconds", diff / 1000.0);
-				writefln("Build time: %s seconds", diff / 1000.0);
-			}
-
-			l.info("Average time: %s seconds", total / (times - 1) / 1000.0);
-			writefln("Average time: %s seconds", total / (times - 1) / 1000.0);
-		}
-
 		push(r);
 	}
 
@@ -654,16 +549,6 @@ protected:
 	void displayClassicPauseMenu(Runner part)
 	{
 		push(new PauseMenu(this, opts, part));
-	}
-
-	void displayLevelSelector()
-	{
-		try {
-			auto lm = new LevelMenu(this, opts);
-			push(lm);
-		} catch (Exception e) {
-			displayError(e, false);
-		}
 	}
 
 	void displayClassicBlockSelector(void delegate(ubyte) selectedDg)

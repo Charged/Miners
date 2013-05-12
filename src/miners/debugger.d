@@ -14,8 +14,6 @@ import charge.sys.tracker : TimeTracker;
 
 import miners.interfaces;
 
-static import miners.terrain.chunk;
-
 
 /**
  * A debug display overlay.
@@ -92,7 +90,6 @@ public:
 			"     D%7.1fMB\n"
 			"   Lua%7.1fMB\n"
 			"   VBO%7.1fMB\n"
-			" Chunk%7.1fMB\n"
 			"\n"
 			"GC:\n"
 			"  used%7.1fMB\n"
@@ -107,7 +104,6 @@ public:
 			stats.usedsize / MB,
 			lib.lua.state.State.getMemory() / MB,
 			charge.gfx.vbo.VBO.used / MB,
-			miners.terrain.chunk.Chunk.used_mem / MB,
 			stats.usedsize / MB,
 			stats.poolsize / MB,
 			stats.freelistsize / MB,

@@ -14,7 +14,6 @@ import miners.options;
 import miners.defines;
 import miners.classic.data;
 import miners.builder.types;
-import miners.builder.beta;
 import miners.builder.classic;
 import miners.importer.folders;
 
@@ -77,9 +76,6 @@ void manipulateTextureModern(Picture pic)
 {
 	// Doesn't support biomes right now fixup the texture before use.
 	applyStaticBiome(pic);
-
-	// Doesn't support redstone wire that well either
-	setupRedstoneWire(pic);
 }
 
 /**
@@ -140,36 +136,36 @@ void manipulateTextureClassic(Picture pic)
 	}
 
 	// Gold block, must come before iron.
-	src = miners.builder.beta.tile[41].yTex;
+	src = 23;
 	dst = miners.builder.classic.tile[41].yTex;
 	copy(src, dst);
 	copy(src, dst+16);
 	copy(src, dst+32);
 
 	// Iron block, must come after gold.
-	src = miners.builder.beta.tile[42].yTex;
+	src = 22;
 	dst = miners.builder.classic.tile[42].yTex;
 	copy(src, dst);
 	copy(src, dst+16);
 	copy(src, dst+32);
 
 	// Leaves, must come after iron.
-	src = miners.builder.beta.tile[18].yTex;
+	src = 52;
 	dst = miners.builder.classic.tile[18].yTex;
 	copy(src, dst);
 
 	// Water
-	src = miners.builder.beta.tile[8].yTex;
+	src = 223;
 	dst = miners.builder.classic.tile[8].yTex;
 	copy(src, dst);
 
 	// Water
-	src = miners.builder.beta.tile[10].yTex;
+	src = 255;
 	dst = miners.builder.classic.tile[10].yTex;
 	copy(src, dst);
 
 	// Move the white wool to its place.
-	src = miners.builder.beta.tile[21+15].xzTex;
+	src = 64;
 	dst = miners.builder.classic.tile[21+15].xzTex;
 	copy(src, dst);
 
@@ -269,72 +265,6 @@ void applyStaticBiome(Picture pic)
 	fillEmptyWithAverage(pic, 4, 3); // Leaves
 	fillEmptyWithAverage(pic, 1, 3); // Glass
 	fillEmptyWithAverage(pic, 1, 4); // Moster-spawn
-}
-
-void setupRedstoneWire(Picture pic) {
-	auto active = Color4b(178, 0, 0, 155);
-	auto inactive = Color4b(65, 0, 0, 155);
-
-	// Clear tiles.
-	{
-		int u, v;
-		auto tile = redstoneWireTile[0][RedstoneWireType.Corner];
-		u = tile.xzTex % 16; v = tile.xzTex / 16;
-		clearTile(pic, u, v);
-		tile = redstoneWireTile[0][RedstoneWireType.Tjunction];
-		u = tile.xzTex % 16; v = tile.xzTex / 16;
-		clearTile(pic, u, v);
-	}
-
-	foreach(BuildBlockDescriptor dec; redstoneWireTile[1]) {
-		int u = dec.xzTex % 16, v = dec.xzTex / 16;
-		clearTile(pic, u, v);
-	}
-
-
-	// Create corner (2 connections) tile and T-form (3 connections) tile
-	// from the crossover tile.
-	{
-		auto src = redstoneWireTile[0][RedstoneWireType.Crossover];
-		auto corner_dst = redstoneWireTile[0][RedstoneWireType.Corner];
-		auto tjunction_dst = redstoneWireTile[0][RedstoneWireType.Tjunction];
-
-		// AFAIK there are no non-square tile maps.
-		uint tile_size = pic.width / 16;
-		int h = tile_size / 2;
-		int f = tile_size;
-		int uSrc = src.xzTex % 16, vSrc = src.xzTex / 16;
-		int uCornerDst = corner_dst.xzTex % 16;
-		int vCornerDst = corner_dst.xzTex / 16;
-		int uTjunctionDst = tjunction_dst.xzTex % 16;
-		int vTjunctionDst = tjunction_dst.xzTex / 16;
-
-		copyTilePart(pic, uSrc*f, vSrc*f+h, f-h, f-h,
-		             uCornerDst*f, vCornerDst*f+h);
-
-		copyTilePart(pic, uSrc*f, vSrc*f, f-h, f,
-		             uTjunctionDst*f, vTjunctionDst*f);
-	}
-
-	// Copy all four wire tiles.
-	for (int i = 0; i < 4; i++) {
-		auto src = redstoneWireTile[0][i];
-		auto dst = redstoneWireTile[1][i];
-		int uSrc = src.xzTex % 16, vSrc = src.xzTex / 16;
-		int uDst = dst.xzTex % 16, vDst = dst.xzTex / 16;
-		copyTile(pic, uSrc, vSrc, uDst, vDst);
-	}
-
-	// Color the wire tiles.
-	foreach(BuildBlockDescriptor dec; redstoneWireTile[0]) {
-		int u = dec.xzTex % 16, v = dec.xzTex / 16;
-		modulateColor(pic, u, v, inactive);
-	}
-
-	foreach(BuildBlockDescriptor dec; redstoneWireTile[1]) {
-		int u = dec.xzTex % 16, v = dec.xzTex / 16;
-		modulateColor(pic, u, v, active);
-	}
 }
 
 void blendColor(Picture pic, uint tile_x, uint tile_y, Color4b color)
