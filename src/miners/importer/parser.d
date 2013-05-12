@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module miners.importer.classicinfo;
+module miners.importer.parser;
 
 import lib.xml.xml : DomParser, Element, Handle;
 import std.string : find, format;

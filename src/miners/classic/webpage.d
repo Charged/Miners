@@ -9,7 +9,7 @@ import uri = std.uri;
 import charge.charge;
 
 import miners.types;
-import miners.importer.classicinfo;
+import miners.importer.parser;
 
 
 alias charge.net.util.ntoh ntoh;

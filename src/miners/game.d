@@ -28,7 +28,6 @@ import miners.options;
 import miners.debugger;
 import miners.interfaces;
 import miners.background;
-import miners.gfx.font;
 import miners.gfx.manager;
 import miners.menu.base;
 import miners.menu.main;
@@ -39,9 +38,8 @@ import miners.menu.classic;
 import miners.menu.blockselector;
 import miners.classic.world;
 import miners.classic.runner;
+import miners.importer.parser;
 import miners.importer.network;
-import miners.importer.texture;
-import miners.importer.classicinfo;
 
 static import miners.builder.classic;
 
