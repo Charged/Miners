@@ -31,3 +31,8 @@ const string borrowedModernTerrainTexture = borrowedPath ~ "terrain.png";
  * Where the borrowed classic terrain.png is saved.
  */
 const string borrowedClassicTerrainTexture = borrowedPath ~ "terrain.classic.png";
+
+/**
+ * Where the downloaded default classic terrain.png is saved.
+ */
+const string defaultClassicTerrainTexture = "terrain.default.png";

@@ -320,7 +320,7 @@ public:
 
 		signalDone();
 
-		nextTask(new LoadModernTexture(startup, opts));
+		nextTask(new LoadDefaultClassicTerrain(startup, opts));
 
 		return true;
 	}
@@ -352,6 +352,99 @@ public:
 	void disconnected()
 	{
 		signalError(["Got disconnected when downloading default skin"]);
+	}
+}
+
+/**
+ * Loads and downloads the default classic terrain.
+ */
+class LoadDefaultClassicTerrain : OptionsTask, NetDownloadListener
+{
+public:
+	const string path = "/releases/terrain.default.png";
+	const string hostname = "cm-cdn.fcraft.net";
+	const ushort port = 80;
+
+
+private:
+	NetDownloadConnection dl;
+
+	mixin SysLogging;
+
+
+public:
+	this(StartupRunner startup, Options opts)
+	{
+		text = "Loading default terrain";
+		super(startup, opts);
+	}
+
+	void close()
+	{
+		if (dl !is null) {
+			dl.close();
+			dl = null;
+		}
+	}
+
+	bool build()
+	{
+		if (dl !is null) {
+			dl.doTick();
+			return false;
+		}
+
+		Picture defTerrain;
+
+		try {
+			defTerrain = Picture(SysPool(), defaultClassicTerrainTexture);
+		} catch (Exception e) {
+			signalError(["Could not load default terrain", e.toString]);
+			return false;
+		}
+
+		if (defTerrain is null) {
+			dl = new NetDownloadConnection(this, hostname, port);
+			return true;
+		}
+
+		opts.defaultClassicTerrain = defTerrain;
+		sysReference(&defTerrain, null);
+
+		signalDone();
+
+		nextTask(new LoadModernTexture(startup, opts));
+
+		return true;
+	}
+
+	void connected()
+	{
+		dl.getDownload(path);
+	}
+
+	void percentage(int p)
+	{
+		completed = p;
+	}
+
+	void downloaded(void[] data)
+	{
+		l.warn("D %s", data.length);
+
+		write(defaultClassicTerrainTexture, data);
+		dl.close();
+		dl = null;
+	}
+
+	void error(Exception e)
+	{
+		signalError(["Could not download default terrain", e.toString]);
+	}
+
+	void disconnected()
+	{
+		signalError(["Got disconnected when downloading default terrain"]);
 	}
 }
 
@@ -458,6 +551,10 @@ class LoadClassicTexture : OptionsTask
 
 		// Get a texture that works with classic
 		auto pic = getClassicTerrainTexture(p);
+		if (pic is null) {
+			sysReference(&pic, opts.defaultClassicTerrain());
+		}
+
 		if (pic is null) {
 			if (opts.modernTerrainPic() is null) {
 					auto text = format(terrainNotFoundText, chargeConfigFolder);

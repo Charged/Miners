@@ -220,6 +220,7 @@ public:
 	GfxTexture whiteTexture;
 
 	Option!(GfxTexture) defaultSkin;
+	Option!(Picture) defaultClassicTerrain;
 
 	GfxSimpleSkeleton.VBO playerSkeleton;
 	alias PlayerModelData.bones playerBones;
@@ -315,6 +316,7 @@ public:
 		sysReference(&whiteTexture, null);
 
 		defaultSkin.destruct();
+		defaultClassicTerrain.destruct();
 
 		sysReference(&playerSkeleton, null);
 
