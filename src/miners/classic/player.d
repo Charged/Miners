@@ -6,10 +6,10 @@ import charge.charge;
 
 import miners.world;
 import miners.importer.network;
-static import miners.actors.otherplayer;
+import miners.actors.otherplayer;
 
 
-class OtherPlayer : miners.actors.otherplayer.OtherPlayer, GameTicker
+class ClassicPlayer : OtherPlayer, GameTicker
 {
 public:
 	char[] name;

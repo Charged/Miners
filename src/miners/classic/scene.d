@@ -26,12 +26,12 @@ import miners.terrain.finite;
 import miners.classic.data;
 import miners.classic.text;
 import miners.classic.world;
+import miners.classic.player;
 import miners.classic.message;
 import miners.classic.console;
 import miners.classic.connection;
 import miners.classic.interfaces;
 import miners.classic.messagelog;
-import miners.classic.otherplayer;
 import miners.classic.playerphysics;
 import miners.importer.network;
 
@@ -48,7 +48,7 @@ protected:
 	ClientConnection c;
 	ClassicWorld w;
 
-	OtherPlayer players[ubyte.max+1];
+	ClassicPlayer players[ubyte.max+1];
 
 	int sentCounter;
 	Point3d saveCamPos;
@@ -199,7 +199,7 @@ public:
 			console.message = &ml.archive;
 			console.tabCompletePlayer = &ml.tabCompletePlayer;
 		} else {
-			players[0] = new OtherPlayer(w, 0, "&4Hero&9brine", w.spawn, 0, 0);
+			players[0] = new ClassicPlayer(w, 0, "&4Hero&9brine", w.spawn, 0, 0);
 
 			ml = new MessageLogger();
 			console.chat = &ml.archive;
@@ -1139,7 +1139,7 @@ public:
 
 		double offset = 52.0 / 32.0;
 		auto pos = Point3d(x, y - offset, z);
-		auto p = new OtherPlayer(w, index, name, pos, heading, pitch);
+		auto p = new ClassicPlayer(w, index, name, pos, heading, pitch);
 		players[index] = p;
 	}
 
