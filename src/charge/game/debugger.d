@@ -1,30 +1,35 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module miners.debugger;
+module charge.game.debugger;
 
 import std.string : sformat;
 
 static import std.gc;
 static import gcstats;
 static import lib.sdl.sdl;
+static import lib.lua.state;
+static import charge.gfx.vbo;
+static import charge.gfx.draw;
+static import charge.gfx.font;
+static import charge.gfx.target;
+static import charge.gfx.texture;
 
-import charge.charge;
+import charge.math.color : Color4f;
 import charge.sys.memory : MemHeader;
 import charge.sys.tracker : TimeTracker;
+import charge.sys.resource : sysReference = reference;
 
-import miners.interfaces;
+import charge.game.scene : Scene;
 
 
 /**
  * A debug display overlay.
  */
-class DebugScene : Scene
+class DebuggerScene : Scene
 {
 protected:
-	Router router;
-
-	GfxDraw d;
-	GfxDynamicTexture debugText;
+	charge.gfx.draw.Draw d;
+	charge.gfx.texture.DynamicTexture debugText;
 
 	uint num_frames;
 
@@ -32,15 +37,13 @@ protected:
 	const ulong stepLength = 1000;
 
 public:
-	this(Router r)
+	this()
 	{
 		super(Type.Overlay);
 
-		this.router = r;
+		d = new charge.gfx.draw.Draw();
 
-		d = new GfxDraw();
-
-		debugText = GfxDynamicTexture();
+		debugText = charge.gfx.texture.DynamicTexture();
 	}
 
 	~this()
@@ -53,7 +56,7 @@ public:
 		sysReference(&debugText, null);
 	}
 
-	void render(GfxRenderTarget rt)
+	void render(charge.gfx.target.RenderTarget rt)
 	{
 		num_frames++;
 		updateText();
@@ -121,7 +124,7 @@ public:
 
 		assert(tmp.ptr == info.ptr);
 
-		gfxDefaultFont.render(debugText, info);
+		charge.gfx.font.BitmapFont.defaultFont.render(debugText, info);
 
 		num_frames = 0;
 		start = start + elapsed;

@@ -15,6 +15,7 @@ import charge.sys.file;
 import charge.sys.memory;
 import charge.util.png;
 import charge.util.memory;
+import charge.game.debugger;
 import charge.platform.homefolder;
 
 import miners.skin;
@@ -24,7 +25,6 @@ import miners.world;
 import miners.defines;
 import miners.startup;
 import miners.options;
-import miners.debugger;
 import miners.interfaces;
 import miners.background;
 import miners.gfx.manager;
@@ -70,7 +70,7 @@ private:
 
 	SkinDownloader skin;
 
-	DebugScene dr;
+	DebuggerScene dr;
 
 	GfxDraw d;
 
@@ -200,7 +200,7 @@ protected:
 
 		// Always create the debug scene,
 		// only use it on debug builds.
-		dr = new DebugScene(this);
+		dr = new DebuggerScene();
 		opts.showDebug ~= &showDebug;
 		// Will push the scene now if debug build.
 		debug { opts.showDebug = true; }
