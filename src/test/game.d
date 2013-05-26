@@ -259,6 +259,13 @@ public:
 
 		car = new Car(w, Point3d(0.0, 3.0, -6.0));
 		new Car(w, Point3d(0.0, 3.0, 10.0));
+
+		keyboard.up ~= &this.keyUp;
+		keyboard.down ~= &this.keyDown;
+
+		mouse.up ~= &this.mouseUp;
+		mouse.down ~= &this.mouseDown;
+		mouse.move ~= &this.mouseMove;
 	}
 
 	~this()
@@ -267,6 +274,13 @@ public:
 
 	void close()
 	{
+		keyboard.up.disconnect(&this.keyUp);
+		keyboard.down.disconnect(&this.keyDown);
+
+		mouse.up.disconnect(&this.mouseUp);
+		mouse.down.disconnect(&this.mouseDown);
+		mouse.move.disconnect(&this.mouseMove);
+
 		breakApartAndNull(w);
 		super.close();
 	}
@@ -275,143 +289,6 @@ protected:
 	void addRemovable(Ticker t)
 	{
 		removable ~= t;
-	}
-
-	void input()
-	{
-		SDL_Event e;
-
-		while(SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) {
-				running = false;
-			}
-
-			if (e.type == SDL_KEYDOWN) {
-				if (e.key.keysym.sym == SDLK_r) {
-					car.car.position = Point3d(0.0, 3.0, -6.0);
-					car.car.rotation = Quatd();
-				}
-				if (e.key.keysym.sym == SDLK_f)
-					force = true;
-				if (e.key.keysym.sym == SDLK_g)
-					inverse = true;
-				if (e.key.keysym.sym == SDLK_UP)
-					forward = true;
-				if (e.key.keysym.sym == SDLK_DOWN)
-					backwards = true;
-
-
-
-				if (e.key.keysym.sym == SDLK_RIGHT) {
-					double s = -PI * 0.20;
-					car.car.setTurning(s, 0.01);
-				}
-				if (e.key.keysym.sym == SDLK_LEFT) {
-					double s = PI * 0.20;
-					car.car.setTurning(s, 0.01);
-				}
-
-			}
-
-			if (e.type == SDL_KEYUP) {
-
-				if (e.key.keysym.sym == SDLK_UP)
-					forward = false;
-				if (e.key.keysym.sym == SDLK_DOWN)
-					backwards = false;
-				if (e.key.keysym.sym == SDLK_RIGHT) {
-					car.car.setTurning(0, 0.15);
-				}
-				if (e.key.keysym.sym == SDLK_LEFT) {
-					car.car.setTurning(0, 0.15);
-				}
-				if (e.key.keysym.sym == SDLK_f)
-					force = false;
-				if (e.key.keysym.sym == SDLK_g)
-					inverse = false;
-				if (e.key.keysym.sym == SDLK_ESCAPE)
-					running = false;
-				if (e.key.keysym.sym == SDLK_s)
-					addRemovable(new Sphere(w, Point3d(0, 1, 0)));
-				if (e.key.keysym.sym == SDLK_c)
-					addRemovable(new Cube(w, Point3d(0, 1, 0)));
-				if (e.key.keysym.sym == SDLK_p) {
-					addRemovable(new Cube(w, Point3d( 4, 1, 0)));
-					addRemovable(new Cube(w, Point3d( 3, 1, 0)));
-					addRemovable(new Cube(w, Point3d( 2, 1, 0)));
-					addRemovable(new Cube(w, Point3d( 1, 1, 0)));
-					addRemovable(new Cube(w, Point3d( 0, 1, 0)));
-					addRemovable(new Cube(w, Point3d(-1, 1, 0)));
-					addRemovable(new Cube(w, Point3d(-2, 1, 0)));
-					addRemovable(new Cube(w, Point3d(-3, 1, 0)));
-					addRemovable(new Cube(w, Point3d(-4, 1, 0)));
-
-					addRemovable(new Cube(w, Point3d( 3.5, 2, 0)));
-					addRemovable(new Cube(w, Point3d( 2.5, 2, 0)));
-					addRemovable(new Cube(w, Point3d( 1.5, 2, 0)));
-					addRemovable(new Cube(w, Point3d( 0.5, 2, 0)));
-					addRemovable(new Cube(w, Point3d(-0.5, 2, 0)));
-					addRemovable(new Cube(w, Point3d(-1.5, 2, 0)));
-					addRemovable(new Cube(w, Point3d(-2.5, 2, 0)));
-					addRemovable(new Cube(w, Point3d(-3.5, 2, 0)));
-
-					addRemovable(new Cube(w, Point3d( 3, 3, 0)));
-					addRemovable(new Cube(w, Point3d( 2, 3, 0)));
-					addRemovable(new Cube(w, Point3d( 1, 3, 0)));
-					addRemovable(new Cube(w, Point3d( 0, 3, 0)));
-					addRemovable(new Cube(w, Point3d(-1, 3, 0)));
-					addRemovable(new Cube(w, Point3d(-2, 3, 0)));
-					addRemovable(new Cube(w, Point3d(-3, 3, 0)));
-
-					addRemovable(new Cube(w, Point3d( 2.5, 4, 0)));
-					addRemovable(new Cube(w, Point3d( 1.5, 4, 0)));
-					addRemovable(new Cube(w, Point3d( 0.5, 4, 0)));
-					addRemovable(new Cube(w, Point3d(-0.5, 4, 0)));
-					addRemovable(new Cube(w, Point3d(-1.5, 4, 0)));
-					addRemovable(new Cube(w, Point3d(-2.5, 4, 0)));
-
-					addRemovable(new Cube(w, Point3d( 2, 5, 0)));
-					addRemovable(new Cube(w, Point3d( 1, 5, 0)));
-					addRemovable(new Cube(w, Point3d( 0, 5, 0)));
-					addRemovable(new Cube(w, Point3d(-1, 5, 0)));
-					addRemovable(new Cube(w, Point3d(-2, 5, 0)));
-
-					addRemovable(new Cube(w, Point3d( 1.5, 6, 0)));
-					addRemovable(new Cube(w, Point3d( 0.5, 6, 0)));
-					addRemovable(new Cube(w, Point3d(-0.5, 6, 0)));
-					addRemovable(new Cube(w, Point3d(-1.5, 6, 0)));
-
-					addRemovable(new Cube(w, Point3d( 1, 7, 0)));
-					addRemovable(new Cube(w, Point3d( 0, 7, 0)));
-					addRemovable(new Cube(w, Point3d(-1, 7, 0)));
-
-					addRemovable(new Cube(w, Point3d( 0.5, 8, 0)));
-					addRemovable(new Cube(w, Point3d(-0.5, 8, 0)));
-
-					addRemovable(new Cube(w, Point3d( 0, 9, 0)));
-				}
-				if (e.key.keysym.sym == SDLK_o) {
-					foreach(r; removable)
-						r.breakApart();
-					removable.length = 0;
-				}
-			}
-
-			if (e.type == SDL_MOUSEMOTION && moveing) {
-				double xrel = e.motion.xrel;
-				double yrel = e.motion.yrel;
-				heading += xrel / 1000.0;
-				pitch += yrel / 1000.0;
-				cam.rotation = Quatd(heading, 0, pitch);
-			}
-
-			if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == 1)
-				moveing = true;
-
-			if (e.type == SDL_MOUSEBUTTONUP && e.button.button == 1)
-				moveing = false;
-		}
-
 	}
 
 	void logic()
@@ -469,5 +346,154 @@ protected:
 
 	void network()
 	{
+	}
+
+	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
+	{
+		switch(sym) {
+		case SDLK_r:
+			car.car.position = Point3d(0.0, 3.0, -6.0);
+			car.car.rotation = Quatd();
+			break;
+		case SDLK_f:
+			force = true;
+			break;
+		case SDLK_g:
+			inverse = true;
+			break;
+		case SDLK_UP:
+			forward = true;
+			break;
+		case SDLK_DOWN:
+			backwards = true;
+			break;
+		case SDLK_RIGHT:
+			double s = -PI * 0.20;
+			car.car.setTurning(s, 0.01);
+			break;
+		case SDLK_LEFT:
+			double s = PI * 0.20;
+			car.car.setTurning(s, 0.01);
+			break;
+		default:
+		}
+	}
+
+	void keyUp(CtlKeyboard kb, int sym)
+	{
+		switch(sym) {
+		case SDLK_UP:
+			forward = false;
+			break;
+		case SDLK_DOWN:
+			backwards = false;
+			break;
+		case SDLK_RIGHT:
+			car.car.setTurning(0, 0.15);
+			break;
+		case SDLK_LEFT:
+			car.car.setTurning(0, 0.15);
+			break;
+		case SDLK_f:
+			force = false;
+			break;
+		case SDLK_g:
+			inverse = false;
+			break;
+		case SDLK_ESCAPE:
+			running = false;
+			break;
+		case SDLK_s:
+			addRemovable(new Sphere(w, Point3d(0, 1, 0)));
+			break;
+		case SDLK_c:
+			addRemovable(new Cube(w, Point3d(0, 1, 0)));
+			break;
+		case SDLK_p:
+			addRemovable(new Cube(w, Point3d( 4, 1, 0)));
+			addRemovable(new Cube(w, Point3d( 3, 1, 0)));
+			addRemovable(new Cube(w, Point3d( 2, 1, 0)));
+			addRemovable(new Cube(w, Point3d( 1, 1, 0)));
+			addRemovable(new Cube(w, Point3d( 0, 1, 0)));
+			addRemovable(new Cube(w, Point3d(-1, 1, 0)));
+			addRemovable(new Cube(w, Point3d(-2, 1, 0)));
+			addRemovable(new Cube(w, Point3d(-3, 1, 0)));
+			addRemovable(new Cube(w, Point3d(-4, 1, 0)));
+
+			addRemovable(new Cube(w, Point3d( 3.5, 2, 0)));
+			addRemovable(new Cube(w, Point3d( 2.5, 2, 0)));
+			addRemovable(new Cube(w, Point3d( 1.5, 2, 0)));
+			addRemovable(new Cube(w, Point3d( 0.5, 2, 0)));
+			addRemovable(new Cube(w, Point3d(-0.5, 2, 0)));
+			addRemovable(new Cube(w, Point3d(-1.5, 2, 0)));
+			addRemovable(new Cube(w, Point3d(-2.5, 2, 0)));
+			addRemovable(new Cube(w, Point3d(-3.5, 2, 0)));
+
+			addRemovable(new Cube(w, Point3d( 3, 3, 0)));
+			addRemovable(new Cube(w, Point3d( 2, 3, 0)));
+			addRemovable(new Cube(w, Point3d( 1, 3, 0)));
+			addRemovable(new Cube(w, Point3d( 0, 3, 0)));
+			addRemovable(new Cube(w, Point3d(-1, 3, 0)));
+			addRemovable(new Cube(w, Point3d(-2, 3, 0)));
+			addRemovable(new Cube(w, Point3d(-3, 3, 0)));
+
+			addRemovable(new Cube(w, Point3d( 2.5, 4, 0)));
+			addRemovable(new Cube(w, Point3d( 1.5, 4, 0)));
+			addRemovable(new Cube(w, Point3d( 0.5, 4, 0)));
+			addRemovable(new Cube(w, Point3d(-0.5, 4, 0)));
+			addRemovable(new Cube(w, Point3d(-1.5, 4, 0)));
+			addRemovable(new Cube(w, Point3d(-2.5, 4, 0)));
+
+			addRemovable(new Cube(w, Point3d( 2, 5, 0)));
+			addRemovable(new Cube(w, Point3d( 1, 5, 0)));
+			addRemovable(new Cube(w, Point3d( 0, 5, 0)));
+			addRemovable(new Cube(w, Point3d(-1, 5, 0)));
+			addRemovable(new Cube(w, Point3d(-2, 5, 0)));
+
+			addRemovable(new Cube(w, Point3d( 1.5, 6, 0)));
+			addRemovable(new Cube(w, Point3d( 0.5, 6, 0)));
+			addRemovable(new Cube(w, Point3d(-0.5, 6, 0)));
+			addRemovable(new Cube(w, Point3d(-1.5, 6, 0)));
+
+			addRemovable(new Cube(w, Point3d( 1, 7, 0)));
+			addRemovable(new Cube(w, Point3d( 0, 7, 0)));
+			addRemovable(new Cube(w, Point3d(-1, 7, 0)));
+
+			addRemovable(new Cube(w, Point3d( 0.5, 8, 0)));
+			addRemovable(new Cube(w, Point3d(-0.5, 8, 0)));
+
+			addRemovable(new Cube(w, Point3d( 0, 9, 0)));
+			break;
+		case SDLK_o:
+			foreach(r; removable)
+				r.breakApart();
+			removable.length = 0;
+			break;
+		default:
+		}
+	}
+
+	void mouseDown(CtlMouse mouse, int button)
+	{
+		if (button == 1)
+			moveing = true;
+	}
+
+	void mouseUp(CtlMouse, int button)
+	{
+		if (button == 1)
+			moveing = false;
+	}
+
+	void mouseMove(CtlMouse mouse, int ixrel, int iyrel)
+	{
+		if (!moveing)
+			return;
+
+		double xrel = ixrel;
+		double yrel = iyrel;
+		heading += xrel / 1000.0;
+		pitch += yrel / 1000.0;
+		cam.rotation = Quatd(heading, pitch, 0);
 	}
 }
