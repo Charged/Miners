@@ -21,14 +21,11 @@ import charge.game.actors.playerspawn;
 
 class Car : Actor, Ticker
 {
-private:
+protected:
 	bool forward;
 	bool left;
 	bool right;
 	bool backward;
-
-	Point3d pos;
-	Quatd rot;
 
 	// Model
 	charge.gfx.rigidmodel.RigidModel c;
@@ -110,8 +107,6 @@ public:
 
 		car.material = new charge.phy.material.Material();
 		car.material.collision = &this.collide;
-
-		resetCar();
 	}
 
 	void collide(charge.phy.actor.Actor a1, charge.phy.actor.Actor a2)
@@ -175,10 +170,6 @@ public:
 		auto a = pow(cast(real)l, cast(uint)2);
 		v.scale(-0.015 * a);
 		car.addForce(v);
-
-		/* XXX don't hardcode this */
-		if (car.position.y < -50)
-			resetCar();
 	}
 
 	void move(int dir, bool v)
@@ -191,6 +182,16 @@ public:
 			right = v;
 		else if (dir == Backward)
 			backward = v;
+	}
+
+	void setPosition(ref Point3d pos)
+	{
+		car.setPosition(pos);
+	}
+
+	void setRotation(ref Quatd rot)
+	{
+		car.setRotation(rot);
 	}
 
 	void getPosition(out Point3d pos)
