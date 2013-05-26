@@ -103,6 +103,7 @@ private:
 	bool force;
 	bool inverse;
 
+	SysPool pool;
 	SysZipFile basePackage;
 
 	Car car;
@@ -124,9 +125,15 @@ public:
 		/* This will initalize Core and other important things */
 		super();
 
-		running = true;
+		if (!phyLoaded)
+			throw new Exception("Physics was not loaded missing ODE library?");
 
-		w = new GameWorld(SysPool());
+		basePackage = SysZipFile("base.chz");
+		if (basePackage is null)
+			throw new Exception("Could not find base.chz file");
+		pool = new SysPool(SysPool(), [basePackage]);
+
+		w = new GameWorld(pool);
 		sl = new GfxSimpleLight(w.gfx);
 		GfxDefaultTarget rt = GfxDefaultTarget();
 		cam = new GfxProjCamera(45.0, cast(double)rt.width / rt.height, 1, 150);
@@ -183,6 +190,7 @@ public:
 		breakApartAndNull(w);
 		delete r;
 		super.close();
+		pool.clean();
 	}
 
 protected:
