@@ -37,5 +37,6 @@ alias charge.game.actors.car.Car GameCar;
 alias charge.game.actors.playerspawn.PlayerSpawn GamePlayerSpawn;
 alias charge.game.actors.primitive.Primitive GamePrimitive;
 alias charge.game.actors.primitive.Cube GameCube;
+alias charge.game.actors.primitive.Static GameStatic;
 alias charge.game.actors.primitive.StaticCube GameStaticCube;
 alias charge.game.actors.primitive.StaticRigid GameStaticRigid;

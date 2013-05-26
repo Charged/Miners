@@ -79,12 +79,50 @@ public:
 	}
 }
 
-class StaticCube : Actor
+class Static : Actor
 {
 protected:
-	charge.gfx.cube.Cube gfx;
+	charge.gfx.world.Actor gfx;
 	charge.phy.actor.Static phy;
 
+public:
+	this(World w, Point3d pos, Quatd rot,
+	     charge.gfx.world.Actor gfx,
+	     charge.phy.actor.Static phy)
+	{
+		super(w);
+
+		this.gfx = gfx;
+		this.phy = phy;
+
+		gfx.position = pos;
+		gfx.rotation = rot;
+
+		phy.position = pos;
+		phy.rotation = rot;
+	}
+
+	~this()
+	{
+		assert(gfx is null);
+		assert(phy is null);
+	}
+
+	void breakApart()
+	{
+		breakApartAndNull(gfx);
+		breakApartAndNull(phy);
+		super.breakApart();
+	}
+
+	void setPosition(ref Point3d pos) { phy.setPosition(pos); gfx.setPosition(pos); }
+	void getPosition(out Point3d pos) { phy.getPosition(pos); }
+	void setRotation(ref Quatd rot) { phy.setRotation(rot); gfx.setRotation(rot); }
+	void getRotation(out Quatd rot) { phy.getRotation(rot); }
+}
+
+class StaticCube : Static
+{
 public:
 	this(World w, Point3d pos, Quatd rot)
 	{
@@ -93,61 +131,20 @@ public:
 
 	this(World w, Point3d pos, Quatd rot, double x, double y, double z)
 	{
-		super(w);
-		gfx = new charge.gfx.cube.Cube(w.gfx);
-		gfx.position = pos;
-		gfx.rotation = rot;
+		auto gfx = new charge.gfx.cube.Cube(w.gfx);
 		gfx.setSize(x, y, z);
-
-		phy = new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomCube(x, y, z));
-		phy.position = pos;
-		phy.rotation = rot;
-	}
-
-	~this()
-	{
-		assert(gfx is null);
-		assert(phy is null);
-	}
-
-	void breakApart()
-	{
-		breakApartAndNull(gfx);
-		breakApartAndNull(phy);
-		super.breakApart();
+		auto phy = new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomCube(x, y, z));
+		super(w, pos, rot, gfx, phy);
 	}
 }
 
-class StaticRigid : Actor
+class StaticRigid : Static
 {
-protected:
-	charge.gfx.rigidmodel.RigidModel gfx;
-	charge.phy.actor.Static phy;
-
 public:
 	this(World w, Point3d pos, Quatd rot, string gfxModel, string phyModel)
 	{
-		super(w);
-
-		gfx = charge.gfx.rigidmodel.RigidModel(w.gfx, gfxModel);
-		gfx.position = pos;
-		gfx.rotation = rot;
-
-		phy = new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomMesh(w.phy.pool, phyModel));
-		phy.position = pos;
-		phy.rotation = rot;
-	}
-
-	~this()
-	{
-		assert(gfx is null);
-		assert(phy is null);
-	}
-
-	void breakApart()
-	{
-		breakApartAndNull(gfx);
-		breakApartAndNull(phy);
-		super.breakApart();
+		super(w, pos, rot,
+		      charge.gfx.rigidmodel.RigidModel(w.gfx, gfxModel),
+		      new charge.phy.actor.Static(w.phy, new charge.phy.geom.GeomMesh(w.phy.pool, phyModel)));
 	}
 }
