@@ -17,7 +17,7 @@ import charge.game.gui.container;
 
 import miners.logo;
 import miners.types;
-import miners.runner;
+import miners.scene;
 import miners.options;
 import miners.defines;
 import miners.interfaces;
@@ -26,15 +26,12 @@ import miners.classic.data;
 import miners.classic.webpage;
 import miners.importer.texture;
 
-alias charge.game.startup.Task GameTask;
-alias charge.game.startup.StartupRunner GameStartupRunner;
-
 
 /**
- * StartupRunner specialized for Miners,
+ * StartupScene specialized for Miners,
  * launches main menu when it is done.
  */
-class StartupRunner : GameStartupRunner
+class StartupScene : charge.game.startup.StartupScene
 {
 public:
 	Router r;
@@ -92,15 +89,15 @@ protected:
 /**
  * Tiny helper class.
  */
-class OptionsTask : GameTask
+class OptionsTask : charge.game.startup.Task
 {
 protected:
 	Options opts;
-	StartupRunner startup;
+	StartupScene startup;
 
 
 public:
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		this.opts = opts;
 		this.startup = startup;
@@ -113,7 +110,7 @@ public:
  */
 class CreateLogo : OptionsTask
 {
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Creating logo";
 		super(startup, opts);
@@ -173,7 +170,7 @@ class CreateLogo : OptionsTask
  */
 class OptionsLoader : OptionsTask
 {
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading options";
 		super(startup, opts);
@@ -279,7 +276,7 @@ private:
 
 
 public:
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading default skin";
 		super(startup, opts);
@@ -373,7 +370,7 @@ private:
 
 
 public:
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading default terrain";
 		super(startup, opts);
@@ -455,7 +452,7 @@ class LoadModernTexture : OptionsTask
 {
 	mixin SysLogging;
 
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading Modern Texture";
 		super(startup, opts);
@@ -531,7 +528,7 @@ class LoadClassicTexture : OptionsTask
 {
 	mixin SysLogging;
 
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading Classic Texture";
 		super(startup, opts);
@@ -624,7 +621,7 @@ class LoadClassicIcons : OptionsTask
 {
 	int pos;
 
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading Classic Icons";
 		super(startup, opts);
@@ -689,7 +686,7 @@ class LoadClassicFont : OptionsTask
 		}
 	}
 
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading Classic Font";
 		super(startup, opts);
@@ -719,7 +716,7 @@ class LoadClassicFont : OptionsTask
  */
 class CreateTiledBackground : OptionsTask
 {
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Loading Background";
 		super(startup, opts);
@@ -791,7 +788,7 @@ private:
 
 
 public:
-	this(StartupRunner startup, Options opts)
+	this(StartupScene startup, Options opts)
 	{
 		text = "Connecting";
 		super(startup, opts);

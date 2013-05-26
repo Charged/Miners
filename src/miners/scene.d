@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module miners.runner;
+module miners.scene;
 
 import charge.charge;
 
@@ -10,9 +10,9 @@ import miners.interfaces;
 
 
 /**
- * Base class for lever viewers and game logic runners.
+ * Base class for lever viewers and game logic scenes.
  */
-class GameRunnerBase : Runner
+class GameSceneBase : Scene
 {
 public:
 	Router r;

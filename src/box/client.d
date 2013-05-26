@@ -11,16 +11,16 @@ import box.network;
 
 
 /**
- * Client runner.
+ * Client scene.
  */
-class ClientRunner : GameRunner, NetConnectionListener
+class ClientScene : GameScene, NetConnectionListener
 {
 public:
 	World w;
 
 	NetClient client;
 
-	GameRouter r;
+	GameSceneManager r;
 	GfxRenderer renderer;
 	GfxCamera cam;
 	GfxSimpleLight light;
@@ -38,9 +38,9 @@ private:
 
 
 public:
-	this(GameRouter r, string address, ushort port)
+	this(GameSceneManager r, string address, ushort port)
 	{
-		super(GameRunner.Type.Game);
+		super(Type.Game);
 		this.r = r;
 
 		client = new NetClient(this);

@@ -12,7 +12,7 @@ import miners.types;
 
 /**
  * Holds settings and common resources that are shared between
- * multiple runners, worlds & actors.
+ * multiple scenes, worlds & actors.
  */
 class Options
 {

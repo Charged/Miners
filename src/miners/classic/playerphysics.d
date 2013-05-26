@@ -79,7 +79,7 @@ public:
 		FULL,   // Obsidian
 	];
 
-	// Initial values not really used and overwritten by ClassicRunner.
+	// Initial values not really used and overwritten by ClassicScene.
 	int speedRun = 1000;
 	int speedWalk = 43;
 

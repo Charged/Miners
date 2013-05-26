@@ -12,7 +12,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class PauseMenu : MenuRunnerBase
+class PauseMenu : MenuSceneBase
 {
 private:
 	const string header = `Options`;
@@ -44,12 +44,12 @@ effect you need to restart Charged-Miners.`;
 
 	const spacerStr = "                                               ";
 
-	Runner partRunner;
+	Scene partScene;
 
 public:
-	this(Router r, Options opts, Runner part)
+	this(Router r, Options opts, Scene part)
 	{
-		this.partRunner = part;
+		this.partScene = part;
 
 		auto mb = new MenuBase(header);
 		auto t = new Text(mb, 0, 0, spacerStr);
@@ -104,8 +104,8 @@ public:
 
 	void other(Button b)
 	{
-		if (partRunner !is null) {
-			r.deleteMe(partRunner);
+		if (partScene !is null) {
+			r.deleteMe(partScene);
 			r.displayClassicMenu();
 		}
 

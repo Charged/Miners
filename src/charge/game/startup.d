@@ -1,28 +1,28 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 /**
- * Source file for StartupRunner.
+ * Source file for StartupScene.
  */
 module charge.game.startup;
 
 import charge.charge;
 
-import charge.game.runner;
+import charge.game.scene;
 
 
 /**
- * Runner that runs tasks and displays progress.
+ * Scene that runs tasks and displays progress.
  *
  * Often used at startup to load several things at
  * the same time.
  */
-class StartupRunner : Runner
+class StartupScene : Scene
 {
 protected:
 	string[] errors;
 
 private:
-	Router r;
+	SceneManager r;
 
 	mixin SysLogging;
 	CtlKeyboard keyboard;
@@ -36,7 +36,7 @@ private:
 	Vector!(Task) signaled;
 
 public:
-	this(Router r)
+	this(SceneManager r)
 	{
 		super(Type.Menu);
 		this.r = r;
@@ -243,13 +243,13 @@ protected:
 abstract class Task
 {
 protected:
-	StartupRunner startup;
+	StartupScene startup;
 	int completed;
 	string text;
 
 
 public:
-	this(StartupRunner startup)
+	this(StartupScene startup)
 	{
 		this.startup = startup;
 	}

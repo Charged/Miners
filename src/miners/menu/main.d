@@ -10,7 +10,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class MainMenu : MenuRunnerBase
+class MainMenu : MenuSceneBase
 {
 private:
 	Text te;

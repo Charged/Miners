@@ -21,7 +21,7 @@ import miners.skin;
 import miners.types;
 import miners.error;
 import miners.world;
-import miners.runner;
+import miners.scene;
 import miners.defines;
 import miners.startup;
 import miners.options;
@@ -37,7 +37,7 @@ import miners.menu.pause;
 import miners.menu.classic;
 import miners.menu.blockselector;
 import miners.classic.world;
-import miners.classic.runner;
+import miners.classic.scene;
 import miners.importer.parser;
 import miners.importer.network;
 
@@ -47,7 +47,7 @@ static import miners.builder.classic;
 /**
  * Main hub of the minecraft game.
  */
-class Game : GameRouterApp, Router
+class Game : GameSceneManagerApp, Router
 {
 private:
 	/** Regexp for extracting information out of a mc url */
@@ -70,7 +70,7 @@ private:
 
 	SkinDownloader skin;
 
-	DebugRunner dr;
+	DebugScene dr;
 
 	GfxDraw d;
 
@@ -124,7 +124,7 @@ public:
 			displayError(e, true);
 		}
 
-		manageRunners();
+		manageScenes();
 
  		d = new GfxDraw();
 	}
@@ -136,11 +136,11 @@ public:
 
 		deleteAll();
 
-		manageRunners();
+		manageScenes();
 
 		deleteAll();
 
-		manageRunners();
+		manageScenes();
 
 		if (skin !is null) {
 			skin.close();
@@ -182,7 +182,7 @@ protected:
 	{
 		// This needs to be done first,
 		// so errors messages can be displayed.
-		BackgroundRunner br = new BackgroundRunner(opts);
+		BackgroundScene br = new BackgroundScene(opts);
 		push(br);
 
 		auto p = Core().properties;
@@ -198,11 +198,11 @@ protected:
 		opts.aa ~= &rm.setAa;
 		rm.setAa(opts.aa());
 
-		// Always create the debug runner,
+		// Always create the debug scene,
 		// only use it on debug builds.
-		dr = new DebugRunner(this);
+		dr = new DebugScene(this);
 		opts.showDebug ~= &showDebug;
-		// Will push the runner now if debug build.
+		// Will push the scene now if debug build.
 		debug { opts.showDebug = true; }
 
 		// Setup the skin loader.
@@ -212,7 +212,7 @@ protected:
 		opts.getSkin = &skin.getSkin;
 		sysReference(&defSkin, null);
 
-		return push(new StartupRunner(this, opts, &doneStartup));
+		return push(new StartupScene(this, opts, &doneStartup));
 	}
 
 	void doneStartup()
@@ -500,25 +500,25 @@ protected:
 
 	/*
 	 *
-	 * Managing runners functions.
+	 * Managing scenes functions.
 	 *
 	 */
 
 
 	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
 	{
-		auto r = new ClassicRunner(this, opts, cc, x, y, z, data);
+		auto r = new ClassicScene(this, opts, cc, x, y, z, data);
 		push(r);
 	}
 
 	void loadLevelClassic(string level)
 	{
-		Runner r;
+		Scene r;
 
 		if (level is null)
-			r = new ClassicRunner(this, opts);
+			r = new ClassicScene(this, opts);
 		else if (isfile(level))
-			r = new ClassicRunner(this, opts, level);
+			r = new ClassicScene(this, opts, level);
 		else
 			throw new GameException("Level must be a file", null, false);
 
@@ -544,7 +544,7 @@ protected:
 
 	}
 
-	void displayClassicPauseMenu(Runner part)
+	void displayClassicPauseMenu(Scene part)
 	{
 		push(new PauseMenu(this, opts, part));
 	}

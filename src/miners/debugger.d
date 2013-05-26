@@ -18,7 +18,7 @@ import miners.interfaces;
 /**
  * A debug display overlay.
  */
-class DebugRunner : Runner
+class DebugScene : Scene
 {
 protected:
 	Router router;

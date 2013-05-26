@@ -326,9 +326,9 @@ protected:
 }
 
 /**
- * A helper runner that manages a UpdateDownloader
+ * A helper scene that manages a UpdateDownloader
  */
-abstract class UpdateRunner : MenuRunner
+abstract class UpdateScene : MenuScene
 {
 protected:
 	UpdateDownloader ud;

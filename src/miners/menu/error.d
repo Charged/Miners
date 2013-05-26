@@ -11,7 +11,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class InfoMenu : MenuRunnerBase
+class InfoMenu : MenuSceneBase
 {
 private:
 	Router r;

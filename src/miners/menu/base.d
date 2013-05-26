@@ -9,7 +9,7 @@ import miners.options;
 import miners.interfaces;
 
 
-class MenuRunnerBase : GameMenuRunner
+class MenuSceneBase : GameMenuScene
 {
 public:
 	Router r;
@@ -26,7 +26,7 @@ public:
 
 	void escapePressed()
 	{
-		// Close this runner
+		// Close this scene
 		r.deleteMe(this);
 	}
 }

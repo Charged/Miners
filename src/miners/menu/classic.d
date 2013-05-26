@@ -52,7 +52,7 @@ public:
 /**
  * Displays connection status for a Classic connection.
  */
-class ClassicConnectingMenu : MenuRunnerBase, ClientListener
+class ClassicConnectingMenu : MenuSceneBase, ClientListener
 {
 private:
 	ClassicServerInfo csi;
@@ -69,7 +69,7 @@ public:
 	/**
 	 * Create a connection from the server info give, displaying
 	 * the connection status as it is made finally creating the
-	 * ClassicRunner once a level is loaded.
+	 * ClassicScene once a level is loaded.
 	 */
 	this(Router r, Options opts, ClassicServerInfo csi)
 	{
@@ -242,7 +242,7 @@ protected:
  */
 
 
-class WebpageInfoMenu : MenuRunnerBase, ClassicWebpageListener
+class WebpageInfoMenu : MenuSceneBase, ClassicWebpageListener
 {
 private:
 	ClassicServerInfo csi;

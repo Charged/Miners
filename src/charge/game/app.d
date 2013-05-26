@@ -17,7 +17,7 @@ import charge.gfx.sync;
 import charge.gfx.gfx;
 import charge.sys.tracker;
 import charge.sys.resource;
-import charge.game.runner;
+import charge.game.scene;
 
 
 abstract class App
@@ -176,7 +176,7 @@ private:
 	void do_idle(long time) { idleTime.start(); idle(time); idleTime.stop(); }
 }
 
-abstract class RouterApp : SimpleApp, Router
+abstract class SceneManagerApp : SimpleApp, SceneManager
 {
 protected:
 	bool fastRender = true; //< Try to render as fast as possible.
@@ -184,11 +184,11 @@ protected:
 private:
 	GfxSync curSync;
 
-	Vector!(Runner) vec;
-	Vector!(Runner) del;
-	Runner currentInput;
+	Vector!(Scene) vec;
+	Vector!(Scene) del;
+	Scene currentInput;
 
-	bool dirty; //< Do we need to manage runners.
+	bool dirty; //< Do we need to manage scenes.
 	bool built; //< Have we built this logic pass.
 
 	alias bool delegate() BuilderDg;
@@ -212,7 +212,7 @@ public:
 	{
 		while(vec.length || del.length) {
 			deleteAll();
-			manageRunners();
+			manageScenes();
 		}
 
 		super.close();
@@ -232,7 +232,7 @@ public:
 		int i = cast(int)vec.length;
 		foreach_reverse(r; vec) {
 			i--;
-			if (r.flags & Runner.Flag.Blocker)
+			if (r.flags & Scene.Flag.Blocker)
 				break;
 		}
 
@@ -249,12 +249,12 @@ public:
 		// the builders once per frame.
 		built = false;
 
-		manageRunners();
+		manageScenes();
 
 		foreach_reverse(r; vec) {
 			r.logic();
 
-			if (r.flags & Runner.Flag.Blocker)
+			if (r.flags & Scene.Flag.Blocker)
 				break;
 		}
 	}
@@ -314,30 +314,30 @@ public:
 		running = false;
 	}
 
-	void push(Runner r)
+	void push(Scene r)
 	{
 		assert(r !is null);
 
-		// Remove and then reinsert the runner on top.
+		// Remove and then reinsert the scene on top.
 		remove(r);
 
-		if (r.flags & Runner.Flag.AlwaysOnTop)
+		if (r.flags & Scene.Flag.AlwaysOnTop)
 			return vec ~= r;
 
 		int i = cast(int)vec.length;
-		for(--i; (i >= 0) && (vec[i].flags & Runner.Flag.AlwaysOnTop); i--) { }
-		// should be placed after the first non AlwaysOnTop runner.
+		for(--i; (i >= 0) && (vec[i].flags & Scene.Flag.AlwaysOnTop); i--) { }
+		// should be placed after the first non AlwaysOnTop scene.
 		i++;
 
 		// Might be moved, but also covers the case where it is empty.
 		vec ~= r;
-		for (Runner o, n = r; i < vec.length; i++, n = o) {
+		for (Scene o, n = r; i < vec.length; i++, n = o) {
 			o = vec[i];
 			vec[i] = n;
 		}
 	}
 
-	void remove(Runner r)
+	void remove(Scene r)
 	{
 		vec.remove(r);
 		dirty = true;
@@ -353,14 +353,14 @@ public:
 		builders.remove(dg);
 	}
 
-	void deleteMe(Runner r)
+	void deleteMe(Scene r)
 	{
 		if (r is null)
 			return;
 
 		remove(r);
 
-		// Don't delete a runner already on the list
+		// Don't delete a scene already on the list
 		foreach(ru; del)
 			if (ru is r)
 				return;
@@ -373,31 +373,31 @@ public:
 			deleteMe(r);
 	}
 
-	final void manageRunners()
+	final void manageScenes()
 	{
 		if (!dirty)
 			return;
 		dirty = false;
 
-		Runner newRunner;
+		Scene newScene;
 
 		foreach_reverse(r; vec) {
 			assert(r !is null);
 
-			if (!(r.flags & Runner.Flag.TakesInput))
+			if (!(r.flags & Scene.Flag.TakesInput))
 				continue;
-			newRunner = r;
+			newScene = r;
 			break;
 		}
 
 		// If there is nobody to take the input we quit the game.
-		if (newRunner is null)
+		if (newScene is null)
 			stop();
 
-		if (currentInput !is newRunner) {
+		if (currentInput !is newScene) {
 			if (currentInput !is null)
 				currentInput.dropControl;
-			currentInput = newRunner;
+			currentInput = newScene;
 			if (currentInput !is null)
 				currentInput.assumeControl;
 		}
@@ -406,7 +406,7 @@ public:
 		del.removeAll();
 		foreach(r; tmp) {
 			r.close;
-			// XXX Change runners so this isn't needed.
+			// XXX Change scenes so this isn't needed.
 			delete r;
 		}
 	}

@@ -1,7 +1,7 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 /**
- * Source file for BackgroundRunner.
+ * Source file for BackgroundScene.
  */
 module charge.game.background;
 
@@ -11,13 +11,13 @@ import charge.gfx.draw;
 import charge.gfx.target;
 import charge.gfx.texture;
 
-import charge.game.runner;
+import charge.game.scene;
 
 
 /**
  * Only used to display something when nothing is being runned.
  */
-class BackgroundRunner : Runner
+class BackgroundScene : Scene
 {
 public:
 	Color4f color;

@@ -1,17 +1,17 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 /**
- * Source file for Runner base class and Router interface.
+ * Source file for Scene base class and SceneManager interface.
  */
-module charge.game.runner;
+module charge.game.scene;
 
 import charge.gfx.target;
 
 
 /**
- * A game runner often is a level logic or menu.
+ * A scene often is a level, menu overlay or a loading screen.
  */
-class Runner
+class Scene
 {
 public:
 	enum Flag {
@@ -46,7 +46,7 @@ public:
 	abstract void logic();
 
 	/**
-	 * Render view of this runner into target.
+	 * Render view of this scene into target.
 	 */
 	abstract void render(RenderTarget rt);
 
@@ -61,7 +61,7 @@ public:
 	abstract void dropControl();
 
 	/**
-	 * Shutdown this runner.
+	 * Shutdown this scene.
 	 */
 	abstract void close();
 }
@@ -69,7 +69,7 @@ public:
 /**
  * A interface back to the main controller, often the main game loop.
  */
-interface Router
+interface SceneManager
 {
 public:
 	/**
@@ -78,19 +78,19 @@ public:
 	void quit();
 
 	/**
-	 * Push this runner to top of the stack.
+	 * Push this scene to top of the stack.
 	 */
-	void push(Runner r);
+	void push(Scene r);
 
 	/**
-	 * Remove this runner from the stack.
+	 * Remove this scene from the stack.
 	 */
-	void remove(Runner r);
+	void remove(Scene r);
 
 	/**
-	 * The given runner wants to be deleted.
+	 * The given scene wants to be deleted.
 	 */
-	void deleteMe(Runner r);
+	void deleteMe(Scene r);
 
 	/**
 	 * Add a callback to be run on idle time.

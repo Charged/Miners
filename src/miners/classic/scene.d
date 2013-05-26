@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module miners.classic.runner;
+module miners.classic.scene;
 
 import std.string : format, find;
 import std.math : PI, PI_2;
@@ -14,7 +14,7 @@ import charge.game.gui.text;
 import charge.game.gui.textbased;
 
 import miners.types;
-import miners.runner;
+import miners.scene;
 import miners.options;
 import miners.console;
 import miners.interfaces;
@@ -37,9 +37,9 @@ import miners.importer.network;
 
 
 /**
- * Classic runner
+ * Classic scene
  */
-class ClassicRunner : GameRunnerBase, ClientListener
+class ClassicScene : GameSceneBase, ClientListener
 {
 private:
 	mixin SysLogging;
@@ -246,7 +246,7 @@ public:
 
 	/*
 	 *
-	 * Runner functions.
+	 * Scene functions.
 	 *
 	 */
 
@@ -289,7 +289,7 @@ public:
 		// Yay
 		cam.position = pp.movePlayer(cam.position, camHeading);
 
-		// From BaseRunner class.
+		// From BaseScene class.
 		w.tick();
 		centerMap();
 

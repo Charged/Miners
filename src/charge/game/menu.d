@@ -1,7 +1,7 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 /**
- * Source file for MenuRunner.
+ * Source file for MenuScene.
  */
 module charge.game.menu;
 
@@ -16,7 +16,7 @@ import charge.ctl.input : Input;
 import charge.ctl.mouse : Mouse;
 import charge.ctl.keyboard : Keyboard;
 
-import charge.game.runner : Runner, Router;
+import charge.game.scene : Scene, SceneManager;
 import charge.game.gui.container : TextureContainer;
 import charge.game.gui.input : InputHandler;
 
@@ -27,7 +27,7 @@ alias charge.sys.resource.reference reference;
 /**
  * Base class for implementing menus.
  */
-abstract class MenuRunner : Runner
+abstract class MenuScene : Scene
 {
 protected:
 	TextureTarget menuTexture;

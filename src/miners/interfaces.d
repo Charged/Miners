@@ -5,23 +5,22 @@ module miners.interfaces;
 import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
-static import charge.game.runner;
+static import charge.game.scene;
 
 import miners.types;
 public import miners.classic.interfaces : ClassicConnection = Connection;
 
-alias charge.game.runner.Runner Runner;
-alias charge.game.runner.Router GameRouter;
+alias charge.game.scene.Scene Scene;
 
 
 /**
  * Specialized router for Miners.
  */
-interface Router : GameRouter
+interface Router : charge.game.scene.SceneManager
 {
 	/*
 	 *
-	 * Runner related.
+	 * Scene related.
 	 *
 	 */
 
@@ -39,7 +38,7 @@ interface Router : GameRouter
 	void loadLevelClassic(string name);
 
 	/**
-	 * Start a classic runner listening to the given connection.
+	 * Start a classic scene listening to the given connection.
 	 */
 	void connectedTo(ClassicConnection cc,
 	                 uint x, uint y, uint z,
@@ -54,7 +53,7 @@ interface Router : GameRouter
 
 
 	/**
-	 * Shows the main menu, overlays the current runner.
+	 * Shows the main menu, overlays the current scene.
 	 */
 	void displayMainMenu();
 
@@ -66,7 +65,7 @@ interface Router : GameRouter
 	/**
 	 * See above, but specialized for classic.
 	 */
-	void displayClassicPauseMenu(Runner part);
+	void displayClassicPauseMenu(Scene part);
 
 	/**
 	 * Display a generic info menu.
@@ -123,7 +122,7 @@ interface Router : GameRouter
 	 * Displays a error message menu, if panic is true the
 	 * only the only thing to do is close the game.
 	 *
-	 * Closes any other menu and overlays the current runner.
+	 * Closes any other menu and overlays the current scene.
 	 */
 	void displayError(Exception e, bool panic);
 

@@ -16,8 +16,8 @@ If you want to look up math related things look at the
 @link Math Math group @endlink.
 @n@n
 For Charged Miners classic a good as place as any is the
-@link miners.classic.runner.ClassicRunner ClassicRunner @endlink
-@link src/miners/classic/runner.d [code] @endlink which holds most of the
+@link miners.classic.scene.ClassicScene ClassicScene @endlink
+@link src/miners/classic/scene.d [code] @endlink which holds most of the
 gameplay logic for Charged Miners and links to the other parts of it.
 */
 

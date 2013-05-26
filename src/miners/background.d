@@ -5,7 +5,6 @@ module miners.background;
 import charge.charge;
 
 import miners.types;
-import miners.runner;
 import miners.options;
 
 
@@ -13,7 +12,7 @@ import miners.options;
  * Used during and after startup has completed. Deals with not all resources
  * being available found via the initOptions function.
  */
-class BackgroundRunner : GameBackgroundRunner
+class BackgroundScene : GameBackgroundScene
 {
 private:
 	Options opts;

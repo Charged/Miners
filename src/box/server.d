@@ -8,14 +8,14 @@ import box.network;
 
 
 /**
- * Server runner.
+ * Server scene.
  */
-class ServerRunner : GameRunner, NetConnectionListener
+class ServerScene : GameScene, NetConnectionListener
 {
 public:
 	World w;
 
-	GameRouter r;
+	GameSceneManager r;
 	NetServer server;
 	NetConnection con;
 
@@ -30,9 +30,9 @@ private:
 
 
 public:
-	this(GameRouter r, ushort port)
+	this(GameSceneManager r, ushort port)
 	{
-		super(GameRunner.Type.Game);
+		super(Type.Game);
 		this.r = r;
 		server = new NetServer(port, this);
 		l.info("Listening on port %s", port);

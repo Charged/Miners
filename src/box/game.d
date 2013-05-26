@@ -11,7 +11,7 @@ import box.server;
 /**
  * Main hub of the box game.
  */
-class Game : GameRouterApp
+class Game : GameSceneManagerApp
 {
 private:
 	mixin SysLogging;
@@ -35,9 +35,9 @@ public:
 			throw new Exception("Failed to load ODE");
 
 		if (!server)
-			push(new ClientRunner(this, address, port));
+			push(new ClientScene(this, address, port));
 		else
-			push(new ServerRunner(this, port));
+			push(new ServerScene(this, port));
 	}
 
 	void close()

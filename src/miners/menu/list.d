@@ -20,7 +20,7 @@ import miners.interfaces;
 import miners.menu.base;
 
 
-class ClassicServerListMenu : MenuRunnerBase
+class ClassicServerListMenu : MenuSceneBase
 {
 private:
 	ListView lv;
@@ -356,13 +356,13 @@ protected:
 
 
 		{
-			int runnerLength = h - buttonSize * 2;
+			int sceneLength = h - buttonSize * 2;
 			int l, offset;
 			if (csis.length <= rows) {
-				l = runnerLength;
+				l = sceneLength;
 			} else {
-				l = cast(int)(runnerLength * rows / cast(float)csis.length);
-				offset = cast(int)((runnerLength - l) * (start / cast(float)(csis.length - rows)));
+				l = cast(int)(sceneLength * rows / cast(float)csis.length);
+				offset = cast(int)((sceneLength - l) * (start / cast(float)(csis.length - rows)));
 			}
 
 			int x1 = w - buttonSize;

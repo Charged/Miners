@@ -12,7 +12,7 @@ import miners.classic.data;
 
 alias void delegate(ubyte) SelectedDg;
 
-class ClassicBlockMenu : MenuRunnerBase
+class ClassicBlockMenu : MenuSceneBase
 {
 private:
 	const string header = `Select Block`;
