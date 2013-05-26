@@ -16,20 +16,28 @@ static import charge.phy.cube;
 import charge.game.world;
 
 
-class Cube : Actor, Ticker
+class Primitive : Actor, Ticker
 {
 protected:
-	charge.gfx.cube.Cube gfx;
-	charge.phy.cube.Cube phy;
+	charge.gfx.world.Actor gfx;
+	charge.phy.actor.Body phy;
 
 public:
-	this(World w)
+	this(World w, Point3d pos, Quatd rot,
+	     charge.gfx.world.Actor gfx,
+	     charge.phy.actor.Body phy)
 	{
 		super(w);
 		w.addTicker(this);
 
-		gfx = new charge.gfx.cube.Cube(w.gfx);
-		phy = new charge.phy.cube.Cube(w.phy);
+		this.gfx = gfx;
+		this.phy = phy;
+
+		gfx.position = pos;
+		gfx.rotation = rot;
+
+		phy.position = pos;
+		phy.rotation = rot;
 	}
 
 	~this()
@@ -56,6 +64,19 @@ public:
 	void getPosition(out Point3d pos) { phy.getPosition(pos); }
 	void setRotation(ref Quatd rot) { phy.setRotation(rot); gfx.setRotation(rot); }
 	void getRotation(out Quatd rot) { phy.getRotation(rot); }
+}
+
+class Cube : Primitive
+{
+public:
+	this(World w, Point3d pos, Quatd rot)
+	{
+		super(w, pos, rot,
+		      new charge.gfx.cube.Cube(w.gfx),
+		      new charge.phy.cube.Cube(w.phy));
+
+		w.addTicker(this);
+	}
 }
 
 class StaticCube : Actor
