@@ -192,7 +192,7 @@ public:
 		assert(m is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(m);
 		super.breakApart();
@@ -205,7 +205,7 @@ public:
 		z = sz;
 	}
 
-	void cullAndPush(Cull cull, RenderQueue rq)
+	override void cullAndPush(Cull cull, RenderQueue rq)
 	{
 		auto v = cull.center - position;
 		rq.push(v.lengthSqrd, this);

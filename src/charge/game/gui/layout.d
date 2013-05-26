@@ -27,7 +27,7 @@ public:
 		this.spacing = spacing;
 	}
 
-	void repack()
+	override void repack()
 	{
 		w = minWidth;
 		h = minHeight;

@@ -50,9 +50,9 @@ public:
 protected:
 	TextureContainer container;
 
-	ushort videoRam[];
-	ushort fontRam[];
-	ushort paletteRam[];
+	ushort[] videoRam;
+	ushort[] fontRam;
+	ushort[] paletteRam;
 
 	DynamicTexture glyphs;
 
@@ -73,8 +73,8 @@ public:
 		container = new TextureContainer(w, h);
 		container.add(this);
 
-		paletteRam = defaultPaletteRam;
-		fontRam = defaultFontRam;
+		paletteRam = cast(ushort[])defaultPaletteRam;
+		fontRam = cast(ushort[])defaultFontRam;
 		videoRam = c.ram[0x8000 .. 0x8000 + numVram];
 
 		this.c = c;
@@ -122,11 +122,11 @@ protected:
 			break;
 
 		case LEM1802_MEM_MAP_FONT:
-			fontRam = c.getSliceSafe(b, numGlyphs*2, defaultFontRam);
+			fontRam = c.getSliceSafe(b, numGlyphs*2, cast(ushort[])defaultFontRam);
 			break;
 
 		case LEM1802_MEM_MAP_PALETTE:
-			paletteRam = c.getSliceSafe(b, numColors, defaultPaletteRam);
+			paletteRam = c.getSliceSafe(b, numColors, cast(ushort[])defaultPaletteRam);
 			break;
 
 		case LEM1802_SET_BORDER_COLOR:
@@ -138,7 +138,7 @@ protected:
 			auto dst = c.getSliceSafe(b, numGlyphs*2, null);
 			if (dst is null)
 				return;
-			dst[] = defaultFontRam;
+			dst[] = cast(ushort[])defaultFontRam;
 			break;
 
 		case LEM1802_MEM_DUMP_PALETTE:
@@ -146,7 +146,7 @@ protected:
 			auto dst = c.getSliceSafe(b, numColors, null);
 			if (dst is null)
 				return;
-			dst[] = defaultPaletteRam[];
+			dst[] = cast(ushort[])defaultPaletteRam[];
 			break;
 
 		default:
@@ -156,8 +156,8 @@ protected:
 	void notifyUnregister()
 	{
 		videoRam = null;
-		paletteRam = defaultPaletteRam;
-		fontRam = defaultFontRam;
+		paletteRam = cast(ushort[])defaultPaletteRam;
+		fontRam = cast(ushort[])defaultFontRam;
 	}
 
 	DcpuHwInfo* getHwInfo()
@@ -173,14 +173,14 @@ protected:
 	 */
 
 
-	void repack() {}
+	override void repack() {}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 		reference(&glyphs, null);
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		Color4f colors[16];
 		foreach(int i, p; paletteRam) {

@@ -5,15 +5,15 @@
  */
 module charge.util.memory;
 
-public import std.outofmemory : OutOfMemoryException;
+public import core.exception : onOutOfMemoryError;
 
 
 /**
  * Only use more expensive debugging memory code on debug builds.
  */
 debug {
-	static extern(C) void* charge_malloc_dbg(size_t size, char* file, uint line);
-	static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, char* file, uint line);
+	static extern(C) void* charge_malloc_dbg(size_t size, const(char)* file, uint line);
+	static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, const(char)* file, uint line);
 	static extern(C) void charge_free_dbg(void *ptr);
 	static extern(C) void* charge_malloc(size_t size);
 	static extern(C) void* charge_realloc(void *ptr, size_t size);
@@ -44,11 +44,11 @@ struct cMemoryArray(T)
 	/**
 	 * Allocate at least the same amount as the given array and copy.
 	 */
-	void allocCopy(T[] array)
+	void allocCopy(const(T)[] array)
 	{
 		if (len) {
 			if (!ensure(array.length))
-				throw new OutOfMemoryException();
+				onOutOfMemoryError();
 		} else {
 			length = array.length;
 		}
@@ -109,7 +109,7 @@ struct cMemoryArray(T)
 	size_t length(size_t newLen)
 	{
 		if (realloc(newLen) == null && newLen != 0)
-			throw new OutOfMemoryException();
+			onOutOfMemoryError();
 		return len;
 	}
 

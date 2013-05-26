@@ -23,7 +23,7 @@ public:
 		assert(phy is null);
 	}
 
-	void tick()
+	override void tick()
 	{
 		super.tick();
 		if (phy.position.y < -50) {
@@ -81,10 +81,9 @@ class Car : GameCar
 
 		car.carSlip2Factor = 0.004;
 		car.carSlip2Limit = 0.01;
-
 	}
 
-	void tick()
+	override void tick()
 	{
 		super.tick();
 		if (position.y < -50) {
@@ -150,9 +149,6 @@ public:
 		spl.position = Point3d(0.0, 5.0, 15.0);
 		spl.far = 150;
 
-		w.phy.setStepLength(10);
-
-
 		new GameStaticCube(w, Point3d(0.0, -5.0, 0.0), Quatd(), 200.0, 10.0, 200.0);
 
 		new GameStaticRigid(w, Point3d(0.0, 0.0, -15.0), Quatd(), "res/bath.bin", "res/bath.bin");
@@ -175,7 +171,7 @@ public:
 	{
 	}
 
-	void close()
+	override void close()
 	{
 		keyboard.up.disconnect(&this.keyUp);
 		keyboard.down.disconnect(&this.keyDown);
@@ -199,7 +195,7 @@ protected:
 		removable ~= t;
 	}
 
-	void logic()
+	override void logic()
 	{
 		w.tick();
 
@@ -237,7 +233,7 @@ protected:
 		cam.rotation = Quatd(angle, Vector3d.Up);
 	}
 
-	void render()
+	override void render()
 	{
 		GfxDefaultTarget rt = GfxDefaultTarget();
 		rt.clear();
@@ -246,7 +242,7 @@ protected:
 		rt.swap();
 	}
 
-	void network()
+	override void network()
 	{
 	}
 

@@ -21,11 +21,11 @@ public:
 	GfxRenderer ifr; // Inbuilt forward renderer
 	MinecraftDeferredRenderer mdr; // Special deferred renderer
 	MinecraftForwardRenderer mfr; // Special forward renderer
-	GfxRenderer rs[5]; // Null terminated list of renderer
-	TerrainBuildTypes rsbt[5]; // A list of build types for the renderers
-	char rss[5][]; // List of renderer names
+	GfxRenderer[5] rs; // Null terminated list of renderer
+	TerrainBuildTypes[5] rsbt; // A list of build types for the renderers
+	string[5] rss; // List of renderer names
 	TerrainBuildTypes bt; // Current build type
-	char[] s; // Current name of renderer
+	string s; // Current name of renderer
 	int num_renderers;
 	int current_renderer;
 
@@ -68,9 +68,9 @@ public:
 
 	~this()
 	{
-		delete ifr;
-		delete mfr;
-		delete mdr;
+		//delete ifr;
+		//delete mfr;
+		//delete mdr;
 	}
 
 	void switchRenderer()

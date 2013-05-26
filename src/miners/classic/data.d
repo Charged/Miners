@@ -11,7 +11,7 @@ import charge.math.color;
 struct ClassicBlockInfo {
 	bool placable;
 	bool selectable;
-	char[] name;
+	string name;
 }
 
 /**

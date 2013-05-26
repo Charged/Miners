@@ -6,7 +6,7 @@
 module charge.gfx.deferred;
 
 import std.math : pow, tan, fmin, fmax, PI;
-import std.string : toString;
+import stdx.string : toString;
 
 import charge.math.color;
 import charge.math.movable;
@@ -404,7 +404,7 @@ public:
 		delete deferredTarget;
 	}
 
-	void target(RenderTarget rt)
+	override void target(RenderTarget rt)
 	{
 		renderTarget = rt;
 
@@ -416,7 +416,7 @@ public:
 	}
 
 protected:
-	void render(Camera c, RenderQueue rq, World w)
+	override void render(Camera c, RenderQueue rq, World w)
 	{
 		Matrix4x4d view;
 		Matrix4x4d proj;
@@ -1168,7 +1168,7 @@ protected:
 		gluTexUnitDisable(GL_TEXTURE_2D, 1);
 		gluTexUnitDisable(GL_TEXTURE_2D, 0);
 
-		glPolygonOffset(1.f, 2048.0f);
+		glPolygonOffset(1.0f, 2048.0f);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 
 		// Set meatricies

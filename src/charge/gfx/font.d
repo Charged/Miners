@@ -45,7 +45,7 @@ private:
 	mixin Logging;
 
 public:
-	void draw(Draw d, int x, int y, string text, bool shaded = false)
+	void draw(Draw d, int x, int y, const(char)[] text, bool shaded = false)
 	{
 		if (x != 0 || y != 0) {
 			d.translate(x, y);
@@ -56,7 +56,7 @@ public:
 		}
 	}
 
-	void buildSize(string text, out uint width, out uint height)
+	void buildSize(const(char)[] text, out uint width, out uint height)
 	{
 		if (text is null)
 			return;
@@ -69,6 +69,7 @@ public:
 				break;
 			case '\n':
 				y++;
+				goto case '\r';
 			case '\r':
 				x = 0;
 				break;
@@ -83,7 +84,7 @@ public:
 		height = (y + 1) * this.height;
 	}
 
-	void render(DynamicTexture dt, string text)
+	void render(DynamicTexture dt, const(char)[] text)
 	{
 		GLint oldFbo;
 
@@ -201,7 +202,7 @@ protected:
 		reference(&tex, null);
 	}
 
-	void drawLayoutedText(string text, bool shaded)
+	void drawLayoutedText(const(char)[] text, bool shaded)
 	{
 		// This is all the state we need to setup,
 		// the rest is handled by draw or the render function.
@@ -231,7 +232,7 @@ protected:
 		glDisable(GL_BLEND);
 	}
 
-	void doLayoutLoop(string text, void delegate(int x, int y, char c) dg)
+	void doLayoutLoop(const(char)[] text, void delegate(int x, int y, char c) dg)
 	{
 		int x, y;
 		foreach(c; text) {
@@ -241,6 +242,7 @@ protected:
 				break;
 			case '\n':
 				y++;
+				goto case '\r';
 			case '\r':
 				x = 0;
 				break;

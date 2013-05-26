@@ -82,7 +82,7 @@ public:
 	/**
 	 * Get the compenet at coordinate x, y, return absolute position.
 	 */
-	Component at(int x, int y, inout int absX, inout int absY)
+	Component at(int x, int y, ref int absX, ref int absY)
 	{
 		if (x < 0 || y < 0 || x >= w || y >= h)
 			return null;
@@ -92,7 +92,7 @@ public:
 		return this;
 	}
 
-	void getAbsolutePosition(inout int absX, inout int absY)
+	void getAbsolutePosition(ref int absX, ref int absY)
 	{
 		if (parent !is null)
 			parent.getAbsolutePosition(absX, absY);

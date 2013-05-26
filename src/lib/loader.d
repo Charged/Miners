@@ -57,7 +57,7 @@ else
 class Library
 {
 public:
-	static Library loads(string[] files)
+	static Library loads(const(string[]) files)
 	{
 		foreach(filename; files) {
 			auto l = load(filename);

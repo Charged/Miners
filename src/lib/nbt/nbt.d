@@ -132,7 +132,7 @@ nbt_node* nbt_parse_file(FILE* fp);
 /*
  * The same as nbt_parse_file, but opens and closes the file for you.
  */
-nbt_node* nbt_parse_path(/+const+/ char* filename);
+nbt_node* nbt_parse_path(const(char)* filename);
 
 /*
  * Loads a NBT tree from a compressed block of memory (such as a chunk or a
@@ -142,7 +142,7 @@ nbt_node* nbt_parse_path(/+const+/ char* filename);
  * PROTIP: Memory map each individual region file, then call
  *         nbt_parse_compressed for chunks as needed.
  */
-nbt_node* nbt_parse_compressed(/+const+/ void* chunk_start, size_t length);
+nbt_node* nbt_parse_compressed(const(void)* chunk_start, size_t length);
 
 /*
  * Dumps a tree into a file. Check your damn error codes. This function should
@@ -176,7 +176,7 @@ struct buffer nbt_dump_compressed(/+const+/ nbt_node* tree,
  * occurs, NULL will be returned, and errno will be set to the appropriate
  * nbt_status. Please check your damn pointers.
  */
-nbt_node* nbt_parse(/+const+/ void* memory, size_t length);
+nbt_node* nbt_parse(const(void)* memory, size_t length);
 
 /*
  * Returns a NULL-terminated string as the ascii representation of the tree. If
@@ -185,7 +185,7 @@ nbt_node* nbt_parse(/+const+/ void* memory, size_t length);
  * 1) Check your damn pointers.
  * 2) Don't forget to free the returned pointer. Memory leaks are bad, mkay?
  */
-char* nbt_dump_ascii(/+const+/ nbt_node* tree);
+char* nbt_dump_ascii(const(nbt_node)* tree);
 
 /*
  * Returns a buffer representing the uncompressed tree in Notch's official
@@ -232,7 +232,7 @@ alias bool function(nbt_node* node, void* aux) nbt_visitor_t;
  * `aux' is an optional parameter which will be passed to your predicate from
  * the parent function.
  */
-alias bool function(/+const+/ nbt_node* node, void* aux) nbt_predicate_t;
+alias bool function(const(nbt_node)* node, void* aux) nbt_predicate_t;
 
 /*
  * Traverses the tree until a visitor says stop or all elements are exhausted.
@@ -252,7 +252,7 @@ bool nbt_map(nbt_node* tree, nbt_visitor_t, void* aux);
  * TODO: What if I want to keep a tree and all of its children? Do I need to
  * augment nbt_node with parent pointers?
  */
-nbt_node* nbt_filter(/+const+/ nbt_node* tree, nbt_predicate_t, void* aux);
+nbt_node* nbt_filter(const(nbt_node)* tree, nbt_predicate_t, void* aux);
 
 /*
  * The exact same as nbt_filter, except instead of returning a new tree, the
@@ -281,7 +281,7 @@ nbt_node* nbt_find(nbt_node* tree, nbt_predicate_t, void* aux);
  * just have to take my word for it that nbt_find DOES NOT modify the tree.
  * Feel free to cast as necessary.
  */
-nbt_node* nbt_find_by_name(nbt_node* tree, /+const+/ char* name);
+nbt_node* nbt_find_by_name(nbt_node* tree, const(char)* name);
 
 /*
  * Returns the first node with the "path" in the tree of `path'. If no such node
@@ -292,29 +292,29 @@ nbt_node* nbt_find_by_name(nbt_node* tree, /+const+/ char* name);
  * Remember, if multiple elements exist in a sublist which share the same name
  * (including ""), the first one will be chosen.
  */
-nbt_node* nbt_find_by_path(nbt_node* tree, /+const+/ char* path);
+nbt_node* nbt_find_by_path(nbt_node* tree, const(char)* path);
 
 /* Returns the number of nodes in the tree. */
-size_t nbt_size(/+const+/ nbt_node* tree);
+size_t nbt_size(const(nbt_node)* tree);
 
 /* TODO: More utilities as requests are made and patches contributed. */
 
                       /***** Utility Functions *****/
 
 /* Returns true if the trees are identical. */
-bool nbt_eq(/+const+/ nbt_node* /+restrict+/ a, /+const+/ nbt_node* /+restrict+/ b);
+bool nbt_eq(const(nbt_node)* /+restrict+/ a, const(nbt_node)* /+restrict+/ b);
 
 /*
  * Converts a type to a print-friendly string. The string is statically
  * allocated, and therefore does not have to be freed by the user.
 */
-/+const+/ char* nbt_type_to_string(nbt_type);
+const(char)* nbt_type_to_string(nbt_type);
 
 /*
  * Converts an error code into a print-friendly string. The string is statically
  * allocated, and therefore does not have to be freed by the user.
  */
-/+const+/ char* nbt_error_to_string(nbt_status);
+const(char)* nbt_error_to_string(nbt_status);
 
 
 extern (D):

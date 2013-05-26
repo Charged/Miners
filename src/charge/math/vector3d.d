@@ -56,12 +56,12 @@ public:
 		return p;
 	}
 
-	double opIndex(uint index)
+	double opIndex(uint index) const
 	{
 		return (&x)[index];
 	}
 
-	Vector3d opAdd(Vector3d vec)
+	Vector3d opAdd(Vector3d vec) const
 	{
 		return Vector3d(vec.x + x, vec.y + y, vec.z + z);
 	}
@@ -71,10 +71,10 @@ public:
 		x += vec.x;
 		y += vec.y;
 		z += vec.z;
-		return *this;
+		return this;
 	}
 
-	Vector3d opSub(Vector3d vec)
+	Vector3d opSub(Vector3d vec) const
 	{
 		return Vector3d(vec.x - x, vec.y - y, vec.z - z);
 	}
@@ -84,21 +84,21 @@ public:
 		x -= vec.x;
 		y -= vec.y;
 		z -= vec.z;
-		return *this;
+		return this;
 	}
 
-	Point3d opAdd(Point3d vec)
+	Point3d opAdd(Point3d vec) const
 	{
 		return Point3d(vec.x + x, vec.y + y, vec.z + z);
 	}
 
-	Vector3d opNeg()
+	Vector3d opNeg() const
 	{
 		Vector3d p = { -x, -y, -z };
 		return p;
 	}
 
-	Vector3d opMul(Vector3d vec)
+	Vector3d opMul(Vector3d vec) const
 	{
 		Vector3d p = {
 			y * vec.z - z * vec.y,
@@ -134,22 +134,22 @@ public:
 		z /= l;
 	}
 
-	double dot(Vector3d vector)
+	double dot(Vector3d vector) const
 	{
 		return x*vector.x + y*vector.y + z*vector.z;
 	}
 
-	double length()
+	double length() const
 	{
 		return sqrt(lengthSqrd());
 	}
 
-	double lengthSqrd()
+	double lengthSqrd() const
 	{
 		return x * x + y * y + z * z;
 	}
 
-	string toString()
+	string toString() const
 	{
 		return format("(%s, %s, %s)", x, y, z);
 	}

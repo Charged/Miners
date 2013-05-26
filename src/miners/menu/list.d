@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.list;
 
-import std.string : ifind;
+import std.string : indexOf, CaseSensitive;
 
 import lib.gl.gl;
 
@@ -83,7 +83,7 @@ public:
 		incArrays();
 	}
 
-	void repack()
+	override void repack()
 	{
 		w = 424; h = gfxDefaultFont.height + 4 + 4;
 	}
@@ -93,7 +93,7 @@ public:
 		this.lv = lv;
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		super.breakApart();
 
@@ -106,7 +106,7 @@ public:
 		lv = null;
 	}
 
-	void paint(GfxDraw d)
+	override void paint(GfxDraw d)
 	{
 		// XXX Mega hack
 		if (!inFocus) {
@@ -128,7 +128,7 @@ public:
 		super.paint(d);
 	}
 
-	void keyDown(CtlKeyboard k, int sym, dchar unicode, char[] str)
+	override void keyDown(CtlKeyboard k, int sym, dchar unicode, char[] str)
 	{
 		// Backspace, remove one character.
 		if (sym == 0x08) {
@@ -157,9 +157,9 @@ public:
 protected:
 	void update(char[] showing)
 	{
-		setText("Search " ~ showing);
+		setText("Search " ~ cast(string)showing);
 
-		lv.newSearch(typed.dup);
+		lv.newSearch(typed.idup);
 
 		repaint();
 	}
@@ -248,9 +248,9 @@ public:
 		assert(glyphs is null);
 	}
 
-	void repack() {}
+	override void repack() {}
 
-	void newSearch(char[] search)
+	void newSearch(string search)
 	{
 		if (search is null) {
 			csis = fullList;
@@ -258,14 +258,14 @@ public:
 		}
 
 		// Reuse old list, for faster search?
-		auto s = ifind(search, oldSearch) < 0 ? fullList : csis;
+		auto s = indexOf(search, oldSearch, CaseSensitive.no) < 0 ? fullList : csis;
 
 		// Create a new list to populate with matching servers.
 		csis = new ClassicServerInfo[fullList.length];
 
 		int i;
 		foreach(c; s) {
-			if (ifind(c.webName, search) < 0)
+			if (indexOf(c.webName, search, CaseSensitive.no) < 0)
 				continue;
 			csis[i++] = c;
 		}
@@ -289,7 +289,7 @@ public:
 
 
 protected:
-	void mouseDown(Mouse m, int x, int y, uint b)
+	override void mouseDown(Mouse m, int x, int y, uint b)
 	{
 		if (b != 1)
 			return;
@@ -332,7 +332,7 @@ protected:
 	 */
 
 
-	void paint(GfxDraw d)
+	override void paint(GfxDraw d)
 	{
 		makeResources();
 
@@ -454,7 +454,7 @@ protected:
 		gfxDefaultFont.render(glyphs, text);
 	}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 		sysReference(&glyphs, null);
 	}

@@ -60,7 +60,7 @@ public:
 		this.ratio = ratio;
 	}
 
-	void transform()
+	override void transform()
 	{
 		Matrix4x4d mat;
 
@@ -77,7 +77,7 @@ public:
 		glLoadMatrixd(mat.array.ptr);
 	}
 
-	Cull cull()
+	override Cull cull()
 	{
 		return new Cull(this);
 	}
@@ -118,7 +118,7 @@ public:
 		this.height = height;
 	}
 
-	void transform()
+	override void transform()
 	{
 		Matrix4x4d mat;
 
@@ -184,7 +184,7 @@ public:
 		this.rot = Quatd(PI/4, rot, 0);
 	}
 
-	void setRotation(ref Quatd rotation)
+	override void setRotation(ref Quatd rotation)
 	{
 		l.warn("Setting rotation on iso camera is bad!");
 	}

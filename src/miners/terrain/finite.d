@@ -104,7 +104,7 @@ public:
 		zStride = ySize * xSize;
 
 		sizeBlocks = xSize * ySize * zSize;
-		sizeData = xSize * yMetaSize * zSize;;
+		sizeData = xSize * yMetaSize * zSize;
 
 		store.length = sizeBlocks + sizeData;
 
@@ -123,7 +123,7 @@ public:
 		assert(vbos is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		if (vbos !is null)
 			unbuildAll();
@@ -145,7 +145,7 @@ public:
 	 */
 
 
-	final Block opIndex(int x, int y, int z)
+	override final Block opIndex(int x, int y, int z)
 	{
 		Block b;
 		if (x < 0 || y < 0 || z < 0)
@@ -164,7 +164,7 @@ public:
 		return b;
 	}
 
-	final Block opIndexAssign(Block b, int x, int y, int z)
+	override final Block opIndexAssign(Block b, int x, int y, int z)
 	{
 		if (x < 0 || y < 0 || z < 0)
 			return Block();
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Get the type of the block at coords.
 	 */
-	final ubyte getType(int x, int y, int z)
+	override final ubyte getType(int x, int y, int z)
 	{
 		if (x < 0 || y < 0 || z < 0)
 			return 0;
@@ -209,7 +209,7 @@ public:
 	/**
 	 * Set the block type at the given location.
 	 */
-	final ubyte setType(ubyte type, int x, int y, int z)
+	override final ubyte setType(ubyte type, int x, int y, int z)
 	{
 		if (x < 0 || y < 0 || z < 0)
 			return 0;
@@ -321,7 +321,7 @@ public:
 	/**
 	 * Mark the given volume as dirty and rebuilt the chunks there.
 	 */
-	void markVolumeDirty(int x, int y, int z, uint sx, uint sy, uint sz)
+	override void markVolumeDirty(int x, int y, int z, uint sx, uint sy, uint sz)
 	{
 		// We must mark all chunks that neighbor the changed area.
 		 x -= 1;  y -= 1;  z -= 1;
@@ -375,7 +375,7 @@ public:
 	/**
 	 * Set the center of the view circle.
 	 */
-	void setCenter(int xNew, int yNew, int zNew)
+	override void setCenter(int xNew, int yNew, int zNew)
 	{
 		xNew = imax(0, imin(xNumChunks-1, xNew));
 		yNew = imax(0, imin(yNumChunks-1, yNew));
@@ -398,12 +398,12 @@ public:
 	 *
 	 * XXX: Currently not implemented.
 	 */
-	void setViewRadii(int radii)
+	override void setViewRadii(int radii)
 	{
 
 	}
 
-	void setBuildType(TerrainBuildTypes type, string name)
+	override void setBuildType(TerrainBuildTypes type, string name)
 	{
 		if (currentBuildType == type)
 			return;
@@ -418,7 +418,7 @@ public:
 	/**
 	 * Start over from the begining when building "chunk" meshes.
 	 */
-	void resetBuild()
+	override void resetBuild()
 	{
 		xSaved = ySaved = zSaved = 0;
 	}
@@ -426,7 +426,7 @@ public:
 	/**
 	 * Build a single "chunk" mesh.
 	 */
-	bool buildOne()
+	override bool buildOne()
 	{
 		int x = xSaved;
 		int y = ySaved;
@@ -473,7 +473,7 @@ public:
 		return false;
 	}
 
-	void unbuildAll()
+	override void unbuildAll()
 	{
 		for (int x; x < xNumChunks; x++)
 			for (int z; z < zNumChunks; z++)

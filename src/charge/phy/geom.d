@@ -128,7 +128,7 @@ public:
 		assert(data is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		reference(&data, null);
 		super.breakApart();

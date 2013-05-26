@@ -5,6 +5,8 @@
  */
 module charge.sys.resource;
 
+import core.memory : GC;
+
 import std.file : read;
 import std.string : format;
 
@@ -82,10 +84,11 @@ private:
 	final void decRef()
 	{
 		if (--refcount == 0) {
-			if (name is null)
-				delete this;
-			else
+			if (name is null) {
+				GC.free(cast(void*)this);
+			} else {
 				pool.mark(uri, name);
+			}
 		}
 	}
 }
@@ -263,7 +266,7 @@ public:
 			marked = null;
 
 			foreach(k; keys)
-				map.remove(k.dup);
+				map.remove(k.idup);
 			foreach(v; values)
 				delete v;
 		}

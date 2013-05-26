@@ -68,7 +68,7 @@ public:
 		super(r, opts, header, errorTexts, txt, dg);
 	}
 
-	void escapePressed()
+	override void escapePressed()
 	{
 		if (panic)
 			r.quit();

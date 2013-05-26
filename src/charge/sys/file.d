@@ -48,12 +48,12 @@ abstract class BaseMemFile : File
 		this.mem = mem;
 	}
 
-	SDL_RWops* peekSDL()
+	override SDL_RWops* peekSDL()
 	{
 		return SDL_RWFromConstMem(mem.ptr, cast(int)mem.length);
 	}
 
-	void[] peekMem()
+	override void[] peekMem()
 	{
 		return mem;
 	}

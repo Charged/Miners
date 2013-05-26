@@ -6,6 +6,7 @@
 module charge.sys.memory;
 
 static import std.c.stdlib;
+import core.exception : onOutOfMemoryError;
 
 version(MemDump) {
 	import std.stdio : writefln;
@@ -17,7 +18,7 @@ private struct MemHeader
 {
 private:
 	size_t size;
-	char *file;
+	const(char)* file;
 	uint line;
 	uint magic;
 
@@ -38,13 +39,15 @@ public:
 
 	void* getData()
 	{
-		return &this[1];
+		return &(&this)[1];
 	}
 
 	static void* cAlloc(size_t size)
 	{
 		MemHeader *ret;
 		ret = cast(typeof(ret))std.c.stdlib.malloc(size + MemHeader.sizeof);
+		if (ret is null)
+			onOutOfMemoryError();
 
 		ret.size = size;
 		memory += size;
@@ -70,6 +73,9 @@ public:
 		mem.size = newSize;
 
 		mem = cast(MemHeader*)std.c.stdlib.realloc(mem, newSize + MemHeader.sizeof);
+		if (mem is null)
+			onOutOfMemoryError();
+
 		return mem.getData();
 	}
 
@@ -85,7 +91,7 @@ public:
 	}
 }
 
-static extern(C) void* charge_malloc_dbg(size_t size, char* file, uint line)
+static extern(C) void* charge_malloc_dbg(size_t size, const(char)* file, uint line)
 {
 	auto ret = MemHeader.cAlloc(size);
 	auto mem = MemHeader.fromData(ret);
@@ -99,7 +105,7 @@ static extern(C) void* charge_malloc_dbg(size_t size, char* file, uint line)
 	return ret;
 }
 
-static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, char* file, uint line)
+static extern(C) void* charge_realloc_dbg(void *ptr, size_t size, const(char)* file, uint line)
 {
 	auto ret = MemHeader.cRealloc(ptr, size);
 	auto mem = MemHeader.fromData(ret);

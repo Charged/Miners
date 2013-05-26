@@ -31,12 +31,12 @@ struct WorkspaceData
 	 */
 	void free()
 	{
-		cFree(cast(void*)this);
+		cFree(cast(void*)&this);
 	}
 
 	void zero()
 	{
-		(cast(ubyte*)this)[0 .. (*this).sizeof - (void*).sizeof] = 0;
+		(cast(ubyte*)(&this))[0 .. this.sizeof - (void*).sizeof] = 0;
 	}
 
 	/*
@@ -88,31 +88,31 @@ struct WorkspaceData
 	
 	bool filled(int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return tile[t].filled != 0;
 	}
 
 	bool filledOrType(ubyte type, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return tile[t].filled != 0 || t == type;
 	}
 
 	bool filledOrTypes(ubyte t1, ubyte t2, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return t == t1 || t == t2 || tile[t].filled != 0;
 	}
 
 	bool isType(ubyte t1, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return t == t1;
 	}
 
 	bool isTypes(ubyte t1, ubyte t2, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return t == t1 || t == t2;
 	}
 

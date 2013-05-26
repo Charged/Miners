@@ -2,11 +2,12 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.game;
 
-import std.file : isfile, isdir;
-import std.conv : toUint;
+import std.file : isFile, isDir;
 import std.stdio : writefln;
-import std.regexp : RegExp;
 import std.string : format;
+
+import stdx.conv : toUint;
+import stdx.regexp : RegExp;
 
 import lib.sdl.sdl;
 
@@ -128,7 +129,7 @@ public:
  		d = new GfxDraw();
 	}
 
-	void close()
+	override void close()
 	{
 		deleteMe(dr);
 		dr = null;
@@ -269,6 +270,7 @@ protected:
 
 				l.fatal("Unknown argument %s", args[i]);
 				writefln("Unknown argument %s", args[i]);
+				goto case;
 			case "-h":
 			case "-help":
 			case "--help":
@@ -318,7 +320,7 @@ protected:
 		checkHttpMcUrl();
 
 		auto csi = opts.classicServerInfo;
-		csi.webId = r[2];
+		csi.webId = r[2].idup;
 
 		opts.isClassicNetwork = true;
 		opts.isClassicHttp = true;
@@ -342,10 +344,10 @@ protected:
 		checkHttpMcUrl();
 
 		auto csi = opts.classicServerInfo;
-		csi.webId = r[5];
+		csi.webId = r[5].idup;
 
-		opts.username = r[1];
-		opts.password = r[3];
+		opts.username = r[1].idup;
+		opts.password = r[3].idup;
 
 		opts.isClassicNetwork = true;
 		opts.isClassicHttp = true;
@@ -370,12 +372,12 @@ protected:
 		checkHttpMcUrl();
 
 		auto csi = opts.classicServerInfo;
-		csi.hostname = r[1];
+		csi.hostname = r[1].idup;
 
 		if (r[5].length > 0)
-			csi.username = r[5];
+			csi.username = r[5].idup;
 		if (r[7].length > 0)
-			csi.verificationKey = r[7];
+			csi.verificationKey = r[7].idup;
 
 		try {
 			if (r[3].length > 0)
@@ -436,7 +438,7 @@ protected:
 		if (r.length < 2)
 			return false;
 
-		opts.playSessionCookie = r[1];
+		opts.playSessionCookie = r[1].idup;
 
 		opts.isClassicNetwork = true;
 
@@ -454,7 +456,7 @@ protected:
 		if (r.length < 2)
 			return false;
 
-		opts.launcherPath = r[1];
+		opts.launcherPath = r[1].idup;
 
 		l.info("LAUNCHER_PATH=%s", opts.launcherPath);
 
@@ -469,7 +471,7 @@ protected:
 	 */
 
 
-	void logic()
+	override void logic()
 	{
 		if (skin !is null)
 			skin.doTick();
@@ -477,7 +479,7 @@ protected:
 		super.logic();
 	}
 
-	void render(GfxWorld w, GfxCamera cam, GfxRenderTarget rt)
+	override void render(GfxWorld w, GfxCamera cam, GfxRenderTarget rt)
 	{
 		rm.render(w, cam, rt);
 	}
@@ -516,7 +518,7 @@ protected:
 
 		if (level is null)
 			r = new ClassicScene(this, opts);
-		else if (isfile(level))
+		else if (isFile(level))
 			r = new ClassicScene(this, opts, level);
 		else
 			throw new GameException("Level must be a file", null, false);
@@ -532,7 +534,7 @@ protected:
 	 */
 
 
-	void displayMainMenu()
+	override void displayMainMenu()
 	{
 		push(new MainMenu(this, opts));
 	}
@@ -543,57 +545,57 @@ protected:
 
 	}
 
-	void displayClassicPauseMenu(Scene part)
+	override void displayClassicPauseMenu(Scene part)
 	{
 		push(new PauseMenu(this, opts, part));
 	}
 
-	void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
+	override void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
 	{
 		push(new ClassicBlockMenu(this, opts, selectedDg));
 	}
 
-	void displayClassicMenu()
+	override void displayClassicMenu()
 	{
 		auto psc = opts.playSessionCookie;
 
 		push(new WebpageInfoMenu(this, opts, psc));
 	}
 
-	void displayClassicList(ClassicServerInfo[] csis)
+	override void displayClassicList(ClassicServerInfo[] csis)
 	{
 		push(new ClassicServerListMenu(this, opts, csis));
 	}
 
-	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
+	override void getClassicServerInfoAndConnect(ClassicServerInfo csi)
 	{
 		auto psc = opts.playSessionCookie;
 
 		push(new WebpageInfoMenu(this, opts, psc, csi));
 	}
 
-	void connectToClassic(string usr, string pwd, ClassicServerInfo csi)
+	override void connectToClassic(string usr, string pwd, ClassicServerInfo csi)
 	{
 		push(new WebpageInfoMenu(this, opts, usr, pwd, csi));
 	}
 
-	void connectToClassic(ClassicServerInfo csi)
+	override void connectToClassic(ClassicServerInfo csi)
 	{
 		push(new ClassicConnectingMenu(this, opts, csi));
 	}
 
-	void classicWorldChange(ClassicClientConnection cc)
+	override void classicWorldChange(ClassicClientConnection cc)
 	{
 		push(new ClassicConnectingMenu(this, opts, cc));
 	}
 
-	void displayInfo(string header, string[] texts,
-	                 string buttonText, void delegate() dg)
+	override void displayInfo(string header, string[] texts,
+	                          string buttonText, void delegate() dg)
 	{
 		push(new InfoMenu(this, opts, header, texts, buttonText, dg));
 	}
 
-	void displayError(Exception e, bool panic)
+	override void displayError(Exception e, bool panic)
 	{
 		// Always handle exception via the game exception.
 		auto ge = cast(GameException)e;
@@ -617,7 +619,7 @@ protected:
 		displayError(texts, ge.panic);
 	}
 
-	void displayError(string[] texts, bool panic)
+	override void displayError(string[] texts, bool panic)
 	{
 		push(new ErrorMenu(this, texts, panic));
 	}

@@ -5,9 +5,10 @@
  */
 module charge.gfx.material;
 
-import std.regexp : RegExp;
-import std.conv : toFloat, ConvError, ConvOverflowError;
+import std.conv : ConvException, ConvOverflowException;
 import std.string : format;
+import stdx.conv : toInt, toFloat;
+import stdx.regexp : RegExp;
 
 import lib.xml.xml;
 
@@ -161,14 +162,14 @@ public:
 		assert(texSafe is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		reference(&texSafe, null);
 		// Does not hold a reference
 		tex = null;
 	}
 
-	MaterialProperty[] getPropList()
+	override MaterialProperty[] getPropList()
 	{
 		static MaterialProperty[] list = [
 			{"tex", MaterialProperty.TEXTURE},
@@ -179,7 +180,7 @@ public:
 		return list;
 	}
 
-	bool setTexture(string name, Texture texture)
+	override bool setTexture(string name, Texture texture)
 	{
 		if (name is null)
 			return false;
@@ -203,7 +204,7 @@ public:
 		return true;
 	}
 
-	bool setColor3f(string name, Color3f color)
+	override bool setColor3f(string name, Color3f color)
 	{
 		if (name is null)
 			return false;
@@ -221,7 +222,7 @@ public:
 		return true;
 	}
 
-	bool setColor4f(string name, Color4f color)
+	override bool setColor4f(string name, Color4f color)
 	{
 		if (name is null)
 			return false;
@@ -240,7 +241,7 @@ public:
 		return true;
 	}
 
-	bool setOption(string name, bool option)
+	override bool setOption(string name, bool option)
 	{
 		switch(name) {
 			case "fake":
@@ -256,7 +257,7 @@ public:
 		return true;
 	}
 
-	bool getTexture(string name, out Texture tex)
+	override bool getTexture(string name, out Texture tex)
 	{
 		if (name is null)
 			return false;
@@ -272,7 +273,7 @@ public:
 		return true;
 	}
 
-	bool getColor3f(string name, out Color3f color)
+	override bool getColor3f(string name, out Color3f color)
 	{
 		if (name is null)
 			return false;
@@ -288,7 +289,7 @@ public:
 		return true;
 	}
 
-	bool getOption(string name, out bool option)
+	override bool getOption(string name, out bool option)
 	{
 		switch(name) {
 			case "fake":
@@ -396,9 +397,9 @@ public:
 			r.r = toFloat(p[1]);
 			r.g = toFloat(p[2]);
 			r.b = toFloat(p[3]);
-		} catch (ConvError ce) {
+		} catch (ConvOverflowException cof) {
 			return false;
-		} catch (ConvOverflowError cof) {
+		} catch (ConvException ce) {
 			return false;
 		}
 
@@ -416,9 +417,9 @@ public:
 			r.g = toFloat(p[2]);
 			r.b = toFloat(p[3]);
 			r.a = toFloat(p[4]);
-		} catch (ConvError ce) {
+		} catch (ConvOverflowException cof) {
 			return false;
-		} catch (ConvOverflowError cof) {
+		} catch (ConvException ce) {
 			return false;
 		}
 

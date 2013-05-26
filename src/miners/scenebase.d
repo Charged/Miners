@@ -50,15 +50,13 @@ public:
 	{
 	}
 
-	void close()
+	override void close()
 	{
 		breakApartAndNull(w);
 		r.removeBuilder(&this.build);
 	}
 
-	abstract void render(GfxRenderTarget rt);
-
-	void logic()
+	override void logic()
 	{
 		w.tick();
 
@@ -78,7 +76,7 @@ public:
 			return false;
 	}
 
-	void assumeControl()
+	override void assumeControl()
 	{
 		if (inControl)
 			return;
@@ -96,7 +94,7 @@ public:
 		inControl = true;
 	}
 
-	void dropControl()
+	override void dropControl()
 	{
 		if (!inControl)
 			return;

@@ -36,21 +36,21 @@ public:
 	{
 		dropControl();
 		if (root !is null)
-			root.notifyUnRegister(&unhookRoot);
+			rt_detachDisposeEvent(root, &unhookRoot);
 		if (keyboardFocus !is null)
-			keyboardFocus.notifyRegister(&unhookFocus);
+			rt_detachDisposeEvent(keyboardFocus, &unhookFocus);
 	}
 
 	void setRoot(Component c)
 	{
 		if (root !is null) {
-			root.notifyUnRegister(&unhookRoot);
+			rt_detachDisposeEvent(root, &unhookRoot);
 			root.input = null;
 		}
 		focus(null);
 		root = c;
 		if (root !is null) {
-			root.notifyRegister(&unhookRoot);
+			rt_attachDisposeEvent(root, &unhookRoot);
 			root.input = this;
 		}
 	}
@@ -58,10 +58,10 @@ public:
 	void focus(Component c)
 	{
 		if (keyboardFocus !is null)
-			keyboardFocus.notifyUnRegister(&unhookFocus);
+			rt_detachDisposeEvent(keyboardFocus, &unhookFocus);
 		keyboardFocus = c;
 		if (keyboardFocus !is null)
-			keyboardFocus.notifyRegister(&unhookFocus);
+			rt_attachDisposeEvent(keyboardFocus, &unhookFocus);
 	}
 
 	void unfocus(Component c)
@@ -186,3 +186,9 @@ private:
 		c.mouseUp(mouse, tx, ty, button);
 	}
 }
+
+private:
+// Used in place of Object.notifyRegister and Object.notifyUnRegister.
+alias void delegate(Object) DisposeEvt;
+extern (C) void  rt_attachDisposeEvent(Object obj, DisposeEvt evt);
+extern (C) void  rt_detachDisposeEvent(Object obj, DisposeEvt evt);

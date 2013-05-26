@@ -92,7 +92,7 @@ public:
 	}
 
 protected:
-	void renderLoop(GfxRenderQueue rq, GfxWorld w)
+	override void renderLoop(GfxRenderQueue rq, GfxWorld w)
 	{
 		Matrix4x4d view;
 		GfxRenderable r;
@@ -282,7 +282,7 @@ protected:
 		glUseProgram(0);
 	}
 
-	void renderShadowLoop(Point3d pos, GfxWorld w)
+	override void renderShadowLoop(Point3d pos, GfxWorld w)
 	{
 		auto cull = new GfxCull(pos);
 		auto rq = new GfxRenderQueue();
@@ -310,7 +310,7 @@ protected:
 		}
 	}
 
-	void renderLoop(GfxRenderQueue rq, GfxWorld w)
+	override void renderLoop(GfxRenderQueue rq, GfxWorld w)
 	{
 		GfxSimpleMaterial m;
 		GfxRenderable r;
@@ -391,7 +391,7 @@ public:
 	 * uv(i) - texture coordenate, i is sufixed for texture array versions.
 	 */
 
-	const char[] materialFragForward = "
+	const string materialFragForward = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -429,7 +429,7 @@ void main()
 }
 ";
 
-	const char[] materialFragForwardIndexed = "
+	const string materialFragForwardIndexed = "
 #version 120
 #extension GL_EXT_texture_array : require
 
@@ -468,7 +468,7 @@ void main()
 }
 ";
 
-	const char[] materialFragDeferred = "
+	const string materialFragDeferred = "
 #version 120
 #extension GL_EXT_texture_array : require
 
@@ -499,7 +499,7 @@ void main()
 	 * Both can be used with either renderer.
 	 */
 
-	const char[] materialVertCompactMesh = "
+	const string materialVertCompactMesh = "
 #version 120
 
 uniform vec4 normals[10];
@@ -526,7 +526,7 @@ void main()
 }
 ";
 
-	const char[] materialVertCompactMeshIndexed = "
+	const string materialVertCompactMeshIndexed = "
 #version 120
 
 varying vec3 normal;

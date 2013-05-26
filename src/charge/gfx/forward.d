@@ -124,7 +124,7 @@ public:
 	}
 
 protected:
-	void render(Camera c, RenderQueue rq, World w)
+	override void render(Camera c, RenderQueue rq, World w)
 	{
 		renderTarget.setTarget();
 

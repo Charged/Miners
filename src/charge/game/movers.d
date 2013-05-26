@@ -51,7 +51,7 @@ public:
 		m.position = Point3d();
 	}
 
-	void tick()
+	override void tick()
 	{
 		if (forward != backward) {
 			x += forward ? -1 : 1;
@@ -80,7 +80,7 @@ public:
 		this.fastScale = 0.6;
 	}
 
-	void tick()
+	override void tick()
 	{
 		Vector3d vec = Vector3d(0, 0, 0);
 

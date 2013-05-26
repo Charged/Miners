@@ -212,7 +212,8 @@ struct SyncData
 			a[0] = 1; // Unit.
 
 		c.setRotPosVel(a);
-		c.setRotation(Quatd(a[0], a[1], a[2], a[3]));
+		auto r = Quatd(a[0], a[1], a[2], a[3]);
+		c.setRotation(r);
 	}
 }
 

@@ -35,7 +35,7 @@ public:
 	/**
 	 * Can't set position the normal way on mobs.
 	 */
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		assert(false);
 	}
@@ -43,7 +43,7 @@ public:
 	/**
 	 * Can't set rotation the normal way on mobs.
 	 */
-	void setRotation(ref Quatd rot)
+	override void setRotation(ref Quatd rot)
 	{
 		assert(false);
 	}

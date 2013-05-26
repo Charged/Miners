@@ -6,9 +6,10 @@
 module charge.game.update;
 
 import std.file : read, write, exists;
-import std.regexp : RegExp;
-import std.string : splitlines, toString,format;
+import std.string : format;
 import std.stream : BufferedFile, FileMode;
+import stdx.regexp : RegExp;
+import stdx.string : splitlines, toString;
 
 import charge.net.download;
 
@@ -105,7 +106,7 @@ public:
 		return true;
 	}
 
-	static VersionTxt fromServer(char[] text)
+	static VersionTxt fromServer(const(char)[] text)
 	{
 		auto ver = new VersionTxt();
 		auto commentRegex = new RegExp(commentRegexStr);
@@ -122,29 +123,29 @@ public:
 				continue;
 
 			// Skip empty and comments lines
-			if (line.length == 0 || commentRegex.match(line).length > 0)
+			if (line.length == 0 || commentRegex.match(cast(string)line).length > 0)
 				continue;
 
 			if (!nameFound) {
-				auto m = nameRegex.match(line);
+				auto m = nameRegex.match(cast(string)line);
 				if (m.length < 2)
 					throw new Exception("Parse error, line: " ~ .toString(i));
 				nameFound = true;
-				name = m[1].dup;
+				name = m[1].idup;
 			} else {
-				auto m = md5AndNameRegex.match(line);
+				auto m = md5AndNameRegex.match(cast(string)line);
 				if (m.length < 3)
 					throw new Exception("Parse error, line: " ~ .toString(i));
 				nameFound = false;
 
-				ver.add(name, m[2].dup, m[1].dup);
+				ver.add(name, m[2].idup, m[1].idup);
 			}
 		}
 
 		return ver;
 	}
 
-	static VersionTxt fromLocal(char[] text)
+	static VersionTxt fromLocal(const(char)[] text)
 	{
 		auto ver = new VersionTxt();
 		auto commentRegex = new RegExp(commentRegexStr);
@@ -156,14 +157,14 @@ public:
 		foreach(int i, line; splitlines(text)) {
 
 			// Skip empty and comments lines
-			if (line.length == 0 || commentRegex.match(line).length > 0)
+			if (line.length == 0 || commentRegex.match(cast(string)line).length > 0)
 				continue;
 
-			auto m = md5AndNameRegex.match(line);
+			auto m = md5AndNameRegex.match(cast(string)line);
 			if (m.length < 2)
 				throw new Exception("Parse error, line: " ~ .toString(i));
 
-			ver.add(m[2], null, m[1]);
+			ver.add(m[2].idup, null, m[1].idup);
 		}
 
 		return ver;

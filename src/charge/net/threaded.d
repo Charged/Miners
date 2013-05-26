@@ -5,18 +5,12 @@
  */
 module charge.net.threaded;
 
-// Oh god why do you do this to me DMD/GDC.
-version(Unix) {
-	import std.c.unix.unix : EINTR;
-} else version(Posix) {
-	import std.c.posix.posix : EINTR;
-}
-import std.c.stdlib : malloc, free, getErrno;
-import std.thread : Thread;
-import std.socket : TcpSocket, SocketShutdown, SocketFlags,
-                    Address, InternetAddress;
+import core.stdc.errno : EINTR, errno;
+import core.stdc.stdlib : malloc, free;
+import core.thread : Thread;
+import std.socket : TcpSocket, SocketShutdown, SocketFlags, InternetAddress;
 
-import charge.util.memory : OutOfMemoryException;
+import charge.util.memory : onOutOfMemoryError;
 
 
 /**
@@ -64,10 +58,17 @@ public:
 protected:
 	this(bool start = true, TcpSocket s = null)
 	{
+		super(&run);
+
 		this.s = s;
 		if (start)
 			this.start();
 	}
+
+	/**
+	 * Main runner.
+	 */
+	abstract void run();
 
 	/**
 	 * Connect to a remote host.
@@ -81,11 +82,13 @@ protected:
 	/**
 	 * Connect to a remote host.
 	 */
-	synchronized void connect(Address addr)
+	void connect(InternetAddress addr)
 	{
-		if (s !is null)
-			throw new Exception("Allready connected");
-		s = new TcpSocket(addr);
+		synchronized (this) {
+			if (s !is null)
+				throw new Exception("Allready connected");
+			s = new TcpSocket(addr);
+		}
 	}
 
 	/**
@@ -94,14 +97,13 @@ protected:
 	int receive(void[] buf, bool peek = false)
 	{
 		SocketFlags flags = cast(SocketFlags)0;
-		flags |= SocketFlags.NOSIGNAL;
 		flags |= peek ? SocketFlags.PEEK : 0;
 
 		version(Posix) {
 			int n;
 			while(true) {
 				n = cast(int)s.receive(buf, flags);
-				if (n < 0 && getErrno() == EINTR)
+				if (n < 0 && errno() == EINTR)
 					continue;
 				return n;
 			}
@@ -136,19 +138,19 @@ protected:
 		{
 			auto p = cast(Packet*)malloc((void*).sizeof + len);
 			if (!p)
-				throw new OutOfMemoryException();
+				onOutOfMemoryError();
 			p.next = null;
 			return p;
 		}
 
 		void cFree()
 		{
-			free(this);
+			free(&this);
 		}
 
 		ubyte* data()
 		{
-			return (cast(ubyte*)&(this[1]));
+			return (cast(ubyte*)&((&this)[1]));
 		}
 	}
 

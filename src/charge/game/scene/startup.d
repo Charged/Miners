@@ -63,7 +63,7 @@ public:
 		assert(signaled.length == 0);
 	}
 
-	void close()
+	override void close()
 	{
 		r.removeBuilder(&build);
 
@@ -85,12 +85,12 @@ public:
 		signaled.removeAll();
 	}
 
-	void logic()
+	override void logic()
 	{
 		/* nothing */
 	}
 
-	void render(charge.gfx.target.RenderTarget rt)
+	override void render(charge.gfx.target.RenderTarget rt)
 	{
 		d.target = rt;
 		d.start();
@@ -133,12 +133,12 @@ public:
 		d.stop();
 	}
 
-	void assumeControl()
+	override void assumeControl()
 	{
 		keyboard.down ~= &this.keyDown;
 	}
 
-	void dropControl()
+	override void dropControl()
 	{
 		keyboard.down -= &this.keyDown;
 	}

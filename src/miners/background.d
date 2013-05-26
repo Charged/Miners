@@ -33,7 +33,7 @@ public:
 		changeOption(opts.backgroundDoubled());
 	}
 
-	void close()
+	override void close()
 	{
 		opts.background -= &newBackground;
 		opts.backgroundTiled -= &changeOption;

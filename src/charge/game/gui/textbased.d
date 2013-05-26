@@ -54,7 +54,7 @@ const char[] doubleGuiElememts = [
 	205, // horizontal line
 ];
 
-char[] makeFrame(char[] elm, uint width, uint height)
+char[] makeFrame(const(char)[] elm, uint width, uint height)
 {
 	size_t stride = width+1; // Newline
 
@@ -86,7 +86,7 @@ char[] makeFrame(char[] elm, uint width, uint height)
 
 }
 
-char[] makeTextGuiButton(string text, uint minwidth = 0)
+string makeTextGuiButton(string text, uint minwidth = 0)
 {
 	int width = cast(uint)text.length;
 	if (width < minwidth)
@@ -98,7 +98,7 @@ char[] makeTextGuiButton(string text, uint minwidth = 0)
 	size_t pos = ((stride-1)/2)-(text.length/2)+stride;
 	ret[pos .. pos+text.length] = text[0 .. $];
 
-	return ret;
+	return cast(string)ret;
 }
 
 /**
@@ -126,13 +126,18 @@ public:
 		pressed.destruct();
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		pressed.destruct();
 		super.breakApart();
 	}
 
-	void setText(string text, int minwidth = -1)
+	override void setText(string text)
+	{
+		setText(text, -1);
+	}
+
+	void setText(string text, int minwidth)
 	{
 		if (minwidth >= 0)
 			this.minwidth = cast(uint)minwidth;
@@ -140,7 +145,7 @@ public:
 		super.setText(makeTextGuiButton(text, this.minwidth));
 	}
 
-	void mouseDown(Mouse m, int x, int y, uint button)
+	override void mouseDown(Mouse m, int x, int y, uint button)
 	{
 		pressed(this);
 	}
@@ -182,22 +187,22 @@ public:
 		Container.add(plane);
 	}
 
-	Component[] getChildren()
+	override Component[] getChildren()
 	{
 		return plane.getChildren();
 	}
 
-	bool add(Component c)
+	override bool add(Component c)
 	{
 		return plane.add(c);
 	}
 
-	bool remove(Component c)
+	override bool remove(Component c)
 	{
 		return plane.remove(c);
 	}
 
-	void repack()
+	override void repack()
 	{
 		Container.repack();
 		w = plane.w;
@@ -217,7 +222,7 @@ public:
 	}
 
 protected:
-	void paintBackground(Draw d)
+	override void paintBackground(Draw d)
 	{
 		// First fill the background.
 		super.paintBackground(d);

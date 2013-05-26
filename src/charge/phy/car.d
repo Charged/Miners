@@ -117,7 +117,7 @@ public:
 		carSlip2Limit = 0.04;
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		w.removePostColl(this);
 		super.breakApart();
@@ -128,7 +128,7 @@ public:
 		return (3 + 4 + 3 + 3);
 	}
 
-	void setSyncData(in float data[])
+	void setSyncData(float data[])
 	{
 		if (data.length != getSyncDataLength) {
 			l.warn("to little data: ", data.length);
@@ -138,14 +138,13 @@ public:
 
 		dBodySetPosition(dBody, data[k], data[k + 1], data[k + 2]);
 		k += 3;
-		dBodySetQuaternion(dBody, [data[k], data[k + 1], data[k + 2], data[k + 3]]);
+		dVector4 gah = [data[k], data[k + 1], data[k + 2], data[k + 3]];
+		dBodySetQuaternion(dBody, gah);
 		k += 4;
 		dBodySetLinearVel(dBody, data[k], data[k + 1], data[k + 2]);
 		k += 3;
 		dBodySetAngularVel(dBody, data[k], data[k + 1], data[k + 2]);
 		k += 3;
-
-		data.length = getSyncDataLength;
 	}
 
 	void getSyncData(out float data[])

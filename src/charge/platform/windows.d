@@ -40,7 +40,7 @@ extern(Windows) size_t GlobalSize(
 	);
 
 
-char[] getClipboardText()
+string getClipboardText()
 {
 	auto format = CF_TEXT;
 
@@ -79,7 +79,7 @@ char[] getClipboardText()
 		}
 	}
 
-	return src[0 .. size].dup;
+	return src[0 .. size].idup;
 }
 
 void panicMessage(string str)

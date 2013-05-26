@@ -62,7 +62,7 @@ public:
 
 	bool step(int cycles)
 	{
-		return vm_run_cycles(vm, cycles);;
+		return vm_run_cycles(vm, cycles);
 	}
 
 	ushort* ram()

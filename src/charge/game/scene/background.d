@@ -47,7 +47,7 @@ public:
 		d = new Draw();
 	}
 
-	void close()
+	override void close()
 	{
 		reference(&this.background, null);
 	}
@@ -57,7 +57,7 @@ public:
 		reference(&this.background, background);
 	}
 
-	void render(RenderTarget rt)
+	override void render(RenderTarget rt)
 	{
 		d.target = rt;
 		d.start();
@@ -118,8 +118,7 @@ public:
 		d.stop();
 	}
 
-	void logic() {}
-	void assumeControl() { assert(false); }
-	void dropControl() { assert(false); }
-	void resize(uint w, uint h) {}
+	override void logic() {}
+	override void assumeControl() { assert(false); }
+	override void dropControl() { assert(false); }
 }

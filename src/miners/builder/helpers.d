@@ -117,56 +117,56 @@ template UVManipulator(int A)
  * With the top-left corner as origin, L and R are the distance
  * to the origin on the u-axis, and T and B on the v-axis.
  */
-ushort[][] genMappedManipUVs(int L, int R, int T, int B,
+ushort[][] genMappedManipUVs(int L_, int R_, int T_, int B_,
 			     int u_offset, int v_offset, int manip)
 {
-	L += u_offset;
-	R += u_offset;
-	T += v_offset;
-	B += v_offset;
+	ushort L = cast(ushort)(L_ + u_offset);
+	ushort R = cast(ushort)(R_ + u_offset);
+	ushort T = cast(ushort)(T_ + v_offset);
+	ushort B = cast(ushort)(B_ + v_offset);
 
 	ushort uv[][];
 
 	switch (manip) {
 		case uvManip.ROT_90:
 			uv = [
-				[T, UV_SIZE_DIVISOR-L],
-				[B, UV_SIZE_DIVISOR-L],
-				[B, UV_SIZE_DIVISOR-R],
-				[T, UV_SIZE_DIVISOR-R]
+				cast(ushort[])[T, UV_SIZE_DIVISOR-L],
+				cast(ushort[])[B, UV_SIZE_DIVISOR-L],
+				cast(ushort[])[B, UV_SIZE_DIVISOR-R],
+				cast(ushort[])[T, UV_SIZE_DIVISOR-R]
 			];
 			break;
 		case uvManip.ROT_180:
 			uv = [
-				[UV_SIZE_DIVISOR-L, UV_SIZE_DIVISOR-T],
-				[UV_SIZE_DIVISOR-L, UV_SIZE_DIVISOR-B],
-				[UV_SIZE_DIVISOR-R, UV_SIZE_DIVISOR-B],
-				[UV_SIZE_DIVISOR-R, UV_SIZE_DIVISOR-T]
+				cast(ushort[])[UV_SIZE_DIVISOR-L, UV_SIZE_DIVISOR-T],
+				cast(ushort[])[UV_SIZE_DIVISOR-L, UV_SIZE_DIVISOR-B],
+				cast(ushort[])[UV_SIZE_DIVISOR-R, UV_SIZE_DIVISOR-B],
+				cast(ushort[])[UV_SIZE_DIVISOR-R, UV_SIZE_DIVISOR-T]
 			];
 			break;
 		case uvManip.ROT_270:
 			uv = [
-				[UV_SIZE_DIVISOR-T, L],
-				[UV_SIZE_DIVISOR-B, L],
-				[UV_SIZE_DIVISOR-B, R],
-				[UV_SIZE_DIVISOR-T, R]
+				cast(ushort[])[UV_SIZE_DIVISOR-T, L],
+				cast(ushort[])[UV_SIZE_DIVISOR-B, L],
+				cast(ushort[])[UV_SIZE_DIVISOR-B, R],
+				cast(ushort[])[UV_SIZE_DIVISOR-T, R]
 			];
 			break;
 		case uvManip.FLIP_U:
 			uv = [
-				[UV_SIZE_DIVISOR-L, T],
-				[UV_SIZE_DIVISOR-L, B],
-				[UV_SIZE_DIVISOR-R, B],
-				[UV_SIZE_DIVISOR-R, T]
+				cast(ushort[])[UV_SIZE_DIVISOR-L, T],
+				cast(ushort[])[UV_SIZE_DIVISOR-L, B],
+				cast(ushort[])[UV_SIZE_DIVISOR-R, B],
+				cast(ushort[])[UV_SIZE_DIVISOR-R, T]
 			];
 			break;
 		case uvManip.NONE:
 		default:
 			uv = [
-				[L, T],
-				[L, B],
-				[R, B],
-				[R, T]
+				cast(ushort[])[L, T],
+				cast(ushort[])[L, B],
+				cast(ushort[])[R, B],
+				cast(ushort[])[R, T]
 			];
 	}
 
@@ -187,8 +187,8 @@ ushort[][] genMappedManipUVsY(int x1, int x2, int z1, int z2,
 
 	ushort L = cast(ushort)(x1 % UV_SIZE_DIVISOR);
 	ushort T = cast(ushort)(z1 % UV_SIZE_DIVISOR);
-	ushort R = L + (x2-x1);
-	ushort B = T + (z2-z1);
+	ushort R = cast(ushort)(L + (x2-x1));
+	ushort B = cast(ushort)(T + (z2-z1));
 
 	return genMappedManipUVs(L, R, T, B, u_offset, v_offset, manip);
 }
@@ -210,20 +210,20 @@ ushort[][] genMappedManipUVsXZ(int x1, int x2, int y1, int y2, int z1, int z2,
 
 	if (normal == sideNormal.ZP) {
 		L = cast(ushort)(x1 % UV_SIZE_DIVISOR);
-		R = L + (x2 - x1);
+		R = cast(ushort)(L + (x2 - x1));
 	} else if (normal == sideNormal.ZN) {
 		R = UV_SIZE_DIVISOR - x1 % UV_SIZE_DIVISOR;
-		L = R - (x2 - x1);
+		L = cast(ushort)(R - (x2 - x1));
 	} else if (normal == sideNormal.XP) {
 		L = cast(ushort)(z1 % UV_SIZE_DIVISOR);
-		R = L + (z2 - z1);
+		R = cast(ushort)(L + (z2 - z1));
 	} else {
 		R = UV_SIZE_DIVISOR - z1 % UV_SIZE_DIVISOR;
-		L = R - (z2 - z1);
+		L = cast(ushort)(R - (z2 - z1));
 	}
 
 	B = cast(ushort)(UV_SIZE_DIVISOR - y1 % UV_SIZE_DIVISOR);
-	T = B - (y2 - y1);
+	T = cast(ushort)(B - (y2 - y1));
 
 	return genMappedManipUVs(L, R, T, B, u_offset, v_offset, manip);
 }

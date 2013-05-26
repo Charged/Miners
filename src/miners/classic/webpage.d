@@ -2,8 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.webpage;
 
-import std.string : format, find;
-import std.conv : toInt;
+import stdx.conv : toInt;
+import stdx.string : find;
+import std.string : format;
 import uri = std.uri;
 
 import charge.charge;
@@ -206,13 +207,13 @@ public:
 
 
 protected:
-	void handleError(Exception e)
+	override void handleError(Exception e)
 	{
 		l.error("Webpage error (%s) \"%s\"", lastReturnCode, e.toString);
 		wl.error(e);
 	}
 
-	void handleResponse(char[] header, char[] res)
+	override void handleResponse(char[] header, char[] res)
 	{
 		auto tmp = curOp;
 		curOp = Op.NO_OP;
@@ -238,18 +239,18 @@ protected:
 		}
 	}
 
-	void handleUpdate(int percentage)
+	override void handleUpdate(int percentage)
 	{
 		wl.percentage(percentage);
 	}
 
-	void handleConnected()
+	override void handleConnected()
 	{
 		curOp = Op.NO_OP;
 		wl.connected();
 	}
 
-	void handleDisconnect()
+	override void handleDisconnect()
 	{
 		Op set;
 
@@ -288,6 +289,6 @@ protected:
 		if (stop == 0)
 			throw new Exception("Failed to authenticate!");
 
-		return header[start .. start + stop].dup;
+		return header[start .. start + stop].idup;
 	}
 }

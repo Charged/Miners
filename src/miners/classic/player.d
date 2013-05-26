@@ -12,7 +12,7 @@ import miners.actors.otherplayer;
 class ClassicPlayer : OtherPlayer, GameTicker
 {
 public:
-	char[] name;
+	string name;
 	GfxDynamicTexture text;
 	Point3d curPos;
 	int ticks;
@@ -22,7 +22,7 @@ public:
 
 
 public:
-	this(World w, int id, char[] name, Point3d pos, double heading, double pitch)
+	this(World w, int id, string name, Point3d pos, double heading, double pitch)
 	{
 		this.name = name;
 		this.curPos = pos;
@@ -41,14 +41,14 @@ public:
 		}
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		w.remTicker(this);
 		sysReference(&text, null);
 		super.breakApart();
 	}
 
-	void update(Point3d pos, double heading, double pitch)
+	override void update(Point3d pos, double heading, double pitch)
 	{
 		this.heading = heading;
 		this.pitch = pitch;
@@ -59,7 +59,7 @@ public:
 		ticks = 4;
 	}
 
-	void tick()
+	override void tick()
 	{
 		if (ticks > -1) {
 			auto vel = this.vel;

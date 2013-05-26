@@ -2,9 +2,10 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.parser;
 
+import stdx.conv : toUshort;
+import stdx.string : find;
 import lib.xml.xml : DomParser, Element, Handle;
-import std.string : find, format;
-import std.conv : toUshort;
+import std.string : format;
 import charge.util.html;
 import miners.types;
 
@@ -17,7 +18,7 @@ import miners.types;
  *
  * Will throw various exceptions if the page is malformed.
  */
-ClassicServerInfo[] getClassicServerList(in char[] text)
+ClassicServerInfo[] getClassicServerList(const(char)[] text)
 {
 	// Only parse the interesting parts.
 	const startText = "<table";
@@ -113,7 +114,7 @@ ClassicServerInfo[] getClassicServerList(in char[] text)
 
 		// Fill in the info that we got.
 		auto csi = new ClassicServerInfo();
-		csi.webId = url[strip.length .. $].dup;
+		csi.webId = url[strip.length .. $].idup;
 		csi.webName = text.value;
 
 		list ~= csi;
@@ -131,7 +132,7 @@ ClassicServerInfo[] getClassicServerList(in char[] text)
  *
  * Will throw various exceptions if the page is malformed.
  */
-void getClassicServerInfo(ClassicServerInfo csi, in char[] text)
+void getClassicServerInfo(ClassicServerInfo csi, const(char)[] text)
 {
 	// Only parse the interesting parts.
 	const startText = "<applet";
@@ -146,14 +147,14 @@ void getClassicServerInfo(ClassicServerInfo csi, in char[] text)
 	if (end == size_t.max)
 		throw new Exception("Could not find end of applet tag");
 
-	// Crop the text.
-	text = text[start .. end];
+	// Crop and de const the text.
+	auto applet = text[start .. end].dup;
 
 	// Fix the html to be valid xml. Skip the first found `">`.
-	auto pos = cast(size_t)find(text, `">`);
+	auto pos = cast(size_t)find(applet, `">`);
 	if (pos == size_t.max)
 		throw new Exception("Something went really bad");
-	auto temp = text[pos+1 .. $];
+	auto temp = applet[pos+1 .. $];
 
 	// Loop over and fix all the problem points.
 	while((pos = cast(size_t)find(temp, `">`)) != size_t.max) {
@@ -166,7 +167,7 @@ void getClassicServerInfo(ClassicServerInfo csi, in char[] text)
 	auto p = new DomParser();
 	scope(exit)
 		delete p;
-	auto root = p.parseData(text);
+	auto root = p.parseData(applet);
 
 	// Sanity checking.
 	if (root is null)

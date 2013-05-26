@@ -5,7 +5,7 @@
  */
 module charge.util.vector;
 
-import std.array : ArrayBoundsError;
+import core.exception : onRangeError;
 
 
 /**
@@ -65,7 +65,7 @@ public:
 	T opIndexAssign(T t, size_t i)
 	{
 		if (i >= num)
-			throw new ArrayBoundsError(typeof(this).stringof, cast(int)i);
+			onRangeError();
 
 		data[i] = t;
 		return t;
@@ -85,7 +85,7 @@ public:
 		num += tarr.length;
 	}
 
-	int opApply(int delegate(inout T) dg)
+	int opApply(int delegate(ref T) dg)
 	{
 		int r;
 		for (int i; i < num; i++) {
@@ -96,7 +96,7 @@ public:
 		return r;
 	}
 
-	int opApplyReverse(int delegate(inout T) dg)
+	int opApplyReverse(int delegate(ref T) dg)
 	{
 		int r;
 		for (int i = cast(int)num-1; i >= 0; i--) {
@@ -205,7 +205,7 @@ public:
 	{
 		
 		if (i >= num)
-			throw new ArrayBoundsError(typeof(this).stringof, cast(int)i);
+			onRangeError();
 
 		return data[i];
 	}

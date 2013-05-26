@@ -5,7 +5,8 @@
  */
 module charge.gfx.texture;
 
-import std.string : format, toString;
+import std.string : format;
+import stdx.string : toString;
 
 import charge.sys.resource;
 import charge.sys.logger;
@@ -465,22 +466,22 @@ public:
 		reference(&this.tex, tex);
 	}
 
-	uint width()
+	override uint width()
 	{
 		return tex.width;
 	}
 
-	uint height()
+	override uint height()
 	{
 		return tex.height;
 	}
 
-	uint id()
+	override uint id()
 	{
 		return tex.glId;
 	}
 
-	void filter(Filter)
+	override void filter(Filter)
 	{
 		assert(false, "filtering not supported");
 	}
@@ -537,12 +538,12 @@ public:
 		gluFrameBufferBind(fbo, buffers, w, h);
 	}
 
-	uint width()
+	override uint width()
 	{
 		return w;
 	}
 
-	uint height()
+	override uint height()
 	{
 		return h;
 	}

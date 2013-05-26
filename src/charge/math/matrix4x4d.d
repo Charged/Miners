@@ -207,7 +207,7 @@ public:
 		temp.array[14] = array[11];
 		temp.array[15] = array[15];
 
-		*this = temp;
+		this = temp;
 	}
 
 	void inverse()

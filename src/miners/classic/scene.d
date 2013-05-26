@@ -251,7 +251,7 @@ public:
 	 */
 
 
-	void close()
+	override void close()
 	{
 		opts.noClip -= &ppNoClip;
 		opts.flying -= &ppFlying;
@@ -284,7 +284,7 @@ public:
 		c = null;
 	}
 
-	void logic()
+	override void logic()
 	{
 		// Yay
 		cam.position = pp.movePlayer(cam.position, camHeading);
@@ -346,7 +346,7 @@ public:
 		}
 	}
 
-	void render(GfxRenderTarget rt)
+	override void render(GfxRenderTarget rt)
 	{
 		placeSelector();
 
@@ -429,13 +429,13 @@ public:
 		}
 	}
 
-	void dropControl()
+	override void dropControl()
 	{
 		stopMoving();
 		super.dropControl();
 	}
 
-	bool grab(bool val)
+	override bool grab(bool val)
 	{
 		if (val) {
 			camMoveing = false;
@@ -445,7 +445,7 @@ public:
 		return super.grab(val);
 	}
 
-	bool grab()
+	override bool grab()
 	{
 		return super.grab();
 	}
@@ -708,7 +708,7 @@ public:
 	 */
 
 
-	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
+	override void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
 		if (sym == 27) {
 			if (console.typing) {
@@ -744,12 +744,13 @@ public:
 				break;
 			}
 			// Fallthrough
+			goto default;
 		default:
 			keyBinding(kb, sym, true);
 		}
 	}
 
-	void keyUp(CtlKeyboard kb, int sym)
+	override void keyUp(CtlKeyboard kb, int sym)
 	{
 		if (console.typing) {
 			console.keyUp(kb, sym);
@@ -847,7 +848,7 @@ public:
 		}
 	}
 
-	void mouseDown(CtlMouse mouse, int button)
+	override void mouseDown(CtlMouse mouse, int button)
 	{
 		if (button == 4) {
 			currentSlot--;
@@ -885,7 +886,7 @@ public:
 		}
 	}
 
-	void mouseUp(CtlMouse, int button)
+	override void mouseUp(CtlMouse, int button)
 	{
 		// XXX Custamizable buttons.
 		if (button == 1) {
@@ -897,7 +898,7 @@ public:
 		}
 	}
 
-	void mouseMove(CtlMouse mouse, int ixrel, int iyrel)
+	override void mouseMove(CtlMouse mouse, int ixrel, int iyrel)
 	{
 		if (camMoveing || (grabbed && !lightMoveing)) {
 			double xrel = ixrel;

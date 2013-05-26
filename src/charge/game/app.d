@@ -129,7 +129,7 @@ public:
 		i.tick();
 	}
 
-	void loop()
+	override void loop()
 	{
 		long now = SDL_GetTicks();
 		long step = 10;

@@ -66,7 +66,7 @@ protected:
 	VBO vbo;
 
 public:
-	this(World w, VBO vbo, Bone bones[])
+	this(World w, VBO vbo, const(Bone)[] bones)
 	{
 		super(w);
 
@@ -83,7 +83,7 @@ public:
 		assert(vbo is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(m);
 		reference(&vbo, null);
@@ -91,7 +91,7 @@ public:
 		super.breakApart();
 	}
 
-	void cullAndPush(Cull cull, RenderQueue rq)
+	override void cullAndPush(Cull cull, RenderQueue rq)
 	{
 		auto v = cull.center - position;
 		rq.push(v.lengthSqrd, this);
@@ -134,12 +134,12 @@ public:
 		const void* normalOffset = cast(void*)(float.sizeof * (3 + 2));
 
 	public:
-		static VBO opCall(Vertex verts[])
+		static VBO opCall(const(Vertex)[] verts)
 		{
 			return new VBO(verts);
 		}
 
-		this(Vertex verts[])
+		this(const(Vertex)[] verts)
 		{
 			super(null, null);
 

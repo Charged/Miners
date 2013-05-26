@@ -8,13 +8,6 @@ module charge.util.signal;
 import charge.util.vector;
 
 
-/*
- * This signal implementation isn't very portable using D1 phobos specific
- * hidden functionality. All this to support autoremove on delete.
- */
-
-extern (C) Object _d_toObject(void* p);
-
 struct Signal(T...)
 {
 private:
@@ -30,7 +23,7 @@ public:
 
 		slots ~= slot;
 		Object o = _d_toObject(slot.ptr);
-		o.notifyRegister(&unhook);
+		rt_attachDisposeEvent(o, &unhook);
 	}
 
 	alias opCatAssign connect;
@@ -41,7 +34,7 @@ public:
 			if (slots[i] == slot) {
 				slots.remove(i);
 				Object o = _d_toObject(slot.ptr);
-				o.notifyUnRegister(&unhook);
+				rt_detachDisposeEvent(o, &unhook);
 			} else {
 				i++;
 			}
@@ -74,8 +67,19 @@ public:
 	{
 		foreach(slot; slots) {
 			Object o = _d_toObject(slot.ptr);
-			o.notifyUnRegister(&unhook);
+			rt_detachDisposeEvent(o, &unhook);
 		}
 		slots.removeAll();
 	}
 }
+
+private:
+// From phobos code:
+// Special function for internal use only (hah!).
+// Use of this is where the slot had better be a delegate
+// to an object or an interface that is part of an object.
+extern(C) Object _d_toObject(void* p);
+
+alias void delegate(Object) DisposeEvt;
+extern(C) void rt_attachDisposeEvent(Object obj, DisposeEvt evt);
+extern(C) void rt_detachDisposeEvent(Object obj, DisposeEvt evt);

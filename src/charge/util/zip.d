@@ -6,11 +6,10 @@
  */
 module charge.util.zip;
 
-private import etc.c.zlib;
+import etc.c.zlib;
 
-private import std.date : DosFileTime;
-private import std.intrinsic : bswap;
-private import charge.util.memory;
+import core.bitop : bswap;
+import charge.util.memory;
 
 // Reuse Exceptions from Phobos
 public import std.zip : ZipException;
@@ -71,6 +70,7 @@ void[] cUncompress(void[] srcbuf, size_t destlen = 0u, int winbits = 15)
 		case Z_OK:
 			// If we need more input throw a error.
 			err = Z_BUF_ERROR;
+			goto case Z_BUF_ERROR;
 		// Might not be a error
 		case Z_BUF_ERROR:
 			// If we don't need more output we need input this is an error.

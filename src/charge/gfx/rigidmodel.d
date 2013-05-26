@@ -55,7 +55,7 @@ public:
 		assert(vbo is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(m);
 		reference(&vbo, null);
@@ -89,7 +89,7 @@ protected:
 		this.vbo = vbo;
 	}
 
-	void cullAndPush(Cull cull, RenderQueue rq)
+	override void cullAndPush(Cull cull, RenderQueue rq)
 	{
 		auto v = cull.center - position;
 		rq.push(v.lengthSqrd, this);

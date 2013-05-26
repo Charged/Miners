@@ -189,7 +189,7 @@ public:
 public:
 	static ubyte toTex(int u, int v)
 	{
-		return cast(ubyte)u + v * 16;
+		return cast(ubyte)(u + v * 16);
 	}
 };
 

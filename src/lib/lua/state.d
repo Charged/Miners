@@ -1,7 +1,8 @@
 module lib.lua.state;
 
-import std.string : cmp, sformat, toString, toStringz;
+import std.string : cmp, sformat, toStringz;
 import std.c.stdlib : realloc;
+import stdx.string : toString;
 
 import lib.lua.all;
 
@@ -104,11 +105,11 @@ public:
 		return this;
 	}
 
-	State registerStructz(T)(char *namez)
+	State registerStructz(T)(const(char)* namez)
 	{
 		TypeInfo ti = typeid(T);
 		char[tmpSize] tmp;
-		string check = mangleName(sformat(tmp, "d_struct_", ti.toString));
+		char[] check = mangleName(sformat(tmp, "d_struct_", ti.toString));
 		/* picks the wrong toString */
 		alias .toString tSz;
 
@@ -129,7 +130,7 @@ public:
 		return pushStructRefz!(T)(s, namez);
 	} 
 
-	T* pushStructRefz(T)(ref T s, char *namez)
+	T* pushStructRefz(T)(ref T s, const(char)* namez)
 	{
 		auto ptr = lua_newuserdata(l, T.sizeof);
 
@@ -151,7 +152,7 @@ public:
 		return pushStructPtrz!(T)(namez);
 	}
 
-	T* pushStructPtrz(T)(char *namez)
+	T* pushStructPtrz(T)(const(char)* namez)
 	{
 		auto ptr = lua_newuserdata(l, T.sizeof);
 
@@ -170,7 +171,7 @@ public:
 		return checkStructz!(T)(index, getMangledNamez("d_struct_" ~ ti.toString));
 	}
 
-	T* checkStructz(T)(int index, char *namez)
+	T* checkStructz(T)(int index, const(char)* namez)
 	{
 		return cast(T*)luaL_checkudata(l, index, namez);
 	}
@@ -200,7 +201,7 @@ public:
 		void ctor(Object obj, GC gc)
 		{
 			if (obj !is null)
-				obj.notifyRegister(&notify);
+				rt_attachDisposeEvent(obj, &notify);
 
 			this.obj = obj;
 			this.gc = gc;
@@ -219,7 +220,7 @@ public:
 		void dtor()
 		{
 			if (obj !is null)
-				obj.notifyUnRegister(&notify);
+				rt_detachDisposeEvent(obj, &notify);
 
 			if (gc !is null)
 				gc();
@@ -310,7 +311,7 @@ public:
 		return checkInstanceName!(T)(index, nullz, getClassName(T.classinfo));
 	}
 
-	Instance* checkInstanceName(T)(int index, string name)
+	Instance* checkInstanceName(T)(int index, const(char)[] name)
 	{
 		Instance *p;
 		string cnz = T.classinfo.name;
@@ -338,7 +339,7 @@ public:
 		return checkClassName!(T)(index, nullz, name);
 	}
 
-	T checkClassName(T)(int index, bool nullz, string name)
+	T checkClassName(T)(int index, bool nullz, const(char)[] name)
 	{
 		auto p = checkInstanceName!(T)(index, name);
 		if (p.obj is null && !nullz)
@@ -346,13 +347,13 @@ public:
 		return cast(T)p.obj;
 	}
 
-	static string getClassName(ClassInfo ci, string tmp)
+	static char[] getClassName(ClassInfo ci, char[] tmp)
 	{
 		auto name = sformat(tmp, "d_class_", ci.name);
 		return mangleName(name);
 	}
 
-	static char* getClassNamez(ClassInfo ci, string tmp)
+	static char* getClassNamez(ClassInfo ci, char[] tmp)
 	{
 		auto namez = sformat(tmp, "d_class_", ci.name, "\0");
 		return mangleName(namez).ptr;
@@ -364,7 +365,7 @@ public:
 	 */
 
 
-	static string mangleName(string str)
+	static char[] mangleName(char[] str)
 	{
 		foreach (i, c; str) {
 			if (c == '.')
@@ -373,7 +374,7 @@ public:
 		return str;
 	}
 
-	bool isUserDataz(int index, char* namez)
+	bool isUserDataz(int index, const(char)* namez)
 	{
 		bool ret = false;
 		if (!lua_isuserdata(l, index))
@@ -405,7 +406,7 @@ public:
 	/**
 	 * Load a string but pretend it is a file.
 	 */
-	int loadStringAsFile(string str, string filename)
+	int loadStringAsFile(const(char)[] str, string filename)
 	{
 		// Make lua think this is a file.
 		auto strLua = "@" ~ filename;
@@ -414,7 +415,7 @@ public:
 		return loadString(str, strLua);
 	}
 
-	int loadString(string str, string name)
+	int loadString(const(char)[] str, string name)
 	{
 		return luaL_loadbuffer(l, str.ptr, str.length, name.ptr);
 	}
@@ -433,13 +434,13 @@ public:
 
 	State setTable(int index) { lua_settable(l, index); return this; }
 	State setField(int index, string str) { return setFieldz(index, .toStringz(str)); }
-	State setFieldz(int index, char* stringz) { lua_setfield(l, index, stringz); return this; }
+	State setFieldz(int index, const(char)* stringz) { lua_setfield(l, index, stringz); return this; }
 
 	State getTable(int index) { lua_gettable(l, index); return this; }
 	State getField(int index, string str) { return getFieldz(index, .toStringz(str)); }
-	State getFieldz(int index, char* stringz) { lua_getfield(l, index, stringz); return this; }
+	State getFieldz(int index, const(char)* stringz) { lua_getfield(l, index, stringz); return this; }
 	State getGlobal(string str) { return getGlobalz(.toStringz(str)); }
-	State getGlobalz(char* stringz) { lua_getfield(l, lib.lua.lua.LUA_GLOBALSINDEX, stringz); return this; }
+	State getGlobalz(const(char)* stringz) { lua_getfield(l, lib.lua.lua.LUA_GLOBALSINDEX, stringz); return this; }
 
 	State getMetaTable(int index = -1) { lua_getmetatable(l, index); return this; }
 
@@ -471,22 +472,22 @@ public:
 	State pushNil() { lua_pushnil(l); return this; }
 	State pushBool(bool v) { lua_pushboolean(l, v); return this; }
 	State pushNumber(double value) { lua_pushnumber(l, value); return this; }
-	State pushString(string str) { lua_pushlstring(l, str.ptr, str.length); return this; }
-	State pushStringz(char* stringz) { lua_pushstring(l, stringz); return this; }
+	State pushString(const(char)[] str) { lua_pushlstring(l, str.ptr, str.length); return this; }
+	State pushStringz(const(char)* stringz) { lua_pushstring(l, stringz); return this; }
 	State pushTable() { lua_newtable(l); return this; }
 	State pushCFunction(lua_CFunction f) { lua_pushcfunction(l, f); return this; }
 
 	bool toBool(int index = -1) { return lua_toboolean(l, index) != 0; }
-	string toString(int index = -1) { size_t e; auto p = lua_tolstring(l, index, &e); return p[0 .. e]; }
-	char* toStringz(int index = -1, size_t *e = null) { return lua_tolstring(l, index, e); }
+	string toString(int index = -1) { size_t e; auto p = lua_tolstring(l, index, &e); return cast(string)p[0 .. e]; }
+	const(char)* toStringz(int index = -1, size_t *e = null) { return lua_tolstring(l, index, e); }
 	double toNumber(int index = -1) { return lua_tonumber(l, index); }
 	lua_CFunction toCFunction(int index = -1) { return lua_tocfunction(l, index); }
 	void* toUserData(int index = -1) { return lua_touserdata(l, index); }
 
-	string checkString(int index = -1) { size_t e; auto p = luaL_checklstring(l, index, &e); return p[0 .. e]; }
+	string checkString(int index = -1) { size_t e; auto p = luaL_checklstring(l, index, &e); return cast(string)p[0 .. e]; }
 	double checkNumber(int index = -1) { return luaL_checknumber(l, index); }
 	void* checkUserData(int index, string name) { return checkUserDataz(index, .toStringz(name)); }
-	void* checkUserDataz(int index, char* namez) { return luaL_checkudata(l, index, namez); }
+	void* checkUserDataz(int index, const(char)* namez) { return luaL_checkudata(l, index, namez); }
 
 	bool isNoneOrNil(int index = -1) { return lua_isnoneornil(l, index) != 0; }
 	bool isNil(int index = -1) { return lua_isnil(l, index) != 0; }
@@ -498,6 +499,8 @@ public:
 	bool isCFunction(int index = -1) { return lua_iscfunction(l, index) != 0; }
 	bool isUserData(int index = -1) { return lua_isuserdata(l, index) != 0; }
 	static size_t getMemory() { return memory; }
+
+	override string toString() { return super.toString(); }
 
 protected:
 	extern (C) static int gc(lua_State *l)
@@ -530,3 +533,8 @@ protected:
 		return realloc(data, newSize);
 	}
 }
+
+private:
+alias void delegate(Object) DisposeEvt;
+extern(C) void rt_attachDisposeEvent(Object obj, DisposeEvt evt);
+extern(C) void rt_detachDisposeEvent(Object obj, DisposeEvt evt);

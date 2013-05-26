@@ -76,7 +76,7 @@ public:
 		cam.far = 512;
 	}
 
-	void close()
+	override void close()
 	{
 		client.close();
 		breakApartAndNull(cam);
@@ -85,24 +85,24 @@ public:
 		breakApartAndNull(w);
 	}
 
-	void logic()
+	override void logic()
 	{
 		client.tick();
 		w.tick();
 	}
 
-	void render(GfxRenderTarget rt)
+	override void render(GfxRenderTarget rt)
 	{
 		renderer.target = rt;
 		renderer.render(cam, w.gfx);
 	}
 
-	void assumeControl()
+	override void assumeControl()
 	{
 		keyboard.down ~= &this.keyDown;
 	}
 
-	void dropControl()
+	override void dropControl()
 	{
 		keyboard.down -= &this.keyDown;
 	}
@@ -115,7 +115,7 @@ public:
 	 */
 
 
-	void packet(NetConnection c, NetPacket p)
+	override void packet(NetConnection c, NetPacket p)
 	{
 		static bool t;
 		t = !t;
@@ -130,12 +130,12 @@ public:
 		}
 	}
 
-	void opened(NetConnection c)
+	override void opened(NetConnection c)
 	{
 		l.info("Connected");
 	}
 
-	void closed(NetConnection c)
+	override void closed(NetConnection c)
 	{
 		l.info("Disconnected");
 		r.quit();

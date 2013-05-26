@@ -18,12 +18,12 @@ public:
 
 
 public:
-	void draw(Draw, int x, int y, string text, bool shaded = false)
+	override void draw(Draw, int x, int y, const(char)[] text, bool shaded = false)
 	{
 		drawLayoutedText(x, y, text);
 	}
 
-	void buildSize(string text, out uint width, out uint height)
+	override void buildSize(const(char)[] text, out uint width, out uint height)
 	{
 		bool colorSelect;
 		int max, x, y;
@@ -44,6 +44,7 @@ public:
 				break;
 			case '\n':
 				y++;
+				goto case;
 			case '\r':
 				x = 0;
 				break;
@@ -89,12 +90,12 @@ public:
 
 
 protected:
-	void drawLayoutedText(string text, bool shaded)
+	override void drawLayoutedText(const(char)[] text, bool shaded)
 	{
 		drawLayoutedText(0, 0, text);
 	}
 
-	void drawLayoutedText(int startX, int startY, string text)
+	void drawLayoutedText(int startX, int startY, const(char)[] text)
 	{
 		uint w = width;
 		uint h = height;
@@ -129,6 +130,7 @@ protected:
 				break;
 			case '\n':
 				y += height;
+				goto case;
 			case '\r':
 				x = startX + 1;
 				break;
@@ -160,6 +162,7 @@ protected:
 				break;
 			case '\n':
 				y += height;
+				goto case;
 			case '\r':
 				x = startX;
 				break;

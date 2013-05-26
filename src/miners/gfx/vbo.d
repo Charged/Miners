@@ -134,7 +134,7 @@ public:
 		assert(resultVbo is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(m);
 		super.breakApart();
@@ -174,7 +174,7 @@ public:
 		array = array[0 .. i] ~ array[i+1 .. array.length];
 	}
 
-	void cullAndPush(GfxCull cull, GfxRenderQueue rq)
+	override void cullAndPush(GfxCull cull, GfxRenderQueue rq)
 	{
 		resultVbo.length = array.length;
 		int i;
@@ -190,6 +190,8 @@ public:
 		result_num = i;
 		rq.push(0.0, this);
 	}
+
+	abstract void drawAttrib(GfxShader s);
 }
 
 
@@ -204,12 +206,12 @@ public:
 		super(w);
 	}
 
-	void drawAttrib(GfxShader s)
+	override void drawAttrib(GfxShader s)
 	{
 		gluPushAndTransform(pos, rot);
 
-		ChunkVBORigidMesh.drawArrayAttrib(
-			cast(ChunkVBORigidMesh[])resultVbo[0 .. result_num]);
+		charge.gfx.vbo.RigidMeshVBO.drawArrayAttrib(
+			cast(charge.gfx.vbo.RigidMeshVBO[])resultVbo[0 .. result_num]);
 
 		glPopMatrix();
 	}
@@ -227,7 +229,7 @@ public:
 		super(w);
 	}
 
-	void drawAttrib(GfxShader s)
+	override void drawAttrib(GfxShader s)
 	{
 		const vertexSize = ChunkVBOCompactMesh.Vertex.sizeof;
 		const void* vertOffset = null;

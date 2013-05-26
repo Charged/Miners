@@ -47,7 +47,7 @@ public:
 		super(p, x, y, colums * columWidth, rows * rowHeight);
 	}
 
-	void repack()
+	override void repack()
 	{
 		makeResources();
 
@@ -57,7 +57,7 @@ public:
 		h = rows * rowHeight;
 	}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 		reference(&bf, null);
 		reference(&glyphs, null);
@@ -71,7 +71,7 @@ public:
 		repaint();
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		if (glyphs is null)
 			makeResources();

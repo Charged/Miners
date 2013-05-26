@@ -42,13 +42,13 @@ public:
 		assert(skel is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(skel);
 		super.breakApart();
 	}
 
-	void update(Point3d pos, double heading, double pitch)
+	override void update(Point3d pos, double heading, double pitch)
 	{
 		auto rot = Quatd(heading, pitch, 0);
 		this.pos = pos;
@@ -62,12 +62,12 @@ public:
 		skel.bones.ptr[0].rot = Quatd(0, pitch, 0);
 	}
 
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		update(pos, heading, pitch);
 	}
 
-	void setRotation(ref Quatd rot)
+	override void setRotation(ref Quatd rot)
 	{
 		// NOOP
 	}

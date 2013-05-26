@@ -115,7 +115,7 @@ public:
 	/**
 	 * Return a new quat which is this rotation rotated by the given rotation.
 	 */
-	Quatd opMul(Quatd quat)
+	Quatd opMul(Quatd quat) const
 	{
 		Quatd result;
 
@@ -146,7 +146,7 @@ public:
 	/**
 	 * Return a copy of the given vector but rotated by this rotation.
 	 */
-	Vector3d opMul(Vector3d vec)
+	Vector3d opMul(Vector3d vec) const
 	{
 		Quatd q = {vec.x * x + vec.y * y + vec.z * z,
 		           vec.x * w + vec.z * y - vec.y * z,
@@ -176,12 +176,12 @@ public:
 		z /= len;
 	}
 
-	double length()
+	double length() const
 	{
 		return sqrt(w*w + x*x + y*y + z*z);
 	}
 
-	double sqrdLength()
+	double sqrdLength() const
 	{
 		return w*w + x*x + y*y + z*z;
 	}
@@ -189,7 +189,7 @@ public:
 	/**
 	 * Return a vector pointing forward but rotated by this rotation.
 	 */
-	Vector3d rotateHeading()
+	Vector3d rotateHeading() const
 	{
 		return opMul(Vector3d.Heading);
 	}
@@ -197,7 +197,7 @@ public:
 	/**
 	 * Return a vector pointing upwards but rotated by this rotation.
 	 */
-	Vector3d rotateUp()
+	Vector3d rotateUp() const
 	{
 		return opMul(Vector3d.Up);
 	}
@@ -205,12 +205,12 @@ public:
 	/**
 	 * Return a vector pointing left but rotated by this rotation.
 	 */
-	Vector3d rotateLeft()
+	Vector3d rotateLeft() const
 	{
 		return opMul(Vector3d.Left);
 	}
 
-	string toString()
+	string toString() const
 	{
 		return format("(%s, %s, %s, %s)", w, x, y, z);
 	}

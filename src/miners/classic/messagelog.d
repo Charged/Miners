@@ -21,14 +21,14 @@ public:
 		super(c, x, y, 64, rows, 0, 1);
 	}
 
-	void makeResources()
+	override void makeResources()
 	{
 		sysReference(&bf, opts.classicFont());
 	}
 
 
 protected:
-	void drawRow(GfxDraw d, int y, string row)
+	override void drawRow(GfxDraw d, int y, string row)
 	{
 		bf.draw(d, 0, y, row);
 	}

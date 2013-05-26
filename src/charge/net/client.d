@@ -24,7 +24,7 @@ public:
 		this.cl = cl;
 	}
 
-	bool connect(char[] host, ushort port)
+	bool connect(string host, ushort port)
 	{
 		if (s !is null)
 			return false;

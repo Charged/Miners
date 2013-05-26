@@ -49,7 +49,7 @@ public:
 		c2 = new PhyCube(w.phy);
 	}
 
-	void close()
+	override void close()
 	{
 		server.close();
 		breakApartAndNull(c1);
@@ -57,7 +57,7 @@ public:
 		breakApartAndNull(cube);
 	}
 
-	void logic()
+	override void logic()
 	{
 		w.tick();
 		server.tick();
@@ -88,17 +88,17 @@ public:
 		}
 	}
 
-	void assumeControl()
+	override void assumeControl()
 	{
 
 	}
 
-	void dropControl()
+	override void dropControl()
 	{
 
 	}
 
-	void render(GfxRenderTarget rt) { assert(false); }
+	override void render(GfxRenderTarget rt) { assert(false); }
 
 
 	/*
@@ -108,11 +108,11 @@ public:
 	 */
 
 
-	void packet(NetConnection c, NetPacket p)
+	override void packet(NetConnection c, NetPacket p)
 	{
 	}
 
-	void opened(NetConnection c)
+	override void opened(NetConnection c)
 	{
 		l.info("Connected %s", c.address);
 
@@ -123,7 +123,7 @@ public:
 		sync2.reset();
 	}
 
-	void closed(NetConnection c)
+	override void closed(NetConnection c)
 	{
 		l.info("Disconnected %s", c.address);
 

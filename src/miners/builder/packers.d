@@ -85,12 +85,12 @@ public:
 
 	Vertex* newVert()
 	{
-		return &(cast(Vertex*)&this[1])[iv++];
+		return &(cast(Vertex*)&(&this)[1])[iv++];
 	}
 
 	Vertex[] getVerts()
 	{
-		auto v = cast(Vertex*)&this[1];
+		auto v = cast(Vertex*)&(&this)[1];
 		return v[0 .. iv];
 	}
 
@@ -111,7 +111,7 @@ public:
 
 	void cFree()
 	{
-		auto ptr = cast(void*)this;
+		auto ptr = cast(void*)&this;
 		.cFree(ptr);
 	}
 }

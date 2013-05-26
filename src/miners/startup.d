@@ -57,7 +57,7 @@ public:
 
 
 protected:
-	void handleNoTaskLeft()
+	override void handleNoTaskLeft()
 	{
 		if (!switchedBackground) {
 			switchedBackground = true;
@@ -79,7 +79,7 @@ protected:
 		r.deleteMe(this);
 	}
 
-	void handleEscapePressed()
+	override void handleEscapePressed()
 	{
 		r.quit();
 	}
@@ -115,9 +115,9 @@ class CreateLogo : OptionsTask
 		super(startup, opts);
 	}
 
-	void close() {}
+	override void close() {}
 
-	bool build()
+	override bool build()
 	{
 		auto p = SysPool();
 		p.suppress404 = true;
@@ -175,9 +175,9 @@ class OptionsLoader : OptionsTask
 		super(startup, opts);
 	}
 
-	void close() {}
+	override void close() {}
 
-	bool build()
+	override bool build()
 	{
 		// Initialize the shared resources.
 		opts.allocateResources();
@@ -281,7 +281,7 @@ public:
 		super(startup, opts);
 	}
 
-	void close()
+	override void close()
 	{
 		if (dl !is null) {
 			dl.close();
@@ -289,7 +289,7 @@ public:
 		}
 	}
 
-	bool build()
+	override bool build()
 	{
 		if (dl !is null) {
 			dl.doTick();
@@ -321,17 +321,17 @@ public:
 		return true;
 	}
 
-	void connected()
+	override void connected()
 	{
 		dl.getDownload(path);
 	}
 
-	void percentage(int p)
+	override void percentage(int p)
 	{
 		completed = p;
 	}
 
-	void downloaded(void[] data)
+	override void downloaded(void[] data)
 	{
 		l.warn("D %s", data.length);
 
@@ -340,12 +340,12 @@ public:
 		dl = null;
 	}
 
-	void error(Exception e)
+	override void error(Exception e)
 	{
 		signalError([e.toString]);
 	}
 
-	void disconnected()
+	override void disconnected()
 	{
 		signalError(["Got disconnected when downloading default skin"]);
 	}
@@ -375,7 +375,7 @@ public:
 		super(startup, opts);
 	}
 
-	void close()
+	override void close()
 	{
 		if (dl !is null) {
 			dl.close();
@@ -383,7 +383,7 @@ public:
 		}
 	}
 
-	bool build()
+	override bool build()
 	{
 		if (dl !is null) {
 			dl.doTick();
@@ -414,17 +414,17 @@ public:
 		return true;
 	}
 
-	void connected()
+	override void connected()
 	{
 		dl.getDownload(path);
 	}
 
-	void percentage(int p)
+	override void percentage(int p)
 	{
 		completed = p;
 	}
 
-	void downloaded(void[] data)
+	override void downloaded(void[] data)
 	{
 		l.warn("D %s", data.length);
 
@@ -433,12 +433,12 @@ public:
 		dl = null;
 	}
 
-	void error(Exception e)
+	override void error(Exception e)
 	{
 		signalError(["Could not download default terrain", e.toString]);
 	}
 
-	void disconnected()
+	override void disconnected()
 	{
 		signalError(["Got disconnected when downloading default terrain"]);
 	}
@@ -457,9 +457,9 @@ class LoadModernTexture : OptionsTask
 		super(startup, opts);
 	}
 
-	void close() {}
+	override void close() {}
 
-	bool build()
+	override bool build()
 	{
 		auto p = SysPool();
 		p.suppress404 = true;
@@ -533,9 +533,9 @@ class LoadClassicTexture : OptionsTask
 		super(startup, opts);
 	}
 
-	void close() {}
+	override void close() {}
 
-	bool build()
+	override bool build()
 	{
 		auto p = SysPool();
 		p.suppress404 = true;
@@ -626,9 +626,9 @@ class LoadClassicIcons : OptionsTask
 		super(startup, opts);
 	}
 
-	void close() {}
+	override void close() {}
 
-	bool build()
+	override bool build()
 	{
 		auto pic = opts.classicTerrainPic();
 
@@ -691,9 +691,9 @@ class LoadClassicFont : OptionsTask
 		super(startup, opts);
 	}
 
-	void close() {}
+	override void close() {}
 
-	bool build()
+	override bool build()
 	{
 		auto cfh = new ClassicFontHandler();
 		cfh.opts = opts;
@@ -721,9 +721,9 @@ class CreateTiledBackground : OptionsTask
 		super(startup, opts);
 	}
 
-	void close() {}
+	override void close() {}
 
-	bool build()
+	override bool build()
 	{
 		auto p = SysPool();
 		p.suppress404 = true;
@@ -800,7 +800,7 @@ public:
 		assert(wc is null);
 	}
 
-	void close()
+	override void close()
 	{
 		if (wc !is null) {
 			wc.close();
@@ -808,7 +808,7 @@ public:
 		}
 	}
 
-	bool build()
+	override bool build()
 	{
 		if (wc !is null)
 			wc.doTick();
@@ -860,7 +860,7 @@ public:
 	 */
 
 
-	void connected()
+	override void connected()
 	{
 		if (opts.playSessionCookie is null)
 			authenticate();
@@ -868,17 +868,17 @@ public:
 			getServerList();
 	}
 
-	void percentage(int p)
+	override void percentage(int p)
 	{
 		completed = p;
 	}
 
-	void authenticated()
+	override void authenticated()
 	{
 		assert(false, "Does not deal with authentication");
 	}
 
-	void serverList(ClassicServerInfo[] csis)
+	override void serverList(ClassicServerInfo[] csis)
 	{
 		shutdownConnection();
 
@@ -892,19 +892,19 @@ public:
 		signalDone();
 	}
 
-	void serverInfo(ClassicServerInfo csi)
+	override void serverInfo(ClassicServerInfo csi)
 	{
 		assert(false, "Does not deal with server info");
 	}
 
-	void error(Exception e)
+	override void error(Exception e)
 	{
 		shutdownConnection();
 
 		signalError(["Disconnected", e.toString()]);
 	}
 
-	void disconnected()
+	override void disconnected()
 	{
 		// The server closed the connection peacefully.
 		shutdownConnection();

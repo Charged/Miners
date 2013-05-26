@@ -5,10 +5,11 @@
  */
 module charge.util.properties;
 
-import std.conv : toInt, toUint, toDouble;
 import std.stream : BufferedFile, FileMode;
-import std.regexp : RegExp;
-import std.string : toString, toStringz;
+import std.string : toStringz;
+import stdx.conv : toInt, toUint, toDouble;
+import stdx.regexp : RegExp;
+import stdx.string : toString;
 
 
 /**
@@ -92,10 +93,10 @@ public:
 		auto v = safeGet(key);
 		if (v is null)
 			return def;
-		return v.dup;
+		return v.idup;
 	}
 
-	char* getStringz(string key, string def)
+	immutable(char)* getStringz(string key, string def)
 	{
 		return toStringz(get(key, def));
 	}
@@ -140,24 +141,27 @@ public:
 
 		auto p = new Properties();
 
-		foreach(ulong n, string line; f) {
+		foreach(ulong n, char[] l; f) {
+			string line = l.idup;
+
 			if (line.length == 0)
 				continue;
 
 			if (comment.find(line) >= 0)
 				continue;
 
+
 			auto m = semsett.exec(line);
 			if (m.length > 2) {
 				// Need to dup them
-				p.add(m[1].dup, m[2].dup);
+				p.add(m[1].idup, m[2].idup);
 				continue;
 			}
 
 			m = setting.exec(line);
 			if (m.length > 2) {
 				// Need to dup them
-				p.add(m[1].dup, m[2].dup);
+				p.add(m[1].idup, m[2].idup);
 				continue;
 			}
 		}

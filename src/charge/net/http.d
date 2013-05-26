@@ -5,15 +5,18 @@
  */
 module charge.net.http;
 
-import std.string : find, format;
-import std.conv : toInt;
-import std.regexp : RegExp;
+import std.c.string : memset;
+
+import std.string : format;
 import std.socket : TcpSocket, SocketSet, SocketShutdown,
                     SocketOption, SocketOptionLevel,
-                    Address, InternetAddress, timeval;
+                    Address, InternetAddress, TimeVal;
+
 import uri = std.uri;
 
-import std.c.string : memset;
+import stdx.conv : toInt;
+import stdx.string : find;
+import stdx.regexp : RegExp;
 
 import charge.sys.logger;
 import charge.net.threaded;
@@ -102,20 +105,8 @@ public:
 		sSetError.add(s);
 
 		try {
-			// Ugh work around silly Phobos bug
-			version (Posix) {
-				struct TimeVal {
-					size_t sec;
-					size_t micro;
-				}
-				TimeVal tv;
-			} else {
-				timeval tv;
-			}
-			auto tvPtr = cast(timeval*)&tv;
-			memset(tvPtr, 0, tv.sizeof);
-
-			int ret = s.select(sSetRead, sSetWrite, sSetError, tvPtr);
+			TimeVal tv;
+			int ret = s.select(sSetRead, sSetWrite, sSetError, &tv);
 			if (ret < 0)
 				throw new Exception("Error on select");
 			if (ret == 0)
@@ -406,7 +397,7 @@ protected:
 	/**
 	 * Called at start.
 	 */
-	int run()
+	override void run()
 	{
 		try {
 			connect(hostname, port);
@@ -424,8 +415,6 @@ protected:
 		} catch (Exception e) {
 			handleError(e);
 		}
-
-		return 0;
 	}
 
 	/**
@@ -495,7 +484,7 @@ static this()
 
 static int getReturnCode(char[] header)
 {
-	auto m = headerReg.match(header);
+	auto m = headerReg.match(cast(string)header);
 	if (m.length < 2)
 		throw new Exception("Invalid HTTP resonse");
 

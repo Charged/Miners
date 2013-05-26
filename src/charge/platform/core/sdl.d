@@ -5,10 +5,12 @@
  */
 module charge.platform.core.sdl;
 
+import std.c.stdlib : exit;
+
 import std.file : exists;
 import std.stdio : writefln;
-import std.string : format, toString, toStringz;
-import std.c.stdlib : exit;
+import std.string : format, toStringz;
+import stdx.string : toString;
 
 import charge.core;
 import charge.math.ints;
@@ -120,7 +122,7 @@ public:
 			init();
 	}
 
-	void close()
+	override void close()
 	{
 		foreach_reverse(close; closeFuncs)
 			close();
@@ -138,7 +140,7 @@ public:
 			closeNoVideo();
 	}
 
-	void panic(string msg)
+	override void panic(string msg)
 	{
 		l.fatal("Core Panic!\n%s", msg);
 		writefln("Core Panic!\n%s", msg);
@@ -146,7 +148,7 @@ public:
 		exit(-1);
 	}
 
-	string getClipboardText()
+	override string getClipboardText()
 	{
 		if (noVideo)
 			throw new Exception("Gfx not initialized!");
@@ -154,7 +156,7 @@ public:
 		return .getClipboardText();
 	}
 
-	void screenShot()
+	override void screenShot()
 	{
 		if (noVideo)
 			throw new Exception("Gfx not initialized!");
@@ -221,12 +223,12 @@ public:
 		SDL_SaveBMP(temp, toStringz(filename));
 	}
 
-	void resize(uint w, uint h)
+	override void resize(uint w, uint h)
 	{
 		resize(w, h, fullscreen);
 	}
 
-	void resize(uint w, uint h, bool fullscreen)
+	override void resize(uint w, uint h, bool fullscreen)
 	{
 		if (!resizeSupported)
 			return;
@@ -257,7 +259,7 @@ public:
 		DefaultTarget.initDefaultTarget(w, h);
 	}
 
-	void size(out uint w, out uint h, out bool fullscreen)
+	override void size(out uint w, out uint h, out bool fullscreen)
 	{
 		if (noVideo)
 			throw new Exception("Gfx not initialized!");
@@ -327,7 +329,7 @@ private:
 		height = p.getUint("h", defaultHeight);
 		fullscreen = p.getBool("fullscreen", defaultFullscreen);
 		fullscreenAutoSize = p.getBool("fullscreenAutoSize", defaultFullscreenAutoSize);
-		char* title = toStringz(opts.title);
+		auto title = toStringz(opts.title);
 
 		SDL_WM_SetCaption(title, title);
 
@@ -366,11 +368,11 @@ private:
 		gfxLoaded = true;
 
 		string str;
-		str = std.string.toString(glGetString(GL_VENDOR));
+		str = .toString(glGetString(GL_VENDOR));
 		l.info(str);
-		str = std.string.toString(glGetString(GL_VERSION));
+		str = .toString(glGetString(GL_VERSION));
 		l.info(str);
-		str = std.string.toString(glGetString(GL_RENDERER));
+		str = .toString(glGetString(GL_RENDERER));
 		l.info(str);
 
 

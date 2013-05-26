@@ -9,7 +9,7 @@ import std.c.stdlib : getenv, free;
 import std.utf : toUTF8;
 import std.file : exists, mkdir, chdir;
 import std.stdio : writefln;
-import std.string : toString;
+import stdx.string : toString;
 
 
 string tempFolder;
@@ -60,7 +60,7 @@ static this()
 static ~this()
 {
 	// This should be stdlib free
-	free(privateFrameworksPath.ptr);
+	free(cast(void*)privateFrameworksPath.ptr);
 	privateFrameworksPath = null;
 }
 

@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.message;
 
-import std.string : tolower;
+import std.string : toLower;
 
 import miners.classic.interfaces;
 import miners.importer.network : removeColorTags;
@@ -50,7 +50,7 @@ public:
 		if (name is null)
 			return;
 
-		tabs[cast(ubyte)id] = tolower(removeColorTags(name));
+		tabs[cast(ubyte)id] = toLower(removeColorTags(name));
 	}
 
 	void removePlayer(byte id)
@@ -75,8 +75,8 @@ public:
 
 	string tabCompletePlayer(string searchIn, string lastIn)
 	{
-		auto search = tolower(searchIn);
-		auto last = tolower(lastIn);
+		auto search = toLower(searchIn);
+		auto last = toLower(lastIn);
 		bool next = lastIn is null; // If null just pick the first match
 		int first = -1;
 
@@ -145,15 +145,15 @@ public:
 	}
 
 protected:
-	char[] escapeBad(char[] msg)
+	string escapeBad(char[] msg)
 	{
 		foreach(m; msg)
 			if (m == '\0' || m == '\t' || m == '\n')
 				m = ' ';
-		return msg;
+		return msg.idup;
 	}
 
-	final void doMessage(char[] msg)
+	final void doMessage(string msg)
 	{
 		if (message !is null)
 			message(msg);
