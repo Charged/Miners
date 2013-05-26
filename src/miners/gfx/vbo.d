@@ -130,14 +130,16 @@ public:
 	~this()
 	{
 		assert(m is null);
-		delete array;
-		delete resultVbo;
+		assert(array is null);
+		assert(resultVbo is null);
 	}
 
 	void breakApart()
 	{
 		breakApartAndNull(m);
 		super.breakApart();
+		delete array;
+		delete resultVbo;
 	}
 
 	GfxMaterial getMaterial()
