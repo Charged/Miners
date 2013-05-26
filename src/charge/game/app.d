@@ -10,6 +10,8 @@ import lib.sdl.sdl;
 import charge.util.vector;
 import charge.core;
 import charge.ctl.input;
+import charge.ctl.keyboard;
+import charge.ctl.mouse;
 import charge.gfx.target;
 import charge.gfx.sync;
 import charge.gfx.gfx;
@@ -22,6 +24,8 @@ abstract class App
 {
 protected:
 	Input i;
+	Keyboard keyboard;
+	Mouse mouse;
 	Core c;
 	bool running;
 
@@ -37,6 +41,9 @@ public:
 
 		i = Input();
 		i.quit ~= &stop;
+
+		keyboard = i.keyboard;
+		mouse = i.mouse;
 	}
 
 	~this()
