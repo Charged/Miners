@@ -168,7 +168,7 @@ public:
 
 		// Load zip files from this or any parent.
 		Pool p = this;
-		while (p is null) {
+		while (p !is null) {
 			f = p.loadZip(filename);
 			if (f !is null)
 				return f;
