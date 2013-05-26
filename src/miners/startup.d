@@ -17,7 +17,6 @@ import charge.game.gui.container;
 
 import miners.logo;
 import miners.types;
-import miners.scene;
 import miners.options;
 import miners.defines;
 import miners.interfaces;

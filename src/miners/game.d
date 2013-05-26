@@ -21,7 +21,6 @@ import miners.skin;
 import miners.types;
 import miners.error;
 import miners.world;
-import miners.scene;
 import miners.defines;
 import miners.startup;
 import miners.options;

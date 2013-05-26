@@ -14,9 +14,9 @@ import charge.game.gui.text;
 import charge.game.gui.textbased;
 
 import miners.types;
-import miners.scene;
 import miners.options;
 import miners.console;
+import miners.scenebase;
 import miners.interfaces;
 import miners.gfx.scene;
 import miners.gfx.selector;
@@ -39,7 +39,7 @@ import miners.importer.network;
 /**
  * Classic scene
  */
-class ClassicScene : GameSceneBase, ClientListener
+class ClassicScene : SceneBase, ClientListener
 {
 private:
 	mixin SysLogging;

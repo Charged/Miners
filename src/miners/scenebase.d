@@ -12,7 +12,7 @@ import miners.interfaces;
 /**
  * Base class for lever viewers and game logic scenes.
  */
-class GameSceneBase : Scene
+class SceneBase : Scene
 {
 public:
 	Router r;
