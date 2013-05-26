@@ -8,7 +8,7 @@ import charge.gfx.target : GfxRenderTarget = RenderTarget;
 static import charge.game.scene;
 
 import miners.types;
-public import miners.classic.interfaces : ClassicConnection = Connection;
+import miners.classic.interfaces : ClassicClientConnection;
 
 alias charge.game.scene.Scene Scene;
 
@@ -40,7 +40,7 @@ interface Router : charge.game.scene.SceneManager
 	/**
 	 * Start a classic scene listening to the given connection.
 	 */
-	void connectedTo(ClassicConnection cc,
+	void connectedTo(ClassicClientConnection cc,
 	                 uint x, uint y, uint z,
 	                 ubyte[] data);
 
@@ -116,7 +116,7 @@ interface Router : charge.game.scene.SceneManager
 	/**
 	 * Display the a world change menu.
 	 */
-	void classicWorldChange(ClassicConnection cc);
+	void classicWorldChange(ClassicClientConnection cc);
 
 	/**
 	 * Displays a error message menu, if panic is true the

@@ -37,6 +37,7 @@ import miners.menu.classic;
 import miners.menu.blockselector;
 import miners.classic.world;
 import miners.classic.scene;
+import miners.classic.interfaces;
 import miners.importer.parser;
 import miners.importer.network;
 
@@ -504,7 +505,7 @@ protected:
 	 */
 
 
-	void connectedTo(ClassicConnection cc, uint x, uint y, uint z, ubyte[] data)
+	void connectedTo(ClassicClientConnection cc, uint x, uint y, uint z, ubyte[] data)
 	{
 		auto r = new ClassicScene(this, opts, cc, x, y, z, data);
 		push(r);
@@ -582,7 +583,7 @@ protected:
 		push(new ClassicConnectingMenu(this, opts, csi));
 	}
 
-	void classicWorldChange(ClassicConnection cc)
+	void classicWorldChange(ClassicClientConnection cc)
 	{
 		push(new ClassicConnectingMenu(this, opts, cc));
 	}

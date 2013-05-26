@@ -52,11 +52,11 @@ public:
 /**
  * Displays connection status for a Classic connection.
  */
-class ClassicConnectingMenu : MenuSceneBase, ClientListener
+class ClassicConnectingMenu : MenuSceneBase, ClassicClientListener
 {
 private:
 	ClassicServerInfo csi;
-	ClientConnection cc;
+	ClassicConnection cc;
 	MessageLogger ml;
 	MenuBase mb;
 	Text text;
@@ -74,7 +74,7 @@ public:
 	this(Router r, Options opts, ClassicServerInfo csi)
 	{
 		ml = new MessageLogger();
-		cc = new ClientConnection(this, ml, csi);
+		cc = new ClassicConnection(this, ml, csi);
 
 		this.csi = csi;
 		this(r, opts, cc, "Connecting");
@@ -84,9 +84,9 @@ public:
 	 * This constructor is used we change world, the server
 	 * does this by sending levelInitialize packet.
 	 */
-	this(Router r, Options opts, ClassicConnection cc)
+	this(Router r, Options opts, ClassicClientConnection cc)
 	{
-		this.cc = cast(ClientConnection)cc;
+		this.cc = cast(ClassicConnection)cc;
 
 		this(r, opts, this.cc, "Changing Worlds");
 	}
@@ -94,7 +94,7 @@ public:
 
 protected:
 	this(Router r, Options opts,
-	     ClientConnection cc, string startText)
+	     ClassicConnection cc, string startText)
 	{
 		this.r = r;
 		this.cc = cc;

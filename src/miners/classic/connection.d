@@ -23,7 +23,7 @@ alias charge.net.util.ntoh ntoh;
 /**
  * A threaded TCP connection to a server that handles protocol parsing. 
  */
-class ClientConnection : Connection
+class ClassicConnection : ClassicClientConnection
 {
 public:
 	// Track some per connection global state.
@@ -52,10 +52,10 @@ private:
 	ubyte[] inData;
 
 	/// Receiver of packages
-	ClientListener cl;
+	ClassicClientListener cl;
 
 	/// Receiver of messages.
-	ClientMessageListener ml;
+	ClassicClientMessageListener ml;
 
 	// For packet processing.
 	size_t packetLength;
@@ -66,7 +66,7 @@ private:
 	TcpSocket s;
 
 public:
-	this(ClientListener cl, ClientMessageListener ml, ClassicServerInfo csi)
+	this(ClassicClientListener cl, ClassicClientMessageListener ml, ClassicServerInfo csi)
 	{
 		this.cl = cl;
 		this.ml = ml;
@@ -84,17 +84,17 @@ public:
 	{
 	}
 
-	void setListener(ClientListener l)
+	void setListener(ClassicClientListener l)
 	{
 		this.cl = l;
 	}
 
-	void setMessageListener(ClientMessageListener ml)
+	void setMessageListener(ClassicClientMessageListener ml)
 	{
 		this.ml = ml;
 	}
 
-	ClientMessageListener getMessageListener()
+	ClassicClientMessageListener getMessageListener()
 	{
 		return ml;
 	}

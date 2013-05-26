@@ -8,7 +8,7 @@ import miners.classic.interfaces;
 import miners.importer.network : removeColorTags;
 
 
-class MessageLogger : ClientMessageListener
+class MessageLogger : ClassicClientMessageListener
 {
 public:
 	const backlog = 100;
@@ -26,7 +26,7 @@ public:
 public:
 	/*
 	 *
-	 * ClientMessageListener functions.
+	 * ClassicClientMessageListener functions.
 	 *
 	 */
 

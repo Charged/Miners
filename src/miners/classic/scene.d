@@ -39,13 +39,13 @@ import miners.importer.network;
 /**
  * Classic scene
  */
-class ClassicScene : SceneBase, ClientListener
+class ClassicScene : SceneBase, ClassicClientListener
 {
 private:
 	mixin SysLogging;
 
 protected:
-	ClientConnection c;
+	ClassicConnection c;
 	ClassicWorld w;
 
 	ClassicPlayer players[ubyte.max+1];
@@ -223,9 +223,9 @@ public:
 	}
 
 	this(Router r, Options opts,
-	     Connection cc, uint xSize, uint ySize, uint zSize, ubyte[] data)
+	     ClassicClientConnection cc, uint xSize, uint ySize, uint zSize, ubyte[] data)
 	{
-		this.c = cast(ClientConnection)cc;
+		this.c = cast(ClassicConnection)cc;
 		this.ml = cast(MessageLogger)cc.getMessageListener();
 		this.isAdmin = this.c.isAdmin;
 

@@ -6,22 +6,22 @@ module miners.classic.interfaces;
 /**
  * A classic connection interface.
  */
-interface Connection
+interface ClassicClientConnection
 {
-	void setListener(ClientListener l);
+	void setListener(ClassicClientListener l);
 
 	/*
 	 * Message Listener
 	 */
 
-	void setMessageListener(ClientMessageListener ml);
-	ClientMessageListener getMessageListener();
+	void setMessageListener(ClassicClientMessageListener ml);
+	ClassicClientMessageListener getMessageListener();
 }
 
 /**
  * Receiver of client packages from a ClientConnection.
  */
-interface ClientListener
+interface ClassicClientListener
 {
 	void indentification(ubyte ver, string name, string motd, ubyte type);
 
@@ -55,7 +55,7 @@ interface ClientListener
 /**
  * Receiver of client messages from a ClientConnection.
  */
-interface ClientMessageListener
+interface ClassicClientMessageListener
 {
 	void archive(byte id, string message);
 
