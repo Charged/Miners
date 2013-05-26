@@ -12,7 +12,7 @@ import charge.util.png : pngDecode;
 import charge.util.memory : cFree;
 
 import charge.platform.homefolder;
-static import charge.game.startup;
+static import charge.game.scene.startup;
 import charge.game.gui.container;
 
 import miners.logo;
@@ -30,7 +30,7 @@ import miners.importer.texture;
  * StartupScene specialized for Miners,
  * launches main menu when it is done.
  */
-class StartupScene : charge.game.startup.StartupScene
+class StartupScene : GameStartupScene
 {
 public:
 	Router r;
@@ -88,7 +88,7 @@ protected:
 /**
  * Tiny helper class.
  */
-class OptionsTask : charge.game.startup.Task
+class OptionsTask : GameTask
 {
 protected:
 	Options opts;

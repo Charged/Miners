@@ -3,7 +3,7 @@
 /**
  * Source file for BackgroundScene.
  */
-module charge.game.background;
+module charge.game.scene.background;
 
 import charge.math.color;
 import charge.sys.resource : reference;
@@ -11,7 +11,7 @@ import charge.gfx.draw;
 import charge.gfx.target;
 import charge.gfx.texture;
 
-import charge.game.scene;
+import charge.game.scene.scene : Scene;
 
 
 /**

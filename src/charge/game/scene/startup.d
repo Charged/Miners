@@ -3,11 +3,19 @@
 /**
  * Source file for StartupScene.
  */
-module charge.game.startup;
+module charge.game.scene.startup;
 
-import charge.charge;
+import charge.math.color : Color4f;
+import charge.util.vector : Vector;
 
-import charge.game.scene;
+static import charge.gfx.font;
+static import charge.gfx.draw;
+static import charge.gfx.target;
+static import charge.ctl.input;
+static import charge.ctl.mouse;
+static import charge.ctl.keyboard;
+
+import charge.game.scene.scene;
 
 
 /**
@@ -24,11 +32,11 @@ protected:
 private:
 	SceneManager r;
 
-	mixin SysLogging;
-	CtlKeyboard keyboard;
-	CtlMouse mouse;
+	mixin charge.sys.logger.Logging;
+	charge.ctl.keyboard.Keyboard keyboard;
+	charge.ctl.mouse.Mouse mouse;
 
-	GfxDraw d;
+	charge.gfx.draw.Draw d;
 
 	Vector!(Task) active;
 	Vector!(Task) done;
@@ -41,10 +49,10 @@ public:
 		super(Type.Menu);
 		this.r = r;
 
-		keyboard = CtlInput().keyboard;
-		mouse = CtlInput().mouse;
+		keyboard = charge.ctl.input.Input().keyboard;
+		mouse = charge.ctl.input.Input().mouse;
 
-		d = new GfxDraw();
+		d = new charge.gfx.draw.Draw();
 
 		r.addBuilder(&build);
 	}
@@ -82,12 +90,12 @@ public:
 		/* nothing */
 	}
 
-	void render(GfxRenderTarget rt)
+	void render(charge.gfx.target.RenderTarget rt)
 	{
 		d.target = rt;
 		d.start();
 
-		auto f = gfxDefaultFont;
+		auto f = charge.gfx.font.BitmapFont.defaultFont;
 
 		const barWidth = 50;
 
@@ -230,7 +238,7 @@ protected:
 	 */
 
 
-	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
+	void keyDown(charge.ctl.keyboard.Keyboard kb, int sym, dchar unicode, char[] str)
 	{
 		if (sym != 27)
 			return;

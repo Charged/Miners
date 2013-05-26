@@ -16,7 +16,7 @@ import charge.ctl.input : Input;
 import charge.ctl.mouse : Mouse;
 import charge.ctl.keyboard : Keyboard;
 
-import charge.game.scene : Scene, SceneManager;
+import charge.game.scene.scene : Scene, SceneManager;
 import charge.game.gui.container : TextureContainer;
 import charge.game.gui.input : InputHandler;
 

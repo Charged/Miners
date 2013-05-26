@@ -12,11 +12,6 @@ import std.stream : BufferedFile, FileMode;
 
 import charge.net.download;
 
-import charge.game.gui.text;
-import charge.game.gui.container;
-
-import charge.game.menu;
-
 
 /**
  * Represents both a local and server version txt file.
@@ -322,68 +317,5 @@ protected:
 	void disconnected()
 	{
 		shutdownConnection();
-	}
-}
-
-/**
- * A helper scene that manages a UpdateDownloader
- */
-abstract class UpdateScene : MenuScene
-{
-protected:
-	UpdateDownloader ud;
-
-
-public:
-	this(TextureContainer target,
-	     string hostname, ushort port,
-	     string localPath, string serverPath,
-	     string versionFilename, string[] files)
-	{
-		ud = new UpdateDownloader(hostname, port,
-			localPath, serverPath,
-			versionFilename, files);
-		ud.updateDg = &update;
-		ud.errorDg = &doError;
-		ud.doneDg = &doDone;
-
-		super(target);
-	}
-
-	void close()
-	{
-		if (ud !is null) {
-			ud.close();
-			ud = null;
-		}
-		super.close();
-	}
-
-	void logic()
-	{
-		if (ud !is null)
-			ud.logic();
-	}
-
-
-protected:
-	abstract void done();
-	abstract void error(Exception e);
-	abstract void update(int p, string file);
-
-
-private:
-	// To manage ud completely in this class.
-	void doDone()
-	{
-		ud = null;
-		done();
-	}
-
-	// To manage ud completely in this class.
-	void doError(Exception e)
-	{
-		ud = null;
-		error(e);
 	}
 }

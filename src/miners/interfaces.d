@@ -5,18 +5,18 @@ module miners.interfaces;
 import charge.gfx.camera : GfxCamera = Camera;
 import charge.gfx.world : GfxWorld = World;
 import charge.gfx.target : GfxRenderTarget = RenderTarget;
-static import charge.game.scene;
+static import charge.game.scene.scene;
 
 import miners.types;
 import miners.classic.interfaces : ClassicClientConnection;
 
-alias charge.game.scene.Scene Scene;
+alias charge.game.scene.scene.Scene Scene;
 
 
 /**
  * Specialized router for Miners.
  */
-interface Router : charge.game.scene.SceneManager
+interface Router : charge.game.scene.scene.SceneManager
 {
 	/*
 	 *

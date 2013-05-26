@@ -3,7 +3,7 @@
 /**
  * Source file for Scene base class and SceneManager interface.
  */
-module charge.game.scene;
+module charge.game.scene.scene;
 
 import charge.gfx.target;
 

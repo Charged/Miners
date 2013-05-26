@@ -74,6 +74,12 @@
  */
 
 /**
+ * @package charge.game.scene
+ *
+ * Folder for SceneManagment and helper Scenes.
+ */
+
+/**
  * @package charge.game.gui
  *
  * Folder for higher level gui classes.

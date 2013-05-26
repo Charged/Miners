@@ -17,7 +17,7 @@ import charge.gfx.sync;
 import charge.gfx.gfx;
 import charge.sys.tracker;
 import charge.sys.resource;
-import charge.game.scene;
+import charge.game.scene.scene;
 
 
 abstract class App

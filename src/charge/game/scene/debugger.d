@@ -1,6 +1,6 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module charge.game.debugger;
+module charge.game.scene.debugger;
 
 import std.string : sformat;
 
@@ -19,7 +19,7 @@ import charge.sys.memory : MemHeader;
 import charge.sys.tracker : TimeTracker;
 import charge.sys.resource : sysReference = reference;
 
-import charge.game.scene : Scene;
+import charge.game.scene.scene : Scene;
 
 
 /**
