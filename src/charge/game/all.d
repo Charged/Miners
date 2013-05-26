@@ -9,6 +9,7 @@ public
 	static import charge.game.lua;
 	static import charge.game.movers;
 	static import charge.game.update;
+	static import charge.game.scene.app;
 	static import charge.game.scene.menu;
 	static import charge.game.scene.scene;
 	static import charge.game.scene.update;
@@ -25,8 +26,8 @@ alias charge.game.world.Actor GameActor;
 alias charge.game.world.World GameWorld;
 alias charge.game.app.App GameApp;
 alias charge.game.app.SimpleApp GameSimpleApp;
-alias charge.game.app.SceneManagerApp GameSceneManagerApp;
 alias charge.game.lua.LuaState GameLuaState;
+alias charge.game.scene.app.SceneManagerApp GameSceneManagerApp;
 alias charge.game.scene.menu.MenuScene GameMenuScene;
 alias charge.game.scene.scene.Scene GameScene;
 alias charge.game.scene.scene.SceneManager GameSceneManager;
