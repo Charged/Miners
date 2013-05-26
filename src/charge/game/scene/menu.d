@@ -3,7 +3,7 @@
 /**
  * Source file for MenuScene.
  */
-module charge.game.menu;
+module charge.game.scene.menu;
 
 static import charge.sys.logger;
 static import charge.sys.resource;

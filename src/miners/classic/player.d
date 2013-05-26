@@ -1,6 +1,6 @@
 // Copyright © 2012, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module miners.classic.otherplayer;
+module miners.classic.player;
 
 import charge.charge;
 
