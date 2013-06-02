@@ -104,10 +104,6 @@ public:
 		}
 	}
 
-	void network()
-	{
-	}
-
 	void idle(long time)
 	{
 		// If we have built at least once this frame and have very little

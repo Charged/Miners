@@ -83,7 +83,6 @@ public:
 		if (opts is null)
 			opts = new CoreOptions();
 
-		networkTime = new TimeTracker("net");
 		renderTime = new TimeTracker("gfx");
 		inputTime = new TimeTracker("ctl");
 		logicTime = new TimeTracker("logic");
@@ -100,7 +99,6 @@ public:
 		i.resize -= &resize;
 	}
 
-	abstract void network();
 	abstract void render();
 	abstract void logic();
 
@@ -124,11 +122,6 @@ public:
 			SDL_Delay(cast(uint)time);
 	}
 
-	void input()
-	{
-		i.tick();
-	}
-
 	void loop()
 	{
 		long now = SDL_GetTicks();
@@ -140,13 +133,11 @@ public:
 		while(running) {
 			now = SDL_GetTicks();
 
-			do_input();
-			do_network();
+			doInput();
 
 			while(where < now) {
-				do_input();
-				do_network();
-				do_logic();
+				doInput();
+				doLogic();
 
 				where = where + step;
 				changed = true;
@@ -154,21 +145,43 @@ public:
 
 			if (changed) {
 				changed = false;
-				do_render();
+				doRender();
 			}
 
 			now = SDL_GetTicks();
 			long diff = (step + where) - now;
-			do_idle(diff);
+			doIdle(diff);
 		}
 
 		close();
 	}
 
-private:
-	void do_network() { networkTime.start(); network(); networkTime.stop(); }
-	void do_render() { renderTime.start(); render(); renderTime.stop(); }
-	void do_logic() { logicTime.start(); logic(); logicTime.stop(); }
-	void do_input() { inputTime.start(); input(); inputTime.stop(); }
-	void do_idle(long time) { idleTime.start(); idle(time); idleTime.stop(); }
+private final:
+	void doInput()
+	{
+		inputTime.start();
+		scope(exit) inputTime.stop();
+		i.tick();
+	}
+
+	void doLogic()
+	{
+		logicTime.start();
+		scope(exit) logicTime.stop();
+		logic();
+	}
+
+	void doRender()
+	{
+		renderTime.start();
+		scope(exit) renderTime.stop();
+		render();
+	}
+
+	void doIdle(long diff)
+	{
+		idleTime.start();
+		scope(exit) idleTime.stop();
+		idle(diff);
+	}
 }

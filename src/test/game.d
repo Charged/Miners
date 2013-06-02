@@ -246,10 +246,6 @@ protected:
 		rt.swap();
 	}
 
-	void network()
-	{
-	}
-
 	void keyDown(CtlKeyboard kb, int sym, dchar unicode, char[] str)
 	{
 		switch(sym) {
