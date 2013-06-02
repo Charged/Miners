@@ -25,7 +25,6 @@ alias charge.game.world.Ticker GameTicker;
 alias charge.game.world.Actor GameActor;
 alias charge.game.world.World GameWorld;
 alias charge.game.app.App GameApp;
-alias charge.game.app.SimpleApp GameSimpleApp;
 alias charge.game.lua.LuaState GameLuaState;
 alias charge.game.scene.app.SceneManagerApp GameSceneManagerApp;
 alias charge.game.scene.menu.MenuScene GameMenuScene;

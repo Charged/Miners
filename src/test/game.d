@@ -94,7 +94,7 @@ class Car : GameCar
 	}
 }
 
-class Game : GameSimpleApp
+class Game : GameApp
 {
 private:
 	bool moveing;

@@ -22,27 +22,50 @@ import charge.sys.resource;
 abstract class App
 {
 protected:
-	Input i;
-	Keyboard keyboard;
-	Mouse mouse;
 	Core c;
+
 	bool running;
+
+	Input i;
+	Mouse mouse;
+	Keyboard keyboard;
+
+
+	GfxSync curSync;
+	bool fastRender = true; //< Try to render as fast as possible.
+
+	TimeTracker networkTime;
+	TimeTracker renderTime;
+	TimeTracker logicTime;
+	TimeTracker inputTime;
+	TimeTracker buildTime;
+	TimeTracker idleTime;
 
 private:
 	bool closed;
 
 public:
-	this(CoreOptions opts)
+	this(CoreOptions opts = null)
 	{
 		running = true;
+
+		if (opts is null)
+			opts = new CoreOptions();
 
 		c = Core(opts);
 
 		i = Input();
-		i.quit ~= &stop;
+		i.quit ~= &quit;
+		i.resize ~= &resize;
 
 		keyboard = i.keyboard;
 		mouse = i.mouse;
+
+		renderTime = new TimeTracker("gfx");
+		inputTime = new TimeTracker("ctl");
+		logicTime = new TimeTracker("logic");
+		buildTime = new TimeTracker("build");
+		idleTime = new TimeTracker("idle");
 	}
 
 	~this()
@@ -53,63 +76,24 @@ public:
 	void close()
 	{
 		running = false;
-		i.quit -= &stop;
+		i.quit -= &quit;
+		i.resize -= &resize;
 		c.close();
 		closed = true;
 	}
 
-	abstract void loop();
-
-protected:
-	void stop()
+	void quit()
 	{
 		running = false;
 	}
-}
-
-abstract class SimpleApp : App
-{
-protected:
-	GfxSync curSync;
-
-	bool fastRender = true; //< Try to render as fast as possible.
-
-	TimeTracker networkTime;
-	TimeTracker renderTime;
-	TimeTracker logicTime;
-	TimeTracker inputTime;
-	TimeTracker buildTime;
-	TimeTracker idleTime;
-
-public:
-	this(CoreOptions opts = null)
-	{
-		if (opts is null)
-			opts = new CoreOptions();
-
-		renderTime = new TimeTracker("gfx");
-		inputTime = new TimeTracker("ctl");
-		logicTime = new TimeTracker("logic");
-		buildTime = new TimeTracker("build");
-		idleTime = new TimeTracker("idle");
-
-		super(opts);
-
-		i.resize ~= &resize;
-	}
-
-	~this()
-	{
-		i.resize -= &resize;
-	}
-
-	abstract void render();
-	abstract void logic();
 
 	void resize(uint w, uint h)
 	{
 		Core().resize(w, h);
 	}
+
+	abstract void render();
+	abstract void logic();
 
 	/**
 	 * Idle is a bit missleading name, this function is always after a
@@ -165,7 +149,6 @@ public:
 
 		close();
 	}
-
 
 private final:
 	void doInput()

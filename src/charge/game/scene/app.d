@@ -19,7 +19,7 @@ import charge.game.scene.scene;
  * Base class for games wishing to use Scenes, implements
  * most if not all needed SceneManager functions needed.
  */
-abstract class SceneManagerApp : SimpleApp, SceneManager
+abstract class SceneManagerApp : App, SceneManager
 {
 private:
 	Vector!(Scene) vec;
@@ -208,7 +208,7 @@ public:
 
 		// If there is nobody to take the input we quit the game.
 		if (newScene is null)
-			stop();
+			quit();
 
 		if (currentInput !is newScene) {
 			if (currentInput !is null)
