@@ -6,6 +6,7 @@ import charge.core;
 
 static import box.game;
 static import miners.game;
+static import examples.gl;
 static import examples.game;
 
 // For memory tracking
@@ -54,6 +55,7 @@ int main(string[] args)
 	try {
 //		auto g = new box.game.Game(args);
 		auto g = new miners.game.Game(args);
+//		auto g = new examples.gl.Game(args);
 //		auto g = new examples.game.Game(args);
 
 		g.loop();
