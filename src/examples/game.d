@@ -1,6 +1,6 @@
 // Copyright © 2011, Jakob Bornecrantz.  All rights reserved.
 // See copyright notice in src/charge/charge.d (GPLv2 only).
-module test.game;
+module examples.game;
 
 import std.math : pow, fmin, acos, PI;
 

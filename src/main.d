@@ -5,8 +5,8 @@ import std.stdio : writefln;
 import charge.core;
 
 static import box.game;
-static import test.game;
 static import miners.game;
+static import examples.game;
 
 // For memory tracking
 static import lib.lua.state;
@@ -53,8 +53,8 @@ int main(string[] args)
 
 	try {
 //		auto g = new box.game.Game(args);
-//		auto g = new test.game.Game(args);
 		auto g = new miners.game.Game(args);
+//		auto g = new examples.game.Game(args);
 
 		g.loop();
 
