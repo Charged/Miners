@@ -12,6 +12,8 @@ import charge.core;
 import charge.ctl.input;
 import charge.ctl.keyboard;
 import charge.ctl.mouse;
+import charge.gfx.gfx;
+import charge.gfx.sync;
 import charge.gfx.target;
 import charge.sys.tracker;
 import charge.sys.resource;
@@ -68,14 +70,16 @@ protected:
 abstract class SimpleApp : App
 {
 protected:
+	GfxSync curSync;
+
+	bool fastRender = true; //< Try to render as fast as possible.
+
 	TimeTracker networkTime;
 	TimeTracker renderTime;
 	TimeTracker logicTime;
 	TimeTracker inputTime;
 	TimeTracker buildTime;
 	TimeTracker idleTime;
-
-	bool changed; //< Tracks if should render
 
 public:
 	this(CoreOptions opts = null)
@@ -116,10 +120,12 @@ public:
 	 */
 	void idle(long time)
 	{
-		charge.sys.resource.Pool().collect();
-
-		if (time > 0)
-			SDL_Delay(cast(uint)time);
+		if (time > 0) {
+			if (curSync && fastRender)
+				gfxSyncWaitAndDelete(curSync, time);
+			else
+				SDL_Delay(cast(uint)time);
+		}
 	}
 
 	void loop()
@@ -129,6 +135,7 @@ public:
 		long where = now;
 		long last = now;
 
+		bool changed; //< Tracks if should render
 
 		while(running) {
 			now = SDL_GetTicks();
@@ -143,9 +150,12 @@ public:
 				changed = true;
 			}
 
-			if (changed) {
-				changed = false;
-				doRender();
+			if (changed && gfxLoaded) {
+				changed = !gfxSyncWaitAndDelete(curSync, 0);
+				if (!changed) {
+					doRender();
+					curSync = gfxSyncInsert();
+				}
 			}
 
 			now = SDL_GetTicks();
@@ -155,6 +165,7 @@ public:
 
 		close();
 	}
+
 
 private final:
 	void doInput()

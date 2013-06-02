@@ -10,8 +10,6 @@ import lib.sdl.sdl : SDL_Delay;
 import charge.core : CoreOptions;
 import charge.util.vector : Vector;
 
-import charge.gfx.gfx;
-import charge.gfx.sync;
 import charge.gfx.target;
 import charge.game.app;
 import charge.game.scene.scene;
@@ -23,12 +21,7 @@ import charge.game.scene.scene;
  */
 abstract class SceneManagerApp : SimpleApp, SceneManager
 {
-protected:
-	bool fastRender = true; //< Try to render as fast as possible.
-
 private:
-	GfxSync curSync;
-
 	Vector!(Scene) vec;
 	Vector!(Scene) del;
 	Scene currentInput;
@@ -65,13 +58,6 @@ public:
 
 	void render()
 	{
-		if (!gfxLoaded)
-			return;
-
-		changed = !gfxSyncWaitAndDelete(curSync, 0);
-		if (changed)
-			return;
-
 		auto rt = DefaultTarget();
 
 		int i = cast(int)vec.length;
@@ -85,7 +71,6 @@ public:
 			vec[i].render(rt);
 
 		rt.swap();
-		curSync = gfxSyncInsert();
 	}
 
 	void logic()
@@ -109,7 +94,7 @@ public:
 		// If we have built at least once this frame and have very little
 		// time left don't build again. But we always build one each frame.
 		if (built && time < 5 || builders.length == 0)
-			return wait(time);
+			return super.idle(time);
 
 		// Account this time for build instead of idle
 		buildTime.start();
@@ -129,17 +114,7 @@ public:
 
 		// Didn't build anything, just sleep.
 		if (!built)
-			return wait(time);
-	}
-
-	void wait(long time)
-	{
-		if (time > 0) {
-			if (curSync && fastRender)
-				gfxSyncWaitAndDelete(curSync, time);
-			else
-				SDL_Delay(cast(uint)time);
-		}
+			return super.idle(time);
 	}
 
 
