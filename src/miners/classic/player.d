@@ -15,6 +15,8 @@ public:
 	char[] name;
 	GfxDynamicTexture text;
 	Point3d curPos;
+	double curHeading, curPitch;
+	double diffHeading, diffPitch;
 	int ticks;
 
 	/// fCraft likes to hide players far away.
@@ -26,6 +28,8 @@ public:
 	{
 		this.name = name;
 		this.curPos = pos;
+		this.curHeading = heading;
+		this.curPitch = pitch;
 		super(w, id, pos, heading, pitch);
 
 		w.addTicker(this);
@@ -56,6 +60,13 @@ public:
 
 		vel = (this.pos - curPos);
 		vel.scale(0.2);
+
+		diffHeading = this.heading - curHeading;
+		diffHeading *= 0.2;
+
+		diffPitch = this.pitch - curPitch;
+		diffPitch *= 0.2;
+
 		ticks = 4;
 	}
 
@@ -65,12 +76,19 @@ public:
 			auto vel = this.vel;
 			vel.scale(ticks);
 
-			auto tmp = this.pos;
+			auto savePos = this.pos;
+			auto saveHeading = this.heading;
+			auto savePitch = this.pitch;
 
 			curPos = this.pos - vel;
-			super.update(curPos, heading, pitch);
+			curHeading = this.heading - (diffHeading * ticks);
+			curPitch = this.pitch - (diffPitch * ticks);
 
-			this.pos = tmp;
+			super.update(curPos, curHeading, curPitch);
+
+			this.pos = savePos;
+			this.heading = saveHeading;
+			this.pitch = savePitch;
 
 			ticks--;
 		}
