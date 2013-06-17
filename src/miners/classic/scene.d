@@ -328,7 +328,8 @@ public:
 			auto pos = cam.position;
 			if (pos != saveCamPos ||
 			    camHeading != saveCamHeading ||
-			    camPitch != saveCamPitch) {
+			    camPitch != saveCamPitch ||
+			    sentCounter > 5) {
 
 				c.sendClientPlayerUpdate(pos.x,
 							 pos.y,
@@ -339,9 +340,7 @@ public:
 				saveCamPos = pos;
 				saveCamHeading = camHeading,
 				saveCamPitch = camPitch;
-			} else {
-				sentCounter = 0;
-				// @todo c.sendPing();
+				sentCounter = 1;
 			}
 		}
 	}
