@@ -8,6 +8,9 @@ import miners.world;
 import miners.importer.network;
 import miners.actors.otherplayer;
 
+import std.math;
+import std.stdio;
+
 
 class ClassicPlayer : OtherPlayer, GameTicker
 {
@@ -17,7 +20,16 @@ public:
 	Point3d curPos;
 	double curHeading, curPitch;
 	double diffHeading, diffPitch;
+	bool moving;
 	int ticks;
+	int idleTicks;
+	int animTicks;
+	int resetTicks;
+
+	Vector3d diffBone2;
+	Vector3d diffBone3;
+	Vector3d diffBone4;
+	Vector3d diffBone5;
 
 	/// fCraft likes to hide players far away.
 	bool isHidden;
@@ -91,6 +103,52 @@ public:
 			this.pitch = savePitch;
 
 			ticks--;
+
+			if (vel.x || vel.z)
+				idleTicks = 0;
+		}
+
+		if (ticks < 0 || (!vel.x && !vel.z)) {
+			idleTicks = (idleTicks < 16) ? idleTicks + 1 : idleTicks;
+		}
+
+		if (idleTicks < 15) {
+			animTicks++;
+
+			skel.bones.ptr[2].rot = Quatd(0, cos(animTicks * 0.18f * 0.6662f + 3.141593f) * 2.0f * 0.5f, 0);
+			skel.bones.ptr[3].rot = Quatd(0, cos(animTicks * 0.18f * 0.6662f) * 2.0f * 0.5f, 0);
+			skel.bones.ptr[4].rot = Quatd(0, cos(animTicks * 0.18f * 0.6662f) * 2.0f * 0.5f, 0);
+			skel.bones.ptr[5].rot = Quatd(0, cos(animTicks * 0.18f * 0.6662f + 3.141593f) * 2.0f * 0.5f, 0);
+		} else if (idleTicks == 15) {
+			animTicks = 0;
+			resetTicks = 19;
+			
+			diffBone2 = Vector3d(0, cos(animTicks * 0.18f * 0.6662f + 3.141593f) * 2.0f * 0.5f, 0);
+			diffBone3 = Vector3d(0, cos(animTicks * 0.18f * 0.6662f) * 2.0f * 0.5f, 0);
+			diffBone4 = Vector3d(0, cos(animTicks * 0.18f * 0.6662f) * 2.0f * 0.5f, 0);
+			diffBone5 = Vector3d(0, cos(animTicks * 0.18f * 0.6662f + 3.141593f) * 2.0f * 0.5f, 0);
+
+			diffBone2.scale(-0.05);
+			diffBone3.scale(-0.05);
+			diffBone4.scale(-0.05);
+			diffBone5.scale(-0.05);
+		} else if (resetTicks > -1) {
+			auto tmp2 = diffBone2;
+			auto tmp3 = diffBone3;
+			auto tmp4 = diffBone4;
+			auto tmp5 = diffBone5;
+
+			tmp2.scale(resetTicks);
+			tmp3.scale(resetTicks);
+			tmp4.scale(resetTicks);
+			tmp5.scale(resetTicks);
+
+			skel.bones.ptr[2].rot = Quatd(tmp2.x, tmp2.y, tmp2.z);
+			skel.bones.ptr[3].rot = Quatd(tmp3.x, tmp3.y, tmp3.z);
+			skel.bones.ptr[4].rot = Quatd(tmp4.x, tmp4.y, tmp4.z);
+			skel.bones.ptr[5].rot = Quatd(tmp5.x, tmp5.y, tmp5.z);
+
+			resetTicks--;
 		}
 	}
 }
