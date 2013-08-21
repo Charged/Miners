@@ -45,7 +45,7 @@ const string playSessionCookieStr = "PLAY_SESSION=([^;]+)";
  *
  * launcherPath = r[1]
  */
-const string launcherPathStr = "LAUNCHER_PATH=([^:]+)";
+const string launcherPathStr = "LAUNCHER_PATH=(.+)";
 
 
 /**
