@@ -271,7 +271,7 @@ public:
 	 */
 	this(Router r, Options opts, string playSession)
 	{
-		auto wc = new WebpageConnection(this, playSession);
+		auto wc = new WebpageConnection(this, playSession, opts.useClassiCube);
 
 		this.playSession = playSession;
 		this(r, opts, wc, null, false);
@@ -292,7 +292,7 @@ public:
 	 */
 	this(Router r, Options opts, string playSession, ClassicServerInfo csi)
 	{
-		auto wc = new WebpageConnection(this, playSession);
+		auto wc = new WebpageConnection(this, playSession, opts.useClassiCube);
 
 		this.playSession = playSession;
 		this(r, opts, wc, csi, false);

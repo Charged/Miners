@@ -62,6 +62,8 @@ private:
 	RegExp playSessionCookieExp;
 	/** Regexp for extracting the launcher path */
 	RegExp launcherPathExp;
+	/** Regexp for extracting ClassiCube option */
+	RegExp useClassiCubeExp;
 
 	Options opts;
 	RenderManager rm;
@@ -83,6 +85,7 @@ public:
 		httpUserPassUrl = RegExp(httpUserPassUrlStr);
 		playSessionCookieExp = RegExp(playSessionCookieStr);
 		launcherPathExp = RegExp(launcherPathStr);
+		useClassiCubeExp = RegExp(useClassiCubeStr);
 
 		running = true;
 
@@ -293,7 +296,7 @@ protected:
 	{
 		return tryArgHttpUrl(arg) || tryArgMcUrl(arg) ||
 		       tryArgHtml(arg)    || tryArgCookie(arg) ||
-		       tryArgLauncherPath(arg);
+		       tryArgLauncherPath(arg) || tryArgUseClassiCube(arg);
 	}
 
 	void checkHttpMcUrl()
@@ -461,6 +464,22 @@ protected:
 		return true;
 	}
 
+	/**
+	 * Is this argument a USE_CLASSICUBE string?
+	 */
+	bool tryArgUseClassiCube(string arg)
+	{
+		auto r = useClassiCubeExp.exec(arg);
+		if (r.length < 2)
+			return false;
+
+		opts.useClassiCube = (r[1] == "true");
+
+		l.info("USE_CLASSICUBE=%s", r[1]);
+
+		return true;
+	}
+
 
 	/*
 	 *
@@ -567,6 +586,12 @@ protected:
 
 	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
 	{
+		if (csi.hostname !is null && csi.username !is null &&
+		    csi.verificationKey !is null && csi.port != 0) {
+			connectToClassic(csi);
+			return;
+		}
+
 		auto psc = opts.playSessionCookie;
 
 		push(new WebpageInfoMenu(this, opts, psc, csi));

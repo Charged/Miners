@@ -37,6 +37,7 @@ public:
 	bool isClassicHttp;
 	bool inhibitClassicListLoad;
 
+	bool useClassiCube;
 	string playSessionCookie;
 	string username;
 	string password;

@@ -49,6 +49,13 @@ const string launcherPathStr = "LAUNCHER_PATH=(.+)";
 
 
 /**
+ * String to parse a USE_CLASSICUBE string.
+ *
+ * useClassiCube = (r[1] == "true")
+ */
+const string useClassiCubeStr = "USE_CLASSICUBE=(.+)";
+
+/**
  * Remove any trailing spaces from a string.
  *
  * Used to deal with strings from classic servers.

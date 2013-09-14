@@ -792,7 +792,7 @@ public:
 		text = "Connecting";
 		super(startup, opts);
 
-		wc = new WebpageConnection(this, opts.playSessionCookie);
+		wc = new WebpageConnection(this, opts.playSessionCookie, opts.useClassiCube);
 	}
 
 	~this()

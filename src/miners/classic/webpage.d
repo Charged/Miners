@@ -64,8 +64,10 @@ private:
 	mixin SysLogging;
 
 	// Server details
-	const string hostname = "minecraft.net";
+	string hostname;
 	const ushort port = 80;
+
+	bool useClassiCube;
 
 	enum Op {
 		NO_OP,
@@ -100,9 +102,11 @@ public:
 		super(hostname, port);
 	}
 
-	this(ClassicWebpageListener wl, string playSession)
+	this(ClassicWebpageListener wl, string playSession, bool useClassiCube)
 	{
 		this.playSession = playSession;
+		this.useClassiCube = useClassiCube;
+		this.hostname = useClassiCube ? "www.classicube.net" : "minecraft.net";
 		this(wl);
 	}
 
@@ -117,10 +121,10 @@ public:
 	void getServerList()
 	{
 		const string http =
-		"GET /classic/list HTTP/1.1\r\n"
+		"GET /server/list HTTP/1.0\r\n"
 		"User-Agent: Charged-Miners\r\n"
 		"Host: %s\r\n"
-		"Cookie: PLAY_SESSION=%s\r\n"
+		"Cookie: %s=%s\r\n"
 		"\r\n";
 
 		if (curOp != Op.NO_OP)
@@ -129,7 +133,8 @@ public:
 		if (playSession is null)
 			throw new Exception("Not authenticated");
 
-		auto req = format(http, hostname, playSession);
+		auto req = format(http, hostname,
+			useClassiCube ? "session" : "PLAY_SESSION", playSession);
 
 		s.send(req);
 
@@ -139,10 +144,10 @@ public:
 	void getServerInfo(ClassicServerInfo csi)
 	{
 		const string http =
-		"GET /classic/play/%s HTTP/1.1\r\n"
+		"GET /server/play/%s HTTP/1.0\r\n"
 		"User-Agent: Charged-Miners\r\n"
 		"Host: %s\r\n"
-		"Cookie: PLAY_SESSION=%s\r\n"
+		"Cookie: %s=%s\r\n"
 		"\r\n";
 
 		if (curOp != Op.NO_OP)
@@ -151,7 +156,8 @@ public:
 		if (playSession is null)
 			throw new Exception("Not authenticated");
 
-		auto req = format(http, csi.webId, hostname, playSession);
+		auto req = format(http, csi.webId, hostname,
+			useClassiCube ? "session" : "PLAY_SESSION", playSession);
 
 		s.send(req);
 
@@ -223,7 +229,7 @@ protected:
 			wl.authenticated();
 			break;
 		case Op.GET_SERVER_LIST:
-			auto csis = getClassicServerList(res);
+			auto csis = useClassiCube ? getClassiCubeServerList(res) : getClassicServerList(res);
 			if (csis.length == 0)
 				l.warn("No servers found in list:\n%s\n\n%s", header, res);
 			wl.serverList(csis);

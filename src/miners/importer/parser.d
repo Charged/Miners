@@ -5,8 +5,10 @@ module miners.importer.parser;
 import lib.xml.xml : DomParser, Element, Handle;
 import std.string : find, format;
 import std.conv : toUshort;
+import std.regexp : RegExp;
 import charge.util.html;
 import miners.types;
+import miners.importer.network;
 
 
 /**
@@ -118,6 +120,67 @@ ClassicServerInfo[] getClassicServerList(in char[] text)
 
 		list ~= csi;
 	}
+
+	return list;
+}
+
+/**
+ * Parse the source of the classic list page from
+ * classicube.net and retrive a list of servers.
+ */
+ClassicServerInfo[] getClassiCubeServerList(in char[] text)
+{
+	auto tableStart = find(text, `<table id="servers">`);
+	auto tableEnd = find(text[tableStart .. $], `</table>`);
+
+	text = text[tableStart .. tableStart + tableEnd];
+
+	auto mcUrl = RegExp(mcUrlStr);
+
+	ClassicServerInfo[] list;
+	do {
+		auto trStart = find(text, `<tr class="server">`);
+		if (trStart == size_t.max)
+			break;
+		auto trEnd = find(text[trStart .. $], `</tr>`);
+
+		auto server = text[trStart .. trStart + trEnd];
+
+		auto nameStart = find(server, `<a href="/server/play/`);
+		auto nameEnd = find(server[nameStart .. $], `">`);
+
+		nameStart = nameStart + nameEnd + 2;
+		nameEnd = find(server[nameStart .. $], `</a>`);
+
+		auto name = server[nameStart .. nameStart + nameEnd];
+
+		auto urlStart = find(server, `mc://`);
+		auto urlEnd = find(server[urlStart .. $], `">`);
+
+		auto url = server[urlStart .. urlStart + urlEnd];
+
+		auto csi = new ClassicServerInfo();
+
+		auto r = mcUrl.exec(url);
+		csi.hostname = r[1];
+
+		if (r[5].length > 0)
+			csi.username = r[5];
+		if (r[7].length > 0)
+			csi.verificationKey = r[7];
+
+		try {
+			if (r[3].length > 0)
+				csi.port = cast(ushort)toUshort(r[3]);
+		} catch (Exception e) {
+		}
+
+		csi.webName = name;
+
+		list ~= csi;
+
+		text = text[trEnd .. $];
+	} while (true);
 
 	return list;
 }
