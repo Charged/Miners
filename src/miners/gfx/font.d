@@ -14,7 +14,7 @@ import miners.gfx.imports;
 class ClassicFont : BitmapFont
 {
 public:
-	const string uri = "bfc://";
+	enum string uri = "bfc://";
 
 
 public:
@@ -187,7 +187,7 @@ protected:
 		return -1;
 	}
 
-	const Color4f colors[16] = [
+	const Color4f[16] colors = [
 		Color4f( 32/255f,  32/255f,  32/255f, 1),
 		Color4f( 45/255f, 100/255f, 200/255f, 1),
 		Color4f( 50/255f, 126/255f,  54/255f, 1),

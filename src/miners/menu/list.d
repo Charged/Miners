@@ -66,8 +66,8 @@ private:
 	bool inFocus; //< XXX Hack
 	ListView lv;
 
-	const typingCursor = 219;
-	const numLetters = 20;
+	enum char typingCursor = 219;
+	enum numLetters = 20;
 
 	char[] typed; /**< Typed text. */
 	char[] showing; /**< Text including the cursor. */

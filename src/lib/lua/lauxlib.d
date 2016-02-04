@@ -97,7 +97,7 @@ struct luaL_Buffer {
   char* p;			/* current position in buffer */
   int lvl;  /* number of strings in the stack (level) */
   lua_State *L;
-  char buffer[LUAL_BUFFERSIZE];
+  char[LUAL_BUFFERSIZE] buffer;
 };
 
 void luaL_addchar(luaL_Buffer* B, char c)

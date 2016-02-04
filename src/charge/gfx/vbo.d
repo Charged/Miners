@@ -23,7 +23,7 @@ import charge.sys.resource;
 class VBO : Resource
 {
 protected:
-	const string uri = "vbo://";
+	enum string uri = "vbo://";
 
 	GLuint vboVerts;
 	GLuint vboIndices;

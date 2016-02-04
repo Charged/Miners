@@ -109,7 +109,7 @@ private:
 
 	GameWorld w;
 
-	BaseActor removable[];
+	BaseActor[] removable;
 
 	GfxSimpleLight sl;
 	GfxSpotLight spl;

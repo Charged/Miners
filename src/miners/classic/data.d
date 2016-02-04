@@ -17,7 +17,7 @@ struct ClassicBlockInfo {
 /**
  * Table holding information about beta blocks.
  */
-ClassicBlockInfo classicBlocks[50] = [
+ClassicBlockInfo[50] classicBlocks = [
 	{ false, false, "Air" },               // 0
 	{  true,  true, "Stone" },
 	{  true,  true, "Grass" },
@@ -70,7 +70,7 @@ ClassicBlockInfo classicBlocks[50] = [
 	{  true,  true, "Obsidian" },
 ];
 
-Color4b classicWoolColors[16] = [
+Color4b[16] classicWoolColors = [
 	Color4b(255,  58,  58, 255),
 	Color4b(255, 156,  58, 255),
 	Color4b(255, 255,  58, 255),

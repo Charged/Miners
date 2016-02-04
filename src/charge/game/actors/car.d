@@ -29,7 +29,7 @@ protected:
 
 	// Model
 	charge.gfx.rigidmodel.RigidModel c;
-	charge.gfx.rigidmodel.RigidModel wheels[4];
+	charge.gfx.rigidmodel.RigidModel[4] wheels;
 
 	charge.phy.car.Car car;
 

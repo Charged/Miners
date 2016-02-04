@@ -295,7 +295,7 @@ private:
 		NUM = OFF * 2
 	}
 
-	static Shader matShader[matShdr.NUM];
+	static Shader[matShdr.NUM] matShader;
 
 	static DirectionalLightSplitShader directionLightSplitShader;
 	static DirectionalLightIsoShader directionLightIsoShader;
@@ -485,7 +485,7 @@ protected:
 		glBlendFunc(GL_ONE, GL_ONE);
 
 		// Setup uniforms for lights
-		float vec[2];
+		float[2] vec;
 		vec[0] = 1.0f / renderTarget.width;
 		vec[1] = 1.0f / renderTarget.height;
 
@@ -690,7 +690,7 @@ protected:
 	}
 
 	static void getDirSplitDistance(int splits, double near, double far,
-	                                float near_array[], float far_array[])
+	                                float[] near_array, float[] far_array)
 	{
 		double lambda = 0.75;
 		double ratio = far / near;
@@ -754,9 +754,9 @@ protected:
 	{
 		ProjCamera cam = c;
 		const int num_splits = 4;
-		float nears[num_splits];
-		float fars[num_splits];
-		Matrix4x4d mat[num_splits];
+		float[num_splits] nears;
+		float[num_splits] fars;
+		Matrix4x4d[num_splits] mat;
 
 		gluPushMatricesAttrib(GL_VIEWPORT_BIT);
 
@@ -879,7 +879,7 @@ protected:
 		mat.transpose();
 		mat.inverse();
 
-		Point3d p[8];
+		Point3d[8] p;
 		// Get the global coords of the scene ModelViewProj matrix.
 		p[0] = mat / Point3d(-1, -1, -1);
 		p[1] = mat / Point3d(-1, -1,  1);
@@ -1117,7 +1117,7 @@ protected:
 		viewInverse.transpose;
 		viewInverse.inverse;
 
-		static const GLfloat biasMatrix[16] = [
+		static const GLfloat[16] biasMatrix = [
 			0.5, 0.0, 0.0, 0.0,
 			0.0, 0.5, 0.0, 0.0,
 			0.0, 0.0, 0.5, 0.0,
@@ -1377,7 +1377,7 @@ protected:
 	 */
 
 
-	const string material_shader_mesh_vert = "
+	enum string material_shader_mesh_vert = "
 #version 120
 
 varying vec2 uv;
@@ -1395,7 +1395,7 @@ void main()
 }
 ";
 
-	const string material_shader_skel_vert = "
+	enum string material_shader_skel_vert = "
 #version 120
 
 varying vec3 normal;
@@ -1437,7 +1437,7 @@ void main()
 }
 ";
 
-	const string material_shader_tex_frag = "
+	enum string material_shader_tex_frag = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -1452,7 +1452,7 @@ void main()
 }
 ";
 
-	const string material_shader_fake_frag = "
+	enum string material_shader_fake_frag = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -1471,7 +1471,7 @@ void main()
 }
 ";
 
-	const string material_shader_shadow_frag = "
+	enum string material_shader_shadow_frag = "
 #version 120
 
 void main()
@@ -1479,7 +1479,7 @@ void main()
 }
 ";
 
-	const string deferred_base_vert = "
+	enum string deferred_base_vert = "
 #version 120
 
 void main()
@@ -1489,7 +1489,7 @@ void main()
 }
 ";
 
-	const string spotlight_shader_shadow_frag = "
+	enum string spotlight_shader_shadow_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 
@@ -1555,7 +1555,7 @@ void main()
 }
 ";
 
-	const string spotlight_shader_frag = "
+	enum string spotlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1603,7 +1603,7 @@ void main()
 }
 ";
 
-	const string pointlight_shader_frag = "
+	enum string pointlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1647,7 +1647,7 @@ void main()
 }
 ";
 
-	const string pointlight_shader_geom = "
+	enum string pointlight_shader_geom = "
 #version 120
 #extension GL_EXT_geometry_shader4 : require
 
@@ -1707,7 +1707,7 @@ void main() {
 }
 ";
 
-	const string pointlight_shader_vertex = "
+	enum string pointlight_shader_vertex = "
 #version 120
 
 varying float size;
@@ -1722,7 +1722,7 @@ void main() {
 }
 ";
 
-	const string directionlight_shader_frag = "
+	enum string directionlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1753,7 +1753,7 @@ void main()
 }
 ";
 
-	const string directionlight_split_shader_frag = "
+	enum string directionlight_split_shader_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
@@ -1829,7 +1829,7 @@ void main()
 }
 ";
 
-	const string directionlight_iso_shader_frag = "
+	enum string directionlight_iso_shader_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
@@ -1889,7 +1889,7 @@ void main()
 }
 ";
 
-	const string fog_shader_frag = "
+	enum string fog_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1912,7 +1912,7 @@ void main()
 }
 ";
 
-	const string fog_tex_shader_frag = "
+	enum string fog_tex_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -2039,7 +2039,7 @@ public:
 
 	void setTarget()
 	{
-		static GLenum buffers[2] = [
+		static GLenum[2] buffers = [
 			GL_COLOR_ATTACHMENT0_EXT,
 			GL_COLOR_ATTACHMENT1_EXT,
 		];
@@ -2147,7 +2147,7 @@ public:
 
 	void setTarget()
 	{
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_NONE,
 		];
 		gluFrameBufferBind(fbo, buffers, width, height);
@@ -2258,7 +2258,7 @@ public:
 
 	void setTarget(int layer)
 	{
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_NONE,
 		];
 		gluFrameBufferBind(fbo, buffers, width, height);

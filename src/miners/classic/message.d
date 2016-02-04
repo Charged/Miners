@@ -11,7 +11,7 @@ import miners.importer.network : removeColorTags;
 class MessageLogger : ClassicClientMessageListener
 {
 public:
-	const backlog = 100;
+	enum backlog = 100;
 
 	string[backlog] msgs;
 	size_t cur;

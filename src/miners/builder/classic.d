@@ -38,7 +38,7 @@ class ClassicMeshBuilder : MeshBuilderBuildArray
 private alias BuildBlockDescriptor.toTex toTex;
 
 
-BuildBlockDescriptor tile[256] = [
+BuildBlockDescriptor[256] tile = [
 	{ false, toTex(  0,  0 ), toTex(  0,  0 ) }, // air                   // 0
 	{  true, toTex(  1,  0 ), toTex(  1,  0 ) }, // stone
 	{  true, toTex(  3,  0 ), toTex(  0,  0 ) }, // grass

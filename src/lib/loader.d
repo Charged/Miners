@@ -3,7 +3,7 @@
 module lib.loader;
 
 import std.stdio : writefln;
-import std.string : find, toStringz;
+import std.string : toStringz;
 
 
 alias void* delegate(string) Loader;

@@ -33,7 +33,7 @@ public:
 		Linear,
 		LinearNone,
 	}
-	const string uri = "tex://";
+	enum string uri = "tex://";
 
 protected:
 	uint w;
@@ -532,7 +532,7 @@ public:
 
 	void setTarget()
 	{
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_COLOR_ATTACHMENT0_EXT,
 		];
 		gluFrameBufferBind(fbo, buffers, w, h);

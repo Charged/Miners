@@ -22,20 +22,20 @@ import charge.game.dcpu.cpu;
 class Lem1802 : Component, DcpuHw
 {
 public:
-	const hwId = 0x7349F615;
-	const hwVersion = 0x1802;
-	const hwManufacturer = 0x1C6C8B36;
+	enum ushort hwId = cast(ushort)0x7349F615;
+	enum ushort hwVersion = cast(ushort)0x1802;
+	enum ushort hwManufacturer = cast(ushort)0x1C6C8B36;
 
-	const width = 32;
-	const height = 12;
-	const glyphWidth = 4;
-	const glyphHeight = 8;
+	enum width = 32;
+	enum height = 12;
+	enum glyphWidth = 4;
+	enum glyphHeight = 8;
 
-	const numColors = 16;
-	const numGlyphs = 128;
-	const numVram = width * height;
+	enum numColors = 16;
+	enum numGlyphs = 128;
+	enum numVram = width * height;
 
-	const borderSize = 4;
+	enum borderSize = 4;
 
 	enum {
 		LEM1802_MEM_MAP_SCREEN,
@@ -182,7 +182,7 @@ protected:
 
 	override void paint(Draw d)
 	{
-		Color4f colors[16];
+		Color4f[16] colors;
 		foreach(int i, p; paletteRam) {
 			colors[i] = Color4f(
 				(0x0f & (p >> 8)) / 16f,
@@ -324,7 +324,7 @@ protected:
 
 
 public:
-	const ushort defaultPaletteRam[numColors] = [
+	const ushort[numColors] defaultPaletteRam = [
 		0x0000, 0x000A, 0x00A0, 0x00AA,
 		0x0A00, 0x0A0A, 0x0A50, 0x0AAA,
 		0x0555, 0x055F, 0x05F5, 0x05FF,

@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.scene;
 
-import std.string : format, find;
+import std.string : format;
 import std.math : PI, PI_2;
 
 import lib.sdl.keysym;
@@ -48,7 +48,7 @@ protected:
 	ClassicConnection c;
 	ClassicWorld w;
 
-	ClassicPlayer players[ubyte.max+1];
+	ClassicPlayer[ubyte.max+1] players;
 
 	int sentCounter;
 	Point3d saveCamPos;
@@ -579,7 +579,10 @@ public:
 			yList[i] = rt.height - cast(int)pos.y;
 		}
 
-		list.sort;
+		{
+			import std.algorithm : sort;
+			list.sort();
+		}
 
 		foreach_reverse(ref e; list) {
 			auto p = players[e.index];

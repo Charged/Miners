@@ -14,7 +14,7 @@ void luaL_openlibs(lua_State *L)
 		extern(C) int function(lua_State *L) func;
 	}
 
-	const Reg lualibs[] = [
+	const Reg[] lualibs = [
 		{"", &luaopen_base},
 		{LUA_LOADLIBNAME, &luaopen_package},
 		{LUA_TABLIBNAME, &luaopen_table},

@@ -27,7 +27,7 @@ interface ClassicClientListener
 
 	void levelInitialize();
 	void levelLoadUpdate(ubyte precent);
-	void levelFinalize(uint x, uint y, uint z, ubyte data[]);
+	void levelFinalize(uint x, uint y, uint z, ubyte[] data);
 
 	void disconnect(string reason);
 

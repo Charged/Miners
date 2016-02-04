@@ -20,9 +20,9 @@ import charge.net.download;
 class VersionTxt
 {
 public:
-	const string commentRegexStr = `^\s*#`;
-	const string nameRegexStr = `^(\S+)\s*$`;
-	const string md5AndNameRegexStr = `\s*([a-fA-F0-9]{32})\s+(\S+)\s*$`;
+	enum string commentRegexStr = `^\s*#`;
+	enum string nameRegexStr = `^(\S+)\s*$`;
+	enum string md5AndNameRegexStr = `\s*([a-fA-F0-9]{32})\s+(\S+)\s*$`;
 
 	class File
 	{

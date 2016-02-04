@@ -41,7 +41,7 @@ interface ConnectionListener
 
 struct AddressKey
 {
-
+public:
 	static AddressKey opCall(uint addr, ushort port)
 	{
 		AddressKey a;
@@ -66,7 +66,7 @@ struct AddressKey
 		return addr * port;
 	}
 
-	int opCmp(AddressKey *k)
+	int opCmp(ref const AddressKey k) const
 	{
 		if (addr < k.addr) {
 			return -1;
@@ -87,6 +87,7 @@ struct AddressKey
 			port);
 	}
 
+public:
 	uint addr;
 	ushort port;
 }
@@ -253,7 +254,7 @@ private:
 		foreach(p; unAckedPackets) {
 			// We check against stored value since buffers might be shared
 			// And stored in network byte order
-			if (p.id <> h.orderId)
+			if (p.id != h.orderId)
 				continue;
 
 			unAckedPackets.remove(p);
@@ -295,7 +296,7 @@ private:
 
 		foreach(p; outOfOrderPackets) {
 			auto h = cast(Header*)p.ptr;
-			if (h.orderId <> realibleNumIn)
+			if (h.orderId != realibleNumIn)
 				continue;
 
 			realibleNumIn++;

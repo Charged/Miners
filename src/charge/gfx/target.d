@@ -51,7 +51,7 @@ public:
 	void setTarget()
 	{
 		if (GL_EXT_framebuffer_object) {
-			static GLenum buffers[1] = [
+			static GLenum[1] buffers = [
 				GL_BACK_LEFT,
 			];
 			gluFrameBufferBind(0, buffers, w, h);
@@ -212,7 +212,7 @@ public:
 
 	void setTarget()
 	{
-		static GLenum buffers[3] = [
+		static GLenum[3] buffers = [
 			GL_COLOR_ATTACHMENT0_EXT,
 		];
 		gluFrameBufferBind(fbo, buffers, w, h);

@@ -85,7 +85,7 @@ class LuaState : State
 	}
 
 private:
-	const luaL_Reg chargelib[] = [
+	static const luaL_Reg[] chargelib = [
 		{ "Quat", &QuatdWrapper.newQuatd },
 		{ "Color", &Color4fWrapper.newColor4f },
 		{ "Point", &Point3dWrapper.newPoint3d },

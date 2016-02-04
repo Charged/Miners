@@ -55,9 +55,9 @@ public:
 
 	static struct Vertex
 	{
-		float pos[3];
-		float uv[2];
-		float normal[3];
+		float[3] pos;
+		float[2] uv;
+		float[3] normal;
 		float bone;
 	}
 
@@ -106,7 +106,7 @@ public:
 	{
 		gluPushAndTransform(pos, rot);
 
-		float stuff[4*64*2];
+		float[4*64*2] stuff;
 		for (int i, k; k < bones.length; i+=8, k++) {
 			auto q = bones.ptr[k].rot;
 			auto t = bones.ptr[k].offset;

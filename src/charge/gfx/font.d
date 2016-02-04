@@ -23,7 +23,7 @@ import charge.gfx.texture;
 class BitmapFont : Resource
 {
 public:
-	const string uri = "bf://";
+	enum string uri = "bf://";
 
 	/**
 	 * Default inbuilt font, will always be available as long as
@@ -120,7 +120,7 @@ public:
 
 		glActiveTexture(GL_TEXTURE0);
 
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_COLOR_ATTACHMENT0_EXT,
 		];
 

@@ -54,7 +54,7 @@ public:
 			Vector3f vec;
 			float vec_length;
 		};
-		float array[4];
+		float[4] array;
 	};
 
 public:
@@ -100,7 +100,7 @@ public:
 struct Frustum
 {
 public:
-	Planef p[6];
+	Planef[6] p;
 
 	enum Planes {
 		Left,

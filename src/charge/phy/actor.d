@@ -50,8 +50,8 @@ class Body : Actor
 protected:
 	dBodyID dBody;
 	/// a trick to not allocate another buffer for most usecases.
-	dGeomID static_store[1];
-	dGeomID geoms[];
+	dGeomID[1] static_store;
+	dGeomID[] geoms;
 	uint num_geoms;
 
 public:

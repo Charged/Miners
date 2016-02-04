@@ -78,7 +78,7 @@ class Element : Node
 	{
 		int result;
 		foreach(ref Node node; children) {
-			if ((result = dg(node)) <> 0)
+			if ((result = dg(node)) != 0)
 				break;
 		}
 		return result;
@@ -94,7 +94,7 @@ class Element : Node
 			if (e is null)
 				continue;
 
-			if ((result = dg(e)) <> 0)
+			if ((result = dg(e)) != 0)
 				break;
 		}
 		return result;
@@ -264,7 +264,7 @@ protected:
 			throw new XmlException(format(
 				"closing tag without no opening tag "));
 
-		if (name <> current.name)
+		if (name != current.name)
 			throw new XmlException(format(
 				"unmatched tags: expected </", current.name,
 				"> got </", name, ">"));

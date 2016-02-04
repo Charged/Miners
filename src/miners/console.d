@@ -2,8 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.console;
 
-import stdx.string : find;
-import std.string : split, format, find;
+import std.string : split, format, indexOf;
 import charge.core : Core;
 import charge.ctl.keyboard : CtlKeyboard = Keyboard;
 
@@ -17,7 +16,7 @@ public:
 	alias void delegate(string) TextDg;
 
 	bool typing;
-	const typingCursor = 219;
+	enum char typingCursor = 219;
 	size_t maxChars;
 
 	string typed; /**< Typed text. */
@@ -184,7 +183,7 @@ protected:
 				findStr = cmdPrefix;
 
 			// Only a command if we find the command prefix first.
-			if (find(str, findStr) != 0)
+			if (indexOf(str, findStr) != 0)
 				return doChat(str);
 
 			// Remove the prefix

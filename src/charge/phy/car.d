@@ -79,7 +79,7 @@ public:
 	float carSlip2Factor;
 	float carSlip2Limit;
 
-	Wheel wheel[4];
+	Wheel[4] wheel;
 
 public:
 	this(World w, Point3d pos)
@@ -128,7 +128,7 @@ public:
 		return (3 + 4 + 3 + 3);
 	}
 
-	void setSyncData(float data[])
+	void setSyncData(float[] data)
 	{
 		if (data.length != getSyncDataLength) {
 			l.warn("to little data: ", data.length);
@@ -147,7 +147,7 @@ public:
 		k += 3;
 	}
 
-	void getSyncData(out float data[])
+	void getSyncData(out float[] data)
 	{
 		size_t ds = 3 + 4 + 3 + 3;
 		data.length = ds * 5 + 1;

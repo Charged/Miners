@@ -54,5 +54,5 @@ class Fifo(T)
 
 protected:
 	size_t num;
-	T array[];
+	T[] array;
 }

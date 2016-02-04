@@ -144,7 +144,7 @@ void emitQuadMappedUVAOXZP(Packer *p, int x1, int x2, int y1, int y2, int z1, in
 		ubyte texture, sideNormal normal,
 		int u_offset, int v_offset, uvManip manip)
 {
-	ushort uv[][] = genMappedManipUVsXZ(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
+	ushort[][] uv = genMappedManipUVsXZ(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
 
 	p.pack(p, x2, y1, z1, texture, aoBR, normal, uv[2][0], uv[2][1]);
 	p.pack(p, x2, y2, z1, texture, aoTR, normal, uv[3][0], uv[3][1]);
@@ -157,7 +157,7 @@ void emitQuadMappedUVAOXZN(Packer *p, int x1, int x2, int y1, int y2, int z1, in
 		ubyte texture, sideNormal normal,
 		int u_offset, int v_offset, uvManip manip)
 {
-	ushort uv[][] = genMappedManipUVsXZ(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
+	ushort[][] uv = genMappedManipUVsXZ(x1, x2, y1, y2, z1, z2, u_offset, v_offset, normal, manip);
 
 	p.pack(p, x1, y1, z2, texture, aoBR, normal, uv[2][0], uv[2][1]);
 	p.pack(p, x1, y2, z2, texture, aoTR, normal, uv[3][0], uv[3][1]);
@@ -170,7 +170,7 @@ void emitQuadMappedUVAOYP(Packer *p, int x1, int x2, int y, int z1, int z2,
 			  ubyte texture, sideNormal normal,
 			  int u_offset, int v_offset, uvManip manip)
 {
-	ushort uv[][] = genMappedManipUVsY(x1, x2, z1, z2, u_offset, v_offset, manip);
+	ushort[][] uv = genMappedManipUVsY(x1, x2, z1, z2, u_offset, v_offset, manip);
 
 	p.pack(p, x1, y, z1, texture, aoTL, normal, uv[0][0], uv[0][1]);
 	p.pack(p, x1, y, z2, texture, aoBL, normal, uv[1][0], uv[1][1]);
@@ -183,7 +183,7 @@ void emitQuadMappedUVAOYN(Packer *p, int x1, int x2, int y, int z1, int z2,
 		ubyte texture, sideNormal normal,
 		int u_offset, int v_offset, uvManip manip)
 {
-	ushort uv[][] = genMappedManipUVsY(x1, x2, z1, z2, u_offset, v_offset, manip);
+	ushort[][] uv = genMappedManipUVsY(x1, x2, z1, z2, u_offset, v_offset, manip);
 
 	p.pack(p, x1, y, z1, texture, aoTL, normal, uv[0][0], uv[0][1]);
 	p.pack(p, x2, y, z1, texture, aoTR, normal, uv[3][0], uv[3][1]);

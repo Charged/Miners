@@ -283,7 +283,8 @@ T chip(T, bool reverse = false)(ref ubyte[] data)
 	// Reverse
 	static if (reverse) {
 		ubyte[T.sizeof] temp = data[0 .. T.sizeof];
-		temp.reverse;
+		import std.algorithm : reverse;
+		reverse(temp[]);
 		ret = *cast(T*)temp.ptr;
 	} else {
 		ret = *cast(T*)data.ptr;

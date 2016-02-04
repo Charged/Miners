@@ -51,7 +51,7 @@ struct RigidMeshStruct
 class RigidMesh : Resource
 {
 public:
-	const string uri = "mesh://";
+	enum string uri = "mesh://";
 	enum Types {
 		INDEXED_TRIANGLES,
 		QUADS,
@@ -77,7 +77,7 @@ public:
 		return load(p, name);
 	}
 
-	static RigidMesh opCall(Vertex verts[], Triangle tris[], Types type)
+	static RigidMesh opCall(Vertex[] verts, Triangle[] tris, Types type)
 	{
 		return new RigidMesh(null, null, verts, tris, type);
 	}
@@ -104,7 +104,7 @@ public:
 	}
 
 protected:
-	this(Pool p, string name, Vertex verts[], Triangle tris[], Types type)
+	this(Pool p, string name, Vertex[] verts, Triangle[] tris, Types type)
 	{
 		super(p, uri, name);
 		this.tp = type;
@@ -133,8 +133,11 @@ protected:
 		File file;
 		void[] f;
 		RigidMeshStruct *mod;
-		Vertex verts[];
-		Triangle tris[];
+		Vertex[] verts;
+		Triangle[] tris;
+		size_t dataLength;
+		Triangle* tris_ptr;
+		Vertex* vert_ptr;
 
 		file = p.load(filename);
 		if (file is null)
@@ -156,7 +159,7 @@ protected:
 			goto err;
 		}
 
-		size_t dataLength = RigidMeshStruct.sizeof + mod.indexCount * uint.sizeof +
+		dataLength = RigidMeshStruct.sizeof + mod.indexCount * uint.sizeof +
 			mod.vertCount * Vertex.sizeof;
 
 		if (f.length != dataLength) {
@@ -170,11 +173,11 @@ protected:
 		}
 
 		// Indices storted right after the RigidMeshStruct
-		auto tris_ptr = cast(Triangle*)(&mod[1]);
+		tris_ptr = cast(Triangle*)(&mod[1]);
 		tris = tris_ptr[0 .. mod.indexCount / 3];
 
 		// Vertices storted after the indicies
-		auto vert_ptr = cast(Vertex*)&tris_ptr[tris.length];
+		vert_ptr = cast(Vertex*)&tris_ptr[tris.length];
 		verts = vert_ptr[0 .. mod.vertCount];
 
 		/// TODO test all the indecies.

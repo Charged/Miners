@@ -53,22 +53,22 @@ public:
 	 * Last connected classic server name.
 	 */
 	Option!(string) lastClassicServer;
-	const string lastClassicServerName = "mc.lastClassicServer";
-	const string lastClassicServerDefault = "--";
+	enum string lastClassicServerName = "mc.lastClassicServer";
+	enum string lastClassicServerDefault = "--";
 
 	/**
 	 * Last connected classic server name hash.
 	 */
 	Option!(string) lastClassicServerHash;
-	const string lastClassicServerHashName = "mc.lastClassicServerHash";
-	const string lastClassicServerHashDefault = "--";
+	enum string lastClassicServerHashName = "mc.lastClassicServerHash";
+	enum string lastClassicServerHashDefault = "--";
 
 	/**
 	 * Used for resume option.
 	 */
 	Option!(string) lastMcUrl;
-	const string lastMcUrlName = "mc.lastMcUrl";
-	const string lastMcUrlDefault = "--";
+	enum string lastMcUrlName = "mc.lastMcUrl";
+	enum string lastMcUrlDefault = "--";
 
 
 	/*
@@ -92,15 +92,15 @@ public:
 	Option!(bool) useCmdPrefix; /**< should we use the command prefix */
 	Option!(double) viewDistance; /**< the view distance */
 
-	const string aaName = "mc.aa";
-	const string fogName = "mc.fog";
-	const string fovName = "mc.fov";
-	const string uiSizeName = "mc.uiSize";
-	const string shadowName = "mc.shadow";
-	const string speedRunName = "mc.speedRun";
-	const string speedWalkName = "mc.speedWalk";
-	const string useCmdPrefixName = "mc.useCmdPrefix";
-	const string viewDistanceName = "mc.viewDistance";
+	enum string aaName = "mc.aa";
+	enum string fogName = "mc.fog";
+	enum string fovName = "mc.fov";
+	enum string uiSizeName = "mc.uiSize";
+	enum string shadowName = "mc.shadow";
+	enum string speedRunName = "mc.speedRun";
+	enum string speedWalkName = "mc.speedWalk";
+	enum string useCmdPrefixName = "mc.useCmdPrefix";
+	enum string viewDistanceName = "mc.viewDistance";
 
 	const bool aaDefault = true;
 	const bool fogDefault = true;
@@ -120,7 +120,7 @@ public:
 	 */
 
 
-	const string[24] keyNames = [
+	enum string[24] keyNames = [
 		"mc.keyForward",
 		"mc.keyBackward",
 		"mc.keyLeft",
@@ -250,7 +250,7 @@ public:
 
 
 	bool failsafe; /**< use as little as possible gfx features */
-	const string failsafeName = "mc.failsafe"; /**< config name */
+	enum string failsafeName = "mc.failsafe"; /**< config name */
 
 	bool rendererBackground; /**< use the background scene */
 	bool rendererBuildIndexed; /**< support array textures */
@@ -448,16 +448,17 @@ private struct Option(T)
 
 class PlayerModelData
 {
-	const float sz = 0.215 / 2;
-	const float s_2 = sz*2;
-	const float s_3 = sz*3;
-	const float s_4 = sz*4;
-	const float s_5 = sz*5;
-	const float s_6 = sz*6;
-	const float offW = offH/2f;
-	const float offH = 1f/4096f;
+public:
+	enum float sz = 0.215 / 2;
+	enum float s_2 = sz*2;
+	enum float s_3 = sz*3;
+	enum float s_4 = sz*4;
+	enum float s_5 = sz*5;
+	enum float s_6 = sz*6;
+	enum float offW = offH/2f;
+	enum float offH = 1f/4096f;
 
-	const GfxSimpleSkeleton.Vertex verts[] = [
+	static immutable GfxSimpleSkeleton.Vertex[] verts = [
 		// HEAD
 		// X- Left
 		{[-s_2,   0, -s_2], [   0.25f+offW,   0.5f-offH], [-1,  0,  0], 0},
@@ -651,7 +652,7 @@ class PlayerModelData
 		{[ -sz,    0,  sz], [ 0.1875f+offW, 0.625f+offH], [ 0,  0,  1], 5}
 	];
 
-	const charge.gfx.skeleton.Bone bones[] = [
+	static immutable charge.gfx.skeleton.Bone[] bones = [
 		{Quatd(), Vector3d(   0,   s_6*2, 0), uint.max}, // Head
 		{Quatd(), Vector3d(   0, s_6+s_3, 0), uint.max}, // Body
 		{Quatd(), Vector3d(-s_3, s_6+s_5, 0), uint.max}, // Arm 1

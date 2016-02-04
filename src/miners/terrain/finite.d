@@ -54,8 +54,8 @@ protected:
 	cMemoryArray!(ubyte) store;
 
 	GfxVBO[BuildMeshes][] vbos;
-	bool gfx[];
-	bool dirty[];
+	bool[] gfx;
+	bool[] dirty;
 
 	int xSaved;
 	int ySaved;

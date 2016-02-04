@@ -57,7 +57,7 @@ class GeomSphere : Geom
 class GeomMeshData : Resource
 {
 public:
-	const string uri = "geom://";
+	enum string uri = "geom://";
 
 private:
 	mixin Logging;

@@ -43,20 +43,20 @@ struct WorkspaceData
 	 * We copy the data so we can use unsafe accessor functionswhen building
 	 * mesh geometry data.
 	 */
-	const int ws_width = BuildWidth+2;
-	const int ws_height = BuildHeight+2;
-	const int ws_depth = BuildDepth+2;
+	enum int ws_width = BuildWidth+2;
+	enum int ws_height = BuildHeight+2;
+	enum int ws_depth = BuildDepth+2;
 
-	const int ws_data_width = BuildWidth+2;
-	const int ws_data_height = BuildHeight/2+2;
-	const int ws_data_depth = BuildDepth+2;
+	enum int ws_data_width = BuildWidth+2;
+	enum int ws_data_height = BuildHeight/2+2;
+	enum int ws_data_depth = BuildDepth+2;
 
-	const int ws_x_stride = ws_depth * ws_height;
-	const int ws_y_stride = 1;
-	const int ws_z_stride = ws_height;
+	enum int ws_x_stride = ws_depth * ws_height;
+	enum int ws_y_stride = 1;
+	enum int ws_z_stride = ws_height;
 
-	ubyte blocks[ws_width][ws_depth][ws_height];
-	ubyte data[ws_data_width][ws_data_depth][ws_data_height];
+	ubyte[ws_height][ws_depth][ws_width] blocks;
+	ubyte[ws_data_height][ws_data_depth][ws_data_width] data;
 	BuildBlockDescriptor *tile;
 
 	ubyte opIndex(int x, int y, int z)

@@ -69,7 +69,7 @@ public:
 
 		Header *h;
 		// Windows is stupid and you must take the entire packege
-		uint8_t peek[1024];
+		uint8_t[1024] peek;
 
 		while(true) {
 			// Don't need receiveFrom since we have connected.
@@ -98,7 +98,7 @@ public:
 			buffer.length = h.length;
 			n = s.receive(buffer);
 
-			if (n <> buffer.length) {
+			if (n != buffer.length) {
 				l.warn("invalid length");
 				continue;
 			}

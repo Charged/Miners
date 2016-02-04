@@ -184,7 +184,7 @@ union SDL_Event
 	SDL_QuitEvent quit;
 	SDL_UserEvent user;
 	SDL_SysWMEvent syswm;
-	Uint8 filler[64];
+	Uint8[64] filler;
 }
 
 enum SDL_eventaction

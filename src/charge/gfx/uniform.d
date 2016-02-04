@@ -155,7 +155,7 @@ struct UniformMatrix4x4d
 
 	void opAssign(Matrix4x4d value)
 	{
-		float array[16];
+		float[16] array;
 		foreach(uint i, a; value.array)
 			array[i] = cast(float)a;
 
@@ -164,7 +164,7 @@ struct UniformMatrix4x4d
 
 	void transposed(Matrix4x4d value)
 	{
-		float array[16];
+		float[16] array;
 		foreach(uint i, a; value.array)
 			array[i] = cast(float)a;
 

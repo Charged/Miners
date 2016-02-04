@@ -55,12 +55,12 @@ public:
 abstract class Core
 {
 public:
-	const int defaultWidth = 800;
-	const int defaultHeight = 600;
-	const bool defaultFullscreen = false;
-	const bool defaultFullscreenAutoSize = true;
-	const string defaultTitle = "Charge Game Engine";
-	const bool defaultForceResizeEnable = false;
+	enum int defaultWidth = 800;
+	enum int defaultHeight = 600;
+	enum bool defaultFullscreen = false;
+	enum bool defaultFullscreenAutoSize = true;
+	enum string defaultTitle = "Charge Game Engine";
+	enum bool defaultForceResizeEnable = false;
 
 	coreFlag flags;
 	bool resizeSupported;

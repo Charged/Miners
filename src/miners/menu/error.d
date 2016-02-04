@@ -16,7 +16,7 @@ class InfoMenu : MenuSceneBase
 private:
 	Router r;
 	Button b;
-	Text te[];
+	Text[] te;
 	void delegate() dg;
 
 public:

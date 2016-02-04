@@ -345,7 +345,7 @@ protected:
 private class Helper
 {
 public:
-	const static float normals[] = [
+	const static float[] normals = [
 		-1.0,  0.0,  0.0, 0.0, // XN
 		 1.0,  0.0,  0.0, 0.0, // XP
 		 0.0, -1.0,  0.0, 0.0, // YN - Down
@@ -358,7 +358,7 @@ public:
 		 1.0,  0.0, -1.0, 0.0, // XPZN
 		 1.0,  0.0,  1.0, 0.0, // XPZP
 	];
-	const static float uv_mixs[] = [
+	const static float[] uv_mixs = [
 		 0.0,  1.0,  0.0, -1.0, // XN
 		 0.0, -1.0,  0.0, -1.0, // XP
 		 1.0,  0.0,  1.0,  0.0, // YN - Down
@@ -391,7 +391,7 @@ public:
 	 * uv(i) - texture coordenate, i is sufixed for texture array versions.
 	 */
 
-	const string materialFragForward = "
+	enum string materialFragForward = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -429,7 +429,7 @@ void main()
 }
 ";
 
-	const string materialFragForwardIndexed = "
+	enum string materialFragForwardIndexed = "
 #version 120
 #extension GL_EXT_texture_array : require
 
@@ -468,7 +468,7 @@ void main()
 }
 ";
 
-	const string materialFragDeferred = "
+	enum string materialFragDeferred = "
 #version 120
 #extension GL_EXT_texture_array : require
 
@@ -499,7 +499,7 @@ void main()
 	 * Both can be used with either renderer.
 	 */
 
-	const string materialVertCompactMesh = "
+	enum string materialVertCompactMesh = "
 #version 120
 
 uniform vec4 normals[10];
@@ -526,7 +526,7 @@ void main()
 }
 ";
 
-	const string materialVertCompactMeshIndexed = "
+	enum string materialVertCompactMeshIndexed = "
 #version 120
 
 varying vec3 normal;

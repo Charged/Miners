@@ -42,11 +42,11 @@ extern (C) {
 }
 
 extern (C) {
-	alias void function(dGeomID, dReal aabb[6]) dGetAABBFn;
+	alias void function(dGeomID, dReal[6] aabb) dGetAABBFn;
 	alias int function(dGeomID o1, dGeomID o2, int flags, dContactGeom* contact, int skip) dColliderFn;
 	alias dColliderFn* function(int num) dGetColliderFnFn;
 	alias void function(dGeomID o) dGeomDtorFn;
-	alias int function(dGeomID o1, dGeomID o2, dReal aabb[6]) dAABBTestFn;
+	alias int function(dGeomID o1, dGeomID o2, dReal[6] aabb) dAABBTestFn;
 }
 
 struct dGeomClass
@@ -74,7 +74,7 @@ void function(dGeomID geom, ref dVector3 pos) dGeomCopyPosition;
 dReal* function(dGeomID geom) dGeomGetRotation;
 void function(dGeomID geom, dMatrix3 R) dGeomCopyRotation;
 void function(dGeomID geom, ref dQuaternion result) dGeomGetQuaternion;
-void function(dGeomID geom, dReal aabb[6]) dGeomGetAABB;
+void function(dGeomID geom, dReal[6] aabb) dGeomGetAABB;
 int function(dGeomID geom) dGeomIsSpace;
 dSpaceID function(dGeomID) dGeomGetSpace;
 int function(dGeomID geom) dGeomGetClass;
@@ -153,7 +153,7 @@ dHeightfieldDataID function(dGeomID g) dGeomHeightfieldGetHeightfieldData;
 void function(ref dVector3 a1, ref dVector3 a2, ref dVector3 b1, ref dVector3 b2, ref dVector3 cp1, ref dVector3 cp2) dClosestLineSegmentPoints;
 int function(ref dVector3 _p1, dMatrix3 R1, ref dVector3 side1, ref dVector3 _p2, dMatrix3 R2, ref dVector3 side2) dBoxTouchesBox;
 int function(ref dVector3 p1, dMatrix3 R1, ref dVector3 side1, ref dVector3 p2, dMatrix3 R2, ref dVector3 side2, ref dVector3 normal, dReal *depth, int *return_code, int flags, dContactGeom *contact, int skip) dBoxBox;
-void function(dGeomID geom, dReal aabb[6]) dInfiniteAABB;
+void function(dGeomID geom, dReal[6] aabb) dInfiniteAABB;
 void function() dCloseODE;
 int function(dGeomClass *classptr) dCreateGeomClass;
 void* function(dGeomID) dGeomGetClassData;
@@ -175,7 +175,7 @@ void dGeomCopyPosition(dGeomID geom, ref dVector3 pos);
 dReal* dGeomGetRotation(dGeomID geom);
 void dGeomCopyRotation(dGeomID geom, dMatrix3 R);
 void dGeomGetQuaternion(dGeomID geom, ref dQuaternion result);
-void dGeomGetAABB(dGeomID geom, dReal aabb[6]);
+void dGeomGetAABB(dGeomID geom, dReal[6] aabb);
 int dGeomIsSpace(dGeomID geom);
 dSpaceID dGeomGetSpace(dGeomID);
 int dGeomGetClass(dGeomID geom);
@@ -254,7 +254,7 @@ dHeightfieldDataID dGeomHeightfieldGetHeightfieldData(dGeomID g);
 void dClosestLineSegmentPoints(ref dVector3 a1, ref dVector3 a2, ref dVector3 b1, ref dVector3 b2, ref dVector3 cp1, ref dVector3 cp2);
 int dBoxTouchesBox(ref dVector3 _p1, dMatrix3 R1, ref dVector3 side1, ref dVector3 _p2, dMatrix3 R2, ref dVector3 side2);
 int dBoxBox(ref dVector3 p1, dMatrix3 R1, ref dVector3 side1, ref dVector3 p2, dMatrix3 R2, ref dVector3 side2, ref dVector3 normal, dReal *depth, int *return_code, int flags, dContactGeom *contact, int skip);
-void dInfiniteAABB(dGeomID geom, dReal aabb[6]);
+void dInfiniteAABB(dGeomID geom, dReal[6] aabb);
 void dCloseODE();
 int dCreateGeomClass(dGeomClass *classptr);
 void* dGeomGetClassData(dGeomID);

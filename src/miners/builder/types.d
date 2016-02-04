@@ -48,7 +48,7 @@ enum sideNormal : ubyte {
 }
 
 
-int normalTable[] = [
+int[] normalTable = [
 	-1, 0, 0,
 	 1, 0, 0,
 	 0,-1, 0,
@@ -120,7 +120,7 @@ enum uvManip {
  *
  * TopLeft, BottomLeft, BottomRight, TopRight
  */
-uvCoord uvCoords[uvManip.SIZE][4][2] = [
+uvCoord[2][4][uvManip.SIZE] uvCoords = [
 	[ // uvManip.NONE
 		[uvCoord.LEFT,  uvCoord.TOP],
 		[uvCoord.LEFT,  uvCoord.BOTTOM],

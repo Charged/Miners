@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.skin;
 
-import std.string : format, find;
+import std.string : format;
 import uri = std.uri;
 
 import charge.charge;

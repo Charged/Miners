@@ -88,7 +88,7 @@ final:
 		float4(name, 1, value.ptr);
 	}
 
-	void float4(const(char)* name, float value[4])
+	void float4(const(char)* name, float[4] value)
 	{
 		float4(name, value.ptr);
 	}
@@ -104,14 +104,14 @@ final:
 		float3(name, 1, value);
 	}
 
-	void float3(const(char)* name, float array[3])
+	void float3(const(char)* name, float[3] array)
 	{
 		float3(name, array.ptr);
 	}
 
 	void float3(const(char)* name, Point3d value)
 	{
-		float array[3];
+		float[3] array;
 		array[0] = value.x;
 		array[1] = value.y;
 		array[2] = value.z;
@@ -120,7 +120,7 @@ final:
 
 	void float3(const(char)* name, Vector3d value)
 	{
-		float array[3];
+		float[3] array;
 		array[0] = value.x;
 		array[1] = value.y;
 		array[2] = value.z;
@@ -138,7 +138,7 @@ final:
 		float2(name, 1, value);
 	}
 
-	void float2(const(char)* name, float value[2])
+	void float2(const(char)* name, float[2] value)
 	{
 		float2(name, value.ptr);
 	}
@@ -163,7 +163,7 @@ final:
 
 	void matrix4(const(char)* name, bool transpose, ref Matrix4x4d matrix)
 	{
-		float array[16];
+		float[16] array;
 		foreach(uint i, a; matrix.array)
 			array[i] = cast(float)a;
 

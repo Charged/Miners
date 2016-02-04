@@ -197,7 +197,7 @@ protected:
 		mb.repack();
 	}
 
-	override void levelFinalize(uint x, uint y, uint z, ubyte data[])
+	override void levelFinalize(uint x, uint y, uint z, ubyte[] data)
 	{
 		auto t = format("Done!");
 		text.setText(t);

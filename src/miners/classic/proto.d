@@ -3,7 +3,7 @@
 module miners.classic.proto;
 
 
-uint clientPacketSizes[16] = [
+uint[16] clientPacketSizes = [
 	ClientIdentification.sizeof,     // 0x00
 	0,                               // 0x01
 	0,                               // 0x02
@@ -21,7 +21,7 @@ uint clientPacketSizes[16] = [
 	0,                               // 0x0f
 ];
 
-uint serverPacketSizes[16] = [
+uint[16] serverPacketSizes = [
 	ServerIdentification.sizeof,     // 0x00
 	ServerPing.sizeof,               // 0x01
 	ServerLevelInitialize.sizeof,    // 0x02
@@ -80,7 +80,7 @@ static assert(ServerPacketUnion.sizeof == ServerPacketUnion.data.length);
 
 struct ClientIdentification
 {
-	const constId = 0x00;
+	enum ubyte constId = cast(ubyte)0x00;
 
 align(1):
 	ubyte packetId;
@@ -92,7 +92,7 @@ align(1):
 
 struct ClientSetBlock
 {
-	const constId = 0x05;
+	enum ubyte constId = cast(ubyte)0x05;
 
 align(1):
 	ubyte packetId;
@@ -105,7 +105,7 @@ align(1):
 
 struct ClientPlayerUpdatePosOri
 {
-	const constId = 0x08;
+	enum ubyte constId = cast(ubyte)0x08;
 
 align(1):
 	ubyte packetId;
@@ -119,7 +119,7 @@ align(1):
 
 struct ClientMessage
 {
-	const constId = 0x0d;
+	enum ubyte constId = cast(ubyte)0x0d;
 
 align(1):
 	ubyte packetId;
@@ -137,7 +137,7 @@ align(1):
 
 struct ServerIdentification
 {
-	const constId = 0x00;
+	enum ubyte constId = cast(ubyte)0x00;
 
 align(1):
 	ubyte packetId;
@@ -149,7 +149,7 @@ align(1):
 
 struct ServerPing
 {
-	const constId = 0x01;
+	enum ubyte constId = cast(ubyte)0x01;
 
 align(1):
 	ubyte packetId;
@@ -157,7 +157,7 @@ align(1):
 
 struct ServerLevelInitialize
 {
-	const constId = 0x02;
+	enum ubyte constId = cast(ubyte)0x02;
 
 align(1):
 	ubyte packetId;
@@ -165,7 +165,7 @@ align(1):
 
 struct ServerLevelDataChunk
 {
-	const constId = 0x03;
+	enum ubyte constId = cast(ubyte)0x03;
 
 align(1):
 	ubyte packetId;
@@ -176,7 +176,7 @@ align(1):
 
 struct ServerLevelFinalize
 {
-	const constId = 0x04;
+	enum ubyte constId = cast(ubyte)0x04;
 
 align(1):
 	ubyte packetId;
@@ -187,7 +187,7 @@ align(1):
 
 struct ServerSetBlock
 {
-	const constId = 0x06;
+	enum ubyte constId = cast(ubyte)0x06;
 
 align(1):
 	ubyte packetId;
@@ -199,7 +199,7 @@ align(1):
 
 struct ServerPlayerSpawn
 {
-	const constId = 0x07;
+	enum ubyte constId = cast(ubyte)0x07;
 
 align(1):
 	ubyte packetId;
@@ -214,7 +214,7 @@ align(1):
 
 struct ServerPlayerTeleport
 {
-	const constId = 0x08;
+	enum ubyte constId = cast(ubyte)0x08;
 
 align(1):
 	ubyte packetId;
@@ -228,7 +228,7 @@ align(1):
 
 struct ServerPlayerUpdatePosOri
 {
-	const constId = 0x09;
+	enum ubyte constId = cast(ubyte)0x09;
 
 align(1):
 	ubyte packetId;
@@ -242,7 +242,7 @@ align(1):
 
 struct ServerPlayerUpdatePos
 {
-	const constId = 0x0a;
+	enum ubyte constId = cast(ubyte)0x0a;
 
 align(1):
 	ubyte packetId;
@@ -254,7 +254,7 @@ align(1):
 
 struct ServerPlayerUpdateOri
 {
-	const constId = 0x0b;
+	enum ubyte constId = cast(ubyte)0x0b;
 
 align(1):
 	ubyte packetId;
@@ -265,7 +265,7 @@ align(1):
 
 struct ServerPlayerDespawn
 {
-	const constId = 0x0c;
+	enum ubyte constId = cast(ubyte)0x0c;
 
 align(1):
 	ubyte packetId;
@@ -274,7 +274,7 @@ align(1):
 
 struct ServerMessage
 {
-	const constId = 0x0d;
+	enum ubyte constId = cast(ubyte)0x0d;
 
 align(1):
 	ubyte packetId;
@@ -284,7 +284,7 @@ align(1):
 
 struct ServerDisconnect
 {
-	const constId = 0x0e;
+	enum ubyte constId = cast(ubyte)0x0e;
 
 align(1):
 	ubyte packetId;
@@ -293,7 +293,7 @@ align(1):
 
 struct ServerUpdateType
 {
-	const constId = 0x0f;
+	enum ubyte constId = cast(ubyte)0x0f;
 
 align(1):
 	ubyte packetId;

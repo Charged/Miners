@@ -102,7 +102,7 @@ public:
 	}
 }
 
-private static Vertex vert[24] = [
+private static Vertex[24] vert = [
 	{ // X-
 		-0.001f, -0.001f, -0.001f, // Pos
 		 0.0f,    1.0f,            // UV
