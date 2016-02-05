@@ -130,8 +130,8 @@ ClassicServerInfo[] getClassicServerList(in char[] text)
  */
 ClassicServerInfo[] getClassiCubeServerList(in char[] text)
 {
-	auto tableStart = find(text, `<table id="servers">`);
-	auto tableEnd = find(text[tableStart .. $], `</table>`);
+	auto tableStart = cast(size_t)find(text, `<table id="servers">`);
+	auto tableEnd = cast(size_t)find(text[tableStart .. $], `</table>`);
 
 	text = text[tableStart .. tableStart + tableEnd];
 
@@ -139,23 +139,23 @@ ClassicServerInfo[] getClassiCubeServerList(in char[] text)
 
 	ClassicServerInfo[] list;
 	do {
-		auto trStart = find(text, `<tr class="server">`);
+		auto trStart = cast(size_t)find(text, `<tr class="server">`);
 		if (trStart == size_t.max)
 			break;
-		auto trEnd = find(text[trStart .. $], `</tr>`);
+		auto trEnd = cast(size_t)find(text[trStart .. $], `</tr>`);
 
 		auto server = text[trStart .. trStart + trEnd];
 
-		auto nameStart = find(server, `<a href="/server/play/`);
-		auto nameEnd = find(server[nameStart .. $], `">`);
+		auto nameStart = cast(size_t)find(server, `<a href="/server/play/`);
+		auto nameEnd = cast(size_t)find(server[nameStart .. $], `">`);
 
 		nameStart = nameStart + nameEnd + 2;
-		nameEnd = find(server[nameStart .. $], `</a>`);
+		nameEnd = cast(size_t)find(server[nameStart .. $], `</a>`);
 
 		auto name = server[nameStart .. nameStart + nameEnd];
 
-		auto urlStart = find(server, `mc://`);
-		auto urlEnd = find(server[urlStart .. $], `">`);
+		auto urlStart = cast(size_t)find(server, `mc://`);
+		auto urlEnd = cast(size_t)find(server[urlStart .. $], `">`);
 
 		auto url = server[urlStart .. urlStart + urlEnd];
 
