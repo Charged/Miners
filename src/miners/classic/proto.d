@@ -3,7 +3,7 @@
 module miners.classic.proto;
 
 
-uint clientPacketSizes[16] = [
+uint clientPacketSizes[16+16+2] = [
 	ClientIdentification.sizeof,     // 0x00
 	0,                               // 0x01
 	0,                               // 0x02
@@ -18,10 +18,17 @@ uint clientPacketSizes[16] = [
 	0,                               // 0x0b
 	0,                               // 0x0c
 	ClientMessage.sizeof,            // 0x0d
+	0,                               // 0x0e
 	0,                               // 0x0f
+
+	0, 0, 0, 0,  0, 0, 0, 0,         // 0x10 - 0x17
+	0, 0, 0, 0,  0, 0, 0, 0,         // 0x17 - 0x1f
+
+	ExtInfo.sizeof,                  // 0x20
+	ExtEntry.sizeof                  // 0x21
 ];
 
-uint serverPacketSizes[16] = [
+uint serverPacketSizes[16+16+2] = [
 	ServerIdentification.sizeof,     // 0x00
 	ServerPing.sizeof,               // 0x01
 	ServerLevelInitialize.sizeof,    // 0x02
@@ -38,6 +45,12 @@ uint serverPacketSizes[16] = [
 	ServerMessage.sizeof,            // 0x0d
 	ServerDisconnect.sizeof,         // 0x0e
 	ServerUpdateType.sizeof,         // 0x0f
+
+	0, 0, 0, 0,  0, 0, 0, 0,         // 0x10 - 0x17
+	0, 0, 0, 0,  0, 0, 0, 0,         // 0x17 - 0x1f
+
+	ExtInfo.sizeof,                  // 0x20
+	ExtEntry.sizeof                  // 0x21
 ];
 
 
@@ -64,6 +77,8 @@ union ServerPacketUnion {
 	ServerMessage            message;            // 0x0d
 	ServerDisconnect         disconnect;         // 0x0e
 	ServerUpdateType         updateType;         // 0x0f
+	ExtInfo                  extInfo;            // 0x10
+	ExtEntry                 extEntry;           // 0x11
 	ubyte[ServerLevelDataChunk.sizeof] data;
 }
 
@@ -298,4 +313,22 @@ struct ServerUpdateType
 align(1):
 	ubyte packetId;
 	ubyte type;
+}
+
+struct ExtInfo
+{
+	const constId = 0x20;
+
+	ubyte packetId;
+	char[64] name;
+	int numExts;
+}
+
+struct ExtEntry
+{
+	const constId = 0x21;
+
+	ubyte packetId;
+	char[64] name;
+	int ver;
 }

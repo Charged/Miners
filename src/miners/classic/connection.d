@@ -48,6 +48,9 @@ private:
 	/// Verification recieved from mc.net
 	string verificationKey;
 
+	/// Are we still negotiating the extensions.
+	bool negotiating;
+
 	/// Stored data when receiving the level
 	ubyte[] inData;
 
@@ -77,6 +80,7 @@ public:
 		this.username = csi.username;
 		this.verificationKey = csi.verificationKey;
 
+		this.negotiating = true;
 		this.packetLength = size_t.max;
 	}
 
@@ -145,7 +149,7 @@ public:
 		ci.username[name.length .. $] = ' ';
 		ci.verificationKey[0 .. key.length] = key[0 .. $];
 		ci.verificationKey[key.length .. $] = ' ';
-		ci.pad = 0;
+		ci.pad = 0x42;
 
 		sendPacket!(ci)(s);
 	}
@@ -220,6 +224,7 @@ protected:
 		ubyte type = si.playerType;
 
 		setPlayerType(type);
+		negotiating = false;
 
 		cl.indentification(ver, name, motd, type);
 	}
@@ -440,6 +445,52 @@ protected:
 		cl.playerType(type);
 	}
 
+	/**
+	 * 0x10
+	 */
+	void extInfo(ExtInfo *ei_)
+	{
+		if (!negotiating)
+			throw new Exception("ExtInfo packet not expected");
+
+		string name = removeTrailingSpaces(ei_.name);
+		int num = ntoh(ei_.numExts);
+
+		l.info("Server: \"%s\" num: %s", name, num);
+
+		ExtInfo ei;
+		ExtEntry ee;
+
+		string clientName = "Charged Miners";
+		ei.packetId = ExtInfo.constId;
+		ei.name[0 .. clientName.length] = clientName[];
+		ei.name[clientName.length .. $] = ' ';
+		ei.numExts = 1;
+
+		string extName = "EmoteFix";
+		ee.packetId = ExtEntry.constId;
+		ee.name[0 .. extName.length] = extName[];
+		ee.name[extName.length .. $] = ' ';
+		ee.ver = 1;
+
+		sendPacket!(ei)(s);
+		sendPacket!(ee)(s);
+	}
+
+	/**
+	 * 0x11
+	 */
+	void extEntry(ExtEntry *ee)
+	{
+		if (!negotiating)
+			throw new Exception("ExtEntry packet not expected");
+
+		string name = removeTrailingSpaces(ee.name);
+		int ver = ntoh(ee.ver);
+
+		l.info("Ext: \"%s\" ver: %s", name, ver);
+	}
+
 	void packet(ubyte *pkg)
 	{
 		switch(*pkg) {
@@ -491,6 +542,12 @@ protected:
 			break;
 		case ServerUpdateType.constId:
 			updateType(&packets.updateType);
+			break;
+		case ExtInfo.constId:
+			extInfo(&packets.extInfo);
+			break;
+		case ExtEntry.constId:
+			extEntry(&packets.extEntry);
 			break;
 		default: // Error 
 			assert(false);
