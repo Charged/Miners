@@ -76,7 +76,7 @@ public:
 		assert(texture is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		reference(&texture, null);
 		super.breakApart();

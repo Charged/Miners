@@ -465,22 +465,22 @@ public:
 		reference(&this.tex, tex);
 	}
 
-	uint width()
+	override uint width()
 	{
 		return tex.width;
 	}
 
-	uint height()
+	override uint height()
 	{
 		return tex.height;
 	}
 
-	uint id()
+	override uint id()
 	{
 		return tex.glId;
 	}
 
-	void filter(Filter)
+	override void filter(Filter)
 	{
 		assert(false, "filtering not supported");
 	}
@@ -531,18 +531,18 @@ public:
 
 	void setTarget()
 	{
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_COLOR_ATTACHMENT0_EXT,
 		];
 		gluFrameBufferBind(fbo, buffers, w, h);
 	}
 
-	uint width()
+	override uint width()
 	{
 		return w;
 	}
 
-	uint height()
+	override uint height()
 	{
 		return h;
 	}

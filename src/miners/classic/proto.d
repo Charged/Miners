@@ -3,7 +3,7 @@
 module miners.classic.proto;
 
 
-uint clientPacketSizes[16] = [
+uint[16] clientPacketSizes = [
 	ClientIdentification.sizeof,     // 0x00
 	0,                               // 0x01
 	0,                               // 0x02
@@ -21,7 +21,7 @@ uint clientPacketSizes[16] = [
 	0,                               // 0x0f
 ];
 
-uint serverPacketSizes[16] = [
+uint[16] serverPacketSizes = [
 	ServerIdentification.sizeof,     // 0x00
 	ServerPing.sizeof,               // 0x01
 	ServerLevelInitialize.sizeof,    // 0x02

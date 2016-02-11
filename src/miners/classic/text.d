@@ -21,7 +21,7 @@ public:
 		super(c, x, y, text, true);
 	}
 
-	void makeResources()
+	override void makeResources()
 	{
 		sysReference(&bf, opts.classicFont());
 	}

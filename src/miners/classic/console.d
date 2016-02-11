@@ -38,7 +38,7 @@ public:
 	}
 
 protected:
-	void tabComplete()
+	override void tabComplete()
 	{
 		if (tabCompletePlayer is null)
 			return;
@@ -118,7 +118,7 @@ protected:
 		}
 	}
 
-	bool validateChar(dchar unicode)
+	override bool validateChar(dchar unicode)
 	{
 		// Skip invalid characters.
 		if (unicode < 0x20 ||
@@ -128,13 +128,13 @@ protected:
 		return true;
 	}
 
-	void doUserInputed()
+	override void doUserInputed()
 	{
 		tabCompleteText = null;
 		lastTabComplete = null;
 	}
 
-	void doCommand(string[] cmds, string str)
+	override void doCommand(string[] cmds, string str)
 	{
 		switch(cmds[0]) {
 		case "help":
@@ -185,7 +185,7 @@ protected:
 		}
 	}
 
-	void msgHelp()
+	override void msgHelp()
 	{
 		doMessage("&eCommands:");
 		doMessage("&a  aa&e     - toggle anti-aliasing");
@@ -198,13 +198,13 @@ protected:
 		doMessage("&a  shadow&e - toggle shadows");
 	}
 
-	void msgNoCommandGiven()
+	override void msgNoCommandGiven()
 	{
 		doMessage(format(
 			"&eNo command given type &a%shelp", cmdPrefix));
 	}
 
-	void msgNoSuchCommand(string cmd)
+	override void msgNoSuchCommand(string cmd)
 	{
 		doMessage(format(
 			"&eUnknown command \"&c%s&e\" type &a%shelp",

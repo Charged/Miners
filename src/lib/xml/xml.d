@@ -26,7 +26,7 @@ class Text : Node
 		this.data = text;
 	}
 
-	string value()
+	override string value()
 	{
 		return data;
 	}
@@ -58,7 +58,7 @@ class Element : Node
 		return *ret;
 	}
 
-	string value()
+	override string value()
 	{
 		return name;
 	}
@@ -94,7 +94,7 @@ class Element : Node
 			if (e is null)
 				continue;
 
-			if ((result = dg(e)) <> 0)
+			if ((result = dg(e)) != 0)
 				break;
 		}
 		return result;
@@ -264,7 +264,7 @@ protected:
 			throw new XmlException(format(
 				"closing tag without no opening tag "));
 
-		if (name <> current.name)
+		if (name != current.name)
 			throw new XmlException(format(
 				"unmatched tags: expected </", current.name,
 				"> got </", name, ">"));

@@ -42,7 +42,7 @@ public:
 		super(c, x, y, w, h);
 	}
 
-	void repack()
+	override void repack()
 	{
 		w = 0;
 		h = 0;
@@ -59,7 +59,7 @@ public:
 		return children.adup;
 	}
 
-	Component at(int x, int y, inout int absX, inout int absY)
+	override Component at(int x, int y, ref int absX, ref int absY)
 	{
 		absX += this.x;
 		absY += this.y;
@@ -128,14 +128,14 @@ public:
 		return -1;
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		paintBackground(d);
 		paintComponents(d);
 		paintForeground(d);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		while(children.length > 0) {
 			auto i = children.length-1;
@@ -149,7 +149,7 @@ public:
 		releaseResources();
 	}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 		foreach(c; children)
 			c.releaseResources();
@@ -204,14 +204,14 @@ public:
 		assert(tt is null);
 	}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 		super.releaseResources();
 
 		reference(&tt, null);
 	}
 
-	void repaint(int x, int y, uint w, uint h)
+	override void repaint(int x, int y, uint w, uint h)
 	{
 		super.repaint(x, y, w, h);
 
@@ -221,7 +221,7 @@ public:
 		repaintDg();
 	}
 
-	void paintBackground(Draw d)
+	override void paintBackground(Draw d)
 	{
 		d.fill(bg, false, 0, 0, w, h);
 	}
@@ -247,7 +247,7 @@ public:
 		d.stop();
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		// Not the intended use.
 		assert(false);
@@ -296,7 +296,7 @@ public:
 		super(c, x, y, w, h, bg);
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		d.blit(tt, Color4f.White, true,
 		       0, 0, w, h,  // srcX, srcY, srcW, srcH
@@ -326,7 +326,7 @@ public:
 	 *
 	 * Create a new one if size differs or if none is attached.
 	 */
-	void paintTexture()
+	override void paintTexture()
 	{
 		auto dW = w * 2;
 		auto dH = h * 2;
@@ -348,7 +348,7 @@ public:
 		d.stop();
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		d.blit(tt, Color4f.White, true,
 		       0, 0, w*2, h*2,  // srcX, srcY, srcW, srcH

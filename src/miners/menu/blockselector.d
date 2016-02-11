@@ -33,7 +33,7 @@ public:
 		super(r, opts, mb);
 	}
 
-	void close()
+	override void close()
 	{
 		selected = null;
 		super.close();
@@ -88,26 +88,26 @@ public:
 	}
 
 
-	void repack()
+	override void repack()
 	{
 
 	}
 
 
-	void breakApart()
+	override void breakApart()
 	{
 		super.breakApart();
 		selected = null;
 	}
 
 
-	void releaseResources()
+	override void releaseResources()
 	{
 
 	}
 
 
-	void paint(GfxDraw d)
+	override void paint(GfxDraw d)
 	{
 		int x;
 		int y;
@@ -128,7 +128,7 @@ public:
 		}
 	}
 
-	void mouseUp(Mouse m, int x, int y, uint button)
+	override void mouseUp(Mouse m, int x, int y, uint button)
 	{
 		if (button != 1)
 			return;

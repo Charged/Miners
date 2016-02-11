@@ -19,14 +19,14 @@ private {
 
 struct Vertex
 {
-	float pos[3];
-	float normal[3];
-	float uv[2];
-	float tanget[3];
-	float binomial[3];
+	float[3] pos;
+	float[3] normal;
+	float[2] uv;
+	float[3] tanget;
+	float[3] binomial;
 }
 
-static Vertex vert[24] = [
+static Vertex[24] vert = [
 	{ // X-
 		[-0.5f, -0.5f, -0.5f], // Pos
 		[-1.0f,  0.0f,  0.0f], // Normal
@@ -192,7 +192,7 @@ public:
 		assert(m is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(m);
 		super.breakApart();
@@ -205,7 +205,7 @@ public:
 		z = sz;
 	}
 
-	void cullAndPush(Cull cull, RenderQueue rq)
+	override void cullAndPush(Cull cull, RenderQueue rq)
 	{
 		auto v = cull.center - position;
 		rq.push(v.lengthSqrd, this);

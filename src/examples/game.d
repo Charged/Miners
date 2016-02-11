@@ -23,7 +23,7 @@ public:
 		assert(phy is null);
 	}
 
-	void tick()
+	override void tick()
 	{
 		super.tick();
 		if (phy.position.y < -50) {
@@ -81,10 +81,9 @@ class Car : GameCar
 
 		car.carSlip2Factor = 0.004;
 		car.carSlip2Limit = 0.01;
-
 	}
 
-	void tick()
+	override void tick()
 	{
 		super.tick();
 		if (position.y < -50) {
@@ -110,7 +109,7 @@ private:
 
 	GameWorld w;
 
-	BaseActor removable[];
+	BaseActor[] removable;
 
 	GfxSimpleLight sl;
 	GfxSpotLight spl;
@@ -175,7 +174,7 @@ public:
 	{
 	}
 
-	void close()
+	override void close()
 	{
 		keyboard.up.disconnect(&this.keyUp);
 		keyboard.down.disconnect(&this.keyDown);
@@ -199,7 +198,7 @@ protected:
 		removable ~= t;
 	}
 
-	void logic()
+	override void logic()
 	{
 		w.tick();
 
@@ -237,7 +236,7 @@ protected:
 		cam.rotation = Quatd(angle, Vector3d.Up);
 	}
 
-	void render()
+	override void render()
 	{
 		GfxDefaultTarget rt = GfxDefaultTarget();
 		rt.clear();

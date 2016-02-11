@@ -37,7 +37,7 @@ public:
 		super(hostname, port);
 	}
 
-	void close()
+	override void close()
 	{
 		auto a = store.values.dup;
 		store = null;
@@ -47,7 +47,7 @@ public:
 		super.close();
 	}
 
-	void doTick()
+	override void doTick()
 	{
 		if (curSkin is null &&
 		    !nextSkin.length)
@@ -75,19 +75,19 @@ public:
 		return ret;
 	}
 
-	void httpGetSkin(char[] name)
+	void httpGetSkin(string name)
 	{
 		auto url = format(this.url, name);
 		httpGet(url);
 	}
 
-	void handleError(Exception e)
+	override void handleError(Exception e)
 	{
 		curSkin = null;
 		super.close();
 	}
 
-	void handleResponse(char[] header, char[] res)
+	override void handleResponse(char[] header, char[] res)
 	{
 		auto str = format("dl/%s.png", curSkin);
 		l.info("%s", str);
@@ -122,16 +122,16 @@ public:
 		super.close();
 	}
 
-	void handleUpdate(int percentage)
+	override void handleUpdate(int percentage)
 	{
 	}
 
-	void handleConnected()
+	override void handleConnected()
 	{
 		httpGetSkin(curSkin);
 	}
 
-	void handleDisconnect()
+	override void handleDisconnect()
 	{
 		curSkin = null;
 		l.warn("Got disconnected");

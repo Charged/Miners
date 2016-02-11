@@ -42,7 +42,7 @@ public:
 		super(c, x, y, cast(uint)(scale * r2) * 2, cast(uint)(scale * r2) * 2);
 	}
 
-	void paint(GfxDraw d)
+	override void paint(GfxDraw d)
 	{
 		glTranslated(scale * r2, scale * r2, 0);
 		glScaled(scale, scale, 1);
@@ -251,12 +251,12 @@ public:
 		glEnd();
 	}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 
 	}
 
-	void repack()
+	override void repack()
 	{
 
 	}
@@ -281,7 +281,7 @@ public:
 		this.innerRadius = innerRadius;
 	}
 
-	void paint(GfxDraw d)
+	override void paint(GfxDraw d)
 	{
 		d.fill(Logo.grey, false, 0, 0, w, h);
 
@@ -318,12 +318,12 @@ public:
 		drawGear(outerRadius, innerRadius, 0);
 	}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 
 	}
 
-	void repack()
+	override void repack()
 	{
 
 	}

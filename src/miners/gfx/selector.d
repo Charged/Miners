@@ -38,7 +38,7 @@ public:
 		assert(m is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(m);
 		super.breakApart();
@@ -49,8 +49,8 @@ public:
 		pos = Point3d(x, y, z);
 	}
 
-	void setPosition(ref Point3d pos) {}
-	void setRotation(ref Quatd rot) {}
+	override void setPosition(ref Point3d pos) {}
+	override void setRotation(ref Quatd rot) {}
 
 
 	/*
@@ -60,7 +60,7 @@ public:
 	 */
 
 
-	GfxMaterial getMaterial()
+	override GfxMaterial getMaterial()
 	{
 		return m;
 	}
@@ -70,7 +70,7 @@ public:
 		this.m = m;
 	}
 
-	void cullAndPush(GfxCull cull, GfxRenderQueue rq)
+	override void cullAndPush(GfxCull cull, GfxRenderQueue rq)
 	{
 		if (show)
 			rq.push(-double.max, this);
@@ -84,7 +84,7 @@ public:
 	 */
 
 
-	void drawAttrib(GfxShader s)
+	override void drawAttrib(GfxShader s)
 	{
 		gluPushAndTransform(pos, rot);
 
@@ -102,7 +102,7 @@ public:
 	}
 }
 
-private static Vertex vert[24] = [
+private static Vertex[24] vert = [
 	{ // X-
 		-0.001f, -0.001f, -0.001f, // Pos
 		 0.0f,    1.0f,            // UV

@@ -406,7 +406,7 @@ protected:
 	/**
 	 * Called at start.
 	 */
-	int run()
+	override int run()
 	{
 		try {
 			connect(hostname, port);

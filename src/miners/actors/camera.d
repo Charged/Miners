@@ -88,7 +88,7 @@ public:
 		assert(icam is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		auto w = cast(World)w;
 		if (w !is null) {
@@ -114,7 +114,7 @@ public:
 		pcam.ratio = ratio;
 	}
 
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		pcam.position = pos;
 
@@ -160,7 +160,7 @@ public:
 	final double far() { return pcam.far; }
 	final double near() { return pcam.near; }
 
-	void getPosition(out Point3d pos) { pcam.getPosition(pos); }
-	void setRotation(ref Quatd rot) { pcam.setRotation(rot); }
-	void getRotation(out Quatd rot) { pcam.getRotation(rot); }
+	override void getPosition(out Point3d pos) { pcam.getPosition(pos); }
+	override void setRotation(ref Quatd rot) { pcam.setRotation(rot); }
+	override void getRotation(out Quatd rot) { pcam.getRotation(rot); }
 }

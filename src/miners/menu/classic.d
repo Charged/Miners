@@ -34,7 +34,7 @@ public:
 		this.text = new Text(this, 0, 0, text);
 	}
 
-	void repack()
+	override void repack()
 	{
 		text.x = (w - text.w) / 2;
 		text.y = (h - text.h) / 2;
@@ -129,7 +129,7 @@ public:
 		assert(cc is null);
 	}
 
-	void close()
+	override void close()
 	{
 		super.close();
 
@@ -139,7 +139,7 @@ public:
 		}
 	}
 
-	void logic()
+	override void logic()
 	{
 		if (cc !is null)
 			cc.doPackets();
@@ -163,7 +163,7 @@ protected:
 	 */
 
 
-	void indentification(ubyte ver, string name, string motd, ubyte type)
+	override void indentification(ubyte ver, string name, string motd, ubyte type)
 	{
 		// Save the mcUrl of a valid connection.
 		string mcUrl;
@@ -181,7 +181,7 @@ protected:
 		opts.lastClassicServer = name;
 	}
 
-	void levelInitialize()
+	override void levelInitialize()
 	{
 		disString = format(disconnectString, "Loading level");
 
@@ -190,14 +190,14 @@ protected:
 		mb.repack();
 	}
 
-	void levelLoadUpdate(ubyte precent)
+	override void levelLoadUpdate(ubyte precent)
 	{
 		auto t = format("Loading level %s%%", precent);
 		text.setText(t);
 		mb.repack();
 	}
 
-	void levelFinalize(uint x, uint y, uint z, ubyte data[])
+	override void levelFinalize(uint x, uint y, uint z, ubyte[] data)
 	{
 		auto t = format("Done!");
 		text.setText(t);
@@ -211,23 +211,22 @@ protected:
 		r.deleteMe(this);
 	}
 
-	void setBlock(short x, short y, short z, ubyte type) {}
+	override void setBlock(short x, short y, short z, ubyte type) {}
 
-	void playerSpawn(byte id, string name, double x, double y, double z,
+	override void playerSpawn(byte id, string name, double x, double y, double z,
 			 double heading, double pitch) {}
 
-	void playerMoveTo(byte id, double x, double y, double z,
+	override void playerMoveTo(byte id, double x, double y, double z,
 			  double heading, double pitch) {}
-	void playerMove(byte id, double x, double y, double z,
+	override void playerMove(byte id, double x, double y, double z,
 			double heading, double pitch) {}
-	void playerMove(byte id, double x, double y, double z) {}
-	void playerMove(byte id, double heading, double pitch) {}
-	void playerDespawn(byte id) {}
-	void playerType(ubyte type) {}
+	override void playerMove(byte id, double x, double y, double z) {}
+	override void playerMove(byte id, double heading, double pitch) {}
+	override void playerDespawn(byte id) {}
+	override void playerType(ubyte type) {}
 
-	void ping() {}
-	void message(byte id, string message) {}
-	void disconnect(string reason)
+	override void ping() {}
+	override void disconnect(string reason)
 	{
 		r.displayError([disString, reason], false);
 		r.deleteMe(this);
@@ -318,14 +317,14 @@ public:
 		assert(wc is null);
 	}
 
-	void close()
+	override void close()
 	{
 		super.close();
 
 		shutdownConnection();
 	}
 
-	void logic()
+	override void logic()
 	{
 		if (wc !is null)
 			wc.doTick();

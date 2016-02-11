@@ -28,7 +28,7 @@ public:
 		assert(phy is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		w.remTicker(this);
 		breakApartAndNull(gfx);
@@ -36,14 +36,14 @@ public:
 		super.breakApart();
 	}
 
-	void tick()
+	override void tick()
 	{
 		gfx.position = phy.position;
 		gfx.rotation = phy.rotation;
 	}
 
-	void setPosition(ref Point3d pos) { phy.setPosition(pos); gfx.setPosition(pos); }
-	void getPosition(out Point3d pos) { phy.getPosition(pos); }
-	void setRotation(ref Quatd rot) { phy.setRotation(rot); gfx.setRotation(rot); }
-	void getRotation(out Quatd rot) { phy.getRotation(rot); }
+	override void setPosition(ref Point3d pos) { phy.setPosition(pos); gfx.setPosition(pos); }
+	override void getPosition(out Point3d pos) { phy.getPosition(pos); }
+	override void setRotation(ref Quatd rot) { phy.setRotation(rot); gfx.setRotation(rot); }
+	override void getRotation(out Quatd rot) { phy.getRotation(rot); }
 }

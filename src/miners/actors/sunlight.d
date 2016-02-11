@@ -46,7 +46,7 @@ public:
 		assert(gfx is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		auto w = cast(World)w;
 		if (w !is null) {
@@ -83,10 +83,10 @@ public:
 		return _procent;
 	}
 
-	void setPosition(ref Point3d pos) { gfx.setPosition(pos); }
-	void getPosition(out Point3d pos) { gfx.getPosition(pos); }
-	void setRotation(ref Quatd rot) { gfx.setRotation(rot); }
-	void getRotation(out Quatd rot) { gfx.getRotation(rot); }
+	override void setPosition(ref Point3d pos) { gfx.setPosition(pos); }
+	override void getPosition(out Point3d pos) { gfx.getPosition(pos); }
+	override void setRotation(ref Quatd rot) { gfx.setRotation(rot); }
+	override void getRotation(out Quatd rot) { gfx.getRotation(rot); }
 
 private:
 	void setViewDistance(double dist)

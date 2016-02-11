@@ -131,7 +131,7 @@ public:
  		d = new GfxDraw();
 	}
 
-	void close()
+	override void close()
 	{
 		deleteMe(dr);
 		dr = null;
@@ -488,7 +488,7 @@ protected:
 	 */
 
 
-	void logic()
+	override void logic()
 	{
 		if (skin !is null)
 			skin.doTick();
@@ -496,7 +496,7 @@ protected:
 		super.logic();
 	}
 
-	void render(GfxWorld w, GfxCamera cam, GfxRenderTarget rt)
+	override void render(GfxWorld w, GfxCamera cam, GfxRenderTarget rt)
 	{
 		rm.render(w, cam, rt);
 	}
@@ -551,7 +551,7 @@ protected:
 	 */
 
 
-	void displayMainMenu()
+	override void displayMainMenu()
 	{
 		push(new MainMenu(this, opts));
 	}
@@ -562,29 +562,29 @@ protected:
 
 	}
 
-	void displayClassicPauseMenu(Scene part)
+	override void displayClassicPauseMenu(Scene part)
 	{
 		push(new PauseMenu(this, opts, part));
 	}
 
-	void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
+	override void displayClassicBlockSelector(void delegate(ubyte) selectedDg)
 	{
 		push(new ClassicBlockMenu(this, opts, selectedDg));
 	}
 
-	void displayClassicMenu()
+	override void displayClassicMenu()
 	{
 		auto psc = opts.playSessionCookie;
 
 		push(new WebpageInfoMenu(this, opts, psc));
 	}
 
-	void displayClassicList(ClassicServerInfo[] csis)
+	override void displayClassicList(ClassicServerInfo[] csis)
 	{
 		push(new ClassicServerListMenu(this, opts, csis));
 	}
 
-	void getClassicServerInfoAndConnect(ClassicServerInfo csi)
+	override void getClassicServerInfoAndConnect(ClassicServerInfo csi)
 	{
 		if (csi.hostname !is null && csi.username !is null &&
 		    csi.verificationKey !is null && csi.port != 0) {
@@ -597,28 +597,28 @@ protected:
 		push(new WebpageInfoMenu(this, opts, psc, csi));
 	}
 
-	void connectToClassic(string usr, string pwd, ClassicServerInfo csi)
+	override void connectToClassic(string usr, string pwd, ClassicServerInfo csi)
 	{
 		push(new WebpageInfoMenu(this, opts, usr, pwd, csi));
 	}
 
-	void connectToClassic(ClassicServerInfo csi)
+	override void connectToClassic(ClassicServerInfo csi)
 	{
 		push(new ClassicConnectingMenu(this, opts, csi));
 	}
 
-	void classicWorldChange(ClassicClientConnection cc)
+	override void classicWorldChange(ClassicClientConnection cc)
 	{
 		push(new ClassicConnectingMenu(this, opts, cc));
 	}
 
-	void displayInfo(string header, string[] texts,
-	                 string buttonText, void delegate() dg)
+	override void displayInfo(string header, string[] texts,
+	                          string buttonText, void delegate() dg)
 	{
 		push(new InfoMenu(this, opts, header, texts, buttonText, dg));
 	}
 
-	void displayError(Exception e, bool panic)
+	override void displayError(Exception e, bool panic)
 	{
 		// Always handle exception via the game exception.
 		auto ge = cast(GameException)e;
@@ -642,7 +642,7 @@ protected:
 		displayError(texts, ge.panic);
 	}
 
-	void displayError(string[] texts, bool panic)
+	override void displayError(string[] texts, bool panic)
 	{
 		push(new ErrorMenu(this, texts, panic));
 	}

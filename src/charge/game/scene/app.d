@@ -46,7 +46,7 @@ public:
 		assert(currentInput is null);
 	}
 
-	void close()
+	override void close()
 	{
 		while(vec.length || del.length) {
 			deleteAll();
@@ -56,7 +56,7 @@ public:
 		super.close();
 	}
 
-	void render()
+	override void render()
 	{
 		auto rt = DefaultTarget();
 
@@ -73,7 +73,7 @@ public:
 		rt.swap();
 	}
 
-	void logic()
+	override void logic()
 	{
 		// This make sure we at least call
 		// the builders once per frame.
@@ -89,7 +89,7 @@ public:
 		}
 	}
 
-	void idle(long time)
+	override void idle(long time)
 	{
 		// If we have built at least once this frame and have very little
 		// time left don't build again. But we always build one each frame.
@@ -125,12 +125,12 @@ public:
 	 */
 
 
-	void quit()
+	override void quit()
 	{
 		running = false;
 	}
 
-	void push(Scene r)
+	override void push(Scene r)
 	{
 		assert(r !is null);
 
@@ -153,23 +153,23 @@ public:
 		}
 	}
 
-	void remove(Scene r)
+	override void remove(Scene r)
 	{
 		vec.remove(r);
 		dirty = true;
 	}
 
-	void addBuilder(bool delegate() dg)
+	override void addBuilder(bool delegate() dg)
 	{
 		builders ~= dg;
 	}
 
-	void removeBuilder(bool delegate() dg)
+	override void removeBuilder(bool delegate() dg)
 	{
 		builders.remove(dg);
 	}
 
-	void deleteMe(Scene r)
+	override void deleteMe(Scene r)
 	{
 		if (r is null)
 			return;

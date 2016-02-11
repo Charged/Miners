@@ -119,7 +119,7 @@ public:
 
 		glActiveTexture(GL_TEXTURE0);
 
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_COLOR_ATTACHMENT0_EXT,
 		];
 

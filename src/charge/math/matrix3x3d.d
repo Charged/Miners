@@ -29,6 +29,13 @@ public:
 	}
 
 public:
+	static Matrix3x3d opCall(Quatd q)
+	{
+		Matrix3x3d mat = void;
+		mat = q;
+		return mat;
+	}
+
 	void opAssign(Quatd q)
 	{
 		a = 1 - 2 * q.y * q.y - 2 * q.z * q.z;

@@ -125,7 +125,7 @@ ushort[][] genMappedManipUVs(int L, int R, int T, int B,
 	T += v_offset;
 	B += v_offset;
 
-	ushort uv[][];
+	ushort[][] uv;
 
 	switch (manip) {
 		case uvManip.ROT_90:

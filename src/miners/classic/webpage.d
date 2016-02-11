@@ -212,13 +212,13 @@ public:
 
 
 protected:
-	void handleError(Exception e)
+	override void handleError(Exception e)
 	{
 		l.error("Webpage error (%s) \"%s\"", lastReturnCode, e.toString);
 		wl.error(e);
 	}
 
-	void handleResponse(char[] header, char[] res)
+	override void handleResponse(char[] header, char[] res)
 	{
 		auto tmp = curOp;
 		curOp = Op.NO_OP;
@@ -244,18 +244,18 @@ protected:
 		}
 	}
 
-	void handleUpdate(int percentage)
+	override void handleUpdate(int percentage)
 	{
 		wl.percentage(percentage);
 	}
 
-	void handleConnected()
+	override void handleConnected()
 	{
 		curOp = Op.NO_OP;
 		wl.connected();
 	}
 
-	void handleDisconnect()
+	override void handleDisconnect()
 	{
 		Op set;
 

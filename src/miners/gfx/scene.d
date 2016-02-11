@@ -128,7 +128,7 @@ public:
 		m["color"] = Color4f(Color4b(0x80b1ffff));
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(light);
 		camera = null;

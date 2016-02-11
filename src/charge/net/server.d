@@ -79,12 +79,12 @@ public:
 		Address a;
 		Header *h;
 		// Windows is stupid and you must take the entire package
-		uint8_t peek[1024];
+		uint8_t[1024] peek;
 
 		while(true) {
 			auto n = s.receive(peek, SocketFlags.PEEK);
 
-			void buffer[];
+			void[] buffer;
 
 			if (n <= 0) {
 				break;
@@ -108,7 +108,7 @@ public:
 			buffer.length = h.length;
 			n = s.receiveFrom(buffer, a);
 
-			if (n <> buffer.length) {
+			if (n != buffer.length) {
 				l.warn("invalid length");
 				continue;
 			}
@@ -117,7 +117,7 @@ public:
 			if (c is null) {
 
 				// Stray packet?
-				if (h.type <> h.Connect || h.orderId <> 0)
+				if (h.type != h.Connect || h.orderId != 0)
 					continue;
 
 				auto cnew = new Connection(s, a, cl);

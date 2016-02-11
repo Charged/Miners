@@ -92,7 +92,7 @@ public:
 	}
 
 protected:
-	void renderLoop(GfxRenderQueue rq, GfxWorld w)
+	override void renderLoop(GfxRenderQueue rq, GfxWorld w)
 	{
 		Matrix4x4d view;
 		GfxRenderable r;
@@ -282,7 +282,7 @@ protected:
 		glUseProgram(0);
 	}
 
-	void renderShadowLoop(Point3d pos, GfxWorld w)
+	override void renderShadowLoop(Point3d pos, GfxWorld w)
 	{
 		auto cull = new GfxCull(pos);
 		auto rq = new GfxRenderQueue();
@@ -310,7 +310,7 @@ protected:
 		}
 	}
 
-	void renderLoop(GfxRenderQueue rq, GfxWorld w)
+	override void renderLoop(GfxRenderQueue rq, GfxWorld w)
 	{
 		GfxSimpleMaterial m;
 		GfxRenderable r;
@@ -345,7 +345,7 @@ protected:
 private class Helper
 {
 public:
-	const static float normals[] = [
+	const static float[] normals = [
 		-1.0,  0.0,  0.0, 0.0, // XN
 		 1.0,  0.0,  0.0, 0.0, // XP
 		 0.0, -1.0,  0.0, 0.0, // YN - Down
@@ -358,7 +358,7 @@ public:
 		 1.0,  0.0, -1.0, 0.0, // XPZN
 		 1.0,  0.0,  1.0, 0.0, // XPZP
 	];
-	const static float uv_mixs[] = [
+	const static float[] uv_mixs = [
 		 0.0,  1.0,  0.0, -1.0, // XN
 		 0.0, -1.0,  0.0, -1.0, // XP
 		 1.0,  0.0,  1.0,  0.0, // YN - Down

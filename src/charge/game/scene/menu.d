@@ -68,7 +68,7 @@ public:
 		reference(&menuTexture, null);
 	}
 
-	void close()
+	override void close()
 	{
 		if (menu !is null) {
 			menu.breakApart();
@@ -93,11 +93,11 @@ public:
 		menu.repaintDg = &triggerRepaint;
 	}
 
-	void logic()
+	override void logic()
 	{
 	}
 
-	void render(RenderTarget rt)
+	override void render(RenderTarget rt)
 	{
 		if (menu is null)
 			return;
@@ -122,7 +122,7 @@ public:
 		d.stop();
 	}
 
-	void assumeControl()
+	override void assumeControl()
 	{
 		uint w, h;
 		bool fullscreen;
@@ -139,7 +139,7 @@ public:
 		inControl = true;
 	}
 
-	void dropControl()
+	override void dropControl()
 	{
 		keyboard.down -= &this.keyDown;
 		ih.dropControl();

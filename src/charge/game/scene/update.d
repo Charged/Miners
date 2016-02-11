@@ -36,7 +36,7 @@ public:
 		super(target);
 	}
 
-	void close()
+	override void close()
 	{
 		if (ud !is null) {
 			ud.close();
@@ -45,7 +45,7 @@ public:
 		super.close();
 	}
 
-	void logic()
+	override void logic()
 	{
 		if (ud !is null)
 			ud.logic();

@@ -29,7 +29,7 @@ protected:
 
 	// Model
 	charge.gfx.rigidmodel.RigidModel c;
-	charge.gfx.rigidmodel.RigidModel wheels[4];
+	charge.gfx.rigidmodel.RigidModel[4] wheels;
 
 	charge.phy.car.Car car;
 
@@ -120,7 +120,7 @@ public:
 		assert(car is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		w.remTicker(this);
 		breakApartAndNull(c);
@@ -184,22 +184,22 @@ public:
 			backward = v;
 	}
 
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		car.setPosition(pos);
 	}
 
-	void setRotation(ref Quatd rot)
+	override void setRotation(ref Quatd rot)
 	{
 		car.setRotation(rot);
 	}
 
-	void getPosition(out Point3d pos)
+	override void getPosition(out Point3d pos)
 	{
 		car.getPosition(pos);
 	}
 
-	void getRotation(out Quatd rot)
+	override void getRotation(out Quatd rot)
 	{
 		car.getRotation(rot);
 	}

@@ -33,7 +33,7 @@ public:
 		alDeleteSources(1, &source);
 	}
 
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		float[3] temp;
 

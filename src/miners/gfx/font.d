@@ -18,12 +18,12 @@ public:
 
 
 public:
-	void draw(Draw, int x, int y, string text, bool shaded = false)
+	override void draw(Draw, int x, int y, char[] text, bool shaded = false)
 	{
 		drawLayoutedText(x, y, text);
 	}
 
-	void buildSize(string text, out uint width, out uint height)
+	override void buildSize(char[] text, out uint width, out uint height)
 	{
 		bool colorSelect;
 		int max, x, y;
@@ -89,7 +89,7 @@ public:
 
 
 protected:
-	void drawLayoutedText(string text, bool shaded)
+	override void drawLayoutedText(char[] text, bool shaded)
 	{
 		drawLayoutedText(0, 0, text);
 	}
@@ -184,7 +184,7 @@ protected:
 		return -1;
 	}
 
-	const Color4f colors[16] = [
+	const Color4f[16] colors = [
 		Color4f( 32/255f,  32/255f,  32/255f, 1),
 		Color4f( 45/255f, 100/255f, 200/255f, 1),
 		Color4f( 50/255f, 126/255f,  54/255f, 1),

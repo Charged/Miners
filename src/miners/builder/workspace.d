@@ -55,8 +55,8 @@ struct WorkspaceData
 	const int ws_y_stride = 1;
 	const int ws_z_stride = ws_height;
 
-	ubyte blocks[ws_width][ws_depth][ws_height];
-	ubyte data[ws_data_width][ws_data_depth][ws_data_height];
+	ubyte[ws_height][ws_depth][ws_width] blocks;
+	ubyte[ws_data_height][ws_data_depth][ws_data_width] data;
 	BuildBlockDescriptor *tile;
 
 	ubyte opIndex(int x, int y, int z)

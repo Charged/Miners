@@ -47,7 +47,7 @@ public:
 		repaint();
 	}
 
-	void repack()
+	override void repack()
 	{
 		if (bf is null)
 			makeResources();
@@ -55,7 +55,7 @@ public:
 		bf.buildSize(t, w, h);
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		if (bf is null)
 			makeResources();
@@ -68,7 +68,7 @@ public:
 		reference(&bf, BitmapFont.defaultFont);
 	}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 		reference(&bf, null);
 	}
@@ -90,14 +90,14 @@ public:
 		super(c, x, y, text);
 	}
 
-	void repack()
+	override void repack()
 	{
 		super.repack();
 		w *= 2;
 		h *= 2;
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
 		d.scale(2, 2);
 		super.paint(d);

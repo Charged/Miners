@@ -154,7 +154,7 @@ void gluPopMatricesAttrib()
 	glPopAttrib();
 }
 
-void gluFrameBufferBind(GLuint fbo, GLenum buffers[], GLuint width, GLuint height)
+void gluFrameBufferBind(GLuint fbo, GLenum[] buffers, GLuint width, GLuint height)
 {
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
 	glDrawBuffers(cast(GLuint)buffers.length, buffers.ptr);

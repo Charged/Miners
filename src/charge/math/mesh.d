@@ -77,7 +77,7 @@ public:
 		return load(p, name);
 	}
 
-	static RigidMesh opCall(Vertex verts[], Triangle tris[], Types type)
+	static RigidMesh opCall(Vertex[] verts, Triangle[] tris, Types type)
 	{
 		return new RigidMesh(null, null, verts, tris, type);
 	}
@@ -104,7 +104,7 @@ public:
 	}
 
 protected:
-	this(Pool p, string name, Vertex verts[], Triangle tris[], Types type)
+	this(Pool p, string name, Vertex[] verts, Triangle[] tris, Types type)
 	{
 		super(p, uri, name);
 		this.tp = type;

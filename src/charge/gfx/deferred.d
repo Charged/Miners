@@ -295,7 +295,7 @@ private:
 		NUM = OFF * 2
 	}
 
-	static Shader matShader[matShdr.NUM];
+	static Shader[matShdr.NUM] matShader;
 
 	static DirectionalLightSplitShader directionLightSplitShader;
 	static DirectionalLightIsoShader directionLightIsoShader;
@@ -404,7 +404,7 @@ public:
 		delete deferredTarget;
 	}
 
-	void target(RenderTarget rt)
+	override void target(RenderTarget rt)
 	{
 		renderTarget = rt;
 
@@ -416,7 +416,7 @@ public:
 	}
 
 protected:
-	void render(Camera c, RenderQueue rq, World w)
+	override void render(Camera c, RenderQueue rq, World w)
 	{
 		Matrix4x4d view;
 		Matrix4x4d proj;
@@ -485,7 +485,7 @@ protected:
 		glBlendFunc(GL_ONE, GL_ONE);
 
 		// Setup uniforms for lights
-		float vec[2];
+		float[2] vec;
 		vec[0] = 1.0f / renderTarget.width;
 		vec[1] = 1.0f / renderTarget.height;
 
@@ -690,7 +690,7 @@ protected:
 	}
 
 	static void getDirSplitDistance(int splits, double near, double far,
-	                                float near_array[], float far_array[])
+	                                float[] near_array, float[] far_array)
 	{
 		double lambda = 0.75;
 		double ratio = far / near;
@@ -754,9 +754,9 @@ protected:
 	{
 		ProjCamera cam = c;
 		const int num_splits = 4;
-		float nears[num_splits];
-		float fars[num_splits];
-		Matrix4x4d mat[num_splits];
+		float[num_splits] nears;
+		float[num_splits] fars;
+		Matrix4x4d[num_splits] mat;
 
 		gluPushMatricesAttrib(GL_VIEWPORT_BIT);
 
@@ -879,7 +879,7 @@ protected:
 		mat.transpose();
 		mat.inverse();
 
-		Point3d p[8];
+		Point3d[8] p;
 		// Get the global coords of the scene ModelViewProj matrix.
 		p[0] = mat / Point3d(-1, -1, -1);
 		p[1] = mat / Point3d(-1, -1,  1);
@@ -1117,7 +1117,7 @@ protected:
 		viewInverse.transpose;
 		viewInverse.inverse;
 
-		static const GLfloat biasMatrix[16] = [
+		static const GLfloat[16] biasMatrix = [
 			0.5, 0.0, 0.0, 0.0,
 			0.0, 0.5, 0.0, 0.0,
 			0.0, 0.0, 0.5, 0.0,
@@ -1168,7 +1168,7 @@ protected:
 		gluTexUnitDisable(GL_TEXTURE_2D, 1);
 		gluTexUnitDisable(GL_TEXTURE_2D, 0);
 
-		glPolygonOffset(1.f, 2048.0f);
+		glPolygonOffset(1.0f, 2048.0f);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 
 		// Set meatricies
@@ -2039,7 +2039,7 @@ public:
 
 	void setTarget()
 	{
-		static GLenum buffers[2] = [
+		static GLenum[2] buffers = [
 			GL_COLOR_ATTACHMENT0_EXT,
 			GL_COLOR_ATTACHMENT1_EXT,
 		];
@@ -2147,7 +2147,7 @@ public:
 
 	void setTarget()
 	{
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_NONE,
 		];
 		gluFrameBufferBind(fbo, buffers, width, height);
@@ -2258,7 +2258,7 @@ public:
 
 	void setTarget(int layer)
 	{
-		static GLenum buffers[1] = [
+		static GLenum[1] buffers = [
 			GL_NONE,
 		];
 		gluFrameBufferBind(fbo, buffers, width, height);

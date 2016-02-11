@@ -51,12 +51,12 @@ public:
 		assert(debugText is null);
 	}
 
-	void close()
+	override void close()
 	{
 		sysReference(&debugText, null);
 	}
 
-	void render(charge.gfx.target.RenderTarget rt)
+	override void render(charge.gfx.target.RenderTarget rt)
 	{
 		num_frames++;
 		updateText();
@@ -130,8 +130,7 @@ public:
 		start = start + elapsed;
 	}
 
-	void logic() {}
-	void assumeControl() {}
-	void dropControl() {}
-	void resize(uint w, uint h) {}
+	override void logic() {}
+	override void assumeControl() {}
+	override void dropControl() {}
 }

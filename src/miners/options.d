@@ -652,7 +652,7 @@ class PlayerModelData
 		{[ -sz,    0,  sz], [ 0.1875f+offW, 0.625f+offH], [ 0,  0,  1], 5}
 	];
 
-	const charge.gfx.skeleton.Bone bones[] = [
+	const charge.gfx.skeleton.Bone[] bones = [
 		{Quatd(), Vector3d(   0,   s_6*2, 0), uint.max}, // Head
 		{Quatd(), Vector3d(   0, s_6+s_3, 0), uint.max}, // Body
 		{Quatd(), Vector3d(-s_3, s_6+s_5, 0), uint.max}, // Arm 1

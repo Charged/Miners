@@ -64,10 +64,17 @@ public:
 protected:
 	this(bool start = true, TcpSocket s = null)
 	{
+		super(&run);
+
 		this.s = s;
 		if (start)
 			this.start();
 	}
+
+	/**
+	 * Main runner.
+	 */
+	abstract int run();
 
 	/**
 	 * Connect to a remote host.

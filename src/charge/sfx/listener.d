@@ -37,7 +37,7 @@ public:
 		current = null;
 	}
 
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		float[3] temp;
 
@@ -53,7 +53,7 @@ public:
 		alListenerfv(AL_POSITION, temp.ptr);
 	}
 
-	void setRotation(ref Quatd rot)
+	override void setRotation(ref Quatd rot)
 	{
 		float[6] temp;
 

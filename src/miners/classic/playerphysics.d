@@ -26,7 +26,7 @@ public:
 		LIQUID = 0x2,
 	}
 
-	ubyte blockType[256] = [
+	ubyte[256] blockType = [
 		AIR,    // Air               //  0
 		FULL,   // Stone
 		FULL,   // Grass
@@ -341,7 +341,7 @@ protected:
 	final void doCollisions(ref Vector3d vel, ref Point3d pos, ref Aabb current,
 	                        out bool colX, out bool colY, out bool colZ)
 	{
-		Aabb stack[64] = void;
+		Aabb[64] stack = void;
 		Aabb test;
 		double v, old;
 

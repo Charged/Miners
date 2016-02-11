@@ -16,7 +16,7 @@ class InfoMenu : MenuSceneBase
 private:
 	Router r;
 	Button b;
-	Text te[];
+	Text[] te;
 	void delegate() dg;
 
 public:
@@ -68,7 +68,7 @@ public:
 		super(r, opts, header, errorTexts, txt, dg);
 	}
 
-	void escapePressed()
+	override void escapePressed()
 	{
 		if (panic)
 			r.quit();

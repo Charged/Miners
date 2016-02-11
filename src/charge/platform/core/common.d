@@ -96,7 +96,7 @@ protected:
 			initSfx(p);
 	}
 
-	void initSubSystem(coreFlag flag)
+	override void initSubSystem(coreFlag flag)
 	{
 		const not = coreFlag.PHY | coreFlag.SFX;
 
@@ -145,7 +145,7 @@ protected:
 			l.info("%s not found, this not an error.", name);
 	}
 
-	Properties properties()
+	override Properties properties()
 	{
 		return p;
 	}

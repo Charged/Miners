@@ -15,7 +15,7 @@ interface MeshBuilder
 
 	void putWorkspace(WorkspaceData *ws);
 
-	void updateCompactMesh(GfxVBO vbos[], bool indexed,
+	void updateCompactMesh(GfxVBO[] vbos, bool indexed,
 	                       WorkspaceData *data,
 	                       int xPos, int yPos, int zPos);
 }

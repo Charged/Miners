@@ -88,30 +88,30 @@ public:
 
 
 protected:
-	void handleError(Exception e)
+	override void handleError(Exception e)
 	{
 		curPath = null;
 		close();
 		l.error(e);
 	}
 
-	void handleResponse(char[] header, char[] res)
+	override void handleResponse(char[] header, char[] res)
 	{
 		curPath = null;
 		l.downloaded(res);
 	}
 
-	void handleUpdate(int percentage)
+	override void handleUpdate(int percentage)
 	{
 		l.percentage(percentage);
 	}
 
-	void handleConnected()
+	override void handleConnected()
 	{
 		l.connected();
 	}
 
-	void handleDisconnect()
+	override void handleDisconnect()
 	{
 		if (curPath is null) {
 			l.disconnected();

@@ -20,7 +20,7 @@ public:
 
 private:
 	int id;
-	Sint16 axisValues[32];
+	Sint16[32] axisValues;
 	SDL_Joystick *stick;
 
 public:

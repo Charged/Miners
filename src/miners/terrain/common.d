@@ -50,7 +50,7 @@ public:
 	{
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		foreach(ref g; cvgcm)
 			breakApartAndNull(g);

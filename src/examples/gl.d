@@ -18,14 +18,14 @@ public:
 		super();
 	}
 
-	void logic()
+	override void logic()
 	{
 		value += 0.01;
 		if (value > 360)
 			value -= 360;
 	}
 
-	void render()
+	override void render()
 	{
 		auto rt = GfxDefaultTarget();
 

@@ -57,14 +57,14 @@ public:
 		}
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		w.remTicker(this);
 		sysReference(&text, null);
 		super.breakApart();
 	}
 
-	void update(Point3d pos, double heading, double pitch)
+	override void update(Point3d pos, double heading, double pitch)
 	{
 		this.heading = heading;
 		this.pitch = pitch;
@@ -82,7 +82,7 @@ public:
 		ticks = 4;
 	}
 
-	void tick()
+	override void tick()
 	{
 		if (ticks > -1) {
 			auto vel = this.vel;

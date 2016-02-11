@@ -18,7 +18,7 @@ struct DdsHeader
 	uint pitchOrLinearSize;
 	uint depth;
 	uint mipMapCount;
-	uint reserved1[11];
+	uint[11] reserved1;
 	DdsPixelFormat pf;
 	uint caps;
 	uint caps2;
@@ -70,7 +70,7 @@ enum DdsCaps {
 /**
  * Validate data that it is a valid DdsHeader.
  */
-DdsHeader* checkHeader(void data[])
+DdsHeader* checkHeader(void[] data)
 {
 	if (data.length <= DdsHeader.sizeof)
 		throw new Exception("File to small");
@@ -93,7 +93,7 @@ DdsHeader* checkHeader(void data[])
 /**
  * Return array of all the image data that follows the header.
  */
-void[][] extractBytes(void data[])
+void[][] extractBytes(void[] data)
 {
 	auto h = checkHeader(data);
 
@@ -118,7 +118,7 @@ void[][] extractBytes(void data[])
 	}
 
 	auto where = DdsHeader.sizeof;
-	void ret[][];
+	void[][] ret;
 
 	for(int i; i < h.mipMapCount; i++) {
 		auto width = minify(imax(1, h.width), i);

@@ -33,7 +33,7 @@ public:
 		assert(t is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(t);
 		super.breakApart();

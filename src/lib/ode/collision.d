@@ -42,11 +42,11 @@ extern (C) {
 }
 
 extern (C) {
-	alias void function(dGeomID, dReal aabb[6]) dGetAABBFn;
+	alias void function(dGeomID, dReal[6] aabb) dGetAABBFn;
 	alias int function(dGeomID o1, dGeomID o2, int flags, dContactGeom* contact, int skip) dColliderFn;
 	alias dColliderFn* function(int num) dGetColliderFnFn;
 	alias void function(dGeomID o) dGeomDtorFn;
-	alias int function(dGeomID o1, dGeomID o2, dReal aabb[6]) dAABBTestFn;
+	alias int function(dGeomID o1, dGeomID o2, dReal[6] aabb) dAABBTestFn;
 }
 
 struct dGeomClass

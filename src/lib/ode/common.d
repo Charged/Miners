@@ -5,11 +5,11 @@ module lib.ode.common;
 
 alias float dReal;
 
-alias dReal dVector3[4];
-alias dReal dVector4[4];
-alias dReal dMatrix3[4*3];
-alias dReal dMatrix4[4*4];
-alias dReal dMatrix6[8*6];
+alias dReal[4] dVector3;
+alias dReal[4] dVector4;
+alias dReal[4*3] dMatrix3;
+alias dReal[4*4] dMatrix4;
+alias dReal[8*6] dMatrix6;
 alias dVector4 dQuaternion;
 
 alias void* dWorldID;

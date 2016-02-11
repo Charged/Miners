@@ -24,7 +24,7 @@ public:
 		super(menu);
 	}
 
-	void escapePressed()
+	override void escapePressed()
 	{
 		// Close this scene
 		r.deleteMe(this);
@@ -77,7 +77,7 @@ public:
 		Container.add(button);
 	}
 
-	void repack()
+	override void repack()
 	{
 		super.repack();
 

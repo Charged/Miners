@@ -50,8 +50,8 @@ class Body : Actor
 protected:
 	dBodyID dBody;
 	/// a trick to not allocate another buffer for most usecases.
-	dGeomID static_store[1];
-	dGeomID geoms[];
+	dGeomID[1] static_store;
+	dGeomID[] geoms;
 	uint num_geoms;
 
 public:
@@ -73,7 +73,7 @@ public:
 
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		if (dBody !is null) {
 			dBodyDestroy(dBody);
@@ -215,12 +215,12 @@ public:
 	 * From Movable
 	 */
 
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		dBodySetPosition(dBody, pos.x, pos.y, pos.z);
 	}
 
-	void setRotation(ref Quatd q)
+	override void setRotation(ref Quatd q)
 	{
 		dVector4 rot;
 		rot[0] = q.w;
@@ -230,7 +230,7 @@ public:
 		dBodySetQuaternion(dBody, rot);
 	}
 
-	void getPosition(out Point3d p)
+	override void getPosition(out Point3d p)
 	{
 		dVector3 pos;
 		dBodyCopyPosition(dBody, pos);
@@ -239,7 +239,7 @@ public:
 		p.z = pos[2];
 	}
 
-	void getRotation(out Quatd q)
+	override void getRotation(out Quatd q)
 	{
 		dVector4 rot;
 		dBodyCopyQuaternion(dBody, rot);
@@ -285,18 +285,18 @@ public:
 		assert(geom is null);
 	}
 
-	void breakApart()
+	override void breakApart()
 	{
 		breakApartAndNull(geom);
 		super.breakApart();
 	}
 
-	void setPosition(ref Point3d pos)
+	override void setPosition(ref Point3d pos)
 	{
 		dGeomSetPosition(geom.geom, pos.x, pos.y, pos.z);
 	}
 
-	void setRotation(ref Quatd q)
+	override void setRotation(ref Quatd q)
 	{
 		dVector4 rot;
 		rot[0] = q.w;
@@ -306,7 +306,7 @@ public:
 		dGeomSetQuaternion(geom.geom, rot);
 	}
 
-	void getPosition(out Point3d p)
+	override void getPosition(out Point3d p)
 	{
 		dVector3 pos;
 		dGeomCopyPosition(geom.geom, pos);
@@ -315,7 +315,7 @@ public:
 		p.z = pos[2];
 	}
 
-	void getRotation(out Quatd q)
+	override void getRotation(out Quatd q)
 	{
 		dVector4 rot;
 		dGeomGetQuaternion(geom.geom, rot);

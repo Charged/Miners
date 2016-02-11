@@ -48,7 +48,7 @@ bool getBetaBlocksForChunk(string dir, int x, int z,
 	hZ = hZ < 0 ? 32 + hZ : hZ;
 
 	int headerOffset = 4 * (hX + hZ * 32);
-	ubyte headerData[4];
+	ubyte[4] headerData;
 
 	uint chunkSize;
 	uint chunkExactSize;

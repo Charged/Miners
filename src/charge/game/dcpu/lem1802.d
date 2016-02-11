@@ -50,9 +50,9 @@ public:
 protected:
 	TextureContainer container;
 
-	ushort videoRam[];
-	ushort fontRam[];
-	ushort paletteRam[];
+	ushort[] videoRam;
+	ushort[] fontRam;
+	ushort[] paletteRam;
 
 	DynamicTexture glyphs;
 
@@ -173,16 +173,16 @@ protected:
 	 */
 
 
-	void repack() {}
+	override void repack() {}
 
-	void releaseResources()
+	override void releaseResources()
 	{
 		reference(&glyphs, null);
 	}
 
-	void paint(Draw d)
+	override void paint(Draw d)
 	{
-		Color4f colors[16];
+		Color4f[16] colors;
 		foreach(int i, p; paletteRam) {
 			colors[i] = Color4f(
 				(0x0f & (p >> 8)) / 16f,
@@ -324,7 +324,7 @@ protected:
 
 
 public:
-	const ushort defaultPaletteRam[numColors] = [
+	const ushort[numColors] defaultPaletteRam = [
 		0x0000, 0x000A, 0x00A0, 0x00AA,
 		0x0A00, 0x0A0A, 0x0A50, 0x0AAA,
 		0x0555, 0x055F, 0x05F5, 0x05FF,

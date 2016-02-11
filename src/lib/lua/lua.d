@@ -317,7 +317,7 @@ struct lua_Debug {
   int nups;		/* (u) number of upvalues */
   int linedefined;	/* (S) */
   int lastlinedefined;	/* (S) */
-  char short_src[LUA_IDSIZE]; /* (S) */
+  char[LUA_IDSIZE] short_src; /* (S) */
   /* private part */
   int i_ci;  /* active function */
 };
