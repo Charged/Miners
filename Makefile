@@ -52,9 +52,9 @@ LDFLAGS ?= $(DEBUG_DFLAGS)
 DDEFINES = $(ODE_DDEFINES) $(SDL_DDEFINES)
 LDFLAGS_ = $(ODE_LDFLAGS) $(SDL_LDFLAGS) $(LDFLAGS)
 TARGET = Charge
-CCOMP_FLAGS = $(CARCH) -c $(CFLAGS) -o $@
-MCOMP_FLAGS = $(CARCH) -c $(CFLAGS)
-DCOMP_FLAGS = -c -w -Isrc -Jres/builtins -Jres/miners $(DDEFINES) $(DFLAGS)
+CCOMP_FLAGS = $(CARCH) $(CFLAGS)
+MCOMP_FLAGS = $(CARCH) $(CFLAGS)
+DCOMP_FLAGS = -w -Isrc -Jres/builtins -Jres/miners $(DDEFINES) $(DFLAGS)
 LINK_FLAGS = -quiet -L-ldl $(LDFLAGS_)
 
 ifneq ($(strip $(USE_SDL)),)
@@ -108,22 +108,22 @@ OBJ := $(COBJ) $(DOBJ) $(EXTRA_OBJ)
 
 all: $(TARGET)
 
-$(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.m Makefile
+$(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.m
 	@echo "  CC     src/$*.m"
 	@mkdir -p $(dir $@)
-	@$(CC) $(MCOMP_FLAGS) -o $@ src/$*.m
+	@$(CC) $(MCOMP_FLAGS) -c -o $@ src/$*.m
 
-$(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c Makefile
+$(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.c
 	@echo "  CC     src/$*.c"
 	@mkdir -p $(dir $@)
-	@$(CC) $(CCOMP_FLAGS) src/$*.c
+	@$(CC) $(CCOMP_FLAGS) -c -o $@ src/$*.c
 
-$(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.d Makefile
+$(OBJ_DIR)/%.$(OBJ_TYPE) : src/%.d
 	@echo "  DMD    src/$*.d"
 	@mkdir -p $(dir $@)
-	@$(DMD) $(DCOMP_FLAGS) -of$@ src/$*.d
+	@$(DMD) $(DCOMP_FLAGS) -c -of$@ src/$*.d
 
-$(TARGET): $(OBJ) Makefile
+$(TARGET): $(OBJ)
 	@echo "  LD     $@"
 	@$(DMD) $(LINK_FLAGS) -of$@ $(OBJ)
 
