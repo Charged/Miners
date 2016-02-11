@@ -104,7 +104,7 @@ public:
 		zStride = ySize * xSize;
 
 		sizeBlocks = xSize * ySize * zSize;
-		sizeData = xSize * yMetaSize * zSize;;
+		sizeData = xSize * yMetaSize * zSize;
 
 		store.length = sizeBlocks + sizeData;
 
