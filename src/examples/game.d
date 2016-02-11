@@ -149,9 +149,6 @@ public:
 		spl.position = Point3d(0.0, 5.0, 15.0);
 		spl.far = 150;
 
-		w.phy.setStepLength(10);
-
-
 		new GameStaticCube(w, Point3d(0.0, -5.0, 0.0), Quatd(), 200.0, 10.0, 200.0);
 
 		new GameStaticRigid(w, Point3d(0.0, 0.0, -15.0), Quatd(), "res/bath.bin", "res/bath.bin");

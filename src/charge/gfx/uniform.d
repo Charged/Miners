@@ -2,6 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 /**
  * Source file for shader uniforms.
+ *
+ * @todo add back ref.
  */
 module charge.gfx.uniform;
 
@@ -83,7 +85,7 @@ struct UniformColor4f
 		loc = glGetUniformLocation(id, name.ptr);
 	}
 
-	final void opAssign(ref Color4f value)
+	final void opAssign(Color4f value)
 	{
 		glUniform4fv(loc, 1, value.ptr);
 	}
@@ -103,7 +105,7 @@ struct UniformVector3d
 		glUniform3fv(loc, 1, value);
 	}
 
-	final void opAssign(ref Vector3d value)
+	final void opAssign(Vector3d value)
 	{
 		float[3] array;
 		array[0] = value.x;
@@ -112,7 +114,7 @@ struct UniformVector3d
 		glUniform3fv(loc, 1, array.ptr);
 	}
 
-	final void opAssign(ref Quatd value)
+	final void opAssign(Quatd value)
 	{
 		opAssign(value.rotateHeading);
 	}
@@ -132,7 +134,7 @@ struct UniformPoint3d
 		glUniform3fv(loc, 1, value);
 	}
 
-	final void opAssign(ref Point3d value)
+	final void opAssign(Point3d value)
 	{
 		float[3] array;
 		array[0] = value.x;
@@ -151,18 +153,18 @@ struct UniformMatrix4x4d
 		loc = glGetUniformLocation(id, name.ptr);
 	}
 
-	void opAssign(ref Matrix4x4d value)
+	void opAssign(Matrix4x4d value)
 	{
-		float array[16];
+		float[16] array;
 		foreach(uint i, a; value.array)
 			array[i] = cast(float)a;
 
 		glUniformMatrix4fv(loc, 1, true, array.ptr);
 	}
 
-	void transposed(ref Matrix4x4d value)
+	void transposed(Matrix4x4d value)
 	{
-		float array[16];
+		float[16] array;
 		foreach(uint i, a; value.array)
 			array[i] = cast(float)a;
 

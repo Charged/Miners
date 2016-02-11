@@ -15,7 +15,7 @@ version(DynamicODE)
 extern(C):
 dSpaceID function(dSpaceID space) dSimpleSpaceCreate;
 dSpaceID function(dSpaceID space) dHashSpaceCreate;
-dSpaceID function(dSpaceID space, dVector3 Center, dVector3 Extents, int Depth) dQuadTreeSpaceCreate;
+dSpaceID function(dSpaceID space, ref dVector3 Center, ref dVector3 Extents, int Depth) dQuadTreeSpaceCreate;
 void function(dSpaceID) dSpaceDestroy;
 void function(dSpaceID space, int minlevel, int maxlevel) dHashSpaceSetLevels;
 void function(dSpaceID space, int *minlevel, int *maxlevel) dHashSpaceGetLevels;
@@ -33,7 +33,7 @@ else
 extern(C):
 dSpaceID dSimpleSpaceCreate(dSpaceID space);
 dSpaceID dHashSpaceCreate(dSpaceID space);
-dSpaceID dQuadTreeSpaceCreate(dSpaceID space, dVector3 Center, dVector3 Extents, int Depth);
+dSpaceID dQuadTreeSpaceCreate(dSpaceID space, ref dVector3 Center, ref dVector3 Extents, int Depth);
 void dSpaceDestroy(dSpaceID);
 void dHashSpaceSetLevels(dSpaceID space, int minlevel, int maxlevel);
 void dHashSpaceGetLevels(dSpaceID space, int *minlevel, int *maxlevel);

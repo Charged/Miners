@@ -2,8 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.webpage;
 
-import std.string : format, find;
-import std.conv : toInt;
+import stdx.conv : toInt;
+import stdx.string : find;
+import std.string : format;
 import uri = std.uri;
 
 import charge.charge;
@@ -294,6 +295,6 @@ protected:
 		if (stop == 0)
 			throw new Exception("Failed to authenticate!");
 
-		return header[start .. start + stop].dup;
+		return header[start .. start + stop].idup;
 	}
 }

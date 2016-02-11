@@ -61,7 +61,14 @@ void emitQuadAOXZP(Packer *p, int x1, int x2, int y1, int y2, int z1, int z2,
 		   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 		   ubyte texture, sideNormal normal, uvManip manip)
 {
-	mixin UVManipulator!(manip);
+	ushort uTL = uvCoords[manip][0][0];
+	ushort vTL = uvCoords[manip][0][1];
+	ushort uBL = uvCoords[manip][1][0];
+	ushort vBL = uvCoords[manip][1][1];
+	ushort uBR = uvCoords[manip][2][0];
+	ushort vBR = uvCoords[manip][2][1];
+	ushort uTR = uvCoords[manip][3][0];
+	ushort vTR = uvCoords[manip][3][1];
 
 	p.pack(p, x2, y1, z1, texture, aoBR, normal, uBR, vBR);
 	p.pack(p, x2, y2, z1, texture, aoTR, normal, uTR, vTR);
@@ -73,7 +80,14 @@ void emitQuadAOXZN(Packer *p, int x1, int x2, int y1, int y2, int z1, int z2,
 		   ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 		   ubyte texture, sideNormal normal, uvManip manip)
 {
-	mixin UVManipulator!(manip);
+	ushort uTL = uvCoords[manip][0][0];
+	ushort vTL = uvCoords[manip][0][1];
+	ushort uBL = uvCoords[manip][1][0];
+	ushort vBL = uvCoords[manip][1][1];
+	ushort uBR = uvCoords[manip][2][0];
+	ushort vBR = uvCoords[manip][2][1];
+	ushort uTR = uvCoords[manip][3][0];
+	ushort vTR = uvCoords[manip][3][1];
 
 	p.pack(p, x1, y1, z2, texture, aoBR, normal, uBR, vBR);
 	p.pack(p, x1, y2, z2, texture, aoTR, normal, uTR, vTR);
@@ -85,7 +99,14 @@ void emitQuadAOYP(Packer *p, int x1, int x2, int y, int z1, int z2,
 		  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 		  ubyte texture, sideNormal normal, uvManip manip)
 {
-	mixin UVManipulator!(manip);
+	ushort uTL = uvCoords[manip][0][0];
+	ushort vTL = uvCoords[manip][0][1];
+	ushort uBL = uvCoords[manip][1][0];
+	ushort vBL = uvCoords[manip][1][1];
+	ushort uBR = uvCoords[manip][2][0];
+	ushort vBR = uvCoords[manip][2][1];
+	ushort uTR = uvCoords[manip][3][0];
+	ushort vTR = uvCoords[manip][3][1];
 
 	p.pack(p, x1, y, z1, texture, aoTL, normal, uTL, vTL);
 	p.pack(p, x1, y, z2, texture, aoBL, normal, uBL, vBL);
@@ -97,7 +118,14 @@ void emitQuadAOYN(Packer *p, int x1, int x2, int y, int z1, int z2,
 		  ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 		  ubyte texture, sideNormal normal, uvManip manip)
 {
-	mixin UVManipulator!(manip);
+	ushort uTL = uvCoords[manip][0][0];
+	ushort vTL = uvCoords[manip][0][1];
+	ushort uBL = uvCoords[manip][1][0];
+	ushort vBL = uvCoords[manip][1][1];
+	ushort uBR = uvCoords[manip][2][0];
+	ushort vBR = uvCoords[manip][2][1];
+	ushort uTR = uvCoords[manip][3][0];
+	ushort vTR = uvCoords[manip][3][1];
 
 	p.pack(p, x1, y, z1, texture, aoTL, normal, uTL, vTL);
 	p.pack(p, x2, y, z1, texture, aoTR, normal, uTR, vTR);
@@ -211,7 +239,14 @@ void emitHalfQuadAOXZP(Packer *p, int x1, int x2, int y1, int y2, int z1, int z2
 		ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 		ubyte texture, sideNormal normal)
 {
-	mixin UVManipulator!(uvManip.HALF_V);
+	ushort uTL = uvCoords[uvManip.HALF_V][0][0];
+	ushort vTL = uvCoords[uvManip.HALF_V][0][1];
+	ushort uBL = uvCoords[uvManip.HALF_V][1][0];
+	ushort vBL = uvCoords[uvManip.HALF_V][1][1];
+	ushort uBR = uvCoords[uvManip.HALF_V][2][0];
+	ushort vBR = uvCoords[uvManip.HALF_V][2][1];
+	ushort uTR = uvCoords[uvManip.HALF_V][3][0];
+	ushort vTR = uvCoords[uvManip.HALF_V][3][1];
 
 	p.pack(p, x2, y1, z1, texture, aoBR, normal, uBR, vBR);
 	p.pack(p, x2, y2, z1, texture, aoTR, normal, uTR, vTR);
@@ -223,7 +258,14 @@ void emitHalfQuadAOXZM(Packer *p, int x1, int x2, int y1, int y2, int z1, int z2
 		ubyte aoBL, ubyte aoBR, ubyte aoTL, ubyte aoTR,
 		ubyte texture, sideNormal normal)
 {
-	mixin UVManipulator!(uvManip.HALF_V);
+	ushort uTL = uvCoords[uvManip.HALF_V][0][0];
+	ushort vTL = uvCoords[uvManip.HALF_V][0][1];
+	ushort uBL = uvCoords[uvManip.HALF_V][1][0];
+	ushort vBL = uvCoords[uvManip.HALF_V][1][1];
+	ushort uBR = uvCoords[uvManip.HALF_V][2][0];
+	ushort vBR = uvCoords[uvManip.HALF_V][2][1];
+	ushort uTR = uvCoords[uvManip.HALF_V][3][0];
+	ushort vTR = uvCoords[uvManip.HALF_V][3][1];
 
 	p.pack(p, x1, y1, z2, texture, aoBR, normal, uBR, vBR);
 	p.pack(p, x1, y2, z2, texture, aoTR, normal, uTR, vTR);

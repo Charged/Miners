@@ -48,129 +48,129 @@ final:
 		glUseProgram(0);
 	}
 
-	void int4(char *name, int count, int *value)
+	void int4(const(char)* name, int count, const(int)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform4iv(loc, count, value);
 	}
 
-	void int3(char *name, int count, int *value)
+	void int3(const(char)* name, int count, const(int)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform3iv(loc, count, value);
 	}
 
-	void int2(char *name, int count, int *value)
+	void int2(const(char)* name, int count, const(int)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform2iv(loc, count, value);
 	}
 
-	void int1(char *name, int count, int *value)
+	void int1(const(char)* name, int count, const(int)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform1iv(loc, count, value);
 	}
 
-	void float4(char *name, int count, float *value)
+	void float4(const(char)* name, int count, const(float)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform4fv(loc, count, value);
 	}
 
-	void float4(char *name, float *value)
+	void float4(const(char)* name, const(float)* value)
 	{
 		float4(name, 1, value);
 	}
 
-	void float4(char *name, Color4f value)
+	void float4(const(char)* name, Color4f value)
 	{
 		float4(name, 1, value.ptr);
 	}
 
-	void float4(char *name, float value[4])
+	void float4(const(char)* name, float[4] value)
 	{
 		float4(name, value.ptr);
 	}
 
-	void float3(char *name, int count, float *value)
+	void float3(const(char)* name, int count, const(float)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform3fv(loc, count, value);
 	}
 
-	void float3(char *name, float *value)
+	void float3(const(char)* name, const(float)* value)
 	{
 		float3(name, 1, value);
 	}
 
-	void float3(char *name, float array[3])
+	void float3(const(char)* name, float[3] array)
 	{
 		float3(name, array.ptr);
 	}
 
-	void float3(char *name, Point3d value)
+	void float3(const(char)* name, Point3d value)
 	{
-		float array[3];
+		float[3] array;
 		array[0] = value.x;
 		array[1] = value.y;
 		array[2] = value.z;
 		float3(name, array.ptr);
 	}
 
-	void float3(char *name, Vector3d value)
+	void float3(const(char)* name, Vector3d value)
 	{
-		float array[3];
+		float[3] array;
 		array[0] = value.x;
 		array[1] = value.y;
 		array[2] = value.z;
 		float3(name, array.ptr);
 	}
 
-	void float2(char *name, int count, float *value)
+	void float2(const(char)* name, int count, const(float)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform2fv(loc, count, value);
 	}
 
-	void float2(char *name, float *value)
+	void float2(const(char)* name, const(float)* value)
 	{
 		float2(name, 1, value);
 	}
 
-	void float2(char *name, float value[2])
+	void float2(const(char)* name, float[2] value)
 	{
 		float2(name, value.ptr);
 	}
 
-	void float1(char *name, int count, float *value)
+	void float1(const(char)* name, int count, const(float)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform1fv(loc, count, value);
 	}
 
-	void float1(char *name, float value)
+	void float1(const(char)* name, float value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform1f(loc, value);
 	}
 
-	void matrix4(char *name, int count, bool transpose, float *value)
+	void matrix4(const(char)* name, int count, bool transpose, const(float)* value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniformMatrix4fv(loc, count, transpose, value);
 	}
 
-	void matrix4(char *name, bool transpose, ref Matrix4x4d matrix)
+	void matrix4(const(char)* name, bool transpose, ref Matrix4x4d matrix)
 	{
-		float array[16];
+		float[16] array;
 		foreach(uint i, a; matrix.array)
 			array[i] = cast(float)a;
 
 		matrix4(name, 1, transpose, array.ptr);
 	}
 
-	void sampler(char *name, int value)
+	void sampler(const(char)* name, int value)
 	{
 		int loc = glGetUniformLocation(glId, name);
 		glUniform1i(loc, value);
@@ -338,7 +338,7 @@ private:
 	                          string source,
 	                          string type)
 	{
-		char* ptr;
+		const(char)* ptr;
 		int length;
 
 		ptr = source.ptr;

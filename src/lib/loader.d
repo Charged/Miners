@@ -3,7 +3,7 @@
 module lib.loader;
 
 import std.stdio : writefln;
-import std.string : find, toStringz;
+import std.string : toStringz;
 
 
 alias void* delegate(string) Loader;
@@ -57,7 +57,7 @@ else
 class Library
 {
 public:
-	static Library loads(string[] files)
+	static Library loads(const(string[]) files)
 	{
 		foreach(filename; files) {
 			auto l = load(filename);

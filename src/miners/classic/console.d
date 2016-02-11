@@ -2,7 +2,8 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.classic.console;
 
-import std.string : format, find;
+import stdx.string : find;
+import std.string : format;
 import miners.console : Console;
 import miners.options : Options;
 import miners.importer.network : removeColorTags;
@@ -84,8 +85,8 @@ protected:
 			if (i != typed.length)
 				tabbing = typed[i .. $];
 
-			search = tabbing;
-			tabCompleteText = tabbing.dup;
+			search = tabbing.idup;
+			tabCompleteText = search;
 		}
 
 		auto t = tabCompletePlayer(search, lastTabComplete);
@@ -151,7 +152,7 @@ protected:
 			if (i >= str.length)
 				break;
 
-			doChat(str[cast(size_t)i .. $].dup);
+			doChat(str[cast(size_t)i .. $]);
 			break;
 		case "fps":
 			opts.showDebug.toggle();

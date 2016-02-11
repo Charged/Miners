@@ -49,7 +49,7 @@ alias int function(lua_State *L) lua_CFunction;
 /*
 ** functions that read/write blocks when loading/dumping Lua chunks
 */
-alias char *function(lua_State *L, void *ud, size_t *sz) lua_Reader;
+alias const(char)* function(lua_State *L, void *ud, size_t *sz) lua_Reader;
 
 alias int function(lua_State *L, void* p, size_t sz, void* ud) lua_Writer;
 
@@ -146,10 +146,10 @@ void*         lua_topointer(lua_State *L, int idx);
 void    lua_pushnil(lua_State *L);
 void    lua_pushnumber(lua_State *L, lua_Number n);
 void    lua_pushinteger(lua_State *L, lua_Integer n);
-void    lua_pushlstring(lua_State *L, char *s, size_t l);
-void    lua_pushstring(lua_State *L, char *s);
-//char* lua_pushvfstring(lua_State *L, char *fmt, va_list argp);
-//char* lua_pushfstring(lua_State *L, char *fmt, ...);
+void    lua_pushlstring(lua_State *L, const(char) *s, size_t l);
+void    lua_pushstring(lua_State *L, const(char) *s);
+//char* lua_pushvfstring(lua_State *L, const(char)* fmt, va_list argp);
+//char* lua_pushfstring(lua_State *L, const(char)* fmt, ...);
 void    lua_pushcclosure(lua_State *L, lua_CFunction fn, int n);
 void    lua_pushboolean(lua_State *L, int b);
 void    lua_pushlightuserdata(lua_State *L, void *p);
@@ -160,7 +160,7 @@ int     lua_pushthread(lua_State *L);
 ** get functions (Lua -> stack)
 */
 void  lua_gettable(lua_State *L, int idx);
-void  lua_getfield(lua_State *L, int idx, char *k);
+void  lua_getfield(lua_State *L, int idx, const(char)* k);
 void  lua_rawget(lua_State *L, int idx);
 void  lua_rawgeti(lua_State *L, int idx, int n);
 void  lua_createtable(lua_State *L, int narr, int nrec);
@@ -173,7 +173,7 @@ void  lua_getfenv(lua_State *L, int idx);
 ** set functions (stack -> Lua)
 */
 void lua_settable(lua_State *L, int idx);
-void lua_setfield(lua_State *L, int idx, char *k);
+void lua_setfield(lua_State *L, int idx, const(char)* k);
 void lua_rawset(lua_State *L, int idx);
 void lua_rawseti(lua_State *L, int idx, int n);
 int  lua_setmetatable(lua_State *L, int objindex);
@@ -186,7 +186,7 @@ int  lua_setfenv(lua_State *L, int idx);
 void lua_call(lua_State *L, int nargs, int nresults);
 int  lua_pcall(lua_State *L, int nargs, int nresults, int errfunc);
 int  lua_cpcall(lua_State *L, lua_CFunction func, void *ud);
-int  lua_load(lua_State *L, lua_Reader reader, void *dt, char *chunkname);
+int  lua_load(lua_State *L, lua_Reader reader, void *dt, const(char) *chunkname);
 int  lua_dump(lua_State *L, lua_Writer writer, void *data);
 
 
@@ -295,7 +295,7 @@ const LUA_MASKCOUNT = (1 << LUA_HOOKCOUNT);
 alias void function(lua_State *L, lua_Debug *ar) lua_Hook;
 
 int   lua_getstack(lua_State *L, int level, lua_Debug *ar);
-int   lua_getinfo(lua_State *L, char *what, lua_Debug *ar);
+int   lua_getinfo(lua_State *L, const(char)* what, lua_Debug *ar);
 char* lua_getlocal(lua_State *L, lua_Debug *ar, int n);
 char* lua_setlocal(lua_State *L, lua_Debug *ar, int n);
 char* lua_getupvalue(lua_State *L, int funcindex, int n);
@@ -309,10 +309,10 @@ int      lua_gethookcount(lua_State *L);
 
 struct lua_Debug {
   int event;
-  const char *name;	/* (n) */
-  const char *namewhat;	/* (n) `global', `local', `field', `method' */
-  const char *what;	/* (S) `Lua', `C', `main', `tail' */
-  const char *source;	/* (S) */
+  const(char)* name;	/* (n) */
+  const(char)* namewhat;	/* (n) `global', `local', `field', `method' */
+  const(char)* what;	/* (S) `Lua', `C', `main', `tail' */
+  const(char)* source;	/* (S) */
   int currentline;	/* (l) */
   int nups;		/* (u) number of upvalues */
   int linedefined;	/* (S) */

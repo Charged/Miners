@@ -6,7 +6,7 @@
 module charge.gfx.deferred;
 
 import std.math : pow, tan, fmin, fmax, PI;
-import std.string : toString;
+import stdx.string : toString;
 
 import charge.math.color;
 import charge.math.movable;
@@ -1377,7 +1377,7 @@ protected:
 	 */
 
 
-	const string material_shader_mesh_vert = "
+	enum string material_shader_mesh_vert = "
 #version 120
 
 varying vec2 uv;
@@ -1395,7 +1395,7 @@ void main()
 }
 ";
 
-	const string material_shader_skel_vert = "
+	enum string material_shader_skel_vert = "
 #version 120
 
 varying vec3 normal;
@@ -1437,7 +1437,7 @@ void main()
 }
 ";
 
-	const string material_shader_tex_frag = "
+	enum string material_shader_tex_frag = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -1452,7 +1452,7 @@ void main()
 }
 ";
 
-	const string material_shader_fake_frag = "
+	enum string material_shader_fake_frag = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -1471,7 +1471,7 @@ void main()
 }
 ";
 
-	const string material_shader_shadow_frag = "
+	enum string material_shader_shadow_frag = "
 #version 120
 
 void main()
@@ -1479,7 +1479,7 @@ void main()
 }
 ";
 
-	const string deferred_base_vert = "
+	enum string deferred_base_vert = "
 #version 120
 
 void main()
@@ -1489,7 +1489,7 @@ void main()
 }
 ";
 
-	const string spotlight_shader_shadow_frag = "
+	enum string spotlight_shader_shadow_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 
@@ -1555,7 +1555,7 @@ void main()
 }
 ";
 
-	const string spotlight_shader_frag = "
+	enum string spotlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1603,7 +1603,7 @@ void main()
 }
 ";
 
-	const string pointlight_shader_frag = "
+	enum string pointlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1647,7 +1647,7 @@ void main()
 }
 ";
 
-	const string pointlight_shader_geom = "
+	enum string pointlight_shader_geom = "
 #version 120
 #extension GL_EXT_geometry_shader4 : require
 
@@ -1707,7 +1707,7 @@ void main() {
 }
 ";
 
-	const string pointlight_shader_vertex = "
+	enum string pointlight_shader_vertex = "
 #version 120
 
 varying float size;
@@ -1722,7 +1722,7 @@ void main() {
 }
 ";
 
-	const string directionlight_shader_frag = "
+	enum string directionlight_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1753,7 +1753,7 @@ void main()
 }
 ";
 
-	const string directionlight_split_shader_frag = "
+	enum string directionlight_split_shader_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
@@ -1829,7 +1829,7 @@ void main()
 }
 ";
 
-	const string directionlight_iso_shader_frag = "
+	enum string directionlight_iso_shader_frag = "
 #version 120
 #extension GL_EXT_gpu_shader4 : require
 #extension GL_EXT_texture_array : require
@@ -1889,7 +1889,7 @@ void main()
 }
 ";
 
-	const string fog_shader_frag = "
+	enum string fog_shader_frag = "
 #version 120
 
 uniform vec2 screen;
@@ -1912,7 +1912,7 @@ void main()
 }
 ";
 
-	const string fog_tex_shader_frag = "
+	enum string fog_tex_shader_frag = "
 #version 120
 
 uniform vec2 screen;

@@ -5,10 +5,12 @@
  */
 module charge.platform.core.sdl;
 
+import std.c.stdlib : exit;
+
 import std.file : exists;
 import std.stdio : writefln;
-import std.string : format, toString, toStringz;
-import std.c.stdlib : exit;
+import std.string : format, toStringz;
+import stdx.string : toString;
 
 import charge.core;
 import charge.math.ints;
@@ -327,7 +329,7 @@ private:
 		height = p.getUint("h", defaultHeight);
 		fullscreen = p.getBool("fullscreen", defaultFullscreen);
 		fullscreenAutoSize = p.getBool("fullscreenAutoSize", defaultFullscreenAutoSize);
-		char* title = toStringz(opts.title);
+		auto title = toStringz(opts.title);
 
 		SDL_WM_SetCaption(title, title);
 
@@ -366,11 +368,11 @@ private:
 		gfxLoaded = true;
 
 		string str;
-		str = std.string.toString(glGetString(GL_VENDOR));
+		str = .toString(glGetString(GL_VENDOR));
 		l.info(str);
-		str = std.string.toString(glGetString(GL_VERSION));
+		str = .toString(glGetString(GL_VERSION));
 		l.info(str);
-		str = std.string.toString(glGetString(GL_RENDERER));
+		str = .toString(glGetString(GL_RENDERER));
 		l.info(str);
 
 

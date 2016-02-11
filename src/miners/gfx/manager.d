@@ -25,7 +25,7 @@ public:
 	TerrainBuildTypes[5] rsbt; // A list of build types for the renderers
 	string[5] rss; // List of renderer names
 	TerrainBuildTypes bt; // Current build type
-	char[] s; // Current name of renderer
+	string s; // Current name of renderer
 	int num_renderers;
 	int current_renderer;
 
@@ -68,9 +68,9 @@ public:
 
 	~this()
 	{
-		delete ifr;
-		delete mfr;
-		delete mdr;
+		//delete ifr;
+		//delete mfr;
+		//delete mdr;
 	}
 
 	void switchRenderer()

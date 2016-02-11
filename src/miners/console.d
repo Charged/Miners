@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.console;
 
-import std.string : split, format, find;
+import std.string : split, format, indexOf;
 import charge.core : Core;
 import charge.ctl.keyboard : CtlKeyboard = Keyboard;
 
@@ -16,7 +16,7 @@ public:
 	alias void delegate(string) TextDg;
 
 	bool typing;
-	const typingCursor = 219;
+	enum char typingCursor = 219;
 	size_t maxChars;
 
 	string typed; /**< Typed text. */
@@ -170,9 +170,9 @@ protected:
 
 	abstract void tabComplete();
 
-	void process(in char[] str)
+	void process(string str)
 	{
-		char[] findStr;
+		string findStr;
 
 		// If the command prefix ends with a space,
 		// only search for the command without the space.
@@ -183,8 +183,8 @@ protected:
 				findStr = cmdPrefix;
 
 			// Only a command if we find the command prefix first.
-			if (find(str, findStr) != 0)
-				return doChat(str.dup);
+			if (indexOf(str, findStr) != 0)
+				return doChat(str);
 
 			// Remove the prefix
 			str = str[findStr.length .. $];
@@ -204,23 +204,23 @@ protected:
 
 	}
 
-	void doCommand(char[][] cmds, char[] str)
+	void doCommand(string[] cmds, string str)
 	{
 		if (cmds[0] == "help")
 			return msgHelp();
 		msgNoSuchCommand(cmds[0]);
 	}
 
-	final void doMessage(char[] str)
+	final void doMessage(string str)
 	{
 		if (message !is null)
-			message(str.dup);
+			message(str);
 	}
 
-	final void doChat(char[] str)
+	final void doChat(string str)
 	{
 		if (chat !is null)
-			chat(str.dup);
+			chat(str);
 	}
 
 	void msgNoCommandGiven()
@@ -228,7 +228,7 @@ protected:
 		doMessage(format("No command given type %shelp", cmdPrefix));
 	}
 
-	void msgNoSuchCommand(char[] cmd)
+	void msgNoSuchCommand(string cmd)
 	{
 		doMessage(format(
 			"Unknown command \"%s\" type %shelp",
@@ -253,7 +253,7 @@ protected:
 		tmp[typed.length] = v;
 		tmp[$-1] = typingCursor;
 
-		showing = tmp.dup;
+		showing = tmp.idup;
 		typed = showing[0 .. $-1];
 
 		update(showing);
@@ -264,7 +264,7 @@ protected:
 		auto tmp = typedBuffer[0 .. showing.length - 1];
 		tmp[$-1] = typingCursor;
 
-		showing = tmp.dup;
+		showing = tmp.idup;
 		typed = showing[0 .. $-1];
 
 		update(showing);

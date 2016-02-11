@@ -16,18 +16,18 @@ private alias charge.gfx.draw.Draw GfxDraw;
 class Logo : Component
 {
 private:
-	const black = Color4f(Color4b(0x00_00_00_ff));
-	const grey = Color4f(Color4b(0x20_20_20_ff));
-	const frameHighlight = Color4f(Color4b(0xfa_f3_cc_ff));
-	const frameSolid = Color4f(Color4b(0xe1_d3_78_ff));
-	const frameDark = Color4f(Color4b(0xb7_9d_54_ff));
-	const blockHighlight = Color4f(Color4b(0xf0_00_ff_ff));
-	const blockSolid = Color4f(Color4b(0xb8_02_c3_ff));
-	const blockDark = Color4f(Color4b(0x7a_00_82_ff));
+	enum black = Color4f(Color4b(0x00_00_00_ff));
+	enum grey = Color4f(Color4b(0x20_20_20_ff));
+	enum frameHighlight = Color4f(Color4b(0xfa_f3_cc_ff));
+	enum frameSolid = Color4f(Color4b(0xe1_d3_78_ff));
+	enum frameDark = Color4f(Color4b(0xb7_9d_54_ff));
+	enum blockHighlight = Color4f(Color4b(0xf0_00_ff_ff));
+	enum blockSolid = Color4f(Color4b(0xb8_02_c3_ff));
+	enum blockDark = Color4f(Color4b(0x7a_00_82_ff));
 
-	const double r1 = 52.0;
-	const double r2 = 64.0;
-	const int scale = 4;
+	enum double r1 = 52.0;
+	enum double r2 = 64.0;
+	enum int scale = 4;
 
 public:
 	int teeth;

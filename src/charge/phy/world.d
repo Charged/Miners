@@ -96,8 +96,8 @@ public:
 			ticker.physicsTick();
 
 		// Collide all movers
-		dSpaceCollide(body_space, &this, &nearCallback);
-		dSpaceCollide2(body_space, static_space, &this, &nearCallback);
+		dSpaceCollide(body_space, cast(void*)this, &nearCallback);
+		dSpaceCollide2(body_space, static_space, cast(void*)this, &nearCallback);
 
 		foreach (ticker; post)
 			ticker.physicsTick();
@@ -165,8 +165,8 @@ protected:
 		if (b1 && b2 && dAreConnected(b1, b2))
 			return;
 
-		const int N = 8;
-		dContact contact[N];
+		enum int N = 8;
+		dContact[N] contact;
 		n = dCollide(o1, o2, N, &contact[0].geom, dContact.sizeof);
 
 		if (n > 0) {

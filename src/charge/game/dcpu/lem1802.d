@@ -22,20 +22,20 @@ import charge.game.dcpu.cpu;
 class Lem1802 : Component, DcpuHw
 {
 public:
-	const hwId = 0x7349F615;
-	const hwVersion = 0x1802;
-	const hwManufacturer = 0x1C6C8B36;
+	enum ushort hwId = cast(ushort)0x7349F615;
+	enum ushort hwVersion = cast(ushort)0x1802;
+	enum ushort hwManufacturer = cast(ushort)0x1C6C8B36;
 
-	const width = 32;
-	const height = 12;
-	const glyphWidth = 4;
-	const glyphHeight = 8;
+	enum width = 32;
+	enum height = 12;
+	enum glyphWidth = 4;
+	enum glyphHeight = 8;
 
-	const numColors = 16;
-	const numGlyphs = 128;
-	const numVram = width * height;
+	enum numColors = 16;
+	enum numGlyphs = 128;
+	enum numVram = width * height;
 
-	const borderSize = 4;
+	enum borderSize = 4;
 
 	enum {
 		LEM1802_MEM_MAP_SCREEN,
@@ -73,8 +73,8 @@ public:
 		container = new TextureContainer(w, h);
 		container.add(this);
 
-		paletteRam = defaultPaletteRam;
-		fontRam = defaultFontRam;
+		paletteRam = cast(ushort[])defaultPaletteRam;
+		fontRam = cast(ushort[])defaultFontRam;
 		videoRam = c.ram[0x8000 .. 0x8000 + numVram];
 
 		this.c = c;
@@ -122,11 +122,11 @@ protected:
 			break;
 
 		case LEM1802_MEM_MAP_FONT:
-			fontRam = c.getSliceSafe(b, numGlyphs*2, defaultFontRam);
+			fontRam = c.getSliceSafe(b, numGlyphs*2, cast(ushort[])defaultFontRam);
 			break;
 
 		case LEM1802_MEM_MAP_PALETTE:
-			paletteRam = c.getSliceSafe(b, numColors, defaultPaletteRam);
+			paletteRam = c.getSliceSafe(b, numColors, cast(ushort[])defaultPaletteRam);
 			break;
 
 		case LEM1802_SET_BORDER_COLOR:
@@ -138,7 +138,7 @@ protected:
 			auto dst = c.getSliceSafe(b, numGlyphs*2, null);
 			if (dst is null)
 				return;
-			dst[] = defaultFontRam;
+			dst[] = cast(ushort[])defaultFontRam;
 			break;
 
 		case LEM1802_MEM_DUMP_PALETTE:
@@ -146,7 +146,7 @@ protected:
 			auto dst = c.getSliceSafe(b, numColors, null);
 			if (dst is null)
 				return;
-			dst[] = defaultPaletteRam[];
+			dst[] = cast(ushort[])defaultPaletteRam[];
 			break;
 
 		default:
@@ -156,8 +156,8 @@ protected:
 	void notifyUnregister()
 	{
 		videoRam = null;
-		paletteRam = defaultPaletteRam;
-		fontRam = defaultFontRam;
+		paletteRam = cast(ushort[])defaultPaletteRam;
+		fontRam = cast(ushort[])defaultFontRam;
 	}
 
 	DcpuHwInfo* getHwInfo()

@@ -66,7 +66,7 @@ public:
 		return addr * port;
 	}
 
-	int opCmp(AddressKey *k)
+	int opCmp(ref const AddressKey k) const
 	{
 		if (addr < k.addr) {
 			return -1;

@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.menu.list;
 
-import std.string : ifind;
+import std.string : indexOf, CaseSensitive;
 
 import lib.gl.gl;
 
@@ -66,8 +66,8 @@ private:
 	bool inFocus; //< XXX Hack
 	ListView lv;
 
-	const typingCursor = 219;
-	const numLetters = 20;
+	enum char typingCursor = 219;
+	enum numLetters = 20;
 
 	char[] typed; /**< Typed text. */
 	char[] showing; /**< Text including the cursor. */
@@ -157,9 +157,9 @@ public:
 protected:
 	void update(char[] showing)
 	{
-		setText("Search " ~ showing);
+		setText("Search " ~ cast(string)showing);
 
-		lv.newSearch(typed.dup);
+		lv.newSearch(typed.idup);
 
 		repaint();
 	}
@@ -258,14 +258,14 @@ public:
 		}
 
 		// Reuse old list, for faster search?
-		auto s = ifind(search, oldSearch) < 0 ? fullList : csis;
+		auto s = indexOf(search, oldSearch, CaseSensitive.no) < 0 ? fullList : csis;
 
 		// Create a new list to populate with matching servers.
 		csis = new ClassicServerInfo[fullList.length];
 
 		int i;
 		foreach(c; s) {
-			if (ifind(c.webName, search) < 0)
+			if (indexOf(c.webName, search, CaseSensitive.no) < 0)
 				continue;
 			csis[i++] = c;
 		}

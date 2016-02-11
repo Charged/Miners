@@ -54,7 +54,7 @@ const char[] doubleGuiElememts = [
 	205, // horizontal line
 ];
 
-char[] makeFrame(char[] elm, uint width, uint height)
+char[] makeFrame(const(char)[] elm, uint width, uint height)
 {
 	size_t stride = width+1; // Newline
 
@@ -86,7 +86,7 @@ char[] makeFrame(char[] elm, uint width, uint height)
 
 }
 
-char[] makeTextGuiButton(string text, uint minwidth = 0)
+string makeTextGuiButton(string text, uint minwidth = 0)
 {
 	int width = cast(uint)text.length;
 	if (width < minwidth)
@@ -98,7 +98,7 @@ char[] makeTextGuiButton(string text, uint minwidth = 0)
 	size_t pos = ((stride-1)/2)-(text.length/2)+stride;
 	ret[pos .. pos+text.length] = text[0 .. $];
 
-	return ret;
+	return cast(string)ret;
 }
 
 /**

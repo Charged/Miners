@@ -5,11 +5,13 @@
  */
 module charge.sys.logger;
 
-import std.stdio : FILE, FPUTC, stdout, fopen, fflush, fprintf;
-import std.string : format, rfind;
-import std.format : doFormat;
-import std.stdarg;
+import core.stdc.stdio : FILE, fputc, stdout, fopen, fflush, fprintf;
+import core.vararg;
+
 import std.utf : toUTF8;
+import std.string : format;
+import std.format : doFormat;
+import stdx.string : rfind;
 
 import charge.platform.homefolder;
 
@@ -77,7 +79,7 @@ public:
 	void log(ClassInfo info, Level level, TypeInfo[] arguments, va_list argptr)
 	{
 		string name = info.name;
-		name = name[cast(size_t)(rfind(name, '.') + 1) .. length];
+		name = name[cast(size_t)(rfind(name, '.') + 1) .. $];
 
 		fprintf(file, "%s %.*s: ", TextLevels[level].ptr, cast(uint)name.length, name.ptr);
 		writefx(arguments, argptr, true);
@@ -87,6 +89,7 @@ public:
 	void writefx(TypeInfo[] arguments, va_list argptr, bool newline = false)
 	{
 		// Ugly work around for not being able to call FLOCK and FUNLOCK
+		// XXX: Not compiled in.
 		version(Linux) {
 			FLOCK(stdout);
 			scope(exit) FUNLOCK(stdout);
@@ -95,21 +98,21 @@ public:
 		void putc(dchar c)
 		{
 			if (c <= 0x7F) {
-				FPUTC(c, file);
+				fputc(c, file);
 			} else {
 				char[4] buf;
 				char[] b;
 
 				b = toUTF8(buf, c);
 				for (size_t i = 0; i < b.length; i++)
-					FPUTC(b[i], file);
+					fputc(b[i], file);
 			}
 		}
 
 		doFormat(&putc, arguments, argptr);
 
 		if (newline)
-			FPUTC('\n', file);
+			fputc('\n', file);
 	}
 
 	static Writer instance;

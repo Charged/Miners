@@ -262,7 +262,7 @@ protected:
 	 * uv     - texture coordenate.
 	 */
 
-	const string materialFragTex = "
+	enum string materialFragTex = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -292,7 +292,7 @@ void main()
 }
 ";
 
-	const string materialFragBlack = "
+	enum string materialFragBlack = "
 #version 120
 
 varying vec3 normal;
@@ -316,7 +316,7 @@ void main()
 	 * Material vertex shader.
 	 */
 
-	const string materialVertMesh = "
+	enum string materialVertMesh = "
 #version 120
 
 varying vec3 normal;
@@ -334,7 +334,7 @@ void main()
 }
 ";
 
-	const string materialVertSkel = "
+	enum string materialVertSkel = "
 #version 120
 
 varying vec3 normal;

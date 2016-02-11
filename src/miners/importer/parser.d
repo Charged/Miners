@@ -2,10 +2,11 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.importer.parser;
 
+import stdx.conv : toUshort;
+import stdx.string : find;
+import stdx.regexp : RegExp;
+import std.string : format;
 import lib.xml.xml : DomParser, Element, Handle;
-import std.string : find, format;
-import std.conv : toUshort;
-import std.regexp : RegExp;
 import charge.util.html;
 import miners.types;
 import miners.importer.network;
@@ -19,7 +20,7 @@ import miners.importer.network;
  *
  * Will throw various exceptions if the page is malformed.
  */
-ClassicServerInfo[] getClassicServerList(in char[] text)
+ClassicServerInfo[] getClassicServerList(const(char)[] text)
 {
 	// Only parse the interesting parts.
 	const startText = "<table";
@@ -115,7 +116,7 @@ ClassicServerInfo[] getClassicServerList(in char[] text)
 
 		// Fill in the info that we got.
 		auto csi = new ClassicServerInfo();
-		csi.webId = url[strip.length .. $].dup;
+		csi.webId = url[strip.length .. $].idup;
 		csi.webName = text.value;
 
 		list ~= csi;
@@ -128,7 +129,7 @@ ClassicServerInfo[] getClassicServerList(in char[] text)
  * Parse the source of the classic list page from
  * classicube.net and retrive a list of servers.
  */
-ClassicServerInfo[] getClassiCubeServerList(in char[] text)
+ClassicServerInfo[] getClassiCubeServerList(const(char)[] text)
 {
 	auto tableStart = cast(size_t)find(text, `<table id="servers">`);
 	auto tableEnd = cast(size_t)find(text[tableStart .. $], `</table>`);
@@ -162,12 +163,12 @@ ClassicServerInfo[] getClassiCubeServerList(in char[] text)
 		auto csi = new ClassicServerInfo();
 
 		auto r = mcUrl.exec(url);
-		csi.hostname = r[1];
+		csi.hostname = r[1].idup;
 
 		if (r[5].length > 0)
-			csi.username = r[5];
+			csi.username = r[5].idup;
 		if (r[7].length > 0)
-			csi.verificationKey = r[7];
+			csi.verificationKey = r[7].idup;
 
 		try {
 			if (r[3].length > 0)
@@ -175,7 +176,7 @@ ClassicServerInfo[] getClassiCubeServerList(in char[] text)
 		} catch (Exception e) {
 		}
 
-		csi.webName = name;
+		csi.webName = name.idup;
 
 		list ~= csi;
 
@@ -194,7 +195,7 @@ ClassicServerInfo[] getClassiCubeServerList(in char[] text)
  *
  * Will throw various exceptions if the page is malformed.
  */
-void getClassicServerInfo(ClassicServerInfo csi, in char[] text)
+void getClassicServerInfo(ClassicServerInfo csi, const(char)[] text)
 {
 	// Only parse the interesting parts.
 	const startText = "<applet";
@@ -209,14 +210,14 @@ void getClassicServerInfo(ClassicServerInfo csi, in char[] text)
 	if (end == size_t.max)
 		throw new Exception("Could not find end of applet tag");
 
-	// Crop the text.
-	text = text[start .. end];
+	// Crop and de const the text.
+	auto applet = text[start .. end].dup;
 
 	// Fix the html to be valid xml. Skip the first found `">`.
-	auto pos = cast(size_t)find(text, `">`);
+	auto pos = cast(size_t)find(applet, `">`);
 	if (pos == size_t.max)
 		throw new Exception("Something went really bad");
-	auto temp = text[pos+1 .. $];
+	auto temp = applet[pos+1 .. $];
 
 	// Loop over and fix all the problem points.
 	while((pos = cast(size_t)find(temp, `">`)) != size_t.max) {
@@ -229,7 +230,7 @@ void getClassicServerInfo(ClassicServerInfo csi, in char[] text)
 	auto p = new DomParser();
 	scope(exit)
 		delete p;
-	auto root = p.parseData(text);
+	auto root = p.parseData(applet);
 
 	// Sanity checking.
 	if (root is null)

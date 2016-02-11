@@ -115,10 +115,10 @@ void function(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum f
 void function(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLvoid *data) glCompressedTexSubImage2D;
 void function(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, GLvoid *data) glCompressedTexSubImage3D;
 void function(GLenum target, GLint lod, GLvoid *img) glGetCompressedTexImage;
-void function(GLdouble m[16]) glLoadTransposeMatrixd;
-void function(GLfloat m[16]) glLoadTransposeMatrixf;
-void function(GLdouble m[16]) glMultTransposeMatrixd;
-void function(GLfloat m[16]) glMultTransposeMatrixf;
+void function(GLdouble[16] m) glLoadTransposeMatrixd;
+void function(GLfloat[16] m) glLoadTransposeMatrixf;
+void function(GLdouble[16] m) glMultTransposeMatrixd;
+void function(GLfloat[16] m) glMultTransposeMatrixf;
 void function(GLenum target, GLdouble s) glMultiTexCoord1d;
 void function(GLenum target, GLdouble *v) glMultiTexCoord1dv;
 void function(GLenum target, GLfloat s) glMultiTexCoord1f;

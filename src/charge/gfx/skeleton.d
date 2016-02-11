@@ -66,7 +66,7 @@ protected:
 	VBO vbo;
 
 public:
-	this(World w, VBO vbo, Bone bones[])
+	this(World w, VBO vbo, const(Bone)[] bones)
 	{
 		super(w);
 
@@ -134,12 +134,12 @@ public:
 		const void* normalOffset = cast(void*)(float.sizeof * (3 + 2));
 
 	public:
-		static VBO opCall(Vertex verts[])
+		static VBO opCall(const(Vertex)[] verts)
 		{
 			return new VBO(verts);
 		}
 
-		this(Vertex verts[])
+		this(const(Vertex)[] verts)
 		{
 			super(null, null);
 

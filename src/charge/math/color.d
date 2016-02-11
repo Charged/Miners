@@ -34,11 +34,11 @@ public:
 		return res;
 	}
 
-	ubyte* ptr() { return &r; }
+	inout(ubyte)* ptr() @property inout { return &r; }
 
 	void modulate(Color4b c)
 	{
-		Color4f c1 = Color4f(*this);
+		Color4f c1 = Color4f(this);
 		Color4f c2 = Color4f(c);
 
 		r = cast(ubyte)(c1.r * c2.r * 255);
@@ -49,7 +49,7 @@ public:
 
 	void blend(Color4b c)
 	{
-		Color4f c1 = Color4f(*this);
+		Color4f c1 = Color4f(this);
 		Color4f c2 = Color4f(c);
 
 		float alpha = c2.a;
@@ -88,7 +88,7 @@ public:
 		return Color3f(c.r / 255f, c.g / 255f, c.b / 255f);
 	}
 
-	float* ptr() { return &r; }
+	inout(float)* ptr() @property inout { return &r; }
 
 	string toString()
 	{
@@ -132,7 +132,7 @@ public:
 		return res;
 	}
 
-	float* ptr() { return &r; }
+	inout(float)* ptr() @property inout { return &r; }
 
 	string toString()
 	{

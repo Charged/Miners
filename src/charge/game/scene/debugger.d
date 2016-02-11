@@ -4,8 +4,8 @@ module charge.game.scene.debugger;
 
 import std.string : sformat;
 
-static import std.gc;
-static import gcstats;
+//static import std.gc;
+//static import gcstats;
 static import lib.sdl.sdl;
 static import lib.lua.state;
 static import charge.gfx.vbo;
@@ -81,8 +81,16 @@ public:
 
 		const float MB = 1024*1024;
 
-		gcstats.GCStats stats;
-		std.gc.getStats(stats);
+		struct Stats {
+			uint usedsize;
+			uint poolsize;
+			uint freelistsize;
+			uint pageblocks;
+			uint freeblocks;
+		}
+		Stats stats;
+		//gcstats.GCStats stats;
+		//std.gc.getStats(stats);
 
 		char[1024] tmp;
 		char[] info = sformat(tmp,

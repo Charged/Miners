@@ -6,7 +6,7 @@
 module charge.math.point3d;
 
 import std.math : floor;
-import std.string : string, format;
+import std.string : format;
 
 import charge.math.vector3d;
 
@@ -33,7 +33,7 @@ public:
 		return p;
 	}
 
-	static Point3d opCall(ref Vector3d vec)
+	static Point3d opCall(Vector3d vec)
 	{
 		Point3d p = { vec.x, vec.y, vec.z };
 		return p;
@@ -51,12 +51,12 @@ public:
 		return p;
 	}
 
-	double opIndex(uint index)
+	double opIndex(uint index) const
 	{
 		return (&x)[index];
 	}
 
-	Point3d opAdd(Vector3d vec)
+	Point3d opAdd(Vector3d vec) const
 	{
 		return Point3d(x + vec.x, y + vec.y, z + vec.z);
 	}
@@ -66,20 +66,20 @@ public:
 		x += v.x;
 		y += v.y;
 		z += v.z;
-		return *this;
+		return this;
 	}
 
-	Vector3d opSub(Point3d p)
+	Vector3d opSub(Point3d p) const
 	{
 		return Vector3d(x - p.x, y - p.y, z - p.z);
 	}
 
-	Point3d opSub(Vector3d v)
+	Point3d opSub(Vector3d v) const
 	{
 		return Point3d(x - v.x, y - v.y, z - v.z);
 	}
 
-	Point3d opNeg()
+	Point3d opNeg() const
 	{
 		return Point3d(-x, -y, -z);
 	}
@@ -89,7 +89,7 @@ public:
 		x -= v.x;
 		y -= v.y;
 		z -= v.z;
-		return *this;
+		return this;
 	}
 
 	void floor()
@@ -99,12 +99,12 @@ public:
 		z = cast(double).floor(z);
 	}
 
-	Vector3d vec()
+	Vector3d vec() const
 	{
-		return Vector3d(*this);
+		return Vector3d(this);
 	}
 
-	string toString()
+	string toString() const
 	{
 		return format("(%s, %s, %s)", x, y, z);
 	}

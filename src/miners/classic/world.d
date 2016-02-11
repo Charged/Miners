@@ -47,7 +47,7 @@ public:
 		newLevelFromClassic(x, y, z, data[0 .. x * y * z]);
 	}
 
-	this(Options opts, char[] filename)
+	this(Options opts, string filename)
 	{
 		uint x, y, z;
 		auto b = loadClassicTerrain(filename, x, y, z);

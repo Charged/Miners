@@ -183,7 +183,7 @@ public:
 		sendPacket!(cpupo)(s);
 	}
 
-	void sendClientMessage(in char[] msg)
+	void sendClientMessage(string msg)
 	{
 		ClientMessage cm;
 
@@ -288,6 +288,7 @@ protected:
 			if (zs.avail_out == 0 && zs.avail_in == 4)
 				break;
 			// Otherwise error!
+			goto default;
 		default:
 			throw new ZlibException(err);
 		}

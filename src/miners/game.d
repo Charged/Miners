@@ -2,11 +2,12 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.game;
 
-import std.file : isfile, isdir;
-import std.conv : toUint;
+import std.file : isFile, isDir;
 import std.stdio : writefln;
-import std.regexp : RegExp;
 import std.string : format;
+
+import stdx.conv : toUint;
+import stdx.regexp : RegExp;
 
 import lib.sdl.sdl;
 
@@ -272,6 +273,7 @@ protected:
 
 				l.fatal("Unknown argument %s", args[i]);
 				writefln("Unknown argument %s", args[i]);
+				goto case;
 			case "-h":
 			case "-help":
 			case "--help":
@@ -321,7 +323,7 @@ protected:
 		checkHttpMcUrl();
 
 		auto csi = opts.classicServerInfo;
-		csi.webId = r[2];
+		csi.webId = r[2].idup;
 
 		opts.isClassicNetwork = true;
 		opts.isClassicHttp = true;
@@ -345,10 +347,10 @@ protected:
 		checkHttpMcUrl();
 
 		auto csi = opts.classicServerInfo;
-		csi.webId = r[5];
+		csi.webId = r[5].idup;
 
-		opts.username = r[1];
-		opts.password = r[3];
+		opts.username = r[1].idup;
+		opts.password = r[3].idup;
 
 		opts.isClassicNetwork = true;
 		opts.isClassicHttp = true;
@@ -373,12 +375,12 @@ protected:
 		checkHttpMcUrl();
 
 		auto csi = opts.classicServerInfo;
-		csi.hostname = r[1];
+		csi.hostname = r[1].idup;
 
 		if (r[5].length > 0)
-			csi.username = r[5];
+			csi.username = r[5].idup;
 		if (r[7].length > 0)
-			csi.verificationKey = r[7];
+			csi.verificationKey = r[7].idup;
 
 		try {
 			if (r[3].length > 0)
@@ -439,7 +441,7 @@ protected:
 		if (r.length < 2)
 			return false;
 
-		opts.playSessionCookie = r[1];
+		opts.playSessionCookie = r[1].idup;
 
 		opts.isClassicNetwork = true;
 
@@ -457,7 +459,7 @@ protected:
 		if (r.length < 2)
 			return false;
 
-		opts.launcherPath = r[1];
+		opts.launcherPath = r[1].idup;
 
 		l.info("LAUNCHER_PATH=%s", opts.launcherPath);
 
@@ -535,7 +537,7 @@ protected:
 
 		if (level is null)
 			r = new ClassicScene(this, opts);
-		else if (isfile(level))
+		else if (isFile(level))
 			r = new ClassicScene(this, opts, level);
 		else
 			throw new GameException("Level must be a file", null, false);

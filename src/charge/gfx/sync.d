@@ -37,6 +37,7 @@ bool gfxSyncWaitAndDelete(ref GfxSync sync, long timeout)
 		return true;
 	case GL_WAIT_FAILED:
 		gluGetError("gfxSyncWait");
+		goto default;
 	default:
 		return false;
 	}

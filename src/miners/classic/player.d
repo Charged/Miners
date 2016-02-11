@@ -15,7 +15,7 @@ import std.stdio;
 class ClassicPlayer : OtherPlayer, GameTicker
 {
 public:
-	char[] name;
+	string name;
 	GfxDynamicTexture text;
 	Point3d curPos;
 	double curHeading, curPitch;
@@ -36,7 +36,7 @@ public:
 
 
 public:
-	this(World w, int id, char[] name, Point3d pos, double heading, double pitch)
+	this(World w, int id, string name, Point3d pos, double heading, double pitch)
 	{
 		this.name = name;
 		this.curPos = pos;

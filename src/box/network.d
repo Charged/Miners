@@ -21,9 +21,9 @@ bool diffAndWrite(void[] dst, ref int consumed, int left, int right)
 
 struct SyncData
 {
-	const int numSteps = 10;
-	const float scale = 128.0;
-	const float rotScale = ushort.max;
+	enum int numSteps = 10;
+	enum float scale = 128.0;
+	enum float rotScale = ushort.max;
 
 	uint id;
 	uint count;
@@ -212,7 +212,8 @@ struct SyncData
 			a[0] = 1; // Unit.
 
 		c.setRotPosVel(a);
-		c.setRotation(Quatd(a[0], a[1], a[2], a[3]));
+		auto r = Quatd(a[0], a[1], a[2], a[3]);
+		c.setRotation(r);
 	}
 }
 

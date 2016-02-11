@@ -5,7 +5,8 @@
  */
 module charge.gfx.texture;
 
-import std.string : format, toString;
+import std.string : format;
+import stdx.string : toString;
 
 import charge.sys.resource;
 import charge.sys.logger;
@@ -32,7 +33,7 @@ public:
 		Linear,
 		LinearNone,
 	}
-	const string uri = "tex://";
+	enum string uri = "tex://";
 
 protected:
 	uint w;

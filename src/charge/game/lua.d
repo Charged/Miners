@@ -30,7 +30,7 @@ private static string StructWrapperPush(string type)
 		return ` ~ type ~ `Wrapper.push(this);
 	}
 
-	final ` ~ type ~ `* push` ~ type ~ `(ref ` ~ type ~ ` s)
+	final ` ~ type ~ `* push` ~ type ~ `(` ~ type ~ ` s)
 	{
 		return ` ~ type ~ `Wrapper.push(this, s);
 	}`;
@@ -85,7 +85,7 @@ class LuaState : State
 	}
 
 private:
-	const luaL_Reg chargelib[] = [
+	static const luaL_Reg[] chargelib = [
 		{ "Quat", &QuatdWrapper.newQuatd },
 		{ "Color", &Color4fWrapper.newColor4f },
 		{ "Point", &Point3dWrapper.newPoint3d },

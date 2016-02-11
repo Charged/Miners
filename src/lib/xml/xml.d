@@ -2,9 +2,9 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module lib.xml.xml;
 
-import std.regexp : RegExp;
-import std.string : format;
 import std.file : read;
+import std.string : format;
+import stdx.regexp : RegExp;
 
 import charge.util.vector;
 import charge.util.memory;
@@ -77,8 +77,8 @@ class Element : Node
 	int opApply(int delegate(ref Node n) dg)
 	{
 		int result;
-		foreach(n; children) {
-			if ((result = dg(n)) <> 0)
+		foreach(ref Node node; children) {
+			if ((result = dg(node)) != 0)
 				break;
 		}
 		return result;
@@ -236,7 +236,7 @@ public:
 		return root;
 	}
 
-	Element parseData(string data)
+	Element parseData(const(char)[] data)
 	{
 		current = null;
 		root = null;
@@ -277,7 +277,7 @@ protected:
 		if (current is null)
 			return;
 
-		current.attribs[key.dup] = value.dup;
+		current.attribs[key.idup] = value.idup;
 	}
 
 	void addData(string data)
@@ -311,9 +311,9 @@ protected:
 			if (result[0].length == data.length)
 				return;
 
-			t = new Text(data.dup);
+			t = new Text(data.idup);
 		} else {
-			t = new Text(data.dup);
+			t = new Text(data.idup);
 		}
 		t.parent = current;
 		current.children ~= t;
@@ -334,9 +334,9 @@ interface Parser
 extern(C) {
 	struct XML_Parser;
 
-	alias void function(void *userData, char *name, char **atts) XML_StartElementHandler;
-	alias void function(void *userData, char *name) XML_EndElementHandler;
-	alias void function(void *userData, char *data, int len) XML_CharacterDataHandler;
+	alias void function(void *userData, const(char)* name, const(const(char)*)* atts) XML_StartElementHandler;
+	alias void function(void *userData, const(char)* name) XML_EndElementHandler;
+	alias void function(void *userData, const(char)* data, int len) XML_CharacterDataHandler;
 	struct XML_Memory_Handling_Suite {
 		extern(C) void* function(size_t size) malloc_fcn;
 		extern(C) void* function(void *ptr, size_t size) realloc_fcn;
@@ -350,19 +350,19 @@ extern(C) {
 		XML_STATUS_SUSPENDED = 2
 	}
 
-	XML_Parser* XML_ParserCreate(char *encoding);
-	XML_Parser* XML_ParserCreate_MM(char *encoding,
+	XML_Parser* XML_ParserCreate(const(char)* encoding);
+	XML_Parser* XML_ParserCreate_MM(const(char)* encoding,
 					XML_Memory_Handling_Suite *memsuite,
-					char *namespaceSeparator);
+					const(char)* namespaceSeparator);
 	void XML_ParserFree(XML_Parser *parser);
 	void XML_SetUserData(XML_Parser *parser, void *userData);
 	void XML_SetElementHandler(XML_Parser *parser, XML_StartElementHandler start, XML_EndElementHandler end);
 	void XML_SetStartElementHandler(XML_Parser *parser, XML_StartElementHandler handler);
 	void XML_SetEndElementHandler(XML_Parser *parser, XML_EndElementHandler handler);
 	void XML_SetCharacterDataHandler(XML_Parser *parser, XML_CharacterDataHandler handler);
-	XML_Status XML_Parse(XML_Parser *parser, char *s, int len, int isFinal);
+	XML_Status XML_Parse(XML_Parser *parser, const(char)* s, int len, int isFinal);
 
-	int strlen(char*);
+	int strlen(const(char)*);
 }
 // End of different copyright.
 
@@ -423,34 +423,34 @@ public:
 		parseData(g, p);
 	}
 
-	void parseData(string data, Parser p)
+	void parseData(const(char)[] data, Parser p)
 	{
 		this.p = p;
 		XML_Parse(parser, data.ptr, cast(int)data.length, true);
 	}
 
 private:
-	extern(C) static void startElement(void *userData, char *name, char **atts)
+	extern(C) static void startElement(void *userData, const(char)* name, const(const(char)*)*atts)
 	{
 		SaxParser xp = cast(SaxParser)userData;
-		xp.p.startNode(name[0 .. strlen(name)].dup);
+		xp.p.startNode(name[0 .. strlen(name)].idup);
 		for(int i; atts[i]; i += 2) {
-			char* an = atts[i];
-			char* av = atts[i+1];
-			xp.p.addAttribute(an[0 .. strlen(an)].dup, av[0 .. strlen(av)].dup);
+			const(char)* an = atts[i];
+			const(char)* av = atts[i+1];
+			xp.p.addAttribute(an[0 .. strlen(an)].idup, av[0 .. strlen(av)].idup);
 		}
 	}
 
-	extern(C) static void endElement(void *userData, char *name)
+	extern(C) static void endElement(void* userData, const(char)* name)
 	{
 		SaxParser xp = cast(SaxParser)userData;
-		xp.p.endNode(name[0 .. strlen(name)].dup);
+		xp.p.endNode(name[0 .. strlen(name)].idup);
 	}
 
-	extern(C) static void charData(void *userData, char *data, int len)
+	extern(C) static void charData(void* userData, const(char)* data, int len)
 	{
 		SaxParser xp = cast(SaxParser)userData;
-		xp.p.addData(data[0 .. len].dup);
+		xp.p.addData(data[0 .. len].idup);
 	}
 
 }

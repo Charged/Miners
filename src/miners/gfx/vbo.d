@@ -210,8 +210,8 @@ public:
 	{
 		gluPushAndTransform(pos, rot);
 
-		ChunkVBORigidMesh.drawArrayAttrib(
-			cast(ChunkVBORigidMesh[])resultVbo[0 .. result_num]);
+		charge.gfx.vbo.RigidMeshVBO.drawArrayAttrib(
+			cast(charge.gfx.vbo.RigidMeshVBO[])resultVbo[0 .. result_num]);
 
 		glPopMatrix();
 	}

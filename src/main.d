@@ -23,7 +23,7 @@ bool printLicense()
 	return false;
 }
 
-bool filterArgs(inout string[] args)
+bool filterArgs(ref string[] args)
 {
 	string[] ret;
 	int i;

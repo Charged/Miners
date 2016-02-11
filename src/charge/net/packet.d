@@ -6,7 +6,6 @@
 module charge.net.packet;
 
 import std.stdint : uint8_t, uint16_t, uint32_t;
-import std.gc : hasNoPointers;
 
 import charge.net.util;
 
@@ -195,7 +194,7 @@ package:
 	this(size_t size, uint8_t type)
 	{
 		d.length = Header.sizeof + size;
-		hasNoPointers(d.ptr);
+		/// @todo hasNoPointers(d.ptr);
 		this.t = type;
 	}
 

@@ -23,7 +23,7 @@ import charge.sys.resource;
 class VBO : Resource
 {
 protected:
-	const string uri = "vbo://";
+	enum string uri = "vbo://";
 
 	GLuint vboVerts;
 	GLuint vboIndices;
@@ -67,8 +67,8 @@ protected:
 			glGenVertexArraysCHARGE(1, &vao);
 	}
 
-	void update(void *verts, size_t verticesSize, GLuint numVerts,
-	            void *indices, size_t indicesSize, GLuint numIndices)
+	void update(const(void) *verts, size_t verticesSize, GLuint numVerts,
+	            const(void) *indices, size_t indicesSize, GLuint numIndices)
 	{
 		used_mem -= this.verteciesSize;
 		used_mem -= this.indicesSize;

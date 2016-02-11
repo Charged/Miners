@@ -2,7 +2,7 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module miners.skin;
 
-import std.string : format, find;
+import std.string : format;
 import uri = std.uri;
 
 import charge.charge;
@@ -18,9 +18,9 @@ class SkinDownloader : NetHttpConnection
 {
 private:
 	// Server details
-	const char[] hostname = "s3.amazonaws.com";
+	const string hostname = "s3.amazonaws.com";
 	const ushort port = 80;
-	const char[] url = "/MinecraftSkins/%s.png";
+	const string url = "/MinecraftSkins/%s.png";
 
 	GfxWrappedTexture[string] store;
 	string curSkin;
@@ -61,7 +61,7 @@ public:
 		super.doTick();
 	}
 
-	GfxTexture getSkin(char[] name)
+	GfxTexture getSkin(string name)
 	{
 		auto test = name in store;
 		if (test !is null)

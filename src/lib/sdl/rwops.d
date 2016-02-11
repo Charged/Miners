@@ -56,7 +56,7 @@ const RW_SEEK_END = 2;
 version (DynamicSDL)
 {
 extern (C):
-SDL_RWops* function(char *file, char *mode) SDL_RWFromFile;
+SDL_RWops* function(const(char)* file, const(char)* mode) SDL_RWFromFile;
 SDL_RWops* function(FILE *fp, int autoclose) SDL_RWFromFP;
 SDL_RWops* function(void *mem, int size) SDL_RWFromMem;
 SDL_RWops* function(void *mem, int size) SDL_RWFromConstMem;
@@ -78,7 +78,7 @@ int function(SDL_RWops *dst, Uint64 value) SDL_WriteBE64;
 else
 {
 extern (C):
-SDL_RWops* SDL_RWFromFile(char *file, char *mode);
+SDL_RWops* SDL_RWFromFile(const(char)* file, const(char)* mode);
 SDL_RWops* SDL_RWFromFP(FILE *fp, int autoclose);
 SDL_RWops* SDL_RWFromMem(void *mem, int size);
 SDL_RWops* SDL_RWFromConstMem(void *mem, int size);

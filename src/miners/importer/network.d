@@ -73,11 +73,7 @@ string removeTrailingSpaces(in char[] arg)
 	if (!len)
 		return null;
 
-	char[] ret;
-	ret.length = len;
-	ret[0 .. $] = arg[0 .. len];
-
-	return ret;
+	return arg[0 .. len].idup;
 }
 
 /**
@@ -88,10 +84,11 @@ string removeTrailingSpaces(in char[] arg)
  */
 string removeColorTags(in char[] arg)
 {
-	char[] ret;
+	char[1024*16] ret;
 	int k;
 
-	ret.length = arg.length;
+	if (arg.length > ret.length)
+		throw new Exception("To long string to removeColorTags");
 
 	for (int i; i < arg.length; k++, i++) {
 		// Found a color tag, skip it and the next.
@@ -104,8 +101,7 @@ string removeColorTags(in char[] arg)
 		ret[k] = arg[i];
 	}
 
-	ret.length = k;
-	return ret;
+	return ret[0 .. k].idup;
 }
 
 /**

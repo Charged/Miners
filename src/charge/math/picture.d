@@ -21,7 +21,7 @@ import charge.util.memory;
 class Picture : Resource
 {
 public:
-	const string uri = "pic://";
+	enum string uri = "pic://";
 
 	Color4b *pixels;
 

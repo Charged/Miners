@@ -5,9 +5,10 @@
  */
 module charge.gfx.material;
 
-import std.regexp : RegExp;
-import std.conv : toFloat, ConvError, ConvOverflowError;
+import std.conv : ConvException, ConvOverflowException;
 import std.string : format;
+import stdx.conv : toInt, toFloat;
+import stdx.regexp : RegExp;
 
 import lib.xml.xml;
 
@@ -396,9 +397,9 @@ public:
 			r.r = toFloat(p[1]);
 			r.g = toFloat(p[2]);
 			r.b = toFloat(p[3]);
-		} catch (ConvOverflowError cof) {
+		} catch (ConvOverflowException cof) {
 			return false;
-		} catch (ConvError ce) {
+		} catch (ConvException ce) {
 			return false;
 		}
 
@@ -416,9 +417,9 @@ public:
 			r.g = toFloat(p[2]);
 			r.b = toFloat(p[3]);
 			r.a = toFloat(p[4]);
-		} catch (ConvOverflowError cof) {
+		} catch (ConvOverflowException cof) {
 			return false;
-		} catch (ConvError ce) {
+		} catch (ConvException ce) {
 			return false;
 		}
 

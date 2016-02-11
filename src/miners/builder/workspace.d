@@ -31,29 +31,29 @@ struct WorkspaceData
 	 */
 	void free()
 	{
-		cFree(cast(void*)this);
+		cFree(cast(void*)&this);
 	}
 
 	void zero()
 	{
-		(cast(ubyte*)this)[0 .. (*this).sizeof - (void*).sizeof] = 0;
+		(cast(ubyte*)(&this))[0 .. this.sizeof - (void*).sizeof] = 0;
 	}
 
 	/*
 	 * We copy the data so we can use unsafe accessor functionswhen building
 	 * mesh geometry data.
 	 */
-	const int ws_width = BuildWidth+2;
-	const int ws_height = BuildHeight+2;
-	const int ws_depth = BuildDepth+2;
+	enum int ws_width = BuildWidth+2;
+	enum int ws_height = BuildHeight+2;
+	enum int ws_depth = BuildDepth+2;
 
-	const int ws_data_width = BuildWidth+2;
-	const int ws_data_height = BuildHeight/2+2;
-	const int ws_data_depth = BuildDepth+2;
+	enum int ws_data_width = BuildWidth+2;
+	enum int ws_data_height = BuildHeight/2+2;
+	enum int ws_data_depth = BuildDepth+2;
 
-	const int ws_x_stride = ws_depth * ws_height;
-	const int ws_y_stride = 1;
-	const int ws_z_stride = ws_height;
+	enum int ws_x_stride = ws_depth * ws_height;
+	enum int ws_y_stride = 1;
+	enum int ws_z_stride = ws_height;
 
 	ubyte[ws_height][ws_depth][ws_width] blocks;
 	ubyte[ws_data_height][ws_data_depth][ws_data_width] data;
@@ -88,31 +88,31 @@ struct WorkspaceData
 	
 	bool filled(int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return tile[t].filled != 0;
 	}
 
 	bool filledOrType(ubyte type, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return tile[t].filled != 0 || t == type;
 	}
 
 	bool filledOrTypes(ubyte t1, ubyte t2, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return t == t1 || t == t2 || tile[t].filled != 0;
 	}
 
 	bool isType(ubyte t1, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return t == t1;
 	}
 
 	bool isTypes(ubyte t1, ubyte t2, int x, int y, int z)
 	{
-		auto t = (*this)[x, y, z];
+		auto t = (this)[x, y, z];
 		return t == t1 || t == t2;
 	}
 

@@ -391,7 +391,7 @@ public:
 	 * uv(i) - texture coordenate, i is sufixed for texture array versions.
 	 */
 
-	const char[] materialFragForward = "
+	enum string materialFragForward = "
 #version 120
 
 uniform sampler2D diffuseTex;
@@ -429,7 +429,7 @@ void main()
 }
 ";
 
-	const char[] materialFragForwardIndexed = "
+	enum string materialFragForwardIndexed = "
 #version 120
 #extension GL_EXT_texture_array : require
 
@@ -468,7 +468,7 @@ void main()
 }
 ";
 
-	const char[] materialFragDeferred = "
+	enum string materialFragDeferred = "
 #version 120
 #extension GL_EXT_texture_array : require
 
@@ -499,7 +499,7 @@ void main()
 	 * Both can be used with either renderer.
 	 */
 
-	const char[] materialVertCompactMesh = "
+	enum string materialVertCompactMesh = "
 #version 120
 
 uniform vec4 normals[10];
@@ -526,7 +526,7 @@ void main()
 }
 ";
 
-	const char[] materialVertCompactMeshIndexed = "
+	enum string materialVertCompactMeshIndexed = "
 #version 120
 
 varying vec3 normal;

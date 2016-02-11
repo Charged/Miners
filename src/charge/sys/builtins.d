@@ -12,18 +12,18 @@ module charge.sys.builtins;
 static this()
 {
 	// From Miners
-	builtins["script/main-level.lua"] = import("main-level.lua");
-	builtins["script/defaults.lua"] = import("defaults.lua");
-	builtins["script/exported.lua"] = import("exported.lua");
-	builtins["script/physics.lua"] = import("physics.lua");
-	builtins["script/player.lua"] = import("player.lua");
-	builtins["script/blocks.lua"] = import("blocks.lua");
-	builtins["script/input.lua"] = import("input.lua");
+	builtins["script/main-level.lua"] = cast(void[])import("main-level.lua");
+	builtins["script/defaults.lua"] = cast(void[])import("defaults.lua");
+	builtins["script/exported.lua"] = cast(void[])import("exported.lua");
+	builtins["script/physics.lua"] = cast(void[])import("physics.lua");
+	builtins["script/player.lua"] = cast(void[])import("player.lua");
+	builtins["script/blocks.lua"] = cast(void[])import("blocks.lua");
+	builtins["script/input.lua"] = cast(void[])import("input.lua");
 
 	// Common
-	builtins["res/spotlight.png"] = import("spotlight.png");
-	builtins["res/default.png"] = import("default.png");
-	builtins["res/font.png"] = import("font.png");
+	builtins["res/spotlight.png"] = cast(void[])import("spotlight.png");
+	builtins["res/default.png"] = cast(void[])import("default.png");
+	builtins["res/font.png"] = cast(void[])import("font.png");
 }
 
 void[][string] builtins;

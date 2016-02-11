@@ -2,8 +2,6 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 module charge.game.actors.playerspawn;
 
-import std.random : rand;
-
 import charge.util.vector;
 
 import charge.math.point3d;
@@ -33,7 +31,8 @@ public:
 	}
 
 	static PlayerSpawn random() {
-		return spawns[rand() % spawns.length];
+		return spawns[0]; /// @todo random.
+		//return spawns[rand() % spawns.length];
 	}
 
 }

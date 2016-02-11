@@ -2,10 +2,12 @@
 // See copyright notice in src/charge/charge.d (GPLv2 only).
 /**
  * Source file for network helpers.
+ *
+ * @todo fold into math.ints.
  */
 module charge.net.util;
 
-import std.intrinsic : bswap;
+import core.bitop : bswap;
 
 
 uint ntoh(uint v)
@@ -20,7 +22,7 @@ int ntoh(int v)
 
 ushort ntoh(ushort v)
 {
-	return (v >> 8) | (v << 8);
+	return cast(ushort)((v >> 8) | (v << 8));
 }
 
 short ntoh(short v)
