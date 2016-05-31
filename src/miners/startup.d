@@ -262,8 +262,8 @@ class OptionsLoader : OptionsTask
 class LoadDefaultSkin : OptionsTask, NetDownloadListener
 {
 public:
-	const string path = "/images/char.png";
-	const string hostname = "minecraft.net";
+	const string hostname = "hydra-media.cursecdn.com";
+	const string path = "/minecraft.gamepedia.com/3/37/Steve_skin.png";
 	const ushort port = 80;
 	const string filename = "skin.png";
 
@@ -358,7 +358,7 @@ class LoadDefaultClassicTerrain : OptionsTask, NetDownloadListener
 {
 public:
 	const string path = "/releases/terrain.default.png";
-	const string hostname = "cm-cdn.fcraft.net";
+	const string hostname = "cdn.charged-miners.com";
 	const ushort port = 80;
 
 
