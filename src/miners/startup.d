@@ -546,23 +546,24 @@ class LoadClassicTexture : OptionsTask
 			borrowClassicTerrainTexture();
 
 		// Get a texture that works with classic
-		auto pic = getClassicTerrainTexture(p);
-		if (pic is null) {
-			sysReference(&pic, opts.defaultClassicTerrain());
-		}
-
-		if (pic is null) {
-			if (opts.modernTerrainPic() is null) {
-					auto text = format(terrainNotFoundText, chargeConfigFolder);
-					signalError([text]);
-					return false;
-			}
-
+		Picture pic;
+		pic = getClassicTerrainTexture(p);
+		if (pic !is null) {
+			l.info("Found \"terrain.default.png\" using it.");
+		} else if (opts.modernTerrainPic() !is null) {
 			// Copy and manipulate
 			pic = Picture(opts.modernTerrainPic());
 			manipulateTextureClassic(pic);
 
 			l.info("Using a modified modern terrain.png for classic terrain.");
+		} else if (opts.defaultClassicTerrain() !is null) {
+			sysReference(&pic, opts.defaultClassicTerrain());
+			l.info("Using \"terrain.default.png\" for classic terrain.");
+		} else {
+			l.error("No classic texture found.");
+			auto text = format(terrainNotFoundText, chargeConfigFolder);
+			signalError([text]);
+			return false;
 		}
 
 		opts.classicTerrainPic = pic;
