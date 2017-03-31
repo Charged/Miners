@@ -646,6 +646,8 @@ protected:
 
 	override void displayError(string[] texts, bool panic)
 	{
+		l.warn("displayError %s %s", texts, panic);
+		writefln("displayError %s %s", texts, panic);
 		push(new ErrorMenu(this, texts, panic));
 	}
 }
