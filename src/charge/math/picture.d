@@ -130,11 +130,11 @@ protected:
 		this.width = image.width;
 		this.height = image.height;
 
-		if (image.pixels.length != calcImageSize()) {
+		if (image.imageSize != calcImageSize()) {
 			throw new Exception("png image storage is not large enough");
 		}
 
-		this.pixels = cast(Color4b*)image.pixels.steal.ptr;
+		this.pixels = cast(Color4b*)image.steal();
 	}
 
 	this(Pool p, string name, Picture image)
