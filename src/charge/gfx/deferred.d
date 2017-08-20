@@ -396,7 +396,7 @@ public:
 		assert(initilized);
 
 		depthTarget = new DepthTarget(1024, 1024);
-		depthTargetArray = new DepthTargetArray(2048, 2048, 4);
+		depthTargetArray = new DepthTargetArray(4096, 4096, 4);
 	}
 
 	~this()
@@ -707,8 +707,9 @@ protected:
 		far_array[splits-1] = far;
 
 		// Always make objects close look good.
-		near_array[1] = fmin(fmax(8, near+7), near_array[1]);
-		far_array[0] = near_array[1] * 1.005f;
+		// XXX This mostly just added a sharpborder near the player.
+		//near_array[1] = fmin(fmax(8, near+7), near_array[1]);
+		//far_array[0] = near_array[1] * 1.005f;
 	}
 
 	void setDirSplitMatrices(SimpleLight dl, ProjCamera c,
