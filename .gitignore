@@ -17,4 +17,6 @@ charge.sublime*
 *.chz
 *.zip
 *.ver
+*.exe
+build.bat
 screenshot-*.bmp
